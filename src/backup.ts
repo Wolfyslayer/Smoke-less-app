@@ -13,7 +13,7 @@ export async function exportBackup():Promise<string>{
 }
 export function validateBackup(value:unknown):Backup|LegacyBackup{
  if(!value||typeof value!=='object')throw new Error('Ogiltig säkerhetskopia');
- const x=value as Partial<Backup>;
+ const x=value as Partial<Omit<Backup,'version'>> & {version?:number};
  if(x.format!=='smoke-less-backup'||(x.version!==1&&x.version!==2)||!x.profile||!x.interval)throw new Error('Formatet stöds inte');
  const p=x.profile as Profile,i=x.interval as IntervalPlan;
  if(!Array.isArray(p.cravings)||!Number.isFinite(p.cigarettesPerDay)||!Number.isFinite(p.packPrice)||!Number.isFinite(p.cigarettesPerPack)||!Array.isArray(i.history??[])||!Number.isFinite(i.minutes))throw new Error('Säkerhetskopian innehåller ogiltig data');
