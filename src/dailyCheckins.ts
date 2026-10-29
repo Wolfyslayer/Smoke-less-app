@@ -10,6 +10,6 @@ export async function saveCheckin(checkin:DailyCheckin):Promise<void>{
  await AsyncStorage.setItem(KEY,JSON.stringify([checkin,...existing.filter(x=>x.date!==checkin.date)].slice(0,2000)));
 }
 export async function deleteCheckin(date:string):Promise<void>{
- const existing=await loadCheckins();await AsyncStorage.setItem(KEY,JSON.stringify(existing.filter(x=>x.date!==date));
+ const existing=await loadCheckins();await AsyncStorage.setItem(KEY,JSON.stringify(existing.filter(x=>x.date!==date)));
 }
 export function confirmedSmokeFreeDays(checkins:DailyCheckin[]){return checkins.filter(x=>x.complete&&x.smokeFree).length;}
