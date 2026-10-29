@@ -12,14 +12,14 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  const [ready,setReady]=useState(false);
  const [now,setNow]=useState(Date.now());
  useEffect(()=>{loadIntervalPlan().then(p=>{setPlan(p);setReady(true)});const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer)},[]);
- const update=async(next:IntervalPlan)=>{setPlan(next);try{await saveIntervalPlan(next);await scheduleIntervalNotifications(next)}catch{Alert.alert('Notiser','Dina ändringar sparades, men notiser kunde inte uppdateras.')}};
+ const update=async(next:IntervalPlan)=>{setPlan(next);try{await saveIntervalPlan(next);const ok=await scheduleIntervalNotifications(next);if(!ok&&next.notificationsEnabled){setPlan({...next,notificationsEnabled:false});await saveIntervalPlan({...next,notificationsEnabled:false});Alert.alert('Notiser ej aktiverade','Tillåt notiser i Android-inställningarna. Webbversionen stödjer inte intervallnotiser.')}}catch{Alert.alert('Lagring','Kunde inte spara ändringen eller uppdatera notiserna.')}};
  const today=dateKey(new Date(now).toISOString());
  const entries=plan.history??[];
  const todayEntries=entries.filter(x=>dateKey(x.at)===today);
  const target=Math.max(0,Math.round(dailyTarget)||0);
  const count=todayEntries.length;
  const remaining=Math.max(0,target-count);
- const elapsed=Math.max(0,now-new Date(plan.lastCigaretteAt).getTime());
+ const elapsed=entries.length?Math.max(0,now-new Date(entries.reduce((latest,e)=>e.at>latest?e.at:latest,entries[0].at)).getTime()):0;
  const seconds=Math.floor(elapsed/1000);
  const elapsedLabel=seconds<60?seconds+' sek':seconds<3600?Math.floor(seconds/60)+' min':Math.floor(seconds/3600)+' h '+Math.floor(seconds%3600/60)+' min';
  const week=entries.filter(x=>now-new Date(x.at).getTime()<=7*86400000);
