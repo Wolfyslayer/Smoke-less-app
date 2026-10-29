@@ -14,3 +14,13 @@ export function periodSummary(entries:CigaretteEntry[],start:Date,end:Date,basel
  const estimatedAvoided=Math.max(0,Math.floor(Math.max(0,baseline)*days-recent.length));
  return {recent,days,intervals,estimatedAvoided,estimatedSaved:estimatedAvoided*Math.max(0,packPrice)/Math.max(1,perPack)};
 }
+
+/** Rebuild interval facts after a timestamp edit, removal or undo. */
+export function reconcileHistory(entries:CigaretteEntry[]):CigaretteEntry[]{
+ const chronological=sortedHistory(entries).reverse();
+ return chronological.map((entry,index)=>{
+  const previous=chronological[index-1];
+  const elapsedMinutes=previous?Math.max(0,Math.floor((Date.parse(entry.at)-Date.parse(previous.at))/60000)):0;
+  return {...entry,elapsedMinutes,metTarget:!!previous&&elapsedMinutes>=entry.targetMinutes};
+ }).reverse();
+}
