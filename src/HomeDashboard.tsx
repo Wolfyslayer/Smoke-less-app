@@ -5,6 +5,7 @@ import {loadIntervalPlan,saveIntervalPlan} from './intervalStorage';
 import {registerInterval,acceptSuggestion,dismissSuggestion} from './adaptiveTapering';
 import {scheduleIntervalNotifications} from './intervalNotifications';
 import {confirmAction,showMessage} from './dialogs';
+import {deleteCheckin,dayKey} from './dailyCheckins';
 const C={bg:'#15110F',card:'#24201E',line:'#3A3431',orange:'#FF812F',green:'#35B980',white:'#F7F4F1',muted:'#ADA5A0'};
 const dateKey=(value:string)=>new Date(value).toLocaleDateString('sv-SE');
 function Stat({label,value,sub}:{label:string;value:string;sub?:string}){return <View style={s.stat}><Text style={s.statLabel}>{label}</Text><Text style={s.statValue}>{value}</Text>{sub?<Text style={s.sub}>{sub}</Text>:null}</View>;}
@@ -27,7 +28,7 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  const previous=entries.filter(x=>{const age=now-new Date(x.at).getTime();return age>7*86400000&&age<=14*86400000});
  const trend=previous.length?Math.round((previous.length-week.length)/previous.length*100):null;
  const segments=48,progress=target===0?(count>0?1:0):Math.min(1,count/target);
- const register=()=>confirmAction('Registrera cigarett','Vill du lägga till en cigarett i dagens logg?',()=>update(registerInterval(plan)));
+ const register=()=>confirmAction('Registrera cigarett','Vill du lägga till en cigarett i dagens logg?',async()=>{await deleteCheckin(dayKey(new Date()));await update(registerInterval(plan));});
  return <ScrollView style={s.root} contentContainerStyle={s.content}>
  <View style={s.top}><View><Text style={s.date}>{new Date(now).toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'})}</Text><Text style={s.title}>Dagens framsteg</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Stöd vid röksug" onPress={onSOS} style={s.heart}><Text style={s.heartText}>♡</Text></Pressable></View>
  <View style={s.ringWrap} accessibilityLabel={count+' av '+target+' cigaretter idag'}>
