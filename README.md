@@ -29,3 +29,6 @@ eas build -p android --profile preview
 Remote push requires a development/production build, credentials and a server; this app currently schedules local reminders only.
 
 No account, backend, analytics or data transmission is required. Calculated savings are estimates. This app does not replace clinical smoking cessation care.
+
+## Adaptive tapering
+After three completed smoking intervals, the app offers an optional +15 minute increase (maximum 180 minutes). The user can accept or dismiss it. No target changes automatically. This is a motivational feature, not medical guidance.
