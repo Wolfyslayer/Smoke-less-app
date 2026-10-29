@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import IntervalPanel from './src/IntervalPanel';
+import Onboarding, {Setup} from './src/Onboarding';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { initialProfile, Profile, stats } from './src/model';
@@ -13,12 +15,13 @@ function Tile({label,value}:{label:string;value:string}) {return <View style={st
 function AppContent() {
  const [profile,setProfile]=useState<Profile>(initialProfile);
  const [loaded,setLoaded]=useState(false);
+ const [onboarded,setOnboarded]=useState<boolean|null>(null);
  const [tab,setTab]=useState<Tab>('home');
  const [tick,setTick]=useState(Date.now());
  const [intensity,setIntensity]=useState(3);
  const [trigger,setTrigger]=useState('');
  const [breath,setBreath]=useState(0);
- useEffect(()=>{loadProfile().then(p=>{setProfile(p);setLoaded(true);}); const timer=setInterval(()=>setTick(Date.now()),1000);return ()=>clearInterval(timer);},[]);
+ useEffect(()=>{AsyncStorage.getItem('smokeless-onboarded-v1').then(v=>setOnboarded(v==='yes')).catch(()=>setOnboarded(false));loadProfile().then(p=>{setProfile(p);setLoaded(true);}); const timer=setInterval(()=>setTick(Date.now()),1000);return ()=>clearInterval(timer);},[]);
  useEffect(()=>{if(loaded)saveProfile(profile).catch(()=>Alert.alert('Fel','Kunde inte spara lokalt.'));},[profile,loaded]);
  useEffect(()=>{if(tab!=='sos')return;const timer=setInterval(()=>setBreath(v=>(v+1)%8),1000);return ()=>clearInterval(timer);},[tab]);
  const update=(patch:Partial<Profile>)=>setProfile(p=>({...p,...patch}));
@@ -26,6 +29,8 @@ function AppContent() {
  const days=Math.floor(s.days), hours=Math.floor((s.days-days)*24);
  const addCraving=(resisted:boolean)=>{update({cravings:[{id:String(Date.now()),date:new Date().toISOString(),intensity,trigger:trigger.trim()||'Okänd',resisted},...profile.cravings]});setTrigger('');setTab('home');Alert.alert('Registrerat',resisted?'Bra jobbat! Varje hanterat röksug räknas.':'Ett bakslag raderar inte dina framsteg. Fortsätt i din egen takt.');};
  const field=(label:string,value:number,key:'cigarettesPerDay'|'packPrice'|'cigarettesPerPack')=><View style={styles.field}><Text style={styles.muted}>{label}</Text><TextInput keyboardType="decimal-pad" style={styles.input} value={String(value)} onChangeText={v=>{const n=Number(v.replace(',','.'));if(Number.isFinite(n)&&n>=0)update({[key]:n});}} /></View>;
+ if(onboarded===null)return <SafeAreaView style={styles.safe}><Text style={styles.logo}>SMOKE LESS</Text></SafeAreaView>;
+ if(!onboarded)return <Onboarding onComplete={async(setup:Setup)=>{update({cigarettesPerDay:setup.cigarettesPerDay,packPrice:setup.packPrice,cigarettesPerPack:setup.cigarettesPerPack,quitAt:new Date().toISOString()});await AsyncStorage.setItem('smokeless-onboarded-v1','yes');setOnboarded(true);if(setup.mode==='taper')setTab('home');}}/>;
  return <SafeAreaView style={styles.safe}><StatusBar barStyle="light-content"/><View style={styles.header}><Text style={styles.logo}>◉  SMOKE LESS</Text><Text style={styles.muted}>En dag i taget</Text></View><ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
  {tab==='home'&&<><IntervalPanel/><Text style={styles.title}>Din resa mot ett rökfritt liv</Text><View style={styles.hero}><Text style={styles.muted}>Tid sedan ditt rökstopp</Text><Text style={styles.big}>{days} dagar</Text><Text style={styles.subtitle}>{hours} timmar • Du gör framsteg varje dag</Text></View><View style={styles.grid}><Tile label="Sparade kronor" value={s.saved.toFixed(0)+' kr'}/><Tile label="Cigaretter undvikna" value={String(s.avoided)}/></View><Text style={styles.section}>Behöver du stöd just nu?</Text><Btn title="Jag är röksugen – hjälp mig" onPress={()=>setTab('sos')}/><View style={styles.card}><Text style={styles.cardTitle}>Dagens påminnelse</Text><Text style={styles.body}>Röksug går ofta över. Prova att vänta, dricka vatten eller ta en kort promenad. Du behöver inte vara perfekt för att fortsätta.</Text></View></>}
  {tab==='sos'&&<><Text style={styles.title}>Vi tar oss igenom röksuget</Text><View style={styles.hero}><Text style={styles.muted}>Andas lugnt med rytmen</Text><Text style={styles.big}>{breath<4?'Andas in':'Andas ut'}</Text><Text style={styles.subtitle}>{4-(breath%4)} sekunder</Text></View><Text style={styles.section}>Hur starkt är röksuget?</Text><View style={styles.levels}>{[1,2,3,4,5].map(n=><Pressable key={n} onPress={()=>setIntensity(n)} style={[styles.level,intensity===n&&styles.selected]}><Text style={styles.body}>{n}</Text></Pressable>)}</View><Text style={styles.section}>Vad utlöste det?</Text><TextInput placeholder="Stress, kaffe, efter maten..." placeholderTextColor={C.muted} style={styles.input} value={trigger} onChangeText={setTrigger}/><Btn title="Jag klarade röksuget" onPress={()=>addCraving(true)}/><Btn title="Jag rökte – registrera utan skuld" secondary onPress={()=>addCraving(false)}/><Text style={styles.muted}>Tips: drick vatten, byt miljö, ring någon eller vänta fem minuter.</Text></>}
