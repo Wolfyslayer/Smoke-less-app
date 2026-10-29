@@ -21,6 +21,12 @@
     ],
     "extra": {
       "eas": {}
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "name": "Smoke Less",
+      "shortName": "Smoke Less"
     }
   }
 }

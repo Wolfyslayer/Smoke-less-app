@@ -1,12 +1,15 @@
 import * as Notifications from 'expo-notifications';
+import {Platform} from 'react-native';
 import { IntervalPlan } from './interval';
 const PREFIX='smokeless-interval-';
 const checkpoints=[0,15,30,60,120,180];
 export async function clearIntervalNotifications(){
+ if(Platform.OS==='web')return;
  const scheduled=await Notifications.getAllScheduledNotificationsAsync();
  await Promise.all(scheduled.filter(x=>x.content.data?.kind==='smokeless-interval').map(x=>Notifications.cancelScheduledNotificationAsync(x.identifier)));
 }
 export async function scheduleIntervalNotifications(plan:IntervalPlan){
+ if(Platform.OS==='web')return false;
  await clearIntervalNotifications();
  if(!plan.enabled || !plan.notificationsEnabled)return true;
  const permission=await Notifications.requestPermissionsAsync();

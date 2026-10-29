@@ -32,3 +32,6 @@ No account, backend, analytics or data transmission is required. Calculated savi
 
 ## Adaptive tapering
 After three completed smoking intervals, the app offers an optional +15 minute increase (maximum 180 minutes). The user can accept or dismiss it. No target changes automatically. This is a motivational feature, not medical guidance.
+
+## GitHub Pages web preview
+The Expo web export is deployed by GitHub Actions to https://wolfyslayer.github.io/Smoke-less-app/ after each push to main. In repository Settings → Pages, choose **GitHub Actions** as the build and deployment source. This is a browser preview: native notification scheduling is intentionally disabled on web, and local storage is per-browser. Test local notifications on an Android device/development build.
