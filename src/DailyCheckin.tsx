@@ -1,12 +1,12 @@
 import React,{useEffect,useState} from 'react';
 import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
-import {DailyCheckin,dayKey,loadCheckins,saveCheckin,deleteCheckin} from './dailyCheckins';
+import {type DailyCheckin as DailyCheckinRecord,dayKey,loadCheckins,saveCheckin,deleteCheckin} from './dailyCheckins';
 import {loadIntervalPlan} from './intervalStorage';
 import {showMessage} from './dialogs';
 const C={card:'#24201E',line:'#3A3431',orange:'#FF812F',green:'#35B980',white:'#F7F4F1',muted:'#ADA5A0'};
 export default function DailyCheckin({date,onSaved}:{date:Date;onSaved?:()=>void}){
  const key=dayKey(date),today=dayKey(new Date());
- const [checkin,setCheckin]=useState<DailyCheckin|undefined>();
+ const [checkin,setCheckin]=useState<DailyCheckinRecord|undefined>();
  const [count,setCount]=useState(0);
  const [note,setNote]=useState('');
  useEffect(()=>{let active=true;Promise.all([loadCheckins(),loadIntervalPlan()]).then(([all,plan])=>{if(!active)return;const found=all.find(x=>x.date===key);setCheckin(found);setNote(found?.note??'');setCount((plan.history??[]).filter(e=>dayKey(new Date(e.at))===key).length)});return()=>{active=false}},[key]);
