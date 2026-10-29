@@ -16,7 +16,7 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  const today=dateKey(new Date(now).toISOString());
  const entries=plan.history??[];
  const todayEntries=entries.filter(x=>dateKey(x.at)===today);
- const target=Math.max(1,Math.round(dailyTarget)||1);
+ const target=Math.max(0,Math.round(dailyTarget)||0);
  const count=todayEntries.length;
  const remaining=Math.max(0,target-count);
  const elapsed=Math.max(0,now-new Date(plan.lastCigaretteAt).getTime());
@@ -25,7 +25,7 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  const week=entries.filter(x=>now-new Date(x.at).getTime()<=7*86400000);
  const previous=entries.filter(x=>{const age=now-new Date(x.at).getTime();return age>7*86400000&&age<=14*86400000});
  const trend=previous.length?Math.round((previous.length-week.length)/previous.length*100):null;
- const segments=48,progress=Math.min(1,count/target);
+ const segments=48,progress=target===0?(count>0?1:0):Math.min(1,count/target);
  const register=()=>Alert.alert('Registrera cigarett','Vill du lägga till en cigarett i dagens logg?',[
  {text:'Avbryt',style:'cancel'},
  {text:'Registrera',onPress:()=>update(registerInterval(plan))}
@@ -35,7 +35,7 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  <View style={s.ringWrap} accessibilityLabel={count+' av '+target+' cigaretter idag'}>
  <View style={s.ring}>{Array.from({length:segments},(_,i)=>{const angle=i*360/segments;return <View key={i} style={[s.segment,{transform:[{rotate:angle+'deg'}]}]}><View style={[s.segmentMark,{backgroundColor:i/segments<progress?C.orange:'#3B3532'}]}/></View>})}<View style={s.ringCenter}><Text style={s.count}>{count}<Text style={s.slash}> / {target}</Text></Text><Text style={s.ringCaption}>Cigaretter idag</Text></View></View>
  </View>
- <View style={[s.pill,{backgroundColor:remaining?'#19382A':'#3B2923'}]}><Text style={[s.pillText,{color:remaining?C.green:C.orange}]}>{remaining?remaining+' kvar till dagsmålet':'Dagsmålet uppnått'}</Text></View>
+ <View style={[s.pill,{backgroundColor:remaining?'#19382A':'#3B2923'}]}><Text style={[s.pillText,{color:target===0&&count===0?C.green:remaining?C.green:C.orange}]}>{target===0?(count===0?'Rökfri dag hittills':'Registrerat idag: '+count):remaining?remaining+' under dagsmålet':'Dagsmålet nått eller överskridet'}</Text></View>
  <View style={s.grid}><Stat label="◷  Sedan senaste" value={entries.length?elapsedLabel:'Ingen registrering'}/><Stat label="◎  Dagens mål" value={target+' cigaretter'}/><Stat label="♧  Klarade intervall" value={String(entries.filter(x=>x.metTarget).length)}/><Stat label="⌁  Veckans förändring" value={trend===null?'–':(trend>0?'-':'')+Math.abs(trend)+' %'} sub={trend===null?'Samla två veckors data':'jämfört med föregående vecka'}/></View>
  <Pressable accessibilityRole="button" style={s.primary} onPress={register}><Text style={s.flame}>♨</Text><Text style={s.primaryText}>+ Jag rökte</Text><Text style={s.primarySub}>Registrera en cigarett</Text></Pressable>
  <View style={s.panel}><Text style={s.panelTitle}>Din nedtrappningsplan</Text><Text style={s.sub}>{plan.enabled?'Mål: minst '+plan.minutes+' minuter mellan cigaretterna':'Aktivera planen för att träna på längre intervaller.'}</Text>
