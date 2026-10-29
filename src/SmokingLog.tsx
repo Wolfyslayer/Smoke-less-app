@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react';
-import {Alert,Pressable,StyleSheet,Text,View} from 'react-native';
+import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {CigaretteEntry,IntervalPlan} from './interval';
 import {loadIntervalPlan,saveIntervalPlan} from './intervalStorage';
 import {scheduleIntervalNotifications} from './intervalNotifications';
