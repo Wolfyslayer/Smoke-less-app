@@ -8,7 +8,6 @@ import {confirmAction,showMessage} from './dialogs';
 import {deleteCheckin,dayKey} from './dailyCheckins';
 const C={bg:'#071116',card:'#101E25',line:'#20343C',orange:'#6DDAE2',green:'#8DD8BD',white:'#EAF6F7',muted:'#8BA4AC'};
 const dateKey=(value:string)=>new Date(value).toLocaleDateString('sv-SE');
-function Stat({label,value,sub}:{label:string;value:string;sub?:string}){return <View style={s.stat}><Text style={s.statLabel}>{label}</Text><Text style={s.statValue}>{value}</Text>{sub?<Text style={s.sub}>{sub}</Text>:null}</View>;}
 export default function HomeDashboard({dailyTarget,onSOS,onNavigate}:{dailyTarget:number;onSOS:()=>void;onNavigate?:(tab:'plan'|'log'|'stats'|'benefits')=>void}){
  const [plan,setPlan]=useState<IntervalPlan>(initialIntervalPlan);
   const [now,setNow]=useState(Date.now());
