@@ -5,6 +5,7 @@ import SmokingLog from './src/SmokingLog';
 import SmokingStats from './src/SmokingStats';
 import Benefits from './src/Benefits';
 import SettingsScreen from './src/SettingsScreen';
+import DailyCheckin from './src/DailyCheckin';
 import {reductionSchedule} from './src/reductionPlan';
 import ProgressInsights from './src/ProgressInsights';
 import Onboarding, {Setup} from './src/Onboarding';
