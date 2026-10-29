@@ -4,7 +4,7 @@ import {loadIntervalPlan} from './intervalStorage';
 import {CigaretteEntry} from './interval';
 import {Profile} from './model';
 import {DailyCheckin,loadCheckins,dayKey} from './dailyCheckins';
-const C={card:'#211D1A',line:'#302B27',orange:'#EFA46A',green:'#9FC6A9',white:'#F7F2EC',muted:'#AAA29A'};
+const C={card:'#101E25',line:'#20343C',orange:'#6DDAE2',green:'#8DD8BD',white:'#EAF6F7',muted:'#8BA4AC'};
 const milestones=[{minutes:20,label:'20 minuter',description:'Puls och blodtryck kan börja sjunka.'},{minutes:480,label:'8 timmar',description:'Kolmonoxidhalten i blodet sjunker.'},{minutes:1440,label:'24 timmar',description:'Kroppen fortsätter återhämta sig.'},{minutes:2880,label:'2 dagar',description:'Lukt- och smaksinnet kan börja förbättras.'},{minutes:4320,label:'3 dagar',description:'Andningen kan gradvis kännas lättare.'},{minutes:20160,label:'2 veckor',description:'Blodcirkulationen kan förbättras.'},{minutes:43200,label:'1 månad',description:'Hosta och andfåddhet kan minska.'},{minutes:129600,label:'3 månader',description:'Lungfunktion och ork kan fortsätta förbättras.'},{minutes:525600,label:'1 år',description:'Risken för hjärt-kärlsjukdom minskar över tid.'}];
 export default function Benefits({profile}:{profile:Profile}){
  const [entries,setEntries]=useState<CigaretteEntry[]>([]);
