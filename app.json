@@ -24,9 +24,12 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "single",
       "name": "Smoke Less",
       "shortName": "Smoke Less"
+    },
+    "experiments": {
+      "baseUrl": "/Smoke-less-app"
     }
   }
 }
