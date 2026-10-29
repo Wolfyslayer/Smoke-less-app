@@ -4,6 +4,7 @@ import {IntervalPlan,initialIntervalPlan} from './interval';
 import {loadIntervalPlan,saveIntervalPlan} from './intervalStorage';
 import {registerInterval,acceptSuggestion,dismissSuggestion} from './adaptiveTapering';
 import {scheduleIntervalNotifications} from './intervalNotifications';
+import {confirmAction,showMessage} from './dialogs';
 const C={bg:'#15110F',card:'#24201E',line:'#3A3431',orange:'#FF812F',green:'#35B980',white:'#F7F4F1',muted:'#ADA5A0'};
 const dateKey=(value:string)=>new Date(value).toLocaleDateString('sv-SE');
 function Stat({label,value,sub}:{label:string;value:string;sub?:string}){return <View style={s.stat}><Text style={s.statLabel}>{label}</Text><Text style={s.statValue}>{value}</Text>{sub?<Text style={s.sub}>{sub}</Text>:null}</View>;}
@@ -12,7 +13,7 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  const [ready,setReady]=useState(false);
  const [now,setNow]=useState(Date.now());
  useEffect(()=>{loadIntervalPlan().then(p=>{setPlan(p);setReady(true)});const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer)},[]);
- const update=async(next:IntervalPlan)=>{setPlan(next);try{await saveIntervalPlan(next);const ok=await scheduleIntervalNotifications(next);if(!ok&&next.notificationsEnabled){setPlan({...next,notificationsEnabled:false});await saveIntervalPlan({...next,notificationsEnabled:false});Alert.alert('Notiser ej aktiverade','Tillåt notiser i Android-inställningarna. Webbversionen stödjer inte intervallnotiser.')}}catch{Alert.alert('Lagring','Kunde inte spara ändringen eller uppdatera notiserna.')}};
+ const update=async(next:IntervalPlan)=>{setPlan(next);try{await saveIntervalPlan(next);const ok=await scheduleIntervalNotifications(next);if(!ok&&next.notificationsEnabled){setPlan({...next,notificationsEnabled:false});await saveIntervalPlan({...next,notificationsEnabled:false});showMessage('Notiser ej aktiverade','Tillåt notiser i Android-inställningarna. Webbversionen stödjer inte intervallnotiser.')}}catch{showMessage('Lagring','Kunde inte spara ändringen eller uppdatera notiserna.')}};
  const today=dateKey(new Date(now).toISOString());
  const entries=plan.history??[];
  const todayEntries=entries.filter(x=>dateKey(x.at)===today);
@@ -26,10 +27,7 @@ export default function HomeDashboard({dailyTarget,onSOS}:{dailyTarget:number;on
  const previous=entries.filter(x=>{const age=now-new Date(x.at).getTime();return age>7*86400000&&age<=14*86400000});
  const trend=previous.length?Math.round((previous.length-week.length)/previous.length*100):null;
  const segments=48,progress=target===0?(count>0?1:0):Math.min(1,count/target);
- const register=()=>Alert.alert('Registrera cigarett','Vill du lägga till en cigarett i dagens logg?',[
- {text:'Avbryt',style:'cancel'},
- {text:'Registrera',onPress:()=>update(registerInterval(plan))}
- ]);
+ const register=()=>confirmAction('Registrera cigarett','Vill du lägga till en cigarett i dagens logg?',()=>update(registerInterval(plan)));
  return <ScrollView style={s.root} contentContainerStyle={s.content}>
  <View style={s.top}><View><Text style={s.date}>{new Date(now).toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'})}</Text><Text style={s.title}>Dagens framsteg</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Stöd vid röksug" onPress={onSOS} style={s.heart}><Text style={s.heartText}>♡</Text></Pressable></View>
  <View style={s.ringWrap} accessibilityLabel={count+' av '+target+' cigaretter idag'}>
