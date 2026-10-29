@@ -9,7 +9,7 @@ export async function clearIntervalNotifications(){
  await Promise.all(scheduled.filter(x=>x.content.data?.kind==='smokeless-interval').map(x=>Notifications.cancelScheduledNotificationAsync(x.identifier)));
 }
 export async function scheduleIntervalNotifications(plan:IntervalPlan){
- if(Platform.OS==='web')return false;
+ if(Platform.OS==='web')return !plan.notificationsEnabled;
  await clearIntervalNotifications();
  if(!plan.enabled || !plan.notificationsEnabled)return true;
  const permission=await Notifications.requestPermissionsAsync();
