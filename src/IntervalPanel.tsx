@@ -4,7 +4,7 @@ import {initialIntervalPlan,intervalProgress,IntervalPlan} from './interval';
 import {loadIntervalPlan,saveIntervalPlan} from './intervalStorage';
 import {scheduleIntervalNotifications} from './intervalNotifications';
 import { registerInterval, acceptSuggestion, dismissSuggestion } from './adaptiveTapering';
-const colors={card:'#152536',mint:'#65E0BC',white:'#F2F8FA',muted:'#A3B8C5'};
+const colors={card:'#152536',mint:'#65E0BC',white:'#F5F6F4',muted:'#A3B8C5'};
 export default function IntervalPanel(){
  const [plan,setPlan]=useState<IntervalPlan>(initialIntervalPlan);
  const [loaded,setLoaded]=useState(false);
