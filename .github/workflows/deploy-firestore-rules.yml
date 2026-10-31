@@ -1,0 +1,37 @@
+name: Deploy Firestore rules (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: firestore-production-rules
+  cancel-in-progress: false
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    environment: firebase-production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm install --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm install --no-save --package-lock=false --no-audit --no-fund @firebase/rules-unit-testing firebase
+      - name: Test Firestore security rules
+        run: npx --yes firebase-tools emulators:exec --only firestore --project smokeless-rules-test "node --test tests/firestore.rules.test.cjs"
+      - name: Authenticate using Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_FIREBASE_DEPLOY_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
+      - name: Deploy rules only
+        run: npx --yes firebase-tools deploy --only firestore:rules --project smoke-less-75efa --non-interactive
