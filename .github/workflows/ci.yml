@@ -14,4 +14,5 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run test
+      - run: npm run test:storage
       - run: npm run build:web
