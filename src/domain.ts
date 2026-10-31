@@ -1,6 +1,6 @@
 export type Mode='reduce'|'quit';export type Speed='gentle'|'balanced'|'fast';
 export type Profile={mode:Mode;baseline:number;packSize:number;packPrice:number;speed:Speed;startAt:string;dailyTargetOverride:number|null};
-export type Cigarette={id:string;at:string};export type Craving={id:string;at:string;intensity:number;trigger:string};
+export type Cigarette={id:string;at:string;feeling?:string;trigger?:string};export type Craving={id:string;at:string;intensity:number;trigger:string};
 export type Checkin={date:string;complete:boolean;smokeFree:boolean};
 export type Data={profile:Profile|null;entries:Cigarette[];cravings:Craving[];checkins:Checkin[]};
 export const EMPTY:Data={profile:null,entries:[],cravings:[],checkins:[]};
