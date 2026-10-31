@@ -1,7 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ActivityIndicator,Animated,Easing,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,AccessibilityInfo,Vibration,AppState} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Svg,{Circle} from 'react-native-svg';
 import {House,Target,PlusCircle,ChartColumn,UserRound,Heart,Clock,ArrowUpRight,CalendarDays,Wallet,ChevronRight,RotateCcw,Trash2,Check,Wind,Download,Upload,Shield,ArrowLeft,Minus,Plus,History,Settings,Leaf} from 'lucide-react-native';
 import {BenefitsScreen} from './screens/BenefitsScreen';
 import {HistoryScreen} from './screens/HistoryScreen';
@@ -19,19 +18,14 @@ import * as account from './authService';
 import {previewCloudImport,inspectCloudDeletion} from './cloudRead';
 import {syncCloudData} from './cloudSync';
 type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings';
-const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 const nowId=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
 function Label({children}:{children:React.ReactNode}){return <Text style={s.eyebrow}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){return <Text style={s.heading}>{children}</Text>}
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
 function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress} style={({pressed})=>[s.button,secondary&&s.buttonSecondary,pressed&&{opacity:.8},disabled&&{opacity:.4}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
-function IconTile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){return <Pressable accessibilityRole="button" onPress={onPress} style={({pressed})=>[s.actionTile,featured&&{backgroundColor:C.limeSoft,borderColor:'#5C6B24'},pressed&&{opacity:.8}]}><View style={s.actionIcon}><Icon color={C.lime} size={23}/></View><Text style={s.actionText}>{title}</Text><ArrowUpRight color={C.dim} size={16} style={{position:'absolute',right:15,top:17}}/></Pressable>}
-function Stat({label,value,detail}:{label:string;value:string;detail?:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={s.statValue}>{value}</Text>{detail?<Text style={s.muted}>{detail}</Text>:null}</Card>}
-function Ring({value,size=106}:{value:number;size?:number}){const radius=46,circ=2*Math.PI*radius,p=Math.max(0,Math.min(100,value));return <View style={{width:size,height:size,alignItems:'center',justifyContent:'center'}}><Svg width={size} height={size} viewBox="0 0 120 120"><Circle cx="60" cy="60" r={radius} stroke={C.soft} strokeWidth="11" fill="none"/><Circle cx="60" cy="60" r={radius} stroke={C.lime} strokeWidth="11" fill="none" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ*(1-p/100)} rotation={-90} origin="60,60"/></Svg><Text style={[s.ringText,{position:'absolute'}]}>{Math.round(p)}%</Text></View>}
 function Field({label,value,onChange,keyboardType='numeric'}:{label:string;value:string;onChange:(v:string)=>void;keyboardType?:'numeric'|'default'}){return <View style={{gap:8}}><Text style={s.fieldLabel}>{label}</Text><TextInput accessibilityLabel={label} keyboardType={keyboardType} value={value} onChangeText={onChange} placeholderTextColor={C.dim} style={s.input}/></View>}
 function Choice({title,subtitle,selected,onPress}:{title:string;subtitle?:string;selected:boolean;onPress:()=>void}){return <Pressable onPress={onPress} accessibilityRole="radio" accessibilityState={{selected}} style={[s.choice,selected&&{borderColor:C.lime,backgroundColor:C.limeSoft}]}><View style={{flex:1,gap:5}}><Text style={s.choiceTitle}>{title}</Text>{subtitle?<Text style={s.muted}>{subtitle}</Text>:null}</View>{selected?<Check size={20} color={C.lime}/>:<View style={s.radio}/>}</Pressable>}
-function Bars({values}:{values:number[]}){const max=Math.max(1,...values);return <View style={s.bars}>{values.map((n,i)=><View key={i} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:9}}><View style={{height:78,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*74),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:10}}>{['M','T','O','T','F','L','S'][i%7]}</Text></View>)}</View>}
 export default function SmokeLess(){
  const [authState,setAuthState]=useState<{initialized:boolean;user:account.AccountUser|null}>({initialized:false,user:null});
  const activeUidRef=useRef<string|null>(null);
