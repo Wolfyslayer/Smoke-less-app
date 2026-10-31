@@ -1,14 +1,27 @@
 # Smoke Less 6.0
 
-Swedish smoking reduction and cessation tracker. Expo SDK 54, React Native, React Native Web, local AsyncStorage. No account required.
+Android-first smoking reduction and cessation tracker built with **React Native and Expo SDK 58**. Firebase Auth/Firestore use native React Native Firebase modules; guest mode works without an account.
 
-## Run
+## Native Android development
+
+Use Node.js 22, JDK 17 and the Android SDK. Add the Android Firebase configuration file as `google-services.json` at the repository root (it is gitignored). Its package name must match `com.smokeless.app`.
 
 ```sh
-npm install
-npm run web
-npm run typecheck
-npm run build:web
+npm ci
+npx expo prebuild --platform android
+npx expo run:android
 ```
 
-The website is intended for GitHub Pages under `/Smoke-less-app/`. The app is a wellness tracking tool, not medical advice. Data is stored locally on the device/browser.
+This app requires a **development build**, not Expo Go, for native Firebase. No EAS Build is required.
+
+## Native Android CI (manual)
+
+The `Native Android build (manual)` workflow generates the Android project with Expo Prebuild and runs Gradle `assembleDebug`. To use it, add repository Actions secret `GOOGLE_SERVICES_JSON_BASE64` containing the **base64-encoded full contents** of your Android `google-services.json`, then run the workflow from the Actions tab. The workflow verifies that the Firebase configuration contains `com.smokeless.app` and uploads the debug APK as a temporary artifact. Never commit the Firebase file or upload signing credentials.
+
+The existing pull-request CI checks TypeScript, unit tests and web export. **Web export does not validate native Android builds.** A green PR alone is not proof of Android compatibility; run the native workflow and test the APK on an Android device.
+
+## Privacy and data safety
+
+History is stored locally first. Guest-to-account migration requires explicit consent; account-isolated storage modules are still being integrated into the UI. Cloud import is read-only until explicitly approved and cloud writes are not yet enabled.
+
+Smoke Less is a wellness tracker, not medical advice.
