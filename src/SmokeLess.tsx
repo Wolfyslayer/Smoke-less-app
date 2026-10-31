@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {ActivityIndicator,Modal,Pressable,ScrollView,StyleSheet,Text,TextInput,View,AccessibilityInfo,AppState} from 'react-native';
+import {ActivityIndicator,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,AccessibilityInfo,AppState} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {House,Target,PlusCircle,ChartColumn,UserRound,Heart,Check,ArrowLeft,History,Leaf} from 'lucide-react-native';
 import {BenefitsScreen} from './screens/BenefitsScreen';
