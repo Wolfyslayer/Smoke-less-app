@@ -52,6 +52,12 @@ export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
     hasTombstones,
   };
 }
+/** Read-only inventory before a future destructive operation. Does not delete data. */
+export async function inspectCloudDeletion(uid:string):Promise<{entries:number;cravings:number;checkins:number;plan:boolean;hasTombstones:boolean}>{
+  const snapshot=await readCloudSnapshot(uid);
+  return {entries:snapshot.data.entries.length,cravings:snapshot.data.cravings.length,checkins:snapshot.data.checkins.length,plan:snapshot.data.profile!==null,hasTombstones:snapshot.hasTombstones};
+}
+
 export async function previewCloudImport(uid: string, local: Data): Promise<MergePreview> {
   const remote = await readCloudSnapshot(uid);
   const preview = previewMerge(local, remote.data);
