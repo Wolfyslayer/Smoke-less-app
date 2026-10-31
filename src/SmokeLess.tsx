@@ -13,6 +13,7 @@ import {ProfileScreen} from './screens/ProfileScreen';
 import {SettingsScreen} from './screens/SettingsScreen';
 import {AccountScreen} from './screens/AccountScreen';
 import {OnboardingScreen} from './screens/OnboardingScreen';
+import {SectionIntroCard} from './components/SectionIntroCard';
 import {AppCard,AppButton} from './components/ui';
 import {OnboardingField,OnboardingChoice} from './components/OnboardingControls';
 import {useSosTimer} from './hooks/useSosTimer';
@@ -107,17 +108,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
  const primaryTabs=['home','plan','register','stats','profile'];
  return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingHorizontal:20,paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
  <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><View style={{flex:1,gap:7}}><Label>{tab==='home'?(new Date(clock).getHours()<11?'GOD MORGON':new Date(clock).getHours()<17?'GOD EFTERMIDDAG':'GOD KVÄLL'):'SMOKE LESS / 06'}</Label><Text style={s.title}>{title[tab]}</Text><Text style={s.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':tab==='account'?'Inloggning och säkerhetskopiering.':'Ett steg i taget.'}</Text></View><Pressable onPress={()=>go(primaryTabs.includes(tab)?'profile':'home')} style={s.avatar}>{primaryTabs.includes(tab)?<UserRound size={22} color={C.lime}/>:<ArrowLeft size={22} color={C.lime}/>}</Pressable></View>
- {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<AppCard style={{gap:13,padding:18,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
- <View style={{flexDirection:'row',alignItems:'center',gap:13}}>
-  <View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}>
-   {tab==='home'?<House size={24} color={C.lime}/>:tab==='plan'?<Target size={24} color={C.lime}/>:tab==='register'?<PlusCircle size={24} color={C.lime}/>:tab==='stats'?<ChartColumn size={24} color={C.lime}/>:tab==='history'?<History size={24} color={C.lime}/>:tab==='sos'?<Heart size={24} color={C.lime}/>:<Leaf size={24} color={C.lime}/>}
-  </View>
-  <View style={{flex:1,gap:4}}>
-   <Text style={s.cardTitle}>{tab==='home'?'Överblick':tab==='plan'?'Din personliga plan':tab==='register'?'Registrera dina framsteg':tab==='stats'?'Statistik och insikter':tab==='history'?'Din historik':tab==='sos'?'Stöd vid röksug':'Hälsa och besparingar'}</Text>
-   <Text style={s.muted}>{tab==='home'?'En dag i taget – varje steg räknas.':tab==='plan'?'Se dina mål och din utveckling.':tab==='register'?'Håll koll på dina registreringar.':tab==='stats'?'Upptäck hur dina vanor förändras.':tab==='history'?'Se och hantera tidigare registreringar.':tab==='sos'?'Ta hjälp när suget känns starkt.':'Följ vad din förändring ger tillbaka.'}</Text>
-  </View>
- </View>
- </AppCard>:null}
+ {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  {tab==='home'?<HomeScreen data={data} goal={goal} todayCount={todayCount} duration={duration} weekly={weekly} today={today} onRegister={openRegister} onSOS={()=>{setBreathSeconds(0);setBreathing(true);go('sos')}} onPlan={()=>go('plan')} onHistory={()=>go('history')} onStats={()=>go('stats')} onConfirmToday={()=>setData(v=>({...v,checkins:[...v.checkins.filter(c=>c.date!==today),{date:today,complete:true,smokeFree:todayCount===0}]}))}/>:null}
  {tab==='register'?<RegisterScreen todayCount={todayCount} goal={goal} duration={duration} sorted={sorted} today={today} last={last} onOpenRegister={openRegister} onOpenHistory={()=>go('history')} onRemove={remove}/>:null}
  {tab==='plan'?<PlanScreen profile={p} goal={goal} todayReduction={todayReduction} confirmedDays={confirmedDays} withinDays={withinDays} planWeek={planWeek} clock={clock} onChangeProfile={changeProfile}/>:null}
