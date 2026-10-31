@@ -15,4 +15,5 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run test:storage
+      - run: npm run test:migration
       - run: npm run build:web
