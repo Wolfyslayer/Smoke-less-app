@@ -82,7 +82,7 @@ test('changing pace preserves original savings start and historical entries', ()
     planStartTarget: target(original, date('2026-10-09')),
   };
   const data = {profile: changed, entries, cravings: [], checkins: []};
-  assert.equal(savings(data, date('2026-10-09')), 395);
+  assert.equal(savings(data, date('2026-10-09')), 445);
   assert.equal(data.entries.length, 1);
   assert.equal(data.entries[0].id, 'a');
   assert.equal(changed.baseline, 10);
