@@ -11,7 +11,8 @@
     "build:web": "expo export --platform web",
     "test": "node --test tests/domain.test.cjs",
     "test:firestore": "node --test tests/firestore.rules.test.cjs",
-    "test:storage": "node --test tests/localSessionStorage.test.cjs"
+    "test:storage": "node --test tests/localSessionStorage.test.cjs",
+    "test:migration": "node --test tests/accountMigration.test.cjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
