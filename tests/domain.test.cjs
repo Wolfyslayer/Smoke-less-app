@@ -1,0 +1,1 @@
+const test=require('node:test');const assert=require('node:assert/strict');test('project includes domain model',()=>{const fs=require('node:fs');const source=fs.readFileSync('src/domain.ts','utf8');for(const name of ['target','quitDate','countOn','savings','validateData'])assert.match(source,new RegExp('function '+name));});

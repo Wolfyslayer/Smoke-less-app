@@ -1,0 +1,17 @@
+name: Validate Smoke Less 6
+on:
+  push:
+    branches: [main, feat/smoke-less-6-rebuild]
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build:web
