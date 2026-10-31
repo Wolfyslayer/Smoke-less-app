@@ -34,7 +34,7 @@ export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
       return [payload];
     });
   let profile: Data['profile'] = null;
-  if (plan.exists) {
+  if (plan.exists()) {
     const parsed = unwrap(plan.data());
     if (parsed.deleted) hasTombstones = true;
     else {
