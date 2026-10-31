@@ -21,7 +21,13 @@ export function useSettingsFlow({data,setData,ask,showMessage}:{
  const onRestoreBackup=()=>{
   try{
    const value=parseBackupData(backup);
-   ask('Återställ historik?','Den nuvarande lokala historiken ersätts med innehållet i säkerhetskopian.',()=>setData(value));
+   const currentCount=data.entries.length+data.cravings.length+data.checkins.length;
+   const backupCount=value.entries.length+value.cravings.length+value.checkins.length;
+   ask(
+    'Återställ historik?',
+    `Säkerhetskopian innehåller ${backupCount} poster (cigaretter: ${value.entries.length}, röksug: ${value.cravings.length}, dagliga avstämningar: ${value.checkins.length}). Din nuvarande historik innehåller ${currentCount} poster och ersätts helt. Detta går inte att ångra utan en separat säkerhetskopia. Fortsätt?`,
+    ()=>setData(value),
+   );
   }catch{showMessage('Ogiltig säkerhetskopia','Kontrollera JSON-innehållet.')}
  };
  return {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup};
