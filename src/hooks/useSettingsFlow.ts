@@ -1,4 +1,4 @@
-import {useState,type Dispatch,type SetStateAction} from 'react';
+import {useRef,useState,type Dispatch,type SetStateAction} from 'react';
 import {Platform} from 'react-native';
 import type {Data,Mode} from '../domain';
 import {parseBackupData} from '../utils/backupValidation';
@@ -11,6 +11,8 @@ export function useSettingsFlow({data,setData,ask,showMessage}:{
  showMessage:(title:string,message:string)=>void;
 }){
  const [backup,setBackup]=useState('');
+ const backupRef=useRef(backup);backupRef.current=backup;
+ const dataRef=useRef(data);dataRef.current=data;
  const onChangeMode=(mode:Mode)=>ask(mode==='reduce'?'Byta till minskning?':'Byta till rökstopp?','Din plan får ett nytt startdatum. Din tidigare historik behålls.',()=>setData(v=>updateProfile(v,{mode,startAt:new Date().toISOString()})));
  const onExportBackup=()=>{
   const value=JSON.stringify(data,null,2);
@@ -21,12 +23,20 @@ export function useSettingsFlow({data,setData,ask,showMessage}:{
  const onRestoreBackup=()=>{
   try{
    const value=parseBackupData(backup);
+   const backupSnapshot=backup;
+   const dataSnapshot=JSON.stringify(data);
    const currentCount=data.entries.length+data.cravings.length+data.checkins.length;
    const backupCount=value.entries.length+value.cravings.length+value.checkins.length;
    ask(
     'Återställ historik?',
     `Säkerhetskopian innehåller ${backupCount} poster (cigaretter: ${value.entries.length}, röksug: ${value.cravings.length}, dagliga avstämningar: ${value.checkins.length}). Din nuvarande historik innehåller ${currentCount} poster och ersätts helt. Detta går inte att ångra utan en separat säkerhetskopia. Fortsätt?`,
-    ()=>setData(value),
+    ()=>{
+     if(backupRef.current!==backupSnapshot||JSON.stringify(dataRef.current)!==dataSnapshot){
+      showMessage('Återställningen avbröts','Säkerhetskopian eller den lokala historiken har ändrats sedan förhandsgranskningen. Granska och bekräfta igen.');
+      return;
+     }
+     setData(value);
+    },
    );
   }catch{showMessage('Ogiltig säkerhetskopia','Kontrollera JSON-innehållet.')}
  };
