@@ -43,7 +43,7 @@ export async function copyGuestDataToAccount(uid: string, guest: Data): Promise<
   const key = accountStorageKey(uid);
   if (!validateData(guest)) throw new Error('Ogiltig gästhistorik');
   if (await AsyncStorage.getItem(key) !== null) return 'already-exists';
-  // Recheck is best-effort only: callers must serialize migrations per account.
+  // AsyncStorage has no compare-and-swap; callers must serialize migrations per account.
   await AsyncStorage.setItem(key, JSON.stringify(guest));
   return 'copied';
 }
