@@ -87,8 +87,8 @@ service cloud.firestore {
       }
       match /settings/{document} {
         allow read: if owner(uid) && document == 'plan';
-        allow create: if owner(uid) && document == 'plan' && request.resource.data.revision == 1 && plan(request.resource.data);
-        allow update: if owner(uid) && document == 'plan' && request.resource.data.revision == resource.data.revision + 1 && plan(request.resource.data);
+        allow create: if normalWrite(uid) && document == 'plan' && request.resource.data.revision == 1 && plan(request.resource.data);
+        allow update: if document == 'plan' && (normalWrite(uid) || tombstoneWrite(uid)) && request.resource.data.revision == resource.data.revision + 1 && plan(request.resource.data);
         allow delete: if false;
       }
     }
