@@ -1,7 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ActivityIndicator,Platform,Pressable,ScrollView,StyleSheet,Text,View,AccessibilityInfo} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {} from 'lucide-react-native';
 import {BenefitsScreen} from './screens/BenefitsScreen';
 import {HistoryScreen} from './screens/HistoryScreen';
 import {RegisterScreen} from './screens/RegisterScreen';
