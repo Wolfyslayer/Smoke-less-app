@@ -22,12 +22,13 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
    <Choice title="Sluta helt" subtitle="Sätt målet till noll cigaretter" selected={p.mode==='quit'} onPress={()=>{if(p.mode!=='quit')onChangeMode('quit')}}/>
   </View>
   <Card style={{gap:15,padding:18}}>
-   <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Justera dagens mål om du behöver.</Text></View></View>
+   <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Justera riktvärdet om du behöver. Ett eget värde gäller varje dag tills du återställer det.</Text></View></View>
    <View style={styles.sectionRow}>
     <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" style={styles.stepper} onPress={()=>onChangeDailyTarget(Math.max(0,(p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
     <View style={{alignItems:'center',gap:2}}><Text style={styles.goal}>{goal}</Text><Text style={styles.muted}>cigaretter per dag</Text></View>
     <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" style={styles.stepper} onPress={()=>onChangeDailyTarget((p.dailyTargetOverride??goal)+1)}><Plus size={21} color={C.lime}/></Pressable>
    </View>
+   {p.dailyTargetOverride!==null?<Text accessibilityRole="text" style={styles.muted}>Eget riktvärde aktivt: {p.dailyTargetOverride} cigaretter per dag. Den automatiska nedtrappningen pausas tills du återställer.</Text>:<Text style={styles.muted}>Ditt riktvärde följer den valda nedtrappningstakten.</Text>}
    <Pressable accessibilityRole="button" onPress={()=>onChangeDailyTarget(null)} style={styles.button}><Text style={styles.buttonText}>Återställ planens riktvärde</Text></Pressable>
   </Card>
  </>;
