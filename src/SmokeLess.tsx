@@ -29,6 +29,7 @@ import {sosIdeas} from './data/sosIdeas';
 import {getDashboardMetrics} from './utils/dashboardMetrics';
 import {parseOnboardingNumbers} from './utils/onboardingValidation';
 import {removeCigaretteEntry,addCigaretteEntry} from './utils/entryActions';
+import {updateProfile} from './utils/profileActions';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -78,7 +79,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
  const remove=(id:string)=>ask('Ta bort registrering?','Registreringen tas bort från historiken.',()=>setData(v=>removeCigaretteEntry(v,id)));
  const begin=()=>{const values=parseOnboardingNumbers(baseline,packSize,packPrice);if(!values){showMessage('Kontrollera uppgifterna','Ange giltiga positiva tal.');return;}setData({...EMPTY,profile:{mode,baseline:values.baseline,packSize:values.packSize,packPrice:values.packPrice,speed:'balanced',startAt:new Date().toISOString(),dailyTargetOverride:null}})};
  const go=(t:Tab)=>{setTab(t)};
- const changeProfile=(patch:Partial<Profile>)=>setData(v=>v.profile?({...v,profile:{...v.profile,...patch}}):v);
+ const changeProfile=(patch:Partial<Profile>)=>setData(v=>updateProfile(v,patch));
  const checkin=data.checkins.find(x=>x.date===today);
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
