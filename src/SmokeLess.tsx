@@ -24,6 +24,7 @@ import {useLiveClock} from './hooks/useLiveClock';
 import {useAuthObserver} from './hooks/useAuthObserver';
 import {useCloudSync} from './hooks/useCloudSync';
 import {useLocalSession} from './hooks/useLocalSession';
+import {sosIdeas} from './data/sosIdeas';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -71,7 +72,6 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
    })();
   });
  };
- const sosIdeas=[{title:'Drick ett glas vatten',detail:'Drick långsamt och lägg märke till hur det känns. Ge dig själv en kort paus.'},{title:'Byt miljö',detail:'Res dig upp, gå till ett annat rum eller ta en kort promenad.'},{title:'Sysselsätt händerna',detail:'Håll i något, skriv ett meddelande eller gör en enkel uppgift.'},{title:'Vänta en liten stund',detail:'Röksug förändras ofta med tiden. Du behöver inte agera på känslan direkt.'},{title:'Påminn dig om varför',detail:'Tänk på en anledning till att du vill minska eller sluta röka.'}];
  const p=data.profile,today=dayKey(new Date(clock)),todayCount=countOn(data.entries,today),goal=p?target(p,new Date(clock)):0;
  const sorted=useMemo(()=>[...data.entries].sort((a,b)=>b.at.localeCompare(a.at)),[data.entries]);
  const last=sorted[0],elapsed=last?Math.max(0,Math.floor((clock-new Date(last.at).getTime())/60000)):null;
