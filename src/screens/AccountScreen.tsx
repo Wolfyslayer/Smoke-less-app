@@ -6,7 +6,7 @@ import {C} from '../theme';
 type AccountUser={email?:string|null};
 type Props={
  accountUser:AccountUser|null;emailVerified:boolean;verificationBusy:boolean;accountBusy:boolean;
- syncStatus:string;cloudPreviewResult:string;cloudPreviewBusy:boolean;migrationBusy:boolean;
+ syncStatus:string;cloudPreviewResult:string|null;cloudPreviewBusy:boolean;migrationBusy:boolean;
  accountMode:'login'|'signup';accountEmail:string;accountPassword:string;
  onBack:()=>void;onVerification:(action:'send'|'refresh')=>void;onGuestMigration:()=>void;
  onCloudPreview:()=>void;onCloudImport:()=>void;onEmailChange:(value:string)=>void;
