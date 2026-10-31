@@ -80,6 +80,21 @@ export class LocalSessionStorage {
     });
   }
 
+  /** Guest-only reset, serialized after pending saves and preceded by a recovery backup. */
+  async resetGuestWithBackup(): Promise<string> {
+    return this.enqueue(async () => {
+      if (this.current?.session.kind !== 'guest') throw new Error('Radering är endast tillgänglig i gästläge.');
+      const current = this.current.data;
+      if (!validateData(current)) throw new Error('Ogiltig historik. Ingen data raderades.');
+      const {backupBeforeCloudImport} = await import('./storage');
+      const backupKey = await backupBeforeCloudImport(current);
+      const empty: Data = {profile:null,entries:[],cravings:[],checkins:[]};
+      await saveGuest(empty);
+      this.current = {session:{kind:'guest'},data:empty};
+      return backupKey;
+    });
+  }
+
   getSnapshot(): SessionSnapshot | null {
     return this.current;
   }
