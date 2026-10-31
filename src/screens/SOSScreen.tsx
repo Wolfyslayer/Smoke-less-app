@@ -12,6 +12,13 @@ type Props={
  sosStartIntensity:number|null;intensity:number;onStartIntensity:(n:number)=>void;onIntensity:(n:number)=>void;
  trigger:string;onTrigger:(value:string)=>void;onSave:()=>void;
 };
+const triggerGuidance:Record<string,string>={
+ Stress:'Prova att andas lugnt och ge dig själv en kort paus innan du bestämmer nästa steg.',
+ 'Efter mat':'Testa att borsta tänderna, dricka vatten eller ta en kort promenad efter måltiden.',
+ Socialt:'Om du kan, byt plats en stund eller berätta för någon att du försöker minska rökningen.',
+ Vana:'Välj en liten ersättningsrutin som du kan upprepa nästa gång suget dyker upp.',
+ Annat:'Lägg märke till vad som hände precis innan suget. Välj sedan ett tips som passar dig.'
+};
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
@@ -32,7 +39,8 @@ export function SOSScreen({breathScale,breathing,breathSeconds,onToggleBreathing
   <Heading>Följ upp ditt röksug</Heading>
   <Card style={{gap:10}}><Text style={styles.muted}>Välj hur starkt röksuget var när du började, och jämför med hur det känns nu.</Text><Text style={styles.cardTitle}>Vid start</Text><Intensity prefix="Röksug vid start" value={sosStartIntensity} onChange={onStartIntensity}/><Text style={styles.cardTitle}>Just nu</Text><Intensity prefix="Röksug just nu" value={intensity} onChange={onIntensity}/>{sosStartIntensity!==null?<Text style={styles.muted}>{intensity<sosStartIntensity?'Röksuget känns mindre starkt nu. Bra att du gav dig själv en paus.':intensity===sosStartIntensity?'Röksuget är oförändrat. Det är okej – prova gärna ett annat tips.':'Röksuget känns starkare just nu. Fortsätt i din takt och sök stöd om du behöver.'}</Text>:null}</Card>
   <Heading>Vad utlöste det?</Heading>
-  <View style={{gap:9}}>{['Stress','Efter mat','Socialt','Vana','Annat'].map(x=><Pressable accessibilityRole="button" accessibilityState={{selected:trigger===x}} key={x} onPress={()=>onTrigger(x)} style={[styles.choice,trigger===x&&styles.selected]}><Text style={styles.cardTitle}>{x}</Text></Pressable>)}</View>
+  <View style={{gap:9}}>{['Stress','Efter mat','Socialt','Vana','Annat'].map(x=><Pressable accessibilityRole="button" accessibilityLabel={`Utlösare: ${x}`} accessibilityState={{selected:trigger===x}} key={x} onPress={()=>onTrigger(x)} style={[styles.choice,trigger===x&&styles.selected]}><Text style={styles.cardTitle}>{x}</Text></Pressable>)}</View>
+  <Card style={{gap:9}}><Label>ETT TIPS FÖR DIN SITUATION</Label><Text style={styles.muted}>{triggerGuidance[trigger]??triggerGuidance.Annat}</Text></Card>
   <Button title="Spara röksug" onPress={onSave}/>
  </View>;
 }
