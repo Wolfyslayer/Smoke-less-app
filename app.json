@@ -7,7 +7,10 @@
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-dev-client",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ],
     "web": {
       "bundler": "metro",
@@ -18,7 +21,8 @@
       "baseUrl": "/Smoke-less-app"
     },
     "android": {
-      "package": "com.smokeless.app"
+      "package": "com.smokeless.app",
+      "googleServicesFile": "./google-services.json"
     }
   }
 }
