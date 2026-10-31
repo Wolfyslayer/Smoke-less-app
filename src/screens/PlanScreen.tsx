@@ -32,7 +32,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Label>PLANEN KAN ANPASSAS</Label>
    <Text style={styles.cardTitle}>En svår dag ändrar inte dina framsteg</Text>
    <Text style={styles.muted}>Om du röker mer än planerat behöver du inte börja om. Din registrerade historik finns kvar, och du kan fortsätta från nästa stund.</Text>
-   <Text style={styles.muted}>Behöver du en lugnare takt? Välj Lugn nedan. Tänk på att ett byte av takt startar om planens tidsräkning från idag. Tidigare registreringar finns kvar.</Text>
+   <Text style={styles.muted}>Behöver du en lugnare takt? Välj Lugn nedan. När du byter takt fortsätter grundplanen från dagens planerade nivå, inte från din ursprungliga startnivå. Tidigare registreringar finns kvar.</Text>
    <Text style={styles.muted}>Vill du ha ett eget dagsmål kan du ändra det i Inställningar. Det gäller tills du återställer det. Det är ett högsta riktvärde, inte något du måste röka upp till.</Text>
   </Card>
   <Heading>Senaste sju dagarna</Heading>
@@ -44,7 +44,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   </Card>
   <Heading>Välj din takt</Heading>
   {([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
-   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)onChangeProfile({speed:id,startAt:new Date().toISOString()})}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
+   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock))})}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>)}
   <Heading>Kommande mål</Heading>
