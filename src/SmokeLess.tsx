@@ -8,7 +8,7 @@ import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
 import {previewCloudImport} from './cloudRead';
 import {syncCloudData} from './cloudSync';
-type Tab='home'|'plan'|'register'|'stats'|'profile'|'sos'|'history'|'benefits'|'settings';
+type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings';
 const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 const nowId=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
@@ -121,11 +121,11 @@ function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:account.Ac
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  if(!p)return <ScrollView style={s.root} contentContainerStyle={{paddingHorizontal:24,paddingTop:Math.max(insets.top,30)+20,paddingBottom:40,gap:22}} keyboardShouldPersistTaps="handled"><Label>SMOKE LESS / 06</Label><View style={s.welcomeArt}><View style={s.artOuter}><View style={s.artInner}><Leaf size={58} color={C.lime}/></View></View></View><Text style={s.display}>{['Ta tillbaka\nkontrollen.','Välj din\nväg.','Dina vanor.','Din nya\nstart.'][onStep]}</Text><Text style={s.subhead}>{['Varje liten förändring räknas. Bygg ett liv med mindre rökning, i din egen takt.','Du bestämmer hur din resa ska se ut.','Vi använder dina uppgifter för att skapa en personlig plan.','Du är redo att ta första steget.'][onStep]}</Text><View style={s.progressTrack}><View style={[s.progressFill,{width:((onStep+1)*25)+'%' as `${number}%`}]}/></View>{onStep===1?<View style={{gap:12}}><Choice title="Minska gradvis" subtitle="Trappa ner steg för steg med en personlig plan." selected={mode==='reduce'} onPress={()=>setMode('reduce')}/><Choice title="Sluta helt" subtitle="Följ din resa mot ett rökfritt liv." selected={mode==='quit'} onPress={()=>setMode('quit')}/></View>:null}{onStep===2?<View style={{gap:15}}><Field label="Cigaretter per dag" value={baseline} onChange={setBaseline}/><Field label="Cigaretter per paket" value={packSize} onChange={setPackSize}/><Field label="Pris per paket (kr)" value={packPrice} onChange={setPackPrice}/></View>:null}{onStep===3?<Card><Label>DIN STARTPUNKT</Label><Text style={s.statValue}>{baseline} <Text style={s.muted}>cigaretter/dag</Text></Text><Text style={s.muted}>{mode==='quit'?'Mål: rökfri från start':'Balanserad nedtrappning'} · {packPrice} kr/paket</Text></Card>:null}<Btn title={onStep===3?'Starta min resa':onStep===0?'Kom igång':'Fortsätt'} onPress={()=>onStep===3?begin():setOnStep(v=>v+1)}/>{onStep>0?<Btn title="Tillbaka" secondary onPress={()=>setOnStep(v=>v-1)}/>:null}</ScrollView>;
- const title:Record<Tab,string>={home:'Din resa börjar här.',plan:'Din plan.',register:'Registrera.',stats:'Din utveckling.',profile:'Min profil.',sos:'Hantera röksug.',history:'Din logg.',benefits:'Dina framsteg.',settings:'Inställningar.'};
+ const title:Record<Tab,string>={home:'Din resa börjar här.',plan:'Din plan.',register:'Registrera.',stats:'Din utveckling.',profile:'Min profil.',account:'Mitt konto.',sos:'Hantera röksug.',history:'Din logg.',benefits:'Dina framsteg.',settings:'Inställningar.'};
  const nav=[{id:'home',label:'Hem',icon:House},{id:'plan',label:'Plan',icon:Target},{id:'register',label:'Registrera',icon:PlusCircle},{id:'stats',label:'Statistik',icon:ChartColumn},{id:'profile',label:'Profil',icon:UserRound}] as const;
  const primaryTabs=['home','plan','register','stats','profile'];
  return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingHorizontal:20,paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
- <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><View style={{flex:1,gap:7}}><Label>{tab==='home'?(new Date(clock).getHours()<11?'GOD MORGON':new Date(clock).getHours()<17?'GOD EFTERMIDDAG':'GOD KVÄLL'):'SMOKE LESS / 06'}</Label><Text style={s.title}>{title[tab]}</Text><Text style={s.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':'Ett steg i taget.'}</Text></View><Pressable onPress={()=>go(primaryTabs.includes(tab)?'profile':'home')} style={s.avatar}>{primaryTabs.includes(tab)?<UserRound size={22} color={C.lime}/>:<ArrowLeft size={22} color={C.lime}/>}</Pressable></View>
+ <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><View style={{flex:1,gap:7}}><Label>{tab==='home'?(new Date(clock).getHours()<11?'GOD MORGON':new Date(clock).getHours()<17?'GOD EFTERMIDDAG':'GOD KVÄLL'):'SMOKE LESS / 06'}</Label><Text style={s.title}>{title[tab]}</Text><Text style={s.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':tab==='account'?'Inloggning och säkerhetskopiering.':'Ett steg i taget.'}</Text></View><Pressable onPress={()=>go(primaryTabs.includes(tab)?'profile':'home')} style={s.avatar}>{primaryTabs.includes(tab)?<UserRound size={22} color={C.lime}/>:<ArrowLeft size={22} color={C.lime}/>}</Pressable></View>
  {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<Card style={{gap:13,padding:18,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
  <View style={{flexDirection:'row',alignItems:'center',gap:13}}>
   <View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}>
@@ -163,7 +163,40 @@ function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:account.Ac
    <Text style={{color:accountUser?C.lime:'#E7B967',fontWeight:'800',fontSize:13}}>{accountUser?'● Inloggad':'● Gästläge'}</Text>
   </View>
  </Card>
- {accountUser?<Card style={{gap:13,padding:18}}>
+ {!accountUser?<Card style={{gap:13,padding:18,borderColor:'#9D793E',backgroundColor:'#272218'}}>
+  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={{width:43,height:43,borderRadius:14,backgroundColor:'#47381F',alignItems:'center',justifyContent:'center'}}><Shield size={23} color="#E7B967"/></View><View style={{flex:1,gap:3}}><Text style={[s.cardTitle,{color:'#E7B967'}]}>Din historik är inte säkerhetskopierad</Text><Text style={s.muted}>Du använder appen som gäst.</Text></View></View>
+  <Text style={s.muted}>Om du avinstallerar appen, byter telefon eller förlorar enheten kan din historik försvinna.</Text>
+  <Text style={s.muted}>Så skyddar du din historik: Öppna Konto nedan, välj Skapa konto eller Logga in och följ instruktionerna. När du är inloggad synkroniseras kontohistoriken automatiskt till Firestore. Har du redan gästhistorik kan du kopiera den till kontot under Konto.</Text>
+  <Btn title="Öppna Konto och skydda min historik" onPress={()=>go('account')}/>
+ </Card>:<Card style={{gap:11,padding:18}}>
+  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Molnsynkronisering</Text><Text style={s.muted}>Inloggad som {accountUser.email||'användare'}</Text></View></View>
+  <Text style={s.muted} accessibilityLiveRegion="polite">{syncStatus||'Automatisk synkronisering är aktiverad. Ändringar säkerhetskopieras när anslutningen fungerar.'}</Text>
+  <Text style={s.muted}>Om en konflikt upptäcks pausas synkroniseringen för att skydda din historik. Öppna Konto för att granska status och hantera historiken.</Text>
+  <Btn title="Öppna Konto" secondary onPress={()=>go('account')}/>
+ </Card>}
+ <Pressable accessibilityRole="button" onPress={()=>go('account')} style={[s.settingsRow,{borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:16}]}>
+  <View style={s.actionIcon}><UserRound size={21} color={C.lime}/></View>
+  <View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Konto</Text><Text style={s.muted}>{accountUser?'Inloggning, historik och kontohantering':'Logga in, skapa konto och skydda dina data'}</Text></View><ChevronRight size={19} color={C.dim}/>
+ </Pressable>
+ <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Target size={19} color={C.lime}/><Heading>Din resa</Heading></View>
+ <Card style={{flexDirection:'row',alignItems:'center',gap:14,padding:17}}>
+  <View style={s.actionIcon}><Target size={22} color={C.lime}/></View>
+  <View style={{flex:1,gap:5}}><Text style={s.cardTitle}>{p.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text><Text style={s.muted}>Planstart: {date(new Date(p.startAt))}</Text></View>
+  <Pressable accessibilityRole="button" accessibilityLabel="Öppna min plan" onPress={()=>go('plan')}><ChevronRight size={20} color={C.lime}/></Pressable>
+ </Card>
+ <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Settings size={19} color={C.lime}/><Heading>Snabbåtkomst</Heading></View>
+ {([{label:'Min plan',icon:Target,to:'plan',detail:'Mål och framsteg'},{label:'Min logg',icon:History,to:'history',detail:'Din registrerade historik'},{label:'Hälsa och besparing',icon:Leaf,to:'benefits',detail:'Se vad du vinner'},{label:'Inställningar',icon:Settings,to:'settings',detail:'Anpassa appen'},{label:'Stöd vid röksug',icon:Heart,to:'sos',detail:'Hjälp i stunden'}] as const).map(item=>
+  <Pressable key={item.label} accessibilityRole="button" onPress={()=>go(item.to)} style={[s.settingsRow,{borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15}]}>
+   <View style={s.actionIcon}><item.icon size={21} color={C.lime}/></View>
+   <View style={{flex:1,gap:3}}><Text style={s.cardTitle}>{item.label}</Text><Text style={s.muted}>{item.detail}</Text></View><ChevronRight size={19} color={C.dim}/>
+  </Pressable>)}
+ </>:null}
+ {tab==='account'?<>
+ <Pressable accessibilityRole="button" onPress={()=>go('profile')} style={{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
+ <Card style={{gap:12,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
+  <View style={{flexDirection:'row',alignItems:'center',gap:13}}><View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={25} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountUser?'Ditt Smoke Less-konto':'Skydda din resa'}</Text><Text style={s.muted}>{accountUser?.email||'Logga in eller skapa ett konto för molnsäkerhetskopiering.'}</Text></View></View>
+ </Card>
+  {accountUser?<Card style={{gap:13,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Molnsäkerhetskopia</Text><Text style={s.muted}>Automatisk Firestore-synkronisering</Text></View></View>
   <Text style={s.muted} accessibilityLiveRegion="polite">{syncStatus||'Din historik synkroniseras automatiskt när appen öppnas och när du gör ändringar. Vid konflikt skyddas dina befintliga data.'}</Text>
   {cloudPreviewResult?<Text style={s.muted} accessibilityLiveRegion="polite">{cloudPreviewResult}</Text>:null}
@@ -185,20 +218,9 @@ function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:account.Ac
   <Text style={s.cardTitle}>Kontohantering</Text><Text style={s.muted}>Du kan logga ut utan att radera din lokala gästhistorik.</Text>
   <Btn title={accountBusy?'Vänta…':'Logga ut'} secondary disabled={migrationBusy||accountBusy} onPress={()=>accountAction('logout')}/>
  </Card>}
- <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Target size={19} color={C.lime}/><Heading>Din resa</Heading></View>
- <Card style={{flexDirection:'row',alignItems:'center',gap:14,padding:17}}>
-  <View style={s.actionIcon}><Target size={22} color={C.lime}/></View>
-  <View style={{flex:1,gap:5}}><Text style={s.cardTitle}>{p.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text><Text style={s.muted}>Planstart: {date(new Date(p.startAt))}</Text></View>
-  <Pressable accessibilityRole="button" accessibilityLabel="Öppna min plan" onPress={()=>go('plan')}><ChevronRight size={20} color={C.lime}/></Pressable>
- </Card>
- <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Settings size={19} color={C.lime}/><Heading>Snabbåtkomst</Heading></View>
- {([{label:'Min plan',icon:Target,to:'plan',detail:'Mål och framsteg'},{label:'Min logg',icon:History,to:'history',detail:'Din registrerade historik'},{label:'Hälsa och besparing',icon:Leaf,to:'benefits',detail:'Se vad du vinner'},{label:'Inställningar',icon:Settings,to:'settings',detail:'Anpassa appen'},{label:'Stöd vid röksug',icon:Heart,to:'sos',detail:'Hjälp i stunden'}] as const).map(item=>
-  <Pressable key={item.label} accessibilityRole="button" onPress={()=>go(item.to)} style={[s.settingsRow,{borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15}]}>
-   <View style={s.actionIcon}><item.icon size={21} color={C.lime}/></View>
-   <View style={{flex:1,gap:3}}><Text style={s.cardTitle}>{item.label}</Text><Text style={s.muted}>{item.detail}</Text></View><ChevronRight size={19} color={C.dim}/>
-  </Pressable>)}
+
  </>:null}
- {tab==='settings'?<>
+{tab==='settings'?<>
  <Card style={{gap:13,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:13}}>
    <View style={{width:46,height:46,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><Target size={24} color={C.lime}/></View>
