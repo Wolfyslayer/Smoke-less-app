@@ -10,6 +10,7 @@ import {PlanScreen} from './screens/PlanScreen';
 import {StatsScreen} from './screens/StatsScreen';
 import {HomeScreen} from './screens/HomeScreen';
 import {SOSScreen} from './screens/SOSScreen';
+import {ProfileScreen} from './screens/ProfileScreen';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -155,46 +156,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
  {tab==='history'?<HistoryScreen entries={data.entries} sorted={sorted} onRemove={remove}/>:null}
  {tab==='sos'?<SOSScreen breathScale={breathScale} breathing={breathing} breathSeconds={breathSeconds} onToggleBreathing={()=>{setBreathing(v=>!v);setBreathSeconds(0)}} hapticsEnabled={hapticsEnabled} onToggleHaptics={()=>setHapticsEnabled(v=>!v)} sosIdeas={sosIdeas} sosTip={sosTip} onNextTip={()=>setSosTip(v=>(v+1)%sosIdeas.length)} sosTimer={sosTimer} sosTimerActive={sosTimerActive} onToggleTimer={()=>{if(sosTimerActive){setSosTimerActive(false)}else{if(sosTimer===0)setSosTimer(120);setSosTimerActive(true)}}} onResetTimer={()=>{setSosTimerActive(false);setSosTimer(0)}} sosStartIntensity={sosStartIntensity} intensity={intensity} onStartIntensity={setSosStartIntensity} onIntensity={setIntensity} trigger={trigger} onTrigger={setTrigger} onSave={()=>{setData(v=>({...v,cravings:[...v.cravings,{id:nowId(),at:new Date().toISOString(),intensity,trigger}]}));go('home')}}/>:null}
  {tab==='benefits'?<BenefitsScreen data={data}/>:null}
- {tab==='profile'?<>
- <Card style={{gap:14,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:14}}>
-   <View style={{width:54,height:54,borderRadius:18,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={27} color={C.lime}/></View>
-   <View style={{flex:1,gap:5}}><Text style={{color:C.white,fontWeight:'900',fontSize:20}}>{accountUser?'Mitt konto':'Din personliga resa'}</Text><Text style={s.muted}>{accountUser?.email||'Följ din utveckling i din egen takt'}</Text></View>
-  </View>
-  <View style={{height:1,backgroundColor:'#425C29'}}/>
-  <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-   <Text style={s.muted}>Kontostatus</Text>
-   <Text style={{color:accountUser?C.lime:'#E7B967',fontWeight:'800',fontSize:13}}>{accountUser?'● Inloggad':'● Gästläge'}</Text>
-  </View>
- </Card>
- {!accountUser?<Card style={{gap:13,padding:18,borderColor:'#9D793E',backgroundColor:'#272218'}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={{width:43,height:43,borderRadius:14,backgroundColor:'#47381F',alignItems:'center',justifyContent:'center'}}><Shield size={23} color="#E7B967"/></View><View style={{flex:1,gap:3}}><Text style={[s.cardTitle,{color:'#E7B967'}]}>Din historik är inte säkerhetskopierad</Text><Text style={s.muted}>Du använder appen som gäst.</Text></View></View>
-  <Text style={s.muted}>Om du avinstallerar appen, byter telefon eller förlorar enheten kan din historik försvinna.</Text>
-  <Text style={s.muted}>Så skyddar du din historik: Öppna Konto nedan, välj Skapa konto eller Logga in och följ instruktionerna. När du är inloggad synkroniseras kontohistoriken automatiskt till Firestore. Har du redan gästhistorik kan du kopiera den till kontot under Konto.</Text>
-  <Btn title="Öppna Konto och skydda min historik" onPress={()=>go('account')}/>
- </Card>:<Card style={{gap:11,padding:18}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Molnsynkronisering</Text><Text style={s.muted}>Inloggad som {accountUser.email||'användare'}</Text></View></View>
-  <Text style={s.muted} accessibilityLiveRegion="polite">{syncStatus||'Automatisk synkronisering är aktiverad. Ändringar säkerhetskopieras när anslutningen fungerar.'}</Text>
-  <Text style={s.muted}>Om en konflikt upptäcks pausas synkroniseringen för att skydda din historik. Öppna Konto för att granska status och hantera historiken.</Text>
-  <Btn title="Öppna Konto" secondary onPress={()=>go('account')}/>
- </Card>}
- <Pressable accessibilityRole="button" onPress={()=>go('account')} style={[s.settingsRow,{borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:16}]}>
-  <View style={s.actionIcon}><UserRound size={21} color={C.lime}/></View>
-  <View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Konto</Text><Text style={s.muted}>{accountUser?'Inloggning, historik och kontohantering':'Logga in, skapa konto och skydda dina data'}</Text></View><ChevronRight size={19} color={C.dim}/>
- </Pressable>
- <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Target size={19} color={C.lime}/><Heading>Din resa</Heading></View>
- <Card style={{flexDirection:'row',alignItems:'center',gap:14,padding:17}}>
-  <View style={s.actionIcon}><Target size={22} color={C.lime}/></View>
-  <View style={{flex:1,gap:5}}><Text style={s.cardTitle}>{p.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text><Text style={s.muted}>Planstart: {date(new Date(p.startAt))}</Text></View>
-  <Pressable accessibilityRole="button" accessibilityLabel="Öppna min plan" onPress={()=>go('plan')}><ChevronRight size={20} color={C.lime}/></Pressable>
- </Card>
- <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Settings size={19} color={C.lime}/><Heading>Snabbåtkomst</Heading></View>
- {([{label:'Min plan',icon:Target,to:'plan',detail:'Mål och framsteg'},{label:'Min logg',icon:History,to:'history',detail:'Din registrerade historik'},{label:'Hälsa och besparing',icon:Leaf,to:'benefits',detail:'Se vad du vinner'},{label:'Inställningar',icon:Settings,to:'settings',detail:'Anpassa appen'},{label:'Stöd vid röksug',icon:Heart,to:'sos',detail:'Hjälp i stunden'}] as const).map(item=>
-  <Pressable key={item.label} accessibilityRole="button" onPress={()=>go(item.to)} style={[s.settingsRow,{borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15}]}>
-   <View style={s.actionIcon}><item.icon size={21} color={C.lime}/></View>
-   <View style={{flex:1,gap:3}}><Text style={s.cardTitle}>{item.label}</Text><Text style={s.muted}>{item.detail}</Text></View><ChevronRight size={19} color={C.dim}/>
-  </Pressable>)}
- </>:null}
+ {tab==='profile'?<ProfileScreen profile={p} accountEmail={accountUser?accountUser.email||'':null} syncStatus={syncStatus} onNavigate={go}/>:null}
  {tab==='account'?<>
  <Pressable accessibilityRole="button" onPress={()=>go('profile')} style={{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
  <Card style={{gap:12,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
