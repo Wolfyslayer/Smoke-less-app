@@ -47,13 +47,12 @@ export function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:Acc
  const dataRef=useRef(data);dataRef.current=data;
  const {syncStatus}=useCloudSync({data,setData,dataRef,ready,sessionUser,migrationBusy,cloudPreviewBusy,verifyCurrentUid});
 
-  const {p,today,todayCount,goal,sorted,last,elapsed,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,recentCigarettes,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
+  const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
  
  const remove=(id:string)=>ask('Ta bort registrering?','Registreringen tas bort från historiken.',()=>setData(v=>removeCigaretteEntry(v,id)));
  
  const go=(t:Tab)=>{setTab(t)};
  const changeProfile=(patch:Partial<Profile>)=>setData(v=>updateProfile(v,patch));
- const checkin=data.checkins.find(x=>x.date===today);
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  if(!p)return <OnboardingScreen onStep={onStep} setOnStep={setOnStep} mode={mode} setMode={setMode} baseline={baseline} setBaseline={setBaseline} packSize={packSize} setPackSize={setPackSize} packPrice={packPrice} setPackPrice={setPackPrice} begin={begin}/>;
