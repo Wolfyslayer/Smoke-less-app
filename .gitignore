@@ -1,9 +1,28 @@
+# Dependencies
 node_modules/
+
+# Expo
 .expo/
 dist/
 web-build/
-.env*
+
+# Git
+.git/
+
+# Android build files
+android/build/
+android/app/build/
+
+# Firebase
+google-services.json
+
+# Environment variables and secrets
+.env
+.env.*
 !.env.example
 
-# Firebase Android client configuration (provided locally for native builds)
-google-services.json
+# Private keys
+*.keystore
+*.jks
+*.p12
+*.pem
