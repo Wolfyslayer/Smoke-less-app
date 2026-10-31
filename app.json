@@ -10,7 +10,20 @@
       "expo-router",
       "expo-dev-client",
       "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      "@react-native-firebase/auth",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/branding/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#101a15",
+          "dark": {
+            "image": "./assets/branding/splash.png",
+            "backgroundColor": "#101a15"
+          }
+        }
+      ]
     ],
     "web": {
       "bundler": "metro",
@@ -22,7 +35,17 @@
     },
     "android": {
       "package": "com.smokeless.app",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/branding/adaptive-icon.png",
+        "backgroundColor": "#101a15"
+      }
+    },
+    "icon": "./assets/branding/icon.png",
+    "splash": {
+      "image": "./assets/branding/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#101a15"
     }
   }
 }
