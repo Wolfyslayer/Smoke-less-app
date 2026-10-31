@@ -11,6 +11,7 @@ import {StatsScreen} from './screens/StatsScreen';
 import {HomeScreen} from './screens/HomeScreen';
 import {SOSScreen} from './screens/SOSScreen';
 import {ProfileScreen} from './screens/ProfileScreen';
+import {SettingsPlanSection} from './screens/SettingsPlanSection';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -202,30 +203,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
 
  </>:null}
 {tab==='settings'?<>
- <Card style={{gap:13,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:13}}>
-   <View style={{width:46,height:46,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><Target size={24} color={C.lime}/></View>
-   <View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Din personliga plan</Text><Text style={s.muted}>Anpassa din resa, ett steg i taget.</Text></View>
-  </View>
-  <View style={{height:1,backgroundColor:'#425C29'}}/>
-  <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-   <Text style={s.muted}>Nuvarande mål</Text><Text style={{color:C.lime,fontSize:14,fontWeight:'800'}}>{p.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text>
-  </View>
- </Card>
- <View style={{gap:9}}><View style={{flexDirection:'row',alignItems:'center',gap:9}}><Target size={19} color={C.lime}/><Heading>Rökmål</Heading></View>
- <Text style={s.muted}>Välj hur du vill arbeta mot ett rökfritt liv.</Text>
- <Choice title="Minska gradvis" subtitle="Minska antalet cigaretter i din egen takt" selected={p.mode==='reduce'} onPress={()=>{if(p.mode!=='reduce')ask('Byta till minskning?','Din plan får ett nytt startdatum. Din tidigare historik behålls.',()=>changeProfile({mode:'reduce',startAt:new Date().toISOString()}));}}/>
- <Choice title="Sluta helt" subtitle="Sätt målet till noll cigaretter" selected={p.mode==='quit'} onPress={()=>{if(p.mode!=='quit')ask('Byta till rökstopp?','Din plan får ett nytt startdatum. Din tidigare historik behålls.',()=>changeProfile({mode:'quit',startAt:new Date().toISOString()}));}}/>
- </View>
- <Card style={{gap:15,padding:18}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:11}}><View style={s.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Dagligt riktvärde</Text><Text style={s.muted}>Justera dagens mål om du behöver.</Text></View></View>
-  <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-   <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" style={s.stepper} onPress={()=>changeProfile({dailyTargetOverride:Math.max(0,(p.dailyTargetOverride??goal)-1)})}><Minus size={21} color={C.lime}/></Pressable>
-   <View style={{alignItems:'center',gap:2}}><Text style={[s.display,{fontSize:37}]}>{goal}</Text><Text style={s.muted}>cigaretter per dag</Text></View>
-   <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" style={s.stepper} onPress={()=>changeProfile({dailyTargetOverride:(p.dailyTargetOverride??goal)+1})}><Plus size={21} color={C.lime}/></Pressable>
-  </View>
-  <Btn title="Återställ planens riktvärde" secondary onPress={()=>changeProfile({dailyTargetOverride:null})}/>
- </Card>
+ <SettingsPlanSection profile={p} goal={goal} onChangeMode={mode=>ask(mode==='reduce'?'Byta till minskning?':'Byta till rökstopp?','Din plan får ett nytt startdatum. Din tidigare historik behålls.',()=>changeProfile({mode,startAt:new Date().toISOString()}))} onChangeDailyTarget={dailyTargetOverride=>changeProfile({dailyTargetOverride})}/>
  <View style={{flexDirection:'row',alignItems:'center',gap:9}}><Shield size={19} color={C.lime}/><Heading>Konto och säkerhet</Heading></View>
  {!accountUser?<Card style={{gap:13,padding:18,borderColor:'#9D793E',backgroundColor:'#272218'}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={{width:42,height:42,borderRadius:13,backgroundColor:'#47381F',alignItems:'center',justifyContent:'center'}}><Shield size={22} color="#E7B967"/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Inte säkerhetskopierad</Text><Text style={{color:'#E7B967',fontSize:12,fontWeight:'800'}}>GÄSTLÄGE</Text></View></View>
