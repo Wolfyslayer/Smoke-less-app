@@ -5,6 +5,7 @@ import {savings,type Data} from '../domain';
 
 type Props={data:Data;period:number;onPeriodChange:(days:number)=>void;clock:number;weekly:number[];todayCount:number;recentCravingsCount:number;cravingTriggers:[string,number][];cigaretteTriggers:[string,number][]};
 const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
+const periodStart=(clock:number,days:number)=>{const d=new Date(clock);d.setHours(0,0,0,0);d.setDate(d.getDate()-(days-1));return d.getTime()};
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
@@ -12,7 +13,7 @@ function Stat({label,value}:{label:string;value:string}){return <Card style={{fl
 function Bars({values}:{values:number[]}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=><View key={i} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:9}}><View style={{height:78,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*74),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:10}}>{['M','T','O','T','F','L','S'][i%7]}</Text></View>)}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
  return <View style={styles.screen}>
-  <Card style={{padding:19,borderColor:'#425C29'}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{data.entries.filter(e=>period===0||new Date(e.at).getTime()>=clock-period*86400000).length}</Text><Text style={styles.muted}>Under vald period</Text></Card>
+  <Card style={{padding:19,borderColor:'#425C29'}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{data.entries.filter(e=>period===0||(new Date(e.at).getTime()>=periodStart(clock,period)&&new Date(e.at).getTime()<=clock)).length}</Text><Text style={styles.muted}>{period===0?'Alla registreringar':'Kalenderdagar inklusive idag'}</Text></Card>
   <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.background:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
   <Heading>Cigaretter per dag</Heading><Card><Bars values={weekly}/><Text style={styles.muted}>De senaste sju dagarna. Tomma staplar innebär inte automatiskt rökfria dagar.</Text></Card>
   <View style={styles.grid}><Stat label="IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA" value={String(data.checkins.filter(c=>c.complete&&c.smokeFree).length)}/><Stat label="SPARAT" value={fmt(savings(data))+' kr'}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.length)}/></View>
