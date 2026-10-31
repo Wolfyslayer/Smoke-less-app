@@ -30,7 +30,19 @@ function setup() {
     loadAccountData: async uid => {events.push('load:' + uid); if (uid === 'broken') throw Error('Invalid account record'); return records.get('account:' + uid) || {profile:null, entries:[], cravings:[], checkins:[]};},
     saveAccountData: async (uid,value) => {events.push('save:' + uid); records.set('account:' + uid,value);},
   };
-  const mod = loadModule('src/localSessionStorage.ts', {'./domain':{validateData:valid}, './storage':storage, './accountStorage':accounts});
+  const asyncStorage = {
+    async getItem(key) {return records.has(key) ? records.get(key) : null;},
+    async setItem(key,value) {records.set(key,value);},
+  };
+  const migration = {
+    async migrateGuestHistoryWithBackup() {throw Error('Migration not expected in session tests');},
+  };
+  const mod = loadModule('src/localSessionStorage.ts', {
+    './domain':{validateData:valid}, './storage':storage,
+    './accountStorage':accounts,
+    '@react-native-async-storage/async-storage':asyncStorage,
+    './accountMigration':migration,
+  });
   return {controller:new mod.LocalSessionStorage(), records, events};
 }
 const empty = () => ({profile:null, entries:[], cravings:[], checkins:[]});
