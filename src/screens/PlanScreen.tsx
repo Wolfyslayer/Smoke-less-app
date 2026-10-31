@@ -10,12 +10,14 @@ function Card({children,style}:{children:React.ReactNode;style?:any}){return <Vi
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
 export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile}:Props){
- const percentage=p.baseline>0?Math.round(todayReduction/p.baseline*100):0;
+ const percentage=p.baseline>0?Math.max(0,Math.min(100,Math.round(todayReduction/p.baseline*100))):0;
+ const customGoal=p.dailyTargetOverride!==null;
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
-   <Text style={styles.cardTitle}>Planerat rökstopp</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
+   <Text style={styles.cardTitle}>{customGoal?'Rökstopp enligt grundplanen':'Planerat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
+   {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt egna mål.</Text>:null}
   </Card>
   <Heading>Din nedtrappning</Heading>
   <Card style={{gap:10}}>
@@ -24,7 +26,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
     <View style={{flex:1,minWidth:115}}><Label>JÄMFÖRT MED START</Label><Text style={styles.statValue}>{percentage}%</Text></View>
    </View>
    <View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${Math.min(100,percentage)}%` as `${number}%`}]}/></View>
-   <Text style={styles.muted}>Visar hur dagsmålet har förändrats från startnivån, inte hur mycket du faktiskt rökt.</Text>
+   <Text style={styles.muted}>Visar hur dagsmålet har förändrats från startnivån, inte hur mycket du faktiskt rökt.{customGoal?' Ett eget riktvärde gäller tills det återställs.':''}</Text>
   </Card>
   <Card style={{gap:10}}>
    <Label>PLANEN KAN ANPASSAS</Label>
@@ -45,6 +47,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>)}
   <Heading>Kommande mål</Heading>
+  {customGoal?<Text style={styles.muted}>Du använder ett eget dagsmål. Därför visas samma riktvärde för alla kommande dagar tills du återställer det i Inställningar.</Text>:null}
   <Card><View style={styles.grid}>{Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return <View key={i} style={[styles.dayCell,i===0&&{borderColor:C.lime,backgroundColor:C.limeSoft}]}><Text style={styles.muted}>{d.toLocaleDateString('sv-SE',{weekday:'short'})}</Text><Text style={styles.cardTitle}>{target(p,d)}</Text></View>})}</View></Card>
   <Text style={styles.muted}>Dagsmålet är ett högsta riktvärde. Du behöver aldrig röka för att nå det.</Text>
  </View>;
