@@ -1,4 +1,4 @@
-import React,{useRef,useState} from 'react';
+import React from 'react';
 import {ActivityIndicator,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BenefitsScreen} from './screens/BenefitsScreen';
@@ -17,39 +17,13 @@ import {BottomNavigation} from './components/BottomNavigation';
 import {ScreenHeader} from './components/ScreenHeader';
 import {ConfirmationDialog} from './components/ConfirmationDialog';
 import {CigaretteRegisterModal} from './components/CigaretteRegisterModal';
-import {useLiveClock} from './hooks/useLiveClock';
-import {useCloudSync} from './hooks/useCloudSync';
-import {useLocalSession} from './hooks/useLocalSession';
-import {useConfirmationDialog} from './hooks/useConfirmationDialog';
-import {getDashboardMetrics} from './utils/dashboardMetrics';
-import {useOnboardingFlow} from './hooks/useOnboardingFlow';
-import {useCigaretteRegistration} from './hooks/useCigaretteRegistration';
 import {confirmDailyCheckin} from './utils/checkinActions';
-import {useAccountFlow} from './hooks/useAccountFlow';
-import {useSosFlow} from './hooks/useSosFlow';
-import {useSettingsFlow} from './hooks/useSettingsFlow';
-import {useSessionNavigation,type Tab} from './hooks/useSessionNavigation';
-import {useSessionActions} from './hooks/useSessionActions';
+import {useSmokeLessSessionModel} from './hooks/useSmokeLessSessionModel';
+import type {Tab} from './hooks/useSessionNavigation';
 import {C} from './theme';
-import {type Data,EMPTY} from './domain';
 import type {AccountUser} from './authService';
 export function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:AccountUser|null;verifyCurrentUid:()=>string|null}){
- const insets=useSafeAreaInsets();const [data,setData]=useState<Data>(EMPTY),[ready,setReady]=useState(false),[loadError,setLoadError]=useState<string|null>(null);
- const {tab,setTab}=useSessionNavigation();
- const clock=useLiveClock();
- const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
- const {sosProps,startSos}=useSosFlow(setData,()=>setTab('home'));
- const {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup}=useSettingsFlow({data,setData,ask,showMessage});
- const {onStep,setOnStep,mode,setMode,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
- const {registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister}=useCigaretteRegistration(setData);
- const {storageRef,loadedDataRef}=useLocalSession({sessionUser,data,setData,ready,setReady,setLoadError,showMessage});
- const {accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,inspectCloudData,requestGuestReset,requestGuestMigration}=useAccountFlow({sessionUser,verifyCurrentUid,data,setData,storageRef,loadedDataRef,setTab,showMessage,ask});
- const dataRef=useRef(data);dataRef.current=data;
- const {syncStatus}=useCloudSync({data,setData,dataRef,ready,sessionUser,migrationBusy,cloudPreviewBusy,verifyCurrentUid});
-
-  const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
- 
- const {remove,go,changeProfile,period,setPeriod}=useSessionActions({setData,ask,setTab});
+ const insets=useSafeAreaInsets();const {data,setData,ready,loadError,tab,clock,dialog,setDialog,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,period,setPeriod}=useSmokeLessSessionModel(sessionUser,verifyCurrentUid);
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  if(!p)return <OnboardingScreen onStep={onStep} setOnStep={setOnStep} mode={mode} setMode={setMode} baseline={baseline} setBaseline={setBaseline} packSize={packSize} setPackSize={setPackSize} packPrice={packPrice} setPackPrice={setPackPrice} begin={begin}/>;
