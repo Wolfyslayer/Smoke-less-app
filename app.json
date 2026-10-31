@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Smoke Less",
+    "slug": "smoke-less",
+    "scheme": "smokeless",
+    "version": "6.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router"
+    ],
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "name": "Smoke Less"
+    },
+    "experiments": {
+      "baseUrl": "/Smoke-less-app"
+    }
+  }
+}
