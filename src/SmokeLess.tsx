@@ -8,6 +8,7 @@ import {HistoryScreen} from './screens/HistoryScreen';
 import {RegisterScreen} from './screens/RegisterScreen';
 import {PlanScreen} from './screens/PlanScreen';
 import {StatsScreen} from './screens/StatsScreen';
+import {HomeScreen} from './screens/HomeScreen';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -146,14 +147,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
   </View>
  </View>
  </Card>:null}
- {tab==='home'?<>
- <Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1}}><Text style={s.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={s.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>
- <View style={s.grid}><IconTile icon={PlusCircle} title="Registrera" featured onPress={openRegister}/><IconTile icon={Heart} title="SOS · Jag är röksugen" onPress={()=>{setBreathSeconds(0);setBreathing(true);go('sos')}}/><IconTile icon={Target} title="Min plan" onPress={()=>go('plan')}/><IconTile icon={History} title="Min logg" onPress={()=>go('history')}/></View>
- <Card><View style={s.inline}><Clock color={C.lime} size={22}/><View style={{flex:1,gap:5}}><Label>TID SEDAN SENASTE CIGARETTEN</Label><Text style={s.statValue}>{duration}</Text></View></View></Card>
- <View style={s.sectionRow}><Heading>Din utveckling</Heading><Pressable onPress={()=>go('stats')}><Text style={s.link}>Visa mer</Text></Pressable></View><Card><Bars values={weekly}/></Card>
- <View style={s.grid}><Stat label="DIN BESPARING" value={fmt(savings(data))+' kr'}/><Stat label="DAGENS MÅL" value={String(goal)} detail="Högsta riktvärde"/></View>
- <Card><Label>DAGLIG AVSTÄMNING</Label><Text style={s.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Btn title="Bekräfta dagens registreringar" onPress={()=>setData(v=>({...v,checkins:[...v.checkins.filter(c=>c.date!==today),{date:today,complete:true,smokeFree:todayCount===0}]}))}/>:<Text style={s.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>
- </>:null}
+ {tab==='home'?<HomeScreen data={data} goal={goal} todayCount={todayCount} duration={duration} weekly={weekly} today={today} onRegister={openRegister} onSOS={()=>{setBreathSeconds(0);setBreathing(true);go('sos')}} onPlan={()=>go('plan')} onHistory={()=>go('history')} onStats={()=>go('stats')} onConfirmToday={()=>setData(v=>({...v,checkins:[...v.checkins.filter(c=>c.date!==today),{date:today,complete:true,smokeFree:todayCount===0}]}))}/>:null}
  {tab==='register'?<RegisterScreen todayCount={todayCount} goal={goal} duration={duration} sorted={sorted} today={today} last={last} onOpenRegister={openRegister} onOpenHistory={()=>go('history')} onRemove={remove}/>:null}
  {tab==='plan'?<PlanScreen profile={p} goal={goal} todayReduction={todayReduction} confirmedDays={confirmedDays} withinDays={withinDays} planWeek={planWeek} clock={clock} onChangeProfile={changeProfile}/>:null}
  {tab==='stats'?<StatsScreen data={data} period={period} onPeriodChange={setPeriod} clock={clock} weekly={weekly} todayCount={todayCount} recentCravingsCount={recentCravings.length} cravingTriggers={cravingTriggers} cigaretteTriggers={cigaretteTriggers}/>:null}
