@@ -15,6 +15,7 @@ import {AccountScreen} from './screens/AccountScreen';
 import {useSosTimer} from './hooks/useSosTimer';
 import {useBreathing} from './hooks/useBreathing';
 import {useLiveClock} from './hooks/useLiveClock';
+import {useAuthObserver} from './hooks/useAuthObserver';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -30,9 +31,7 @@ function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPres
 function Field({label,value,onChange,keyboardType='numeric'}:{label:string;value:string;onChange:(v:string)=>void;keyboardType?:'numeric'|'default'}){return <View style={{gap:8}}><Text style={s.fieldLabel}>{label}</Text><TextInput accessibilityLabel={label} keyboardType={keyboardType} value={value} onChangeText={onChange} placeholderTextColor={C.dim} style={s.input}/></View>}
 function Choice({title,subtitle,selected,onPress}:{title:string;subtitle?:string;selected:boolean;onPress:()=>void}){return <Pressable onPress={onPress} accessibilityRole="radio" accessibilityState={{selected}} style={[s.choice,selected&&{borderColor:C.lime,backgroundColor:C.limeSoft}]}><View style={{flex:1,gap:5}}><Text style={s.choiceTitle}>{title}</Text>{subtitle?<Text style={s.muted}>{subtitle}</Text>:null}</View>{selected?<Check size={20} color={C.lime}/>:<View style={s.radio}/>}</Pressable>}
 export default function SmokeLess(){
- const [authState,setAuthState]=useState<{initialized:boolean;user:account.AccountUser|null}>({initialized:false,user:null});
- const activeUidRef=useRef<string|null>(null);
- useEffect(()=>account.observeUser(user=>{activeUidRef.current=user?.uid??null;setAuthState({initialized:true,user});}),[]);
+ const {authState,activeUidRef}=useAuthObserver();
  if(!authState.initialized)return <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:C.background}}><ActivityIndicator color={C.lime}/></View>;
  return <SmokeLessSession key={authState.user?.uid??'guest'} sessionUser={authState.user} verifyCurrentUid={()=>activeUidRef.current}/>;
 }
