@@ -21,6 +21,10 @@ export function useSettingsFlow({data,setData,ask,showMessage}:{
   showMessage('Säkerhetskopia skapad','Din historik finns i textfältet nedan. Kopiera och spara texten på en säker plats.');
  };
  const onRestoreBackup=()=>{
+  if(!backup.trim()){
+   showMessage('Ingen säkerhetskopia','Klistra in en JSON-säkerhetskopia innan du försöker återställa.');
+   return;
+  }
   try{
    const value=parseBackupData(backup);
    const backupSnapshot=backup;
@@ -38,7 +42,7 @@ export function useSettingsFlow({data,setData,ask,showMessage}:{
      setData(value);
     },
    );
-  }catch{showMessage('Ogiltig säkerhetskopia','Kontrollera JSON-innehållet.')}
+  }catch(error){showMessage('Ogiltig säkerhetskopia',error instanceof SyntaxError?'Texten är inte giltig JSON. Kontrollera att hela säkerhetskopian har kopierats.':error instanceof Error?error.message:'Kontrollera säkerhetskopians innehåll.')}
  };
  return {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup};
 }
