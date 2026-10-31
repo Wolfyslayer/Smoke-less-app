@@ -1,7 +1,7 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ActivityIndicator,Platform,Pressable,ScrollView,StyleSheet,Text,View,AccessibilityInfo} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {House,Target,PlusCircle,ChartColumn,UserRound,Heart,ArrowLeft,History,Leaf} from 'lucide-react-native';
+import {} from 'lucide-react-native';
 import {BenefitsScreen} from './screens/BenefitsScreen';
 import {HistoryScreen} from './screens/HistoryScreen';
 import {RegisterScreen} from './screens/RegisterScreen';
@@ -32,10 +32,7 @@ import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
 import {previewCloudImport,inspectCloudDeletion} from './cloudRead';
 type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings';
-const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 const nowId=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
-function Label({children}:{children:React.ReactNode}){return <Text style={s.eyebrow}>{children}</Text>}
-function Heading({children}:{children:React.ReactNode}){return <Text style={s.heading}>{children}</Text>}
 export default function SmokeLess(){
  const {authState,activeUidRef}=useAuthObserver();
  if(!authState.initialized)return <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:C.background}}><ActivityIndicator color={C.lime}/></View>;
