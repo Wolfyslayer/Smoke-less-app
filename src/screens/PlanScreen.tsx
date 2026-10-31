@@ -44,7 +44,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   </Card>
   <Heading>Välj din takt</Heading>
   {([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
-   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock))})}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
+   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock)),originalStartAt:p.originalStartAt??p.startAt})}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>)}
   <Heading>Kommande mål</Heading>
