@@ -17,5 +17,11 @@ export function useCigaretteRegistration(setData:Dispatch<SetStateAction<Data>>)
   setCigTrigger(null);
  };
  const openRegister=()=>{setFeeling(null);setCigTrigger(null);setRegisterOpen(true)};
- return {registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister};
+ const skipRegister=()=>{
+  setFeeling(null);
+  setCigTrigger(null);
+  setData(v=>({...v,entries:[...v.entries,{id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2),at:new Date().toISOString()}]}));
+  setRegisterOpen(false);
+ };
+ return {registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister};
 }
