@@ -2,6 +2,7 @@ import React from 'react';
 import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import {Shield,Download} from 'lucide-react-native';
 import {C} from '../theme';
+import {AppCard,AppButton} from '../components/ui';
 import type {Profile} from '../domain';
 import {SettingsPlanSection} from './SettingsPlanSection';
 
@@ -11,8 +12,8 @@ type Props={
  onChangeMode:(mode:'reduce'|'quit')=>void;onChangeDailyTarget:(value:number|null)=>void;
  onOpenProfile:()=>void;onGuestReset:()=>void;onExportBackup:()=>void;onRestoreBackup:()=>void;
 };
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
-function Button({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean}){return <Pressable accessibilityRole="button" onPress={onPress} style={[styles.button,secondary&&styles.buttonSecondary]}><Text style={[styles.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
+const Card=({children,style}:{children:React.ReactNode;style?:any})=><AppCard tone="surface" style={style}>{children}</AppCard>;
+const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="elevated"/>;
 export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBackupChange,onChangeMode,onChangeDailyTarget,onOpenProfile,onGuestReset,onExportBackup,onRestoreBackup}:Props){
  const loggedIn=accountEmail!==null;
  return <View style={styles.screen}>
