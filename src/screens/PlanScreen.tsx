@@ -26,6 +26,13 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${Math.min(100,percentage)}%` as `${number}%`}]}/></View>
    <Text style={styles.muted}>Visar hur dagsmålet har förändrats från startnivån, inte hur mycket du faktiskt rökt.</Text>
   </Card>
+  <Card style={{gap:10}}>
+   <Label>PLANEN KAN ANPASSAS</Label>
+   <Text style={styles.cardTitle}>En svår dag ändrar inte dina framsteg</Text>
+   <Text style={styles.muted}>Om du röker mer än planerat behöver du inte börja om. Din registrerade historik finns kvar, och du kan fortsätta från nästa stund.</Text>
+   <Text style={styles.muted}>Behöver du en lugnare takt? Välj Lugn nedan. Din framtida plan räknas då om från idag, utan att tidigare registreringar raderas.</Text>
+   <Text style={styles.muted}>Vill du ha ett tillfälligt dagsmål kan du ändra det i Inställningar. Det är ett högsta riktvärde, inte något du måste röka upp till.</Text>
+  </Card>
   <Heading>Senaste sju dagarna</Heading>
   <Card style={{gap:10}}>
    <View style={styles.sectionRow}><Text style={styles.cardTitle}>{withinDays} av {confirmedDays} bekräftade dagar inom målet</Text><Text style={styles.muted}>{confirmedDays}/7 avstämda</Text></View>
