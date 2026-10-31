@@ -66,3 +66,29 @@ test('plan changes do not mutate saved smoking entries', () => {
 test('domain functions and validation remain available', () => {
   for (const fn of [target, quitDate, countOn, savings, validateData]) assert.equal(typeof fn, 'function');
 });
+
+test('quit mode remains zero even with an earlier manual override', () => {
+  assert.equal(target(profile({mode: 'quit', dailyTargetOverride: 6}), date('2026-10-09')), 0);
+});
+
+test('changing pace preserves original savings start and historical entries', () => {
+  const original = profile({baseline: 10, packPrice: 100, packSize: 20});
+  const entries = [{id: 'a', at: '2026-10-02T12:00:00.000Z'}];
+  const changed = {
+    ...original,
+    speed: 'gentle',
+    originalStartAt: original.startAt,
+    startAt: date('2026-10-09').toISOString(),
+    planStartTarget: target(original, date('2026-10-09')),
+  };
+  const data = {profile: changed, entries, cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-09')), 395);
+  assert.equal(data.entries.length, 1);
+  assert.equal(data.entries[0].id, 'a');
+  assert.equal(changed.baseline, 10);
+});
+
+test('saved plan anchor is accepted by data validation', () => {
+  const data = {profile: profile({planStartTarget: 8, originalStartAt: '2026-10-01T12:00:00.000Z'}), entries: [], cravings: [], checkins: []};
+  assert.equal(validateData(data), true);
+});
