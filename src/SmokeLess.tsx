@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {ActivityIndicator,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,AccessibilityInfo,AppState} from 'react-native';
+import {ActivityIndicator,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,AccessibilityInfo} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {House,Target,PlusCircle,ChartColumn,UserRound,Heart,Check,ArrowLeft,History,Leaf} from 'lucide-react-native';
 import {BenefitsScreen} from './screens/BenefitsScreen';
@@ -16,6 +16,7 @@ import {useSosTimer} from './hooks/useSosTimer';
 import {useBreathing} from './hooks/useBreathing';
 import {useLiveClock} from './hooks/useLiveClock';
 import {useAuthObserver} from './hooks/useAuthObserver';
+import {useAppResumeTrigger} from './hooks/useAppResumeTrigger';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -84,10 +85,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
   },1200);
   return()=>clearTimeout(timer);
  },[data,ready,sessionUser?.uid,syncTrigger,migrationBusy,cloudPreviewBusy]);
- useEffect(()=>{
-  const subscription=AppState.addEventListener('change',state=>{if(state==='active')setSyncTrigger(v=>v+1);});
-  return()=>subscription.remove();
- },[]);
+ useAppResumeTrigger(setSyncTrigger);
  
  const inspectCloudData=()=>{if(!accountUser||cloudPreviewBusy)return;const uid=accountUser.uid;setCloudPreviewBusy(true);void (async()=>{try{const result=await inspectCloudDeletion(uid);if(accountUidRef.current!==uid)throw Error('Kontot ändrades.');showMessage('Molnhistorik – endast kontroll',`Plan: ${result.plan?'Ja':'Nej'} · Cigaretter: ${result.entries} · Röksug: ${result.cravings} · Avstämningar: ${result.checkins}.${result.hasTombstones?' Raderingsmarkeringar finns i molnet.':''} Ingen data har raderats.`)}catch(error){showMessage('Kunde inte kontrollera molndata',error instanceof Error?error.message:'Försök igen senare.')}finally{setCloudPreviewBusy(false)}})()};
  const requestGuestReset=()=>{if(accountUser)return;ask('Radera gästhistorik?','Alla lokala gästregistreringar, röksug, dagliga avstämningar och din plan tas bort från den aktiva appen. En återställningskopia sparas först på enheten. Detta raderar INTE några molndata eller Firebase-konton. Vill du fortsätta?',()=>{void (async()=>{try{const key=await storageRef.current.resetGuestWithBackup();const snapshot=storageRef.current.getSnapshot();if(!snapshot||snapshot.session.kind!=='guest')throw Error('Gästsessionen ändrades.');loadedDataRef.current=snapshot.data;setData(snapshot.data);setTab('home');showMessage('Gästhistorik raderad','En lokal återställningskopia sparades under '+key+'. Kopian finns bara på den här enheten.')}catch(error){showMessage('Raderingen misslyckades',error instanceof Error?error.message:'Ingen ändring kunde bekräftas.')}})()})};
