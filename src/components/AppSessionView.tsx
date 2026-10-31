@@ -1,13 +1,12 @@
 import React from 'react';
 import {ActivityIndicator,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {OnboardingScreen} from '../screens/OnboardingScreen';
+import {AppSessionOnboarding} from './AppSessionOnboarding';
 import {AppScreenRouter} from './AppScreenRouter';
 import {SectionIntroCard} from './SectionIntroCard';
 import {BottomNavigation} from './BottomNavigation';
 import {ScreenHeader} from './ScreenHeader';
-import {ConfirmationDialog} from './ConfirmationDialog';
-import {CigaretteRegisterModal} from './CigaretteRegisterModal';
+import {AppSessionOverlays} from './AppSessionOverlays';
 import type {useSmokeLessSessionModel} from '../hooks/useSmokeLessSessionModel';
 import type {Tab} from '../hooks/useSessionNavigation';
 import {C} from '../theme';
@@ -15,14 +14,14 @@ import {C} from '../theme';
 type SessionModel=ReturnType<typeof useSmokeLessSessionModel>;
 export function AppSessionView({model}:{model:SessionModel}){
  const insets=useSafeAreaInsets();
- const {data,setData,ready,loadError,tab,clock,dialog,setDialog,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,period,setPeriod}=model;
+ const {ready,loadError,tab,clock,p,go}=model;
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
- if(!p)return <OnboardingScreen onStep={onStep} setOnStep={setOnStep} mode={mode} setMode={setMode} baseline={baseline} setBaseline={setBaseline} packSize={packSize} setPackSize={setPackSize} packPrice={packPrice} setPackPrice={setPackPrice} begin={begin}/>;
+ if(!p)return <AppSessionOnboarding model={model}/>;
  return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingHorizontal:20,paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
  <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
  {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  <AppScreenRouter model={model}/>
- </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><CigaretteRegisterModal visible={registerOpen} feeling={feeling} onFeelingChange={setFeeling} cigTrigger={cigTrigger} onTriggerChange={setCigTrigger} onClose={()=>setRegisterOpen(false)} onRegister={register} onSkip={skipRegister}/><ConfirmationDialog dialog={dialog} onClose={()=>setDialog(null)}/></View>
+ </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><AppSessionOverlays model={model}/></View>
 }
 const s=StyleSheet.create({root:{flex:1,backgroundColor:C.background}});
