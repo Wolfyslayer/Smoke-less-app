@@ -2,13 +2,14 @@ import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {UserRound,Shield,ChevronRight,Target,History,Leaf,Settings,Heart} from 'lucide-react-native';
 import {C} from '../theme';
+import {AppCard,AppButton} from '../components/ui';
 import type {Profile} from '../domain';
 
 type Destination='account'|'plan'|'history'|'benefits'|'settings'|'sos';
 type Props={profile:Profile;accountEmail:string|null;syncStatus:string;onNavigate:(to:Destination)=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
-function Button({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean}){return <Pressable accessibilityRole="button" onPress={onPress} style={[styles.button,secondary&&styles.buttonSecondary]}><Text style={[styles.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
+const Card=({children,style}:{children:React.ReactNode;style?:any})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
+const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="soft" compact/>;
 export function ProfileScreen({profile,accountEmail,syncStatus,onNavigate}:Props){
  const loggedIn=accountEmail!==null;
  return <View style={styles.screen}>
