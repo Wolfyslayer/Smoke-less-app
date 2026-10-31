@@ -1,14 +1,74 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Private per-user data. All requests require Firebase Authentication.
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      match /{document=**} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+    function owner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    function metadata(d) {
+      return d.keys().hasAll(['schemaVersion','updatedAt','revision','deleted'])
+        && d.schemaVersion == 1
+        && d.updatedAt is timestamp
+        && d.updatedAt <= request.time
+        && d.revision is int && d.revision >= 1
+        && d.deleted is bool;
+    }
+    function entry(d, entryId) {
+      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','id','at','feeling','trigger'])
+        && metadata(d) && d.id == entryId && d.id is string && d.id.size() <= 128
+        && d.at is string && d.at.size() <= 40
+        && (!('feeling' in d) || (d.feeling is string && d.feeling.size() <= 200))
+        && (!('trigger' in d) || (d.trigger is string && d.trigger.size() <= 200));
+    }
+    function craving(d, cravingId) {
+      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','id','at','intensity','trigger'])
+        && metadata(d) && d.id == cravingId && d.id is string && d.id.size() <= 128
+        && d.at is string && d.at.size() <= 40
+        && d.intensity is int && d.intensity >= 1 && d.intensity <= 5
+        && d.trigger is string && d.trigger.size() <= 200;
+    }
+    function checkin(d, day) {
+      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','date','complete','smokeFree'])
+        && metadata(d) && d.date == day && d.date is string && d.date.matches('^\\d{4}-\\d{2}-\\d{2}$')
+        && d.complete is bool && d.smokeFree is bool;
+    }
+    function plan(d) {
+      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','mode','baseline','packSize','packPrice','speed','startAt','dailyTargetOverride'])
+        && metadata(d)
+        && d.mode in ['reduce','quit'] && d.speed in ['gentle','balanced','fast']
+        && d.baseline is int && d.baseline >= 0 && d.baseline <= 200
+        && d.packSize is int && d.packSize >= 1 && d.packSize <= 200
+        && d.packPrice is number && d.packPrice >= 0 && d.packPrice <= 100000
+        && d.startAt is string && d.startAt.size() <= 40
+        && (d.dailyTargetOverride == null || (d.dailyTargetOverride is int && d.dailyTargetOverride >= 0 && d.dailyTargetOverride <= 200));
+    }
+    match /users/{uid} {
+      // Parent documents are intentionally not writable.
+      allow read, write: if false;
+      match /entries/{entryId} {
+        allow read: if owner(uid);
+        allow create: if owner(uid) && request.resource.data.revision == 1 && entry(request.resource.data,entryId);
+        allow update: if owner(uid) && request.resource.data.revision == resource.data.revision + 1 && entry(request.resource.data,entryId);
+        allow delete: if false; // Tombstones only.
+      }
+      match /cravings/{cravingId} {
+        allow read: if owner(uid);
+        allow create: if owner(uid) && request.resource.data.revision == 1 && craving(request.resource.data,cravingId);
+        allow update: if owner(uid) && request.resource.data.revision == resource.data.revision + 1 && craving(request.resource.data,cravingId);
+        allow delete: if false;
+      }
+      match /checkins/{day} {
+        allow read: if owner(uid);
+        allow create: if owner(uid) && request.resource.data.revision == 1 && checkin(request.resource.data,day);
+        allow update: if owner(uid) && request.resource.data.revision == resource.data.revision + 1 && checkin(request.resource.data,day);
+        allow delete: if false;
+      }
+      match /settings/{document} {
+        allow read: if owner(uid) && document == 'plan';
+        allow create: if owner(uid) && document == 'plan' && request.resource.data.revision == 1 && plan(request.resource.data);
+        allow update: if owner(uid) && document == 'plan' && request.resource.data.revision == resource.data.revision + 1 && plan(request.resource.data);
+        allow delete: if false;
       }
     }
-    // No public access or cross-user access to any other collection.
     match /{document=**} {
       allow read, write: if false;
     }
