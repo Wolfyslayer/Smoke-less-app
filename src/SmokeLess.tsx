@@ -27,6 +27,7 @@ import {useLocalSession} from './hooks/useLocalSession';
 import {useConfirmationDialog} from './hooks/useConfirmationDialog';
 import {sosIdeas} from './data/sosIdeas';
 import {getDashboardMetrics} from './utils/dashboardMetrics';
+import {parseOnboardingNumbers} from './utils/onboardingValidation';
 import {C} from './theme';import {Data,Profile,Mode,Speed,dayKey,target,quitDate,countOn,savings,EMPTY,validateData} from './domain';import {backupBeforeCloudImport} from './storage';
 import {LocalSessionStorage, type LocalSession} from './localSessionStorage';
 import * as account from './authService';
@@ -74,7 +75,7 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
  const {p,today,todayCount,goal,sorted,last,elapsed,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,recentCigarettes,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
  const register=()=>{if(busy.current)return;busy.current=true;setTimeout(()=>busy.current=false,600);setData(v=>{const at=new Date().toISOString(),day=dayKey(new Date(at));return {...v,entries:[...v.entries,{id:nowId(),at,...(feeling?{feeling}:{}),...(cigTrigger?{trigger:cigTrigger}:{})}],checkins:v.checkins.filter(c=>c.date!==day)}});setRegisterOpen(false);setFeeling(null);setCigTrigger(null);};const openRegister=()=>{setFeeling(null);setCigTrigger(null);setRegisterOpen(true)};
  const remove=(id:string)=>ask('Ta bort registrering?','Registreringen tas bort från historiken.',()=>setData(v=>({...v,entries:v.entries.filter(e=>e.id!==id),checkins:v.checkins.filter(c=>c.date!==dayKey(new Date(v.entries.find(e=>e.id===id)?.at??Date.now())))})));
- const begin=()=>{const b=Number(baseline),ps=Number(packSize),price=Number(packPrice.replace(',','.'));if(!Number.isFinite(b)||b<0||b>200||!Number.isInteger(b)||!Number.isFinite(ps)||ps<1||!Number.isInteger(ps)||!Number.isFinite(price)||price<0){showMessage('Kontrollera uppgifterna','Ange giltiga positiva tal.');return;}setData({...EMPTY,profile:{mode,baseline:b,packSize:ps,packPrice:price,speed:'balanced',startAt:new Date().toISOString(),dailyTargetOverride:null}})};
+ const begin=()=>{const values=parseOnboardingNumbers(baseline,packSize,packPrice);if(!values){showMessage('Kontrollera uppgifterna','Ange giltiga positiva tal.');return;}setData({...EMPTY,profile:{mode,baseline:values.baseline,packSize:values.packSize,packPrice:values.packPrice,speed:'balanced',startAt:new Date().toISOString(),dailyTargetOverride:null}})};
  const go=(t:Tab)=>{setTab(t)};
  const changeProfile=(patch:Partial<Profile>)=>setData(v=>v.profile?({...v,profile:{...v.profile,...patch}}):v);
  const checkin=data.checkins.find(x=>x.date===today);
