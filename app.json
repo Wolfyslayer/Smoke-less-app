@@ -16,6 +16,9 @@
     },
     "experiments": {
       "baseUrl": "/Smoke-less-app"
+    },
+    "android": {
+      "package": "com.smokeless.app"
     }
   }
 }
