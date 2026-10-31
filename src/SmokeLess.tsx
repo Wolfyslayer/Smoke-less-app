@@ -15,6 +15,7 @@ import {AccountScreen} from './screens/AccountScreen';
 import {OnboardingScreen} from './screens/OnboardingScreen';
 import {SectionIntroCard} from './components/SectionIntroCard';
 import {BottomNavigation} from './components/BottomNavigation';
+import {ScreenHeader} from './components/ScreenHeader';
 import {ConfirmationDialog} from './components/ConfirmationDialog';
 import {CigaretteRegisterModal} from './components/CigaretteRegisterModal';
 import {AppCard,AppButton} from './components/ui';
@@ -83,10 +84,8 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  if(!p)return <OnboardingScreen onStep={onStep} setOnStep={setOnStep} mode={mode} setMode={setMode} baseline={baseline} setBaseline={setBaseline} packSize={packSize} setPackSize={setPackSize} packPrice={packPrice} setPackPrice={setPackPrice} begin={begin}/>;
- const title:Record<Tab,string>={home:'Din resa börjar här.',plan:'Din plan.',register:'Registrera.',stats:'Din utveckling.',profile:'Min profil.',account:'Mitt konto.',sos:'Hantera röksug.',history:'Din logg.',benefits:'Dina framsteg.',settings:'Inställningar.'};
- const primaryTabs=['home','plan','register','stats','profile'];
  return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingHorizontal:20,paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
- <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><View style={{flex:1,gap:7}}><Label>{tab==='home'?(new Date(clock).getHours()<11?'GOD MORGON':new Date(clock).getHours()<17?'GOD EFTERMIDDAG':'GOD KVÄLL'):'SMOKE LESS / 06'}</Label><Text style={s.title}>{title[tab]}</Text><Text style={s.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':tab==='account'?'Inloggning och säkerhetskopiering.':'Ett steg i taget.'}</Text></View><Pressable onPress={()=>go(primaryTabs.includes(tab)?'profile':'home')} style={s.avatar}>{primaryTabs.includes(tab)?<UserRound size={22} color={C.lime}/>:<ArrowLeft size={22} color={C.lime}/>}</Pressable></View>
+ <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
  {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  {tab==='home'?<HomeScreen data={data} goal={goal} todayCount={todayCount} duration={duration} weekly={weekly} today={today} onRegister={openRegister} onSOS={()=>{setBreathSeconds(0);setBreathing(true);go('sos')}} onPlan={()=>go('plan')} onHistory={()=>go('history')} onStats={()=>go('stats')} onConfirmToday={()=>setData(v=>({...v,checkins:[...v.checkins.filter(c=>c.date!==today),{date:today,complete:true,smokeFree:todayCount===0}]}))}/>:null}
  {tab==='register'?<RegisterScreen todayCount={todayCount} goal={goal} duration={duration} sorted={sorted} today={today} last={last} onOpenRegister={openRegister} onOpenHistory={()=>go('history')} onRemove={remove}/>:null}
