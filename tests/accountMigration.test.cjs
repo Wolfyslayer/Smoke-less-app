@@ -17,7 +17,7 @@ function setup(){
   async setItem(k,v){events.push('set:'+k);if(failBackup&&k.startsWith('smoke-less-v6-migration-backup:'))throw Error('disk full');onWrite(k);values.set(k,v)}
  };
  const mod=loadModule('src/accountMigration.ts',{
-  '@react-native-async-storage/async-storage':{default:asyncStorage},
+  '@react-native-async-storage/async-storage':asyncStorage,
   './domain':{validateData:x=>!!x&&Array.isArray(x.entries)},
   './accountStorage':{accountStorageKey:uid=>{if(!/^[a-z0-9]+$/i.test(uid))throw Error('bad uid');return 'account:'+uid}}
  });
