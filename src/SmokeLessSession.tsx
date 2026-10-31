@@ -24,18 +24,19 @@ import {useConfirmationDialog} from './hooks/useConfirmationDialog';
 import {getDashboardMetrics} from './utils/dashboardMetrics';
 import {useOnboardingFlow} from './hooks/useOnboardingFlow';
 import {useCigaretteRegistration} from './hooks/useCigaretteRegistration';
-import {removeCigaretteEntry} from './utils/entryActions';
-import {updateProfile} from './utils/profileActions';
 import {confirmDailyCheckin} from './utils/checkinActions';
 import {useAccountFlow} from './hooks/useAccountFlow';
 import {useSosFlow} from './hooks/useSosFlow';
 import {useSettingsFlow} from './hooks/useSettingsFlow';
+import {useSessionActions} from './hooks/useSessionActions';
+import {useSessionNavigation} from './hooks/useSessionNavigation';
 import {C} from './theme';
-import {type Data,type Profile,EMPTY} from './domain';
+import {type Data,EMPTY} from './domain';
 import type {AccountUser} from './authService';
-type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings';
+import type {Tab} from './hooks/useSessionNavigation';
 export function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:AccountUser|null;verifyCurrentUid:()=>string|null}){
- const insets=useSafeAreaInsets();const [data,setData]=useState<Data>(EMPTY),[ready,setReady]=useState(false),[loadError,setLoadError]=useState<string|null>(null),[tab,setTab]=useState<Tab>('home'),[period,setPeriod]=useState(7);
+ const insets=useSafeAreaInsets();const [data,setData]=useState<Data>(EMPTY),[ready,setReady]=useState(false),[loadError,setLoadError]=useState<string|null>(null);
+ const {tab,setTab}=useSessionNavigation();
  const clock=useLiveClock();
  const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
  const {sosProps,startSos}=useSosFlow(setData,()=>setTab('home'));
@@ -49,10 +50,7 @@ export function SmokeLessSession({sessionUser,verifyCurrentUid}:{sessionUser:Acc
 
   const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
  
- const remove=(id:string)=>ask('Ta bort registrering?','Registreringen tas bort från historiken.',()=>setData(v=>removeCigaretteEntry(v,id)));
- 
- const go=(t:Tab)=>{setTab(t)};
- const changeProfile=(patch:Partial<Profile>)=>setData(v=>updateProfile(v,patch));
+ const {remove,go,changeProfile,period,setPeriod}=useSessionActions({setData,ask,setTab});
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  if(!p)return <OnboardingScreen onStep={onStep} setOnStep={setOnStep} mode={mode} setMode={setMode} baseline={baseline} setBaseline={setBaseline} packSize={packSize} setPackSize={setPackSize} packPrice={packPrice} setPackPrice={setPackPrice} begin={begin}/>;
