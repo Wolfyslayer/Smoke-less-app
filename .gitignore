@@ -4,3 +4,6 @@ dist/
 web-build/
 .env*
 !.env.example
+
+# Firebase Android client configuration (provided locally for native builds)
+google-services.json
