@@ -6,10 +6,10 @@ type CardProps={children:React.ReactNode;style?:StyleProp<ViewStyle>;tone?:'surf
 export function AppCard({children,style,tone='surface'}:CardProps){
  return <View style={[styles.card,tone==='elevated'&&styles.elevated,style]}>{children}</View>;
 }
-type ButtonProps={title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean;secondaryTone?:'soft'|'elevated'};
-export function AppButton({title,onPress,secondary=false,disabled=false,secondaryTone='elevated'}:ButtonProps){
+type ButtonProps={title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean;secondaryTone?:'soft'|'elevated';compact?:boolean};
+export function AppButton({title,onPress,secondary=false,disabled=false,secondaryTone='elevated',compact=false}:ButtonProps){
  return <Pressable accessibilityRole="button" accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={({pressed})=>[styles.button,secondary&&(secondaryTone==='soft'?styles.secondarySoft:styles.secondaryElevated),pressed&&{opacity:.8},disabled&&{opacity:.4}]}>
-  <Text style={[styles.buttonText,secondary&&styles.secondaryText]}>{title}</Text>
+  <Text style={[styles.buttonText,secondary&&styles.secondaryText,compact&&styles.compactText]}>{title}</Text>
  </Pressable>;
 }
 const styles=StyleSheet.create({
@@ -20,4 +20,5 @@ const styles=StyleSheet.create({
  secondarySoft:{backgroundColor:C.soft},
  buttonText:{color:C.background,fontWeight:'900',fontSize:15},
  secondaryText:{color:C.white},
+ compactText:{fontSize:14,fontWeight:'800'},
 });
