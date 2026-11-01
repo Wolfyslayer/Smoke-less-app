@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import {Shield,Download} from 'lucide-react-native';
 import {C} from '../theme';
@@ -16,6 +17,10 @@ const Card=({children,style}:{children:React.ReactNode;style?:any})=><AppCard to
 const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="elevated"/>;
 export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBackupChange,onChangeMode,onChangeDailyTarget,onOpenProfile,onGuestReset,onExportBackup,onRestoreBackup}:Props){
  const loggedIn=accountEmail!==null;
+ const [reminderPreference,setReminderPreference]=useState(false);
+ const [reminderReady,setReminderReady]=useState(false);
+ useEffect(()=>{let active=true;AsyncStorage.getItem('smokeless:reminder-preference').then(v=>{if(active)setReminderPreference(v==='true')}).catch(()=>{}).finally(()=>{if(active)setReminderReady(true)});return()=>{active=false}},[]);
+ const changeReminderPreference=async()=>{if(!reminderReady)return;const next=!reminderPreference;try{await AsyncStorage.setItem('smokeless:reminder-preference',String(next));setReminderPreference(next)}catch{setReminderReady(false)}};
  return <View style={styles.screen}>
   <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
   <View style={styles.inlineHeading}><Shield size={19} color={C.lime}/><Text style={styles.heading}>Konto och säkerhet</Text></View>
@@ -35,9 +40,12 @@ export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBa
   </Card>:null}
   <View style={styles.inlineHeading}><Text style={styles.heading}>Påminnelser och motivation</Text></View>
   <Card style={{gap:10,padding:18}}>
-   <Text style={styles.cardTitle}>Påminnelser är inte aktiverade</Text>
-   <Text style={styles.muted}>Du får inga schemalagda påminnelser från den här funktionen ännu. Dagens uppmuntran visas direkt i appen utan att kräva tillgång till telefonens notiser.</Text>
-   <Text style={styles.muted}>När påminnelser införs ska du själv kunna välja om och när du vill få dem. Appen ska inte begära notisbehörighet utan att du först väljer att aktivera funktionen.</Text>
+   <Text style={styles.cardTitle}>Önskemål om dagliga påminnelser</Text>
+   <Text style={styles.muted}>Spara om du vill ha påminnelser när funktionen är färdig. Valet sparas lokalt på enheten och skickar inga notiser ännu.</Text>
+   <Pressable accessibilityRole="switch" accessibilityState={{checked:reminderPreference,disabled:!reminderReady}} disabled={!reminderReady} onPress={changeReminderPreference} style={[styles.inline,{justifyContent:'space-between',paddingVertical:10}]}>
+    <Text style={styles.cardTitle}>{reminderPreference?'Önskas':'Önskas inte'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{reminderPreference?'PÅ':'AV'}</Text>
+   </Pressable>
+   <Text style={styles.muted}>Ingen notisbehörighet begärs av detta val. Du får en separat fråga innan schemalagda notiser aktiveras.</Text>
   </Card>
   <View style={styles.inlineHeading}><Download size={19} color={C.lime}/><Text style={styles.heading}>Data och återställning</Text></View>
   <Card style={{gap:13,padding:18}}>
