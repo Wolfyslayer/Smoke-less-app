@@ -1,11 +1,11 @@
 import {useRef,useState,type Dispatch,type SetStateAction} from 'react';
 import type {Data} from '../domain';
+import type {Tab} from './useSessionNavigation';
 import type {LocalSessionStorage} from '../localSessionStorage';
 import * as account from '../authService';
 import {previewCloudImport,inspectCloudDeletion} from '../cloudRead';
 import {backupBeforeCloudImport} from '../storage';
 
-type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings';
 type Props={
  sessionUser:account.AccountUser|null;
  verifyCurrentUid:()=>string|null;
