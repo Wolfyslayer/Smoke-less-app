@@ -20,7 +20,10 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   assertUser();
   if (remote.hasTombstones) throw new Error('Molnet innehåller raderade poster. Automatisk synkronisering pausad för att undvika återställning av raderad data.');
   const preview = previewMerge(local, remote.data);
-  if (!preview.safeToApply) throw new Error('Lokal historik och molnhistorik skiljer sig. Automatisk synkronisering pausad för att undvika överskrivning.');
+  if (!preview.safeToApply) {
+    const types=[...new Set(preview.conflicts.map(conflict=>conflict.collection))].join(', ');
+    throw new Error('Lokal historik och molnhistorik skiljer sig ('+types+'). Automatisk synkronisering pausad för att undvika överskrivning.');
+  }
   const db=firestore();
   const base=db.doc(userDocumentPath(uid));
   const jobs: {path:string;payload:Record<string,unknown>}[] = [];
