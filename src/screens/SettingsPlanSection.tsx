@@ -40,7 +40,7 @@ const styles=StyleSheet.create({
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
  heading:{fontSize:19,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  muted:{fontSize:13,color:C.muted,lineHeight:20},goal:{fontSize:37,fontWeight:'900',color:C.white},
- choice:{backgroundColor:C.surface,borderRadius:16,padding:15,borderWidth:1,borderColor:C.border,gap:5},
+ choice:{backgroundColor:C.surface,borderRadius:16,padding:15,minHeight:48,borderWidth:1,borderColor:C.border,gap:5},
  selected:{borderColor:C.lime,backgroundColor:C.limeSoft},stepper:{backgroundColor:C.elevated,borderRadius:13,padding:12,minWidth:48,minHeight:48,alignItems:"center",justifyContent:"center"},
  button:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},
  disabled:{opacity:0.45},
