@@ -39,7 +39,7 @@ export function SettingsScreen({profile,goal,onChangeMode,onChangeDailyTarget}:P
    <Pressable accessibilityRole="switch" accessibilityLabel="Dagliga påminnelser" accessibilityHint="Slår på eller av önskemålet om dagliga påminnelser" accessibilityState={{checked:reminderPreference,disabled:!reminderReady||reminderBusy}} disabled={!reminderReady||reminderBusy} onPress={changeReminderPreference} style={[styles.inline,{justifyContent:'space-between',minHeight:48,paddingVertical:10}]}>
     <Text style={styles.cardTitle}>{reminderPreference?'Önskas':'Önskas inte'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{reminderPreference?'PÅ':'AV'}</Text>
    </Pressable>
-   {reminderPreference?<><View style={styles.inline}><TextInput accessibilityLabel="Timme för påminnelse, 0 till 23" keyboardType="number-pad" value={reminderHour} onChangeText={setReminderHour} maxLength={2} style={[styles.input,{minHeight:48,flex:1}]}/><Text style={styles.cardTitle}>:</Text><TextInput accessibilityLabel="Minut för påminnelse, 0 till 59" keyboardType="number-pad" value={reminderMinute} onChangeText={setReminderMinute} maxLength={2} style={[styles.input,{minHeight:48,flex:1}]}/></View><Button title={reminderBusy?'Vänta…':'Aktivera påminnelse vid vald tid'} onPress={activateReminder}/></>:null}
+   {reminderPreference?<><View style={styles.inline}><TextInput accessibilityLabel="Timme för påminnelse, 0 till 23" keyboardType="number-pad" value={reminderHour} onChangeText={setReminderHour} maxLength={2} style={[styles.input,styles.timeInput]}/><Text style={styles.cardTitle}>:</Text><TextInput accessibilityLabel="Minut för påminnelse, 0 till 59" keyboardType="number-pad" value={reminderMinute} onChangeText={setReminderMinute} maxLength={2} style={[styles.input,{minHeight:48,flex:1}]}/></View><Button title={reminderBusy?'Vänta…':'Aktivera påminnelse vid vald tid'} onPress={activateReminder}/></>:null}
    <Text style={styles.muted}>Meddelandet anpassas till din nuvarande plan ({profile.mode==='quit'?'rökstopp':'nedtrappning'}). Om du byter plan behöver du aktivera påminnelsen igen för att uppdatera meddelandet.</Text>
    <Text style={styles.muted}>Tiden gäller i telefonens lokala tidszon. Om du ändrar tiden behöver du aktivera påminnelsen igen. Stänger du av reglaget tas den schemalagda påminnelsen bort.</Text>
    {reminderStatus?<Text accessibilityRole="alert" style={styles.muted}>{reminderStatus}</Text>:null}
@@ -54,5 +54,6 @@ const styles=StyleSheet.create({
  heading:{fontSize:19,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},muted:{fontSize:13,color:C.muted,lineHeight:20},
  button:{backgroundColor:C.lime,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},buttonSecondary:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
  buttonText:{color:C.background,fontWeight:'900',fontSize:15},
+ timeInput:{minHeight:48,flex:1,minWidth:0,textAlign:'center'},
  input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,minHeight:110,textAlignVertical:'top',fontSize:13},
 });
