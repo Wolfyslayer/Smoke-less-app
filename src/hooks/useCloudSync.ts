@@ -43,5 +43,6 @@ export function useCloudSync({
   return()=>clearTimeout(timer);
  },[data,ready,sessionUser?.uid,syncTrigger,migrationBusy,cloudPreviewBusy]);
  useAppResumeTrigger(setSyncTrigger);
- return {syncStatus};
+ const retrySync=()=>{if(!syncInFlight.current){setSyncStatus('');setSyncTrigger(v=>v+1);}};
+ return {syncStatus,retrySync};
 }

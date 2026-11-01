@@ -1,4 +1,4 @@
-import {getFirestore,doc,collection,getDoc,getDocs} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {getAuth} from '@react-native-firebase/auth';
 import type {Data} from './domain';
 import {isCloudProfile, isCloudEntry, isCloudCraving, isCloudCheckin, userDocumentPath} from './cloudSchema';
@@ -17,14 +17,19 @@ function unwrap(value: unknown): {payload: Record<string, unknown>; deleted: boo
 /** Read-only. No writes, no migration and no local storage mutation. */
 export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
   if (!uid || getAuth().currentUser?.uid !== uid) throw new Error('Kontot har ändrats. Logga in igen.');
-  const db=getFirestore();
-  const base=doc(db,userDocumentPath(uid));
-  const [plan, entries, cravings, checkins] = await Promise.all([
-    getDoc(doc(base,'settings','plan')),
-    getDocs(collection(base,'entries')),
-    getDocs(collection(base,'cravings')),
-    getDocs(collection(base,'checkins')),
-  ]);
+  // Read in stages so the error screen can identify the failing Firebase call.
+  const readStage=async <T>(stage:string,operation:()=>Promise<T>):Promise<T>=>{
+    try{return await operation();}
+    catch(error){const message=error instanceof Error?error.message:String(error);throw new Error('Firestore / '+stage+': '+message);}
+  };
+  // React Native Firebase's namespaced document reads use the native bridge
+  // directly. Keep reads isolated from any cloud write path.
+  const db=await readStage('initiera databasen',async()=>firestore());
+  const base=await readStage('skapa användarreferens',async()=>db.doc(userDocumentPath(uid)));
+  const plan=await readStage('läsa sparad plan',()=>base.collection('settings').doc('plan').get());
+  const entries=await readStage('läsa cigaretthistorik',()=>base.collection('entries').get());
+  const cravings=await readStage('läsa röksug',()=>base.collection('cravings').get());
+  const checkins=await readStage('läsa avstämningar',()=>base.collection('checkins').get());
   if (getAuth().currentUser?.uid !== uid) throw new Error('Kontot ändrades under hämtningen.');
   let hasTombstones = false;
   const parse = <T>(items: {data: () => unknown}[], validate: (v: unknown) => v is T): T[] =>

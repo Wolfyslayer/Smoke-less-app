@@ -13,6 +13,7 @@ type Props={
  onPasswordChange:(value:string)=>void;onAccountAction:(action:'login'|'signup'|'reset'|'logout')=>void;
  onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
 };
+const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
 function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
 export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
@@ -25,7 +26,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   {accountUser?<Card style={{gap:13,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Molnsäkerhetskopia</Text><Text style={s.muted}>Automatisk Firestore-synkronisering</Text></View></View>
   <View style={{gap:9,padding:13,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border}}>
-   <Text style={s.cardTitle}>E-postverifiering</Text>
+   <Text style={s.cardTitle} accessibilityRole="header">E-postverifiering</Text>
    <Text style={{color:emailVerified?C.lime:'#E7B967',fontSize:13,fontWeight:'800'}}>{emailVerified?'✓ Verifierad e-postadress':'E-postadressen är inte verifierad'}</Text>
    {!emailVerified?<><Text style={s.muted}>Verifiera din e-postadress för att skydda åtkomsten till ditt konto. Öppna länken i mejlet och kontrollera sedan status här.</Text><Btn title={verificationBusy?'Vänta…':'Skicka verifieringsmejl'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('send')}/><Btn title={verificationBusy?'Kontrollerar…':'Kontrollera verifiering'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('refresh')}/></>:null}
   </View>
@@ -37,17 +38,19 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
  </Card>:<Card style={{gap:14,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountMode==='login'?'Välkommen tillbaka':'Skapa ditt konto'}</Text><Text style={s.muted}>Spara din resa tryggt med molnsäkerhetskopiering.</Text></View></View>
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" keyboardType="email-address" autoComplete="email" placeholder="E-postadress" placeholderTextColor={C.dim} value={accountEmail} onChangeText={onEmailChange} style={s.input}/>
+  {accountEmail.trim()&&!validEmail(accountEmail)?<Text accessibilityRole="alert" style={s.muted}>Ange en giltig e-postadress, till exempel namn@exempel.se.</Text>:null}
   <TextInput accessibilityLabel="Lösenord" secureTextEntry autoCapitalize="none" autoComplete={accountMode==='signup'?'new-password':'current-password'} placeholder="Lösenord" placeholderTextColor={C.dim} value={accountPassword} onChangeText={onPasswordChange} style={s.input}/>
-  <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy} onPress={()=>onAccountAction(accountMode)}/>
+  {accountMode==='signup'&&accountPassword.length>0&&accountPassword.length<6?<Text accessibilityRole="alert" style={s.muted}>Lösenordet måste innehålla minst 6 tecken.</Text>:null}
+  <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!validEmail(accountEmail)||!accountPassword||(accountMode==='signup'&&accountPassword.length<6)} onPress={()=>onAccountAction(accountMode)}/>
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
-  <Pressable disabled={accountBusy} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center'}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
+  <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" accessibilityState={{disabled:accountBusy||!validEmail(accountEmail)}} style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center',opacity:accountBusy||!validEmail(accountEmail)?0.5:1}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}
  {accountUser?<Card style={{gap:12,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={21} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Kontosäkerhet</Text><Text style={s.muted}>Hantera åtkomsten till ditt konto.</Text></View></View>
   <Text style={s.muted}>Vill du byta lösenord skickar vi en återställningslänk till {accountUser.email||'din registrerade e-postadress'}. Din historik påverkas inte.</Text>
   <Btn title={accountBusy?'Skickar…':'Skicka länk för lösenordsbyte'} secondary disabled={accountBusy||!accountUser.email} onPress={onPasswordReset}/>
   <View style={{height:1,backgroundColor:C.border}}/>
-  <Text style={s.cardTitle}>Radera data och konto</Text>
+  <Text style={s.cardTitle} accessibilityRole="header">Radera data och konto</Text>
   <Btn title={cloudPreviewBusy?'Kontrollerar…':'Kontrollera vad som finns i molnet'} secondary disabled={cloudPreviewBusy||migrationBusy||accountBusy} onPress={onInspectCloud}/>
   <Text style={s.muted}>Att radera lokal historik, molnhistorik och Firebase-kontot är tre olika åtgärder. De är ännu inte tillgängliga här eftersom säker radering och skydd mot att synkronisering återskapar data behöver färdigställas först. Använd JSON-säkerhetskopian under Profil → Säkerhetskopiering för att spara en kopia.</Text>
   <Btn title="Öppna säkerhetskopiering" secondary onPress={()=>onOpenSettings()}/>

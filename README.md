@@ -25,3 +25,29 @@ The existing pull-request CI checks TypeScript, unit tests and web export. **Web
 History is stored locally first. Guest-to-account migration requires explicit consent; account-isolated storage modules are still being integrated into the UI. Cloud import is read-only until explicitly approved and cloud writes are not yet enabled.
 
 Smoke Less is a wellness tracker, not medical advice.
+
+## Phase 7.0 – Beta testing, quality assurance and launch
+
+The release process is tracked in the phase 7.0 pull request. Before distributing a beta:
+
+- [ ] Confirm both pull-request CI workflows pass on the latest commit.
+- [ ] Build Android locally using the development build setup below, then verify installation and launch on a physical device. The GitHub Actions native build is optional.
+- [ ] Test login, guest mode, profile, reminders, backup export and restore on a physical Android device.
+- [ ] Test small-screen layout, larger system font sizes, keyboard interaction and TalkBack navigation.
+- [ ] Check privacy notices, permissions and data-handling claims against actual app behavior.
+- [ ] Record any beta defects and fix blockers before declaring a release candidate.
+
+A successful TypeScript/web CI run is **not** equivalent to a tested Android release. Do not mark physical-device checks as completed without evidence.
+
+## Phase 7.0 – Validation coverage audit (2026-11-01)
+
+The pull-request workflow `.github/workflows/ci.yml` uses Node.js 22 and executes TypeScript checking, domain tests, local storage tests, account migration tests and web export. The separate `.github/workflows/firestore-rules.yml` runs the Firestore rules emulator tests. The native Android workflow `.github/workflows/native-android.yml` is **manual**: it needs the repository secret `GOOGLE_SERVICES_JSON_BASE64`, runs Expo prebuild and Gradle debug assembly, then uploads an APK artifact retained for seven days. These checks do not establish that the APK launches correctly or that notifications, Firebase authentication, backup restore and accessibility work on a real Android device. The latter are outstanding acceptance-test gates.
+
+## Android beta acceptance procedure
+
+1. On a Windows development PC with Node.js 22, JDK 17, Android SDK and local `google-services.json`, run `npm ci` and `npx expo run:android` on the phase branch. This builds and installs the Android development app on a connected device or emulator.
+2. Alternatively, run `npx expo prebuild --platform android` and build an APK locally with `cd android` followed by `gradlew.bat :app:assembleDebug`. The optional GitHub Actions workflow is not required.
+3. Install the APK on a physical Android device. Verify app launch, sign-in, guest mode, data persistence, reminders, backup/restore, and accessibility.
+4. Record Android version, device model, tested commit, outcomes, and reproducible defects in the pull request. Do not mark the native acceptance gate complete without this evidence.
+
+A local debug APK is for testing, not a signed Google Play production release. Never commit `google-services.json` or signing credentials.
