@@ -11,7 +11,7 @@ type Props={
  onChangeDailyTarget:(value:number|null)=>void;
 };
 function Card({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']}){return <AppCard style={style}>{children}</AppCard>}
-function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;selected:boolean;onPress:()=>void}){return <Pressable accessibilityRole="radio" accessibilityLabel={title} accessibilityHint={subtitle} accessibilityState={{selected}} onPress={onPress} style={[styles.choice,selected&&styles.selected]}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text></Pressable>}
+function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;selected:boolean;onPress:()=>void}){return <Pressable accessibilityRole="radio" accessibilityLabel={title} accessibilityHint={subtitle} accessibilityState={{checked:selected}} onPress={onPress} style={[styles.choice,selected&&styles.selected]}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text></Pressable>}
 export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTarget}:Props){
  return <>
   <Card style={{gap:13,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
