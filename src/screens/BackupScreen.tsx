@@ -24,7 +24,7 @@ export function BackupScreen({accountEmail,syncStatus,backup,onBackupChange,onEx
    <View style={s.heading}><Download size={22} color={C.lime}/><Text style={s.cardTitle}>Manuell säkerhetskopia</Text></View>
    <Text style={s.muted}>Exportera din historik som JSON och förvara kopian säkert. Återställning kan ändra din lokala historik och kräver bekräftelse.</Text>
    <AppButton title="Skapa JSON-säkerhetskopia" secondary secondaryTone="elevated" onPress={onExportBackup}/>
-   <TextInput accessibilityLabel="JSON-säkerhetskopia" accessibilityHint="Klistra in en säkerhetskopia i JSON-format för återställning" multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={s.input}/>
+   <TextInput accessibilityLabel="JSON-säkerhetskopia" accessibilityHint="Klistra in en säkerhetskopia i JSON-format för återställning" autoCapitalize="none" autoCorrect={false} spellCheck={false} multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={s.input} selectionColor={C.lime}/>
    <AppButton title="Återställ från JSON" secondary secondaryTone="elevated" onPress={onRestoreBackup}/>
   </AppCard>
   {!loggedIn?<AppCard tone="surface" style={s.card}>
