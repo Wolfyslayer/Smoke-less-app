@@ -31,7 +31,7 @@ Smoke Less is a wellness tracker, not medical advice.
 The release process is tracked in the phase 7.0 pull request. Before distributing a beta:
 
 - [ ] Confirm both pull-request CI workflows pass on the latest commit.
-- [ ] Run the **Native Android build (manual)** workflow with the configured Firebase secret and verify the generated debug APK installs and starts.
+- [ ] Build Android locally using the development build setup below, then verify installation and launch on a physical device. The GitHub Actions native build is optional.
 - [ ] Test login, guest mode, profile, reminders, backup export and restore on a physical Android device.
 - [ ] Test small-screen layout, larger system font sizes, keyboard interaction and TalkBack navigation.
 - [ ] Check privacy notices, permissions and data-handling claims against actual app behavior.
@@ -45,9 +45,9 @@ The pull-request workflow `.github/workflows/ci.yml` uses Node.js 22 and execute
 
 ## Android beta acceptance procedure
 
-1. In GitHub Actions, select **Native Android build (manual)** and run it against the current phase branch. This requires the configured `GOOGLE_SERVICES_JSON_BASE64` repository secret.
-2. Confirm that the Gradle build and APK validation steps pass and download the `smoke-less-android-debug` artifact before its seven-day retention expires.
+1. On a Windows development PC with Node.js 22, JDK 17, Android SDK and local `google-services.json`, run `npm ci` and `npx expo run:android` on the phase branch. This builds and installs the Android development app on a connected device or emulator.
+2. Alternatively, run `npx expo prebuild --platform android` and build an APK locally with `cd android` followed by `gradlew.bat :app:assembleDebug`. The optional GitHub Actions workflow is not required.
 3. Install the APK on a physical Android device. Verify app launch, sign-in, guest mode, data persistence, reminders, backup/restore, and accessibility.
 4. Record Android version, device model, tested commit, outcomes, and reproducible defects in the pull request. Do not mark the native acceptance gate complete without this evidence.
 
-This debug APK is for testing, not a signed Google Play production release.
+A local debug APK is for testing, not a signed Google Play production release. Never commit `google-services.json` or signing credentials.
