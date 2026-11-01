@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
+import {Platform,Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
+import * as Notifications from 'expo-notifications';
 import {Shield,Download} from 'lucide-react-native';
 import {C} from '../theme';
 import {AppCard,AppButton} from '../components/ui';
@@ -19,8 +20,15 @@ export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBa
  const loggedIn=accountEmail!==null;
  const [reminderPreference,setReminderPreference]=useState(false);
  const [reminderReady,setReminderReady]=useState(false);
- useEffect(()=>{let active=true;AsyncStorage.getItem('smokeless:reminder-preference').then(v=>{if(active)setReminderPreference(v==='true')}).catch(()=>{}).finally(()=>{if(active)setReminderReady(true)});return()=>{active=false}},[]);
- const changeReminderPreference=async()=>{if(!reminderReady)return;const next=!reminderPreference;try{await AsyncStorage.setItem('smokeless:reminder-preference',String(next));setReminderPreference(next)}catch{setReminderReady(false)}};
+ const [reminderHour,setReminderHour]=useState('19');
+ const [reminderMinute,setReminderMinute]=useState('00');
+ const [reminderStatus,setReminderStatus]=useState('');
+ const [reminderBusy,setReminderBusy]=useState(false);
+ useEffect(()=>{let active=true;Promise.all([AsyncStorage.getItem('smokeless:reminder-preference'),AsyncStorage.getItem('smokeless:reminder-hour'),AsyncStorage.getItem('smokeless:reminder-minute')]).then(([v,h,m])=>{if(active){setReminderPreference(v==='true');if(h)setReminderHour(h);if(m)setReminderMinute(m)}}).catch(()=>{if(active)setReminderStatus('Inställningarna kunde inte läsas.')}).finally(()=>{if(active)setReminderReady(true)});return()=>{active=false}},[]);
+ const cancelReminder=async()=>{const id=await AsyncStorage.getItem('smokeless:reminder-id');if(id){await Notifications.cancelScheduledNotificationAsync(id);await AsyncStorage.removeItem('smokeless:reminder-id')}};
+ const changeReminderPreference=async()=>{if(!reminderReady||reminderBusy)return;setReminderBusy(true);try{if(reminderPreference){if(Platform.OS!=='web')await cancelReminder();await AsyncStorage.setItem('smokeless:reminder-preference','false');setReminderPreference(false);setReminderStatus('Påminnelser är avstängda.')}else{await AsyncStorage.setItem('smokeless:reminder-preference','true');setReminderPreference(true);setReminderStatus('Önskemålet är sparat. Tryck Aktivera påminnelse för att begära behörighet och schemalägga.')}}catch{setReminderStatus('Kunde inte spara ändringen. Försök igen.')}finally{setReminderBusy(false)}};
+ const activateReminder=async()=>{if(!reminderPreference||reminderBusy)return;const hour=Number(reminderHour),minute=Number(reminderMinute);if(!/^\\d{1,2}$/.test(reminderHour)||!/^\\d{1,2}$/.test(reminderMinute)||hour>23||minute>59){setReminderStatus('Ange en giltig tid: timmar 0–23 och minuter 0–59.');return}if(Platform.OS==='web'){setReminderStatus('Schemalagda påminnelser stöds bara i mobilappen.');return}setReminderBusy(true);try{const existing=await Notifications.getPermissionsAsync();const permission=existing.granted?existing:await Notifications.requestPermissionsAsync();if(!permission.granted){setReminderStatus('Notisbehörighet nekades. Du kan ändra detta i telefonens inställningar.');return}await cancelReminder();const id=await Notifications.scheduleNotificationAsync({content:{title:'Smoke Less · Daglig avstämning',body:'Hur har dagen gått? Ta en stund att registrera dina framsteg.'},trigger:{type:Notifications.SchedulableTriggerInputTypes.DAILY,hour,minute}});await AsyncStorage.multiSet([['smokeless:reminder-id',id],['smokeless:reminder-hour',reminderHour],['smokeless:reminder-minute',reminderMinute]]);setReminderStatus('Daglig påminnelse schemalagd kl. '+String(hour).padStart(2,'0')+':'+String(minute).padStart(2,'0')+'.')}catch{setReminderStatus('Kunde inte schemalägga påminnelsen. Försök igen.')}finally{setReminderBusy(false)}};
+
  return <View style={styles.screen}>
   <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
   <View style={styles.inlineHeading}><Shield size={19} color={C.lime}/><Text style={styles.heading}>Konto och säkerhet</Text></View>
@@ -41,11 +49,13 @@ export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBa
   <View style={styles.inlineHeading}><Text style={styles.heading}>Påminnelser och motivation</Text></View>
   <Card style={{gap:10,padding:18}}>
    <Text style={styles.cardTitle}>Önskemål om dagliga påminnelser</Text>
-   <Text style={styles.muted}>Spara om du vill ha påminnelser när funktionen är färdig. Valet sparas lokalt på enheten och skickar inga notiser ännu.</Text>
-   <Pressable accessibilityRole="switch" accessibilityState={{checked:reminderPreference,disabled:!reminderReady}} disabled={!reminderReady} onPress={changeReminderPreference} style={[styles.inline,{justifyContent:'space-between',paddingVertical:10}]}>
+   <Text style={styles.muted}>Välj om du vill ha en daglig påminnelse. Du godkänner notisbehörighet separat när du trycker på Aktivera påminnelse.</Text>
+   <Pressable accessibilityRole="switch" accessibilityState={{checked:reminderPreference,disabled:!reminderReady||reminderBusy}} disabled={!reminderReady||reminderBusy} onPress={changeReminderPreference} style={[styles.inline,{justifyContent:'space-between',paddingVertical:10}]}>
     <Text style={styles.cardTitle}>{reminderPreference?'Önskas':'Önskas inte'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{reminderPreference?'PÅ':'AV'}</Text>
    </Pressable>
-   <Text style={styles.muted}>Ingen notisbehörighet begärs av detta val. Du får en separat fråga innan schemalagda notiser aktiveras.</Text>
+   {reminderPreference?<><View style={styles.inline}><TextInput accessibilityLabel="Timme för påminnelse" keyboardType="number-pad" value={reminderHour} onChangeText={setReminderHour} maxLength={2} style={[styles.input,{minHeight:48,flex:1}]}/><Text style={styles.cardTitle}>:</Text><TextInput accessibilityLabel="Minut för påminnelse" keyboardType="number-pad" value={reminderMinute} onChangeText={setReminderMinute} maxLength={2} style={[styles.input,{minHeight:48,flex:1}]}/></View><Button title={reminderBusy?'Vänta…':'Aktivera påminnelse vid vald tid'} onPress={activateReminder}/></>:null}
+   <Text style={styles.muted}>Tiden gäller i telefonens lokala tidszon. Om du ändrar tiden behöver du aktivera påminnelsen igen. Stänger du av reglaget tas den schemalagda påminnelsen bort.</Text>
+   {reminderStatus?<Text accessibilityRole="alert" style={styles.muted}>{reminderStatus}</Text>:null}
   </Card>
   <View style={styles.inlineHeading}><Download size={19} color={C.lime}/><Text style={styles.heading}>Data och återställning</Text></View>
   <Card style={{gap:13,padding:18}}>
