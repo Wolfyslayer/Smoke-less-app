@@ -1,4 +1,5 @@
 import React,{useState} from 'react';
+import {CloudOff,ChevronDown,ChevronUp,ShieldCheck} from 'lucide-react-native';
 import {ActivityIndicator,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppSessionOnboarding} from './AppSessionOnboarding';
@@ -15,6 +16,7 @@ type SessionModel=ReturnType<typeof useSmokeLessSessionModel>;
 export function AppSessionView({model}:{model:SessionModel}){
  const insets=useSafeAreaInsets();
  const [showLogin,setShowLogin]=useState(false);
+ const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
@@ -22,12 +24,15 @@ export function AppSessionView({model}:{model:SessionModel}){
  // Wait for the first cloud read before deciding that onboarding is needed.
  if(!p && accountUser && syncStatus!=='Synkroniserad med Firestore') {
   const syncing=!syncStatus||syncStatus==='Synkroniserar…'||syncStatus==='Lokala data ändrades. Synkroniserar igen.';
-  return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:14}]}>
-   {syncing?<ActivityIndicator color={C.lime}/>:null}
-   <Text style={{color:C.white,textAlign:'center',fontSize:17,fontWeight:'700'}}>{syncing?'Hämtar din sparade plan…':'Kunde inte hämta din sparade plan'}</Text>
-   {!syncing?<Text selectable style={{color:C.dim,textAlign:'center'}}>{syncStatus}</Text>:null}
-   <Text style={{color:C.dim,textAlign:'center'}}>Din sparade historik skrivs inte över om hämtningen misslyckas.</Text>
-   {!syncing?<Pressable accessibilityRole="button" onPress={model.retrySync} style={s.loginButton}><Text style={{fontWeight:'900',color:C.background}}>Försök igen</Text></Pressable>:null}
+  return <View style={[s.root,{justifyContent:'center',paddingHorizontal:24}]}>
+   <View style={s.errorCard}>
+    <View style={s.errorIcon}><CloudOff color={C.lime} size={30}/></View>
+    <Text style={s.errorTitle}>{syncing?'Hämtar dina uppgifter…':'Vi kunde inte hämta dina uppgifter'}</Text>
+    <Text style={s.errorDescription}>{syncing?'Vi kontrollerar din sparade plan och historik. Det kan ta en liten stund.':'Anslutningen till ditt konto fungerade inte som väntat. Försök igen om en stund.'}</Text>
+    {syncing?<ActivityIndicator color={C.lime} size="large"/>:<Pressable accessibilityRole="button" onPress={()=>{setShowSyncDetails(false);model.retrySync();}} style={s.errorButton}><Text style={s.errorButtonText}>Försök igen</Text></Pressable>}
+    <View style={s.safeRow}><ShieldCheck size={18} color={C.success}/><Text style={s.safeText}>Din sparade historik skrivs inte över.</Text></View>
+    {!syncing?<><Pressable accessibilityRole="button" accessibilityState={{expanded:showSyncDetails}} onPress={()=>setShowSyncDetails(v=>!v)} style={s.detailsButton}><Text style={s.detailsText}>{showSyncDetails?'Dölj tekniska detaljer':'Visa tekniska detaljer'}</Text>{showSyncDetails?<ChevronUp size={16} color={C.muted}/>:<ChevronDown size={16} color={C.muted}/>}</Pressable>{showSyncDetails?<Text selectable style={s.technicalError}>{syncStatus}</Text>:null}</>:null}
+   </View>
   </View>;
  }
  if(!p)return <View style={s.root}>{showLogin && !accountUser?
@@ -47,4 +52,4 @@ export function AppSessionView({model}:{model:SessionModel}){
  <AppScreenRouter model={model}/>
  </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><AppSessionOverlays model={model}/></View>
 }
-const s=StyleSheet.create({root:{flex:1,backgroundColor:C.background},input:{backgroundColor:C.surface,color:C.white,borderColor:C.border,borderWidth:1,borderRadius:14,padding:14,minHeight:50},loginButton:{backgroundColor:C.lime,borderRadius:14,minHeight:50,alignItems:'center',justifyContent:'center'}});
+const s=StyleSheet.create({errorCard:{backgroundColor:C.surface,borderColor:C.border,borderWidth:1,borderRadius:28,padding:26,alignItems:'center',gap:18},errorIcon:{width:68,height:68,borderRadius:22,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},errorTitle:{color:C.white,fontSize:23,fontWeight:'900',textAlign:'center',lineHeight:30},errorDescription:{color:C.muted,fontSize:15,lineHeight:23,textAlign:'center'},errorButton:{backgroundColor:C.lime,borderRadius:16,paddingVertical:16,paddingHorizontal:28,alignItems:'center',alignSelf:'stretch'},errorButtonText:{color:C.background,fontSize:16,fontWeight:'900'},safeRow:{flexDirection:'row',alignItems:'center',gap:8},safeText:{color:C.success,fontSize:12,flexShrink:1},detailsButton:{flexDirection:'row',alignItems:'center',gap:8,padding:8},detailsText:{color:C.muted,fontSize:13,fontWeight:'700'},technicalError:{color:C.dim,fontSize:12,lineHeight:18,backgroundColor:C.elevated,borderRadius:12,padding:12,alignSelf:'stretch'},root:{flex:1,backgroundColor:C.background},input:{backgroundColor:C.surface,color:C.white,borderColor:C.border,borderWidth:1,borderRadius:14,padding:14,minHeight:50},loginButton:{backgroundColor:C.lime,borderRadius:14,minHeight:50,alignItems:'center',justifyContent:'center'}});
