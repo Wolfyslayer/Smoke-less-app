@@ -3,13 +3,14 @@ import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {Target,CalendarDays,Minus,Plus} from 'lucide-react-native';
 import {C} from '../theme';
 import type {Profile} from '../domain';
+import {AppCard} from '../components/ui';
 
 type Props={
  profile:Profile;goal:number;
  onChangeMode:(mode:'reduce'|'quit')=>void;
  onChangeDailyTarget:(value:number|null)=>void;
 };
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
+function Card({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']}){return <AppCard style={style}>{children}</AppCard>}
 function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;selected:boolean;onPress:()=>void}){return <Pressable accessibilityRole="radio" accessibilityLabel={title} accessibilityHint={subtitle} accessibilityState={{selected}} onPress={onPress} style={[styles.choice,selected&&styles.selected]}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text></Pressable>}
 export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTarget}:Props){
  return <>
@@ -34,7 +35,6 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
  </>;
 }
 const styles=StyleSheet.create({
- card:{backgroundColor:C.surface,borderRadius:20,padding:15,borderWidth:1,borderColor:C.border,gap:9},
  inline:{flexDirection:'row',alignItems:'center',gap:11},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
  heroIcon:{width:46,height:46,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
