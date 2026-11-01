@@ -12,6 +12,7 @@ type Props={
 export function BackupScreen({accountEmail,syncStatus,backup,onBackupChange,onExportBackup,onRestoreBackup,onGuestReset,onOpenAccount,onBack}:Props){
  const loggedIn=accountEmail!==null;
  const hasBackupText=backup.trim().length>0;
+ const isJsonObject=(()=>{if(!hasBackupText)return false;try{const value:unknown=JSON.parse(backup);return typeof value==='object'&&value!==null&&!Array.isArray(value)}catch{return false}})();
  return <View style={s.screen}>
   <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={onBack} style={s.back}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
   <View style={s.heading}><Download size={25} color={C.lime}/><Text style={s.title} accessibilityRole="header">Säkerhetskopiering</Text></View>
@@ -26,8 +27,8 @@ export function BackupScreen({accountEmail,syncStatus,backup,onBackupChange,onEx
    <Text style={s.muted}>Exportera din historik som JSON och förvara kopian säkert. Återställning kan ändra din lokala historik och kräver bekräftelse.</Text>
    <AppButton title="Skapa JSON-säkerhetskopia" secondary secondaryTone="elevated" onPress={onExportBackup}/>
    <TextInput accessibilityLabel="JSON-säkerhetskopia" accessibilityHint="Klistra in en säkerhetskopia i JSON-format för återställning" autoCapitalize="none" autoCorrect={false} spellCheck={false} multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={s.input} selectionColor={C.lime}/>
-   <AppButton title="Återställ från JSON" secondary secondaryTone="elevated" disabled={!hasBackupText} onPress={onRestoreBackup}/>
-   {!hasBackupText?<Text style={s.muted}>Klistra in en JSON-säkerhetskopia för att aktivera återställning.</Text>:null}
+   <AppButton title="Återställ från JSON" secondary secondaryTone="elevated" disabled={!isJsonObject} onPress={onRestoreBackup}/>
+   {!hasBackupText?<Text style={s.muted}>Klistra in en JSON-säkerhetskopia för att aktivera återställning.</Text>:!isJsonObject?<Text accessibilityRole="alert" style={s.muted}>Innehållet måste vara ett giltigt JSON-objekt innan återställning kan påbörjas.</Text>:null}
   </AppCard>
   {!loggedIn?<AppCard tone="surface" style={s.card}>
    <View style={s.heading}><Shield size={22} color="#E7B967"/><Text style={s.cardTitle} accessibilityRole="header">Hantera gästhistorik</Text></View>
