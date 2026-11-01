@@ -2,24 +2,20 @@ import React,{useEffect,useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Platform,Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import * as Notifications from 'expo-notifications';
-import {Shield,Download} from 'lucide-react-native';
 import {C} from '../theme';
 import {AppCard,AppButton} from '../components/ui';
 import type {Profile} from '../domain';
 import {SettingsPlanSection} from './SettingsPlanSection';
 
 type Props={
- profile:Profile;goal:number;accountEmail:string|null;syncStatus:string;
- backup:string;onBackupChange:(value:string)=>void;
+ profile:Profile;goal:number;
  onChangeMode:(mode:'reduce'|'quit')=>void;onChangeDailyTarget:(value:number|null)=>void;
- onOpenProfile:()=>void;onGuestReset:()=>void;onExportBackup:()=>void;onRestoreBackup:()=>void;
 };
 export function validReminderTime(hourText:string,minuteText:string){return /^[0-9]{1,2}$/.test(hourText)&&/^[0-9]{1,2}$/.test(minuteText)&&Number(hourText)<=23&&Number(minuteText)<=59}
 export function reminderStatusMessage(optedIn:boolean,permissionGranted:boolean,hasSavedId:boolean,hasScheduledId:boolean){if(!optedIn)return 'Påminnelser är avstängda.';if(!permissionGranted)return 'Notisbehörighet saknas. Tillåt notiser i telefonens inställningar och aktivera sedan påminnelsen igen.';return hasSavedId&&hasScheduledId?'Daglig påminnelse är schemalagd och notiser är tillåtna.':'Ingen aktiv påminnelse hittades. Tryck Aktivera påminnelse för att schemalägga.'}
 const Card=({children,style}:{children:React.ReactNode;style?:any})=><AppCard tone="surface" style={style}>{children}</AppCard>;
 const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="elevated"/>;
-export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBackupChange,onChangeMode,onChangeDailyTarget,onOpenProfile,onGuestReset,onExportBackup,onRestoreBackup}:Props){
- const loggedIn=accountEmail!==null;
+export function SettingsScreen({profile,goal,onChangeMode,onChangeDailyTarget}:Props){
  const [reminderPreference,setReminderPreference]=useState(false);
  const [reminderReady,setReminderReady]=useState(false);
  const [reminderHour,setReminderHour]=useState('19');
@@ -36,21 +32,6 @@ export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBa
 
  return <View style={styles.screen}>
   <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
-  <View style={styles.inlineHeading}><Shield size={19} color={C.lime}/><Text style={styles.heading}>Konto och säkerhet</Text></View>
-  {!loggedIn?<Card style={{gap:13,padding:18,borderColor:'#9D793E',backgroundColor:'#272218'}}>
-   <View style={styles.inline}><View style={[styles.actionIcon,{width:42,height:42,borderRadius:13,backgroundColor:'#47381F'}]}><Shield size={22} color="#E7B967"/></View><View style={{flex:1,gap:3}}><Text style={styles.cardTitle}>Inte säkerhetskopierad</Text><Text style={{color:'#E7B967',fontSize:12,fontWeight:'800'}}>GÄSTLÄGE</Text></View></View>
-   <Text style={styles.muted}>Din historik finns bara på den här enheten. Om du avinstallerar appen, byter telefon eller förlorar enheten kan den försvinna.</Text>
-   <Button title="Logga in eller skapa konto" onPress={onOpenProfile}/>
-  </Card>:<Card style={{gap:12,padding:18}}>
-   <View style={styles.inline}><View style={styles.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={styles.cardTitle}>Molnsäkerhetskopia</Text><Text style={styles.muted}>{accountEmail||'Inloggad användare'}</Text></View></View>
-   <Text style={styles.muted}>{syncStatus||'Automatisk synkronisering är aktiverad. Historiken synkas när appen öppnas och när du gör ändringar.'}</Text>
-   <Button title="Hantera konto" secondary onPress={onOpenProfile}/>
-  </Card>}
-  {!loggedIn?<Card style={{gap:10,padding:18,borderColor:'#9D793E'}}>
-   <Text style={styles.cardTitle}>Radera lokal gästhistorik</Text>
-   <Text style={styles.muted}>En separat återställningskopia sparas på den här enheten innan historiken rensas. Åtgärden påverkar inte Firebase-konton eller molndata. Avinstallera inte appen om du vill behålla återställningskopian.</Text>
-   <Button title="Radera gästhistorik (med bekräftelse)" secondary onPress={onGuestReset}/>
-  </Card>:null}
   <View style={styles.inlineHeading}><Text style={styles.heading}>Påminnelser och motivation</Text></View>
   <Card style={{gap:10,padding:18}}>
    <Text style={styles.cardTitle}>Önskemål om dagliga påminnelser</Text>
@@ -62,13 +43,6 @@ export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBa
    <Text style={styles.muted}>Meddelandet anpassas till din nuvarande plan ({profile.mode==='quit'?'rökstopp':'nedtrappning'}). Om du byter plan behöver du aktivera påminnelsen igen för att uppdatera meddelandet.</Text>
    <Text style={styles.muted}>Tiden gäller i telefonens lokala tidszon. Om du ändrar tiden behöver du aktivera påminnelsen igen. Stänger du av reglaget tas den schemalagda påminnelsen bort.</Text>
    {reminderStatus?<Text accessibilityRole="alert" style={styles.muted}>{reminderStatus}</Text>:null}
-  </Card>
-  <View style={styles.inlineHeading}><Download size={19} color={C.lime}/><Text style={styles.heading}>Data och återställning</Text></View>
-  <Card style={{gap:13,padding:18}}>
-   <View style={styles.inline}><View style={styles.actionIcon}><Download size={20} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={styles.cardTitle}>Manuell säkerhetskopia</Text><Text style={styles.muted}>Exportera eller återställ din historik som JSON.</Text></View></View>
-   <Button title="Skapa JSON-säkerhetskopia" secondary onPress={onExportBackup}/>
-   <TextInput accessibilityLabel="JSON-säkerhetskopia" multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={styles.input}/>
-   <Button title="Återställ från JSON" secondary onPress={onRestoreBackup}/>
   </Card>
   <Text style={[styles.muted,{textAlign:'center',paddingHorizontal:12,paddingVertical:9}]}>Smoke Less hjälper dig att följa din utveckling och ersätter inte medicinsk rådgivning.</Text>
  </View>;
