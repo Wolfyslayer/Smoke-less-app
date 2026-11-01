@@ -92,3 +92,35 @@ test('saved plan anchor is accepted by data validation', () => {
   const data = {profile: profile({planStartTarget: 8, originalStartAt: '2026-10-01T12:00:00.000Z'}), entries: [], cravings: [], checkins: []};
   assert.equal(validateData(data), true);
 });
+
+test('savings is zero before the original start date', () => {
+  const p = profile({originalStartAt: '2026-10-05T12:00:00.000Z'});
+  const data = {profile: p, entries: [], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-04')), 0);
+});
+
+test('savings uses historical start across a restarted plan', () => {
+  const p = profile({
+    baseline: 10, packSize: 20, packPrice: 100,
+    originalStartAt: '2026-10-01T12:00:00.000Z',
+    startAt: '2026-10-08T12:00:00.000Z',
+    planStartTarget: 8,
+  });
+  const data = {profile: p, entries: [
+    {id: 'first', at: '2026-10-02T12:00:00.000Z'},
+    {id: 'second', at: '2026-10-09T12:00:00.000Z'},
+  ], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-09')), 440);
+  assert.equal(savings(data, date('2026-10-02')), 95);
+});
+
+test('duplicate check-ins do not imply additional smoke-free days', () => {
+  const checkins = [
+    {date: '2026-10-01', complete: true, smokeFree: true},
+    {date: '2026-10-01', complete: true, smokeFree: true},
+    {date: '2026-10-02', complete: false, smokeFree: true},
+    {date: '2026-10-03', complete: true, smokeFree: false},
+  ];
+  const confirmed = new Set(checkins.filter(c => c.complete && c.smokeFree).map(c => c.date));
+  assert.equal(confirmed.size, 1);
+});
