@@ -14,12 +14,15 @@ function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
  const todayKey=dayKey(new Date(clock));
  const startKey=period===0?null:dayKey(new Date(periodStart(clock,period)));
- const periodEntries=data.entries.filter(e=>period===0||(new Date(e.at).getTime()>=periodStart(clock,period)&&new Date(e.at).getTime()<=clock));
+ const periodEntries=data.entries.filter(e=>new Date(e.at).getTime()<=clock&&(period===0||new Date(e.at).getTime()>=periodStart(clock,period)));
  const startDate=data.profile?new Date(data.profile.originalStartAt??data.profile.startAt):null;
- const observedDays=period===0?(startDate?Math.max(1,Math.floor((periodStart(clock,1)-periodStart(startDate.getTime(),1))/86400000)+1):0):period;
+ const firstDay=startDate?periodStart(startDate.getTime(),1):null;
+ const todayStart=periodStart(clock,1);
+ const effectiveStart=firstDay===null?null:period===0?firstDay:Math.max(firstDay,periodStart(clock,period));
+ const observedDays=effectiveStart===null||effectiveStart>todayStart?0:Math.round((todayStart-effectiveStart)/86400000)+1;
  const averagePerDay=observedDays>0?periodEntries.length/observedDays:0;
  const baseline=data.profile?.baseline??0;
- const reductionPercent=baseline>0?Math.round((1-averagePerDay/baseline)*100):null;
+ const reductionPercent=baseline>0&&observedDays>0?Math.round((1-averagePerDay/baseline)*100):null;
  const confirmedKeys=new Set(data.checkins.filter(c=>c.complete&&c.smokeFree&&c.date<=todayKey).map(c=>c.date));
  let confirmedStreak=0;
  const cursor=new Date(clock);
@@ -36,7 +39,7 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <Heading>Cigaretter per dag</Heading><Card><Bars values={weekly} clock={clock}/><Text style={styles.muted}>De senaste sju kalenderdagarna, med antal registrerade cigaretter ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text></Card>
   <Text style={styles.muted}>Rökfria dagar räknas bara när dagen har bekräftats och ligger inom vald period. Dagar utan registrering räknas inte automatiskt som rökfria.</Text>
   <View style={styles.grid}><Stat label="IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.length)}/><Stat label="SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
-  <Text style={styles.muted}>Genomsnittet bygger på registrerade cigaretter under vald period, inklusive dagar utan registrering. Det är inte ett bevis på rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.</Text>
+  <Text style={styles.muted}>{observedDays===0?"Ingen planhistorik ännu. Statistik visas när du har startat en plan.":`Genomsnittet bygger på ${observedDays} kalenderdagar sedan planens start inom vald period. Dagar utan registrering ingår men bevisar inte rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.`}</Text>
   <Text style={styles.muted}>Besparingarna är uppskattningar utifrån din angivna startförbrukning och ditt paketpris. Periodens besparing är skillnaden mellan den totala besparingen vid periodens början och nu; den kan därför vara 0 kr även om du har registrerat färre cigaretter vissa dagar.</Text>
   <Heading>Dina milstolpar</Heading>
   <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text>
