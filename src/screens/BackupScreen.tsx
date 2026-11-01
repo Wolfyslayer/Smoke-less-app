@@ -28,6 +28,7 @@ export function BackupScreen({accountEmail,syncStatus,backup,onBackupChange,onEx
    <AppButton title="Skapa JSON-säkerhetskopia" secondary secondaryTone="elevated" onPress={onExportBackup}/>
    <TextInput accessibilityLabel="JSON-säkerhetskopia" accessibilityHint="Klistra in en säkerhetskopia i JSON-format för återställning" autoCapitalize="none" autoCorrect={false} spellCheck={false} multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={s.input} selectionColor={C.lime}/>
    <AppButton title="Återställ från JSON" secondary secondaryTone="elevated" disabled={!isJsonObject} onPress={onRestoreBackup}/>
+   {isJsonObject?<Text style={s.muted}>JSON-formatet är giltigt. Säkerhetskopians innehåll kontrolleras vid återställning och du behöver bekräfta innan data ändras.</Text>:null}
    {!hasBackupText?<Text style={s.muted}>Klistra in en JSON-säkerhetskopia för att aktivera återställning.</Text>:!isJsonObject?<Text accessibilityRole="alert" style={s.muted}>Innehållet måste vara ett giltigt JSON-objekt innan återställning kan påbörjas.</Text>:null}
   </AppCard>
   {!loggedIn?<AppCard tone="surface" style={s.card}>
