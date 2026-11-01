@@ -5,7 +5,7 @@ import {C} from '../theme';
 import {AppCard} from '../components/ui';
 import type {Profile} from '../domain';
 
-type Destination='account'|'plan'|'history'|'benefits'|'settings'|'sos';
+type Destination='account'|'backup'|'plan'|'history'|'benefits'|'settings'|'sos';
 type Props={profile:Profile;accountEmail:string|null;syncStatus:string;onNavigate:(to:Destination)=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 const Card=({children,style}:{children:React.ReactNode;style?:any})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
@@ -17,7 +17,7 @@ export function ProfileScreen({profile,accountEmail,syncStatus,onNavigate}:Props
    <View style={{height:1,backgroundColor:'#425C29'}}/><View style={styles.sectionRow}><Text style={styles.muted}>Kontostatus</Text><Text style={{color:loggedIn?C.lime:'#E7B967',fontWeight:'800',fontSize:13}}>{loggedIn?'● Inloggad':'● Gästläge'}</Text></View>
   </Card>
   <Pressable accessibilityRole="button" onPress={()=>onNavigate('account')} style={styles.row}><View style={styles.actionIcon}><UserRound size={21} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={styles.cardTitle}>Konto och säkerhet</Text><Text style={styles.muted}>{loggedIn?'Hantera inloggning, e-post och lösenord':'Logga in eller skapa konto'}</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>
-  <Pressable accessibilityRole="button" onPress={()=>onNavigate('settings')} style={styles.row}><View style={styles.actionIcon}><Download size={21} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={styles.cardTitle}>Säkerhetskopiering</Text><Text style={styles.muted}>{loggedIn?'Molnstatus och manuell säkerhetskopia':'Exportera och skydda din historik'}</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>
+  <Pressable accessibilityRole="button" onPress={()=>onNavigate('backup')} style={styles.row}><View style={styles.actionIcon}><Download size={21} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={styles.cardTitle}>Säkerhetskopiering</Text><Text style={styles.muted}>{loggedIn?'Molnstatus och manuell säkerhetskopia':'Exportera och skydda din historik'}</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>
   <View style={styles.inline}><Target size={19} color={C.lime}/><Text style={styles.heading}>Din resa</Text></View>
   <Card style={styles.inline}><View style={styles.actionIcon}><Target size={22} color={C.lime}/></View><View style={{flex:1,gap:5}}><Text style={styles.cardTitle}>{profile.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text><Text style={styles.muted}>Planstart: {date(new Date(profile.startAt))}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Öppna min plan" onPress={()=>onNavigate('plan')}><ChevronRight size={20} color={C.lime}/></Pressable></Card>
   <View style={styles.inline}><Settings size={19} color={C.lime}/><Text style={styles.heading}>Snabbåtkomst</Text></View>
