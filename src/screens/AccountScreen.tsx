@@ -14,11 +14,11 @@ type Props={
  onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
 };
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
-function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
+function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
 export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
  return <View style={{gap:20}}>
 
- <Pressable accessibilityRole="button" onPress={()=>onBack()} style={{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
+ <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={()=>onBack()} style={{minHeight:44,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
  <Card style={{gap:12,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:13}}><View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={25} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountUser?'Ditt Smoke Less-konto':'Skydda din resa'}</Text><Text style={s.muted}>{accountUser?.email||'Logga in eller skapa ett konto för molnsäkerhetskopiering.'}</Text></View></View>
  </Card>
@@ -40,7 +40,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <TextInput accessibilityLabel="Lösenord" secureTextEntry autoCapitalize="none" autoComplete={accountMode==='signup'?'new-password':'current-password'} placeholder="Lösenord" placeholderTextColor={C.dim} value={accountPassword} onChangeText={onPasswordChange} style={s.input}/>
   <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy} onPress={()=>onAccountAction(accountMode)}/>
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
-  <Pressable disabled={accountBusy} onPress={()=>onAccountAction('reset')} accessibilityRole="button" style={{paddingVertical:5,alignSelf:'center'}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
+  <Pressable disabled={accountBusy} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center'}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}
  {accountUser?<Card style={{gap:12,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={21} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Kontosäkerhet</Text><Text style={s.muted}>Hantera åtkomsten till ditt konto.</Text></View></View>
@@ -67,7 +67,7 @@ const s=StyleSheet.create({
  muted:{fontSize:13,color:C.muted,lineHeight:20},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
  link:{color:C.lime,fontSize:13,fontWeight:'800'},
- input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,fontSize:15},
+ input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,fontSize:15,minHeight:48},
  button:{backgroundColor:C.lime,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},
  buttonSecondary:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
  buttonText:{color:C.background,fontWeight:'900',fontSize:15},

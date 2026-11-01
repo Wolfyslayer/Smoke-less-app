@@ -12,30 +12,30 @@ type Props={
 export function BackupScreen({accountEmail,syncStatus,backup,onBackupChange,onExportBackup,onRestoreBackup,onGuestReset,onOpenAccount,onBack}:Props){
  const loggedIn=accountEmail!==null;
  return <View style={s.screen}>
-  <Pressable accessibilityRole="button" onPress={onBack} style={s.back}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
-  <View style={s.heading}><Download size={25} color={C.lime}/><Text style={s.title}>Säkerhetskopiering</Text></View>
+  <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={onBack} style={s.back}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
+  <View style={s.heading}><Download size={25} color={C.lime}/><Text style={s.title} accessibilityRole="header">Säkerhetskopiering</Text></View>
   <AppCard tone="surface" style={s.card}>
-   <View style={s.heading}><Cloud size={22} color={C.lime}/><Text style={s.cardTitle}>Molnsynkronisering</Text></View>
+   <View style={s.heading}><Cloud size={22} color={C.lime}/><Text style={s.cardTitle} accessibilityRole="header">Molnsynkronisering</Text></View>
    <Text style={s.muted}>{loggedIn?'Inloggad som '+accountEmail:'Gästläge – din historik sparas lokalt på enheten.'}</Text>
    <Text style={s.muted} accessibilityLiveRegion="polite">{loggedIn?(syncStatus||'Molnsynkronisering är tillgänglig när du är inloggad.'): 'Utan konto kan historiken försvinna om appen avinstalleras eller telefonen byts.'}</Text>
    <AppButton title={loggedIn?'Hantera konto och molnhistorik':'Logga in eller skapa konto'} secondary secondaryTone="elevated" onPress={onOpenAccount}/>
   </AppCard>
   <AppCard tone="surface" style={s.card}>
-   <View style={s.heading}><Download size={22} color={C.lime}/><Text style={s.cardTitle}>Manuell säkerhetskopia</Text></View>
+   <View style={s.heading}><Download size={22} color={C.lime}/><Text style={s.cardTitle} accessibilityRole="header">Manuell säkerhetskopia</Text></View>
    <Text style={s.muted}>Exportera din historik som JSON och förvara kopian säkert. Återställning kan ändra din lokala historik och kräver bekräftelse.</Text>
    <AppButton title="Skapa JSON-säkerhetskopia" secondary secondaryTone="elevated" onPress={onExportBackup}/>
-   <TextInput accessibilityLabel="JSON-säkerhetskopia" multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={s.input}/>
+   <TextInput accessibilityLabel="JSON-säkerhetskopia" accessibilityHint="Klistra in en säkerhetskopia i JSON-format för återställning" autoCapitalize="none" autoCorrect={false} spellCheck={false} multiline placeholder="Klistra in JSON här för att återställa, eller kopiera din exporterade text" placeholderTextColor={C.dim} value={backup} onChangeText={onBackupChange} style={s.input} selectionColor={C.lime}/>
    <AppButton title="Återställ från JSON" secondary secondaryTone="elevated" onPress={onRestoreBackup}/>
   </AppCard>
   {!loggedIn?<AppCard tone="surface" style={s.card}>
-   <View style={s.heading}><Shield size={22} color="#E7B967"/><Text style={s.cardTitle}>Hantera gästhistorik</Text></View>
+   <View style={s.heading}><Shield size={22} color="#E7B967"/><Text style={s.cardTitle} accessibilityRole="header">Hantera gästhistorik</Text></View>
    <Text style={s.muted}>En separat lokal återställningskopia skapas innan gästhistoriken rensas. Kopian försvinner också om appen avinstalleras. Åtgärden påverkar inte molndata.</Text>
    <AppButton title="Radera gästhistorik (med bekräftelse)" secondary secondaryTone="elevated" onPress={onGuestReset}/>
   </AppCard>:null}
  </View>;
 }
 const s=StyleSheet.create({
- screen:{gap:20},back:{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7},
+ screen:{gap:20},back:{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',minHeight:48,paddingVertical:10,paddingHorizontal:8},
  link:{color:C.lime,fontSize:13,fontWeight:'800'},heading:{flexDirection:'row',alignItems:'center',gap:10},
  title:{fontSize:23,fontWeight:'900',color:C.white},cardTitle:{fontSize:17,fontWeight:'800',color:C.white},
  muted:{fontSize:13,color:C.muted,lineHeight:20},card:{gap:13,padding:18},
