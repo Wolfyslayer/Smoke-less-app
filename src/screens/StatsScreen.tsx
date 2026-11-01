@@ -20,6 +20,12 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const averagePerDay=observedDays>0?periodEntries.length/observedDays:0;
  const baseline=data.profile?.baseline??0;
  const reductionPercent=baseline>0?Math.round((1-averagePerDay/baseline)*100):null;
+ const confirmedKeys=new Set(data.checkins.filter(c=>c.complete&&c.smokeFree&&c.date<=todayKey).map(c=>c.date));
+ let confirmedStreak=0;
+ const cursor=new Date(clock);
+ cursor.setHours(12,0,0,0);
+ while(confirmedKeys.has(dayKey(cursor))){confirmedStreak++;cursor.setDate(cursor.getDate()-1)}
+ const milestones=[1,3,7,14,30].map(days=>({days,reached:confirmedStreak>=days}));
  const totalSavings=savings(data,new Date(clock));
  const previousSavings=period===0?0:savings(data,new Date(periodStart(clock,period)-1));
  const selectedSavings=Math.max(0,totalSavings-previousSavings);
@@ -32,6 +38,11 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <View style={styles.grid}><Stat label="IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.length)}/><Stat label="SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
   <Text style={styles.muted}>Genomsnittet bygger på registrerade cigaretter under vald period, inklusive dagar utan registrering. Det är inte ett bevis på rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.</Text>
   <Text style={styles.muted}>Besparingarna är uppskattningar utifrån din angivna startförbrukning och ditt paketpris. Periodens besparing är skillnaden mellan den totala besparingen vid periodens början och nu; den kan därför vara 0 kr även om du har registrerat färre cigaretter vissa dagar.</Text>
+  <Heading>Dina milstolpar</Heading>
+  <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text>
+   {milestones.map(m=><View key={m.days} style={styles.sectionRow}><Text style={styles.cardTitle}>{m.days} {m.days===1?'dag':'dagar'} i följd</Text><Text style={{color:m.reached?C.lime:C.dim,fontWeight:'700'}}>{m.reached?'Uppnått':'Inte ännu'}</Text></View>)}
+   <Text style={styles.muted}>Att minska eller sluta röka kan ge hälsofördelar, men hur snabbt de märks varierar. Följ gärna dina framsteg utan att jämföra din kropp med en fast tidslinje.</Text>
+  </Card>
   <Heading>Förstå dina vanor</Heading>
   <Card style={{gap:14}}><Label>RÖKSUG · SENASTE 30 DAGARNA</Label><Text style={styles.statValue}>{recentCravingsCount} <Text style={{fontSize:14,color:C.muted}}>registrerade tillfällen</Text></Text>
    {cravingTriggers.length===0?<Text style={styles.muted}>Registrera röksug under Stöd vid röksug för att upptäcka dina vanligaste situationer.</Text>:cravingTriggers.slice(0,5).map(([name,n])=><View key={name} style={{gap:6}}><View style={styles.sectionRow}><Text style={styles.cardTitle}>{name}</Text><Text style={styles.muted}>{n} st</Text></View><View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${Math.round(n/recentCravingsCount*100)}%` as `${number}%`}]}/></View></View>)}
