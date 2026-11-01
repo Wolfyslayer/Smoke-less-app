@@ -67,7 +67,7 @@ const s=StyleSheet.create({
  muted:{fontSize:13,color:C.muted,lineHeight:20},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
  link:{color:C.lime,fontSize:13,fontWeight:'800'},
- input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,fontSize:15},
+ input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,fontSize:15,minHeight:48},
  button:{backgroundColor:C.lime,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},
  buttonSecondary:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
  buttonText:{color:C.background,fontWeight:'900',fontSize:15},
