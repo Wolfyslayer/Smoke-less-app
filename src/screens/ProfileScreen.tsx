@@ -8,7 +8,7 @@ import type {Profile} from '../domain';
 type Destination='account'|'backup'|'plan'|'history'|'benefits'|'settings'|'sos';
 type Props={profile:Profile;accountEmail:string|null;onNavigate:(to:Destination)=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
-const Card=({children,style}:{children:React.ReactNode;style?:any})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
+const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
 export function ProfileScreen({profile,accountEmail,onNavigate}:Props){
  const loggedIn=accountEmail!==null;
  return <View style={styles.screen}>
@@ -23,12 +23,11 @@ export function ProfileScreen({profile,accountEmail,onNavigate}:Props){
  </View>;
 }
 const styles=StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17,gap:8},
+ screen:{gap:20},
  inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
  muted:{fontSize:13,lineHeight:19,color:C.dim},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},heading:{fontSize:19,fontWeight:'800',color:C.white},
  actionIcon:{width:42,height:42,borderRadius:13,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},
  planAction:{minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center'},
- row:{minHeight:64,flexDirection:'row',alignItems:'center',gap:14,borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15},
- button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14},buttonSecondary:{backgroundColor:C.soft},
- buttonText:{fontWeight:'800',color:C.background,fontSize:14},
+ row:{minHeight:64,flexDirection:'row',alignItems:'center',gap:14,borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15}
+
 });
