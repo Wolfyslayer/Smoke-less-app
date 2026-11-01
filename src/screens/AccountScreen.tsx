@@ -43,7 +43,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   {accountMode==='signup'&&accountPassword.length>0&&accountPassword.length<6?<Text accessibilityRole="alert" style={s.muted}>Lösenordet måste innehålla minst 6 tecken.</Text>:null}
   <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!validEmail(accountEmail)||!accountPassword||(accountMode==='signup'&&accountPassword.length<6)} onPress={()=>onAccountAction(accountMode)}/>
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
-  <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center'}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
+  <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" accessibilityState={{disabled:accountBusy||!validEmail(accountEmail)}} style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center',opacity:accountBusy||!validEmail(accountEmail)?0.5:1}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}
  {accountUser?<Card style={{gap:12,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={21} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Kontosäkerhet</Text><Text style={s.muted}>Hantera åtkomsten till ditt konto.</Text></View></View>
