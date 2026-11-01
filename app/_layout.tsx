@@ -38,6 +38,6 @@ export default function RootLayout() {
 
 const styles = StyleSheet.create({
   root: {flex: 1, backgroundColor: '#101a15'},
-  intro: {...StyleSheet.absoluteFillObject, backgroundColor: '#101a15', zIndex: 10},
+  intro: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: '#101a15', zIndex: 10},
   image: {width: '100%', height: '100%'},
 });
