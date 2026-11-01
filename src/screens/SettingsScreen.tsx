@@ -32,9 +32,9 @@ export function SettingsScreen({profile,goal,onChangeMode,onChangeDailyTarget}:P
 
  return <View style={styles.screen}>
   <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
-  <View style={styles.inlineHeading}><Text style={styles.heading}>Påminnelser och motivation</Text></View>
+  <View style={styles.inlineHeading}><Text accessibilityRole="header" style={styles.heading}>Påminnelser och motivation</Text></View>
   <Card style={{gap:10,padding:18}}>
-   <Text style={styles.cardTitle}>Önskemål om dagliga påminnelser</Text>
+   <Text accessibilityRole="header" style={styles.cardTitle}>Önskemål om dagliga påminnelser</Text>
    <Text style={styles.muted}>Välj om du vill ha en daglig påminnelse. Du godkänner notisbehörighet separat när du trycker på Aktivera påminnelse.</Text>
    <Pressable accessibilityRole="switch" accessibilityLabel="Dagliga påminnelser" accessibilityHint="Slår på eller av önskemålet om dagliga påminnelser" accessibilityState={{checked:reminderPreference,disabled:!reminderReady||reminderBusy}} disabled={!reminderReady||reminderBusy} onPress={changeReminderPreference} style={[styles.inline,{justifyContent:'space-between',minHeight:48,paddingVertical:10}]}>
     <Text style={styles.cardTitle}>{reminderPreference?'Önskas':'Önskas inte'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{reminderPreference?'PÅ':'AV'}</Text>
