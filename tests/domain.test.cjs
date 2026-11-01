@@ -124,3 +124,30 @@ test('duplicate check-ins do not imply additional smoke-free days', () => {
   const confirmed = new Set(checkins.filter(c => c.complete && c.smokeFree).map(c => c.date));
   assert.equal(confirmed.size, 1);
 });
+
+test('reminder time validation rejects malformed or out-of-range values', () => {
+  const screen = fs.readFileSync('src/screens/SettingsScreen.tsx', 'utf8');
+  const match = screen.match(/export function validReminderTime\([^\n]+/);
+  assert.ok(match, 'time validator must be present');
+  const output = ts.transpileModule(match[0], {compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022}}).outputText;
+  const scope = {exports: {}};
+  vm.runInNewContext(output, scope);
+  const valid = scope.exports.validReminderTime;
+  for (const [h, m] of [['0','0'],['08','05'],['19','00'],['23','59']]) assert.equal(valid(h,m), true);
+  for (const [h, m] of [['24','00'],['23','60'],['-1','00'],['12','-1'],['','00'],['12',''],['abc','15'],['1.5','00'],['001','00'],['12',' 5']]) assert.equal(valid(h,m), false);
+});
+
+test('reminder status distinguishes opt-out, revoked permission and missing schedules', () => {
+  const screen = fs.readFileSync('src/screens/SettingsScreen.tsx', 'utf8');
+  const match = screen.match(/export function reminderStatusMessage\([^\n]+/);
+  assert.ok(match, 'status helper must be present');
+  const output = ts.transpileModule(match[0], {compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022}}).outputText;
+  const scope = {exports: {}};
+  vm.runInNewContext(output, scope);
+  const status = scope.exports.reminderStatusMessage;
+  assert.match(status(false,false,false,false), /avstängda/);
+  assert.match(status(true,false,true,true), /behörighet saknas/);
+  assert.match(status(true,true,false,false), /Ingen aktiv/);
+  assert.match(status(true,true,true,false), /Ingen aktiv/);
+  assert.match(status(true,true,true,true), /schemalagd och notiser är tillåtna/);
+});
