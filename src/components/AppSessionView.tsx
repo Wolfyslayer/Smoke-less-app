@@ -21,10 +21,13 @@ export function AppSessionView({model}:{model:SessionModel}){
  // On a new device, an authenticated account may have no local profile yet.
  // Wait for the first cloud read before deciding that onboarding is needed.
  if(!p && accountUser && syncStatus!=='Synkroniserad med Firestore') {
+  const syncing=!syncStatus||syncStatus==='Synkroniserar…'||syncStatus==='Lokala data ändrades. Synkroniserar igen.';
   return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:14}]}>
-   {(!syncStatus || syncStatus==='Synkroniserar…')?<ActivityIndicator color={C.lime}/>:null}
-   <Text style={{color:C.white,textAlign:'center'}}>{syncStatus||'Hämtar din sparade plan…'}</Text>
-   <Text style={{color:C.dim,textAlign:'center'}}>Din onboarding visas inte förrän kontots molndata har kontrollerats. Kontrollera internetanslutningen om hämtningen misslyckas.</Text>
+   {syncing?<ActivityIndicator color={C.lime}/>:null}
+   <Text style={{color:C.white,textAlign:'center',fontSize:17,fontWeight:'700'}}>{syncing?'Hämtar din sparade plan…':'Kunde inte hämta din sparade plan'}</Text>
+   {!syncing?<Text selectable style={{color:C.dim,textAlign:'center'}}>{syncStatus}</Text>:null}
+   <Text style={{color:C.dim,textAlign:'center'}}>Din sparade historik skrivs inte över om hämtningen misslyckas.</Text>
+   {!syncing?<Pressable accessibilityRole="button" onPress={model.retrySync} style={s.loginButton}><Text style={{fontWeight:'900',color:C.background}}>Försök igen</Text></Pressable>:null}
   </View>;
  }
  if(!p)return <View style={s.root}>{showLogin && !accountUser?
