@@ -27,7 +27,7 @@ const styles=StyleSheet.create({
  inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
  muted:{fontSize:13,lineHeight:19,color:C.dim},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},heading:{fontSize:19,fontWeight:'800',color:C.white},
  actionIcon:{width:42,height:42,borderRadius:13,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},
- planAction:{minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center'},
+ planAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
  row:{minHeight:64,flexDirection:'row',alignItems:'center',gap:14,borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15}
 
 });
