@@ -1,4 +1,4 @@
-import {getFirestore,doc,collection,getDoc,getDocs} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {getAuth} from '@react-native-firebase/auth';
 import type {Data} from './domain';
 import {isCloudProfile, isCloudEntry, isCloudCraving, isCloudCheckin, userDocumentPath} from './cloudSchema';
@@ -22,12 +22,14 @@ export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
     try{return await operation();}
     catch(error){const message=error instanceof Error?error.message:String(error);throw new Error('Firestore / '+stage+': '+message);}
   };
-  const db=await readStage('initiera databasen',async()=>getFirestore());
-  const base=await readStage('skapa användarreferens',async()=>doc(db,userDocumentPath(uid)));
-  const plan=await readStage('läsa sparad plan',()=>getDoc(doc(base,'settings','plan')));
-  const entries=await readStage('läsa cigaretthistorik',()=>getDocs(collection(base,'entries')));
-  const cravings=await readStage('läsa röksug',()=>getDocs(collection(base,'cravings')));
-  const checkins=await readStage('läsa avstämningar',()=>getDocs(collection(base,'checkins')));
+  // React Native Firebase's namespaced document reads use the native bridge
+  // directly. Keep reads isolated from any cloud write path.
+  const db=await readStage('initiera databasen',async()=>firestore());
+  const base=await readStage('skapa användarreferens',async()=>db.doc(userDocumentPath(uid)));
+  const plan=await readStage('läsa sparad plan',()=>base.collection('settings').doc('plan').get());
+  const entries=await readStage('läsa cigaretthistorik',()=>base.collection('entries').get());
+  const cravings=await readStage('läsa röksug',()=>base.collection('cravings').get());
+  const checkins=await readStage('läsa avstämningar',()=>base.collection('checkins').get());
   if (getAuth().currentUser?.uid !== uid) throw new Error('Kontot ändrades under hämtningen.');
   let hasTombstones = false;
   const parse = <T>(items: {data: () => unknown}[], validate: (v: unknown) => v is T): T[] =>
