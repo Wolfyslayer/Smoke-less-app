@@ -33,6 +33,12 @@ export function SettingsScreen({profile,goal,accountEmail,syncStatus,backup,onBa
    <Text style={styles.muted}>En separat återställningskopia sparas på den här enheten innan historiken rensas. Åtgärden påverkar inte Firebase-konton eller molndata. Avinstallera inte appen om du vill behålla återställningskopian.</Text>
    <Button title="Radera gästhistorik (med bekräftelse)" secondary onPress={onGuestReset}/>
   </Card>:null}
+  <View style={styles.inlineHeading}><Text style={styles.heading}>Påminnelser och motivation</Text></View>
+  <Card style={{gap:10,padding:18}}>
+   <Text style={styles.cardTitle}>Påminnelser är inte aktiverade</Text>
+   <Text style={styles.muted}>Du får inga schemalagda påminnelser från den här funktionen ännu. Dagens uppmuntran visas direkt i appen utan att kräva tillgång till telefonens notiser.</Text>
+   <Text style={styles.muted}>När påminnelser införs ska du själv kunna välja om och när du vill få dem. Appen ska inte begära notisbehörighet utan att du först väljer att aktivera funktionen.</Text>
+  </Card>
   <View style={styles.inlineHeading}><Download size={19} color={C.lime}/><Text style={styles.heading}>Data och återställning</Text></View>
   <Card style={{gap:13,padding:18}}>
    <View style={styles.inline}><View style={styles.actionIcon}><Download size={20} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={styles.cardTitle}>Manuell säkerhetskopia</Text><Text style={styles.muted}>Exportera eller återställ din historik som JSON.</Text></View></View>
