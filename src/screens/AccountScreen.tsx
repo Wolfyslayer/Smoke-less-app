@@ -26,7 +26,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   {accountUser?<Card style={{gap:13,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Molnsäkerhetskopia</Text><Text style={s.muted}>Automatisk Firestore-synkronisering</Text></View></View>
   <View style={{gap:9,padding:13,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border}}>
-   <Text style={s.cardTitle}>E-postverifiering</Text>
+   <Text style={s.cardTitle} accessibilityRole="header">E-postverifiering</Text>
    <Text style={{color:emailVerified?C.lime:'#E7B967',fontSize:13,fontWeight:'800'}}>{emailVerified?'✓ Verifierad e-postadress':'E-postadressen är inte verifierad'}</Text>
    {!emailVerified?<><Text style={s.muted}>Verifiera din e-postadress för att skydda åtkomsten till ditt konto. Öppna länken i mejlet och kontrollera sedan status här.</Text><Btn title={verificationBusy?'Vänta…':'Skicka verifieringsmejl'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('send')}/><Btn title={verificationBusy?'Kontrollerar…':'Kontrollera verifiering'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('refresh')}/></>:null}
   </View>
@@ -50,7 +50,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <Text style={s.muted}>Vill du byta lösenord skickar vi en återställningslänk till {accountUser.email||'din registrerade e-postadress'}. Din historik påverkas inte.</Text>
   <Btn title={accountBusy?'Skickar…':'Skicka länk för lösenordsbyte'} secondary disabled={accountBusy||!accountUser.email} onPress={onPasswordReset}/>
   <View style={{height:1,backgroundColor:C.border}}/>
-  <Text style={s.cardTitle}>Radera data och konto</Text>
+  <Text style={s.cardTitle} accessibilityRole="header">Radera data och konto</Text>
   <Btn title={cloudPreviewBusy?'Kontrollerar…':'Kontrollera vad som finns i molnet'} secondary disabled={cloudPreviewBusy||migrationBusy||accountBusy} onPress={onInspectCloud}/>
   <Text style={s.muted}>Att radera lokal historik, molnhistorik och Firebase-kontot är tre olika åtgärder. De är ännu inte tillgängliga här eftersom säker radering och skydd mot att synkronisering återskapar data behöver färdigställas först. Använd JSON-säkerhetskopian under Profil → Säkerhetskopiering för att spara en kopia.</Text>
   <Btn title="Öppna säkerhetskopiering" secondary onPress={()=>onOpenSettings()}/>
