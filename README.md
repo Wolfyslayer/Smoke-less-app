@@ -25,3 +25,16 @@ The existing pull-request CI checks TypeScript, unit tests and web export. **Web
 History is stored locally first. Guest-to-account migration requires explicit consent; account-isolated storage modules are still being integrated into the UI. Cloud import is read-only until explicitly approved and cloud writes are not yet enabled.
 
 Smoke Less is a wellness tracker, not medical advice.
+
+## Phase 7.0 – Beta testing, quality assurance and launch
+
+The release process is tracked in the phase 7.0 pull request. Before distributing a beta:
+
+- [ ] Confirm both pull-request CI workflows pass on the latest commit.
+- [ ] Run the **Native Android build (manual)** workflow with the configured Firebase secret and verify the generated debug APK installs and starts.
+- [ ] Test login, guest mode, profile, reminders, backup export and restore on a physical Android device.
+- [ ] Test small-screen layout, larger system font sizes, keyboard interaction and TalkBack navigation.
+- [ ] Check privacy notices, permissions and data-handling claims against actual app behavior.
+- [ ] Record any beta defects and fix blockers before declaring a release candidate.
+
+A successful TypeScript/web CI run is **not** equivalent to a tested Android release. Do not mark physical-device checks as completed without evidence.
