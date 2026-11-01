@@ -42,3 +42,12 @@ A successful TypeScript/web CI run is **not** equivalent to a tested Android rel
 ## Phase 7.0 – Validation coverage audit (2026-11-01)
 
 The pull-request workflow `.github/workflows/ci.yml` uses Node.js 22 and executes TypeScript checking, domain tests, local storage tests, account migration tests and web export. The separate `.github/workflows/firestore-rules.yml` runs the Firestore rules emulator tests. The native Android workflow `.github/workflows/native-android.yml` is **manual**: it needs the repository secret `GOOGLE_SERVICES_JSON_BASE64`, runs Expo prebuild and Gradle debug assembly, then uploads an APK artifact retained for seven days. These checks do not establish that the APK launches correctly or that notifications, Firebase authentication, backup restore and accessibility work on a real Android device. The latter are outstanding acceptance-test gates.
+
+## Android beta acceptance procedure
+
+1. In GitHub Actions, select **Native Android build (manual)** and run it against the current phase branch. This requires the configured `GOOGLE_SERVICES_JSON_BASE64` repository secret.
+2. Confirm that the Gradle build and APK validation steps pass and download the `smoke-less-android-debug` artifact before its seven-day retention expires.
+3. Install the APK on a physical Android device. Verify app launch, sign-in, guest mode, data persistence, reminders, backup/restore, and accessibility.
+4. Record Android version, device model, tested commit, outcomes, and reproducible defects in the pull request. Do not mark the native acceptance gate complete without this evidence.
+
+This debug APK is for testing, not a signed Google Play production release.
