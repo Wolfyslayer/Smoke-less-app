@@ -10,7 +10,7 @@ type Props={
  onChangeDailyTarget:(value:number|null)=>void;
 };
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
-function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;selected:boolean;onPress:()=>void}){return <Pressable accessibilityRole="button" accessibilityState={{selected}} onPress={onPress} style={[styles.choice,selected&&styles.selected]}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text></Pressable>}
+function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;selected:boolean;onPress:()=>void}){return <Pressable accessibilityRole="radio" accessibilityLabel={title} accessibilityHint={subtitle} accessibilityState={{selected}} onPress={onPress} style={[styles.choice,selected&&styles.selected]}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text></Pressable>}
 export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTarget}:Props){
  return <>
   <Card style={{gap:13,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
@@ -24,12 +24,12 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
   <Card style={{gap:15,padding:18}}>
    <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Justera riktvärdet om du behöver. Ett eget värde gäller varje dag tills du återställer det.</Text></View></View>
    <View style={styles.sectionRow}>
-    <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" style={styles.stepper} onPress={()=>onChangeDailyTarget(Math.max(0,(p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
-    <View style={{alignItems:'center',gap:2}}><Text style={styles.goal}>{goal}</Text><Text style={styles.muted}>cigaretter per dag</Text></View>
-    <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" style={styles.stepper} onPress={()=>onChangeDailyTarget((p.dailyTargetOverride??goal)+1)}><Plus size={21} color={C.lime}/></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" accessibilityHint="Minskar riktvärdet med en cigarett" style={styles.stepper} onPress={()=>onChangeDailyTarget(Math.max(0,(p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
+    <View style={{alignItems:'center',gap:2}}><Text accessibilityLabel={`Dagligt riktvärde: ${goal} cigaretter`} style={styles.goal}>{goal}</Text><Text style={styles.muted}>cigaretter per dag</Text></View>
+    <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" accessibilityHint="Ökar riktvärdet med en cigarett" style={styles.stepper} onPress={()=>onChangeDailyTarget((p.dailyTargetOverride??goal)+1)}><Plus size={21} color={C.lime}/></Pressable>
    </View>
    {p.dailyTargetOverride!==null?<Text accessibilityRole="text" style={styles.muted}>Eget riktvärde aktivt: {p.dailyTargetOverride} cigaretter per dag. Den automatiska nedtrappningen pausas tills du återställer.</Text>:<Text style={styles.muted}>Ditt riktvärde följer den valda nedtrappningstakten.</Text>}
-   <Pressable accessibilityRole="button" onPress={()=>onChangeDailyTarget(null)} style={styles.button}><Text style={styles.buttonText}>Återställ planens riktvärde</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="Återställ planens riktvärde" onPress={()=>onChangeDailyTarget(null)} style={styles.button}><Text style={styles.buttonText}>Återställ planens riktvärde</Text></Pressable>
   </Card>
  </>;
 }
@@ -41,7 +41,7 @@ const styles=StyleSheet.create({
  heading:{fontSize:19,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  muted:{fontSize:13,color:C.muted,lineHeight:20},goal:{fontSize:37,fontWeight:'900',color:C.white},
  choice:{backgroundColor:C.surface,borderRadius:16,padding:15,borderWidth:1,borderColor:C.border,gap:5},
- selected:{borderColor:C.lime,backgroundColor:C.limeSoft},stepper:{backgroundColor:C.elevated,borderRadius:13,padding:12},
+ selected:{borderColor:C.lime,backgroundColor:C.limeSoft},stepper:{backgroundColor:C.elevated,borderRadius:13,padding:12,minWidth:48,minHeight:48,alignItems:"center",justifyContent:"center"},
  button:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},
  buttonText:{color:C.white,fontWeight:'900',fontSize:15},
 });
