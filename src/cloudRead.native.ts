@@ -17,14 +17,17 @@ function unwrap(value: unknown): {payload: Record<string, unknown>; deleted: boo
 /** Read-only. No writes, no migration and no local storage mutation. */
 export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
   if (!uid || getAuth().currentUser?.uid !== uid) throw new Error('Kontot har ändrats. Logga in igen.');
-  const db=getFirestore();
-  const base=doc(db,userDocumentPath(uid));
-  const [plan, entries, cravings, checkins] = await Promise.all([
-    getDoc(doc(base,'settings','plan')),
-    getDocs(collection(base,'entries')),
-    getDocs(collection(base,'cravings')),
-    getDocs(collection(base,'checkins')),
-  ]);
+  // Read in stages so the error screen can identify the failing Firebase call.
+  const readStage=async <T>(stage:string,operation:()=>Promise<T>):Promise<T>=>{
+    try{return await operation();}
+    catch(error){const message=error instanceof Error?error.message:String(error);throw new Error('Firestore / '+stage+': '+message);}
+  };
+  const db=await readStage('initiera databasen',async()=>getFirestore());
+  const base=await readStage('skapa användarreferens',async()=>doc(db,userDocumentPath(uid)));
+  const plan=await readStage('läsa sparad plan',()=>getDoc(doc(base,'settings','plan')));
+  const entries=await readStage('läsa cigaretthistorik',()=>getDocs(collection(base,'entries')));
+  const cravings=await readStage('läsa röksug',()=>getDocs(collection(base,'cravings')));
+  const checkins=await readStage('läsa avstämningar',()=>getDocs(collection(base,'checkins')));
   if (getAuth().currentUser?.uid !== uid) throw new Error('Kontot ändrades under hämtningen.');
   let hasTombstones = false;
   const parse = <T>(items: {data: () => unknown}[], validate: (v: unknown) => v is T): T[] =>
