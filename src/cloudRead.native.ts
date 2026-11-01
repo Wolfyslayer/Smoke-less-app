@@ -1,5 +1,5 @@
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import {getFirestore,doc,collection,getDoc,getDocs} from '@react-native-firebase/firestore';
+import {getAuth} from '@react-native-firebase/auth';
 import type {Data} from './domain';
 import {isCloudProfile, isCloudEntry, isCloudCraving, isCloudCheckin, userDocumentPath} from './cloudSchema';
 import {previewMerge, type MergePreview} from './syncMerge';
@@ -16,15 +16,16 @@ function unwrap(value: unknown): {payload: Record<string, unknown>; deleted: boo
 }
 /** Read-only. No writes, no migration and no local storage mutation. */
 export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
-  if (!uid || auth().currentUser?.uid !== uid) throw new Error('Kontot har ändrats. Logga in igen.');
-  const base = firestore().doc(userDocumentPath(uid));
+  if (!uid || getAuth().currentUser?.uid !== uid) throw new Error('Kontot har ändrats. Logga in igen.');
+  const db=getFirestore();
+  const base=doc(db,userDocumentPath(uid));
   const [plan, entries, cravings, checkins] = await Promise.all([
-    base.collection('settings').doc('plan').get(),
-    base.collection('entries').get(),
-    base.collection('cravings').get(),
-    base.collection('checkins').get(),
+    getDoc(doc(base,'settings','plan')),
+    getDocs(collection(base,'entries')),
+    getDocs(collection(base,'cravings')),
+    getDocs(collection(base,'checkins')),
   ]);
-  if (auth().currentUser?.uid !== uid) throw new Error('Kontot ändrades under hämtningen.');
+  if (getAuth().currentUser?.uid !== uid) throw new Error('Kontot ändrades under hämtningen.');
   let hasTombstones = false;
   const parse = <T>(items: {data: () => unknown}[], validate: (v: unknown) => v is T): T[] =>
     items.flatMap(item => {
