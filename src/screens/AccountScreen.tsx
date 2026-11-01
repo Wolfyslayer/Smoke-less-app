@@ -13,6 +13,7 @@ type Props={
  onPasswordChange:(value:string)=>void;onAccountAction:(action:'login'|'signup'|'reset'|'logout')=>void;
  onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
 };
+const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
 function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
 export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
@@ -37,10 +38,11 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
  </Card>:<Card style={{gap:14,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountMode==='login'?'Välkommen tillbaka':'Skapa ditt konto'}</Text><Text style={s.muted}>Spara din resa tryggt med molnsäkerhetskopiering.</Text></View></View>
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" keyboardType="email-address" autoComplete="email" placeholder="E-postadress" placeholderTextColor={C.dim} value={accountEmail} onChangeText={onEmailChange} style={s.input}/>
+  {accountEmail.trim()&&!validEmail(accountEmail)?<Text accessibilityRole="alert" style={s.muted}>Ange en giltig e-postadress, till exempel namn@exempel.se.</Text>:null}
   <TextInput accessibilityLabel="Lösenord" secureTextEntry autoCapitalize="none" autoComplete={accountMode==='signup'?'new-password':'current-password'} placeholder="Lösenord" placeholderTextColor={C.dim} value={accountPassword} onChangeText={onPasswordChange} style={s.input}/>
-  <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!accountEmail.trim()||!accountPassword} onPress={()=>onAccountAction(accountMode)}/>
+  <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!validEmail(accountEmail)||!accountPassword} onPress={()=>onAccountAction(accountMode)}/>
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
-  <Pressable disabled={accountBusy||!accountEmail.trim()} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center'}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
+  <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center'}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}
  {accountUser?<Card style={{gap:12,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={21} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={s.cardTitle}>Kontosäkerhet</Text><Text style={s.muted}>Hantera åtkomsten till ditt konto.</Text></View></View>
