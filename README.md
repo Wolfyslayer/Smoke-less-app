@@ -38,3 +38,7 @@ The release process is tracked in the phase 7.0 pull request. Before distributin
 - [ ] Record any beta defects and fix blockers before declaring a release candidate.
 
 A successful TypeScript/web CI run is **not** equivalent to a tested Android release. Do not mark physical-device checks as completed without evidence.
+
+## Phase 7.0 – Validation coverage audit (2026-11-01)
+
+The pull-request workflow `.github/workflows/ci.yml` uses Node.js 22 and executes TypeScript checking, domain tests, local storage tests, account migration tests and web export. The separate `.github/workflows/firestore-rules.yml` runs the Firestore rules emulator tests. The native Android workflow `.github/workflows/native-android.yml` is **manual**: it needs the repository secret `GOOGLE_SERVICES_JSON_BASE64`, runs Expo prebuild and Gradle debug assembly, then uploads an APK artifact retained for seven days. These checks do not establish that the APK launches correctly or that notifications, Firebase authentication, backup restore and accessibility work on a real Android device. The latter are outstanding acceptance-test gates.
