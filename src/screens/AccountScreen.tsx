@@ -49,7 +49,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <View style={{height:1,backgroundColor:C.border}}/>
   <Text style={s.cardTitle}>Radera data och konto</Text>
   <Btn title={cloudPreviewBusy?'Kontrollerar…':'Kontrollera vad som finns i molnet'} secondary disabled={cloudPreviewBusy||migrationBusy||accountBusy} onPress={onInspectCloud}/>
-  <Text style={s.muted}>Att radera lokal historik, molnhistorik och Firebase-kontot är tre olika åtgärder. De är ännu inte tillgängliga här eftersom säker radering och skydd mot att synkronisering återskapar data behöver färdigställas först. Använd JSON-säkerhetskopian i Inställningar för att spara en kopia.</Text>
+  <Text style={s.muted}>Att radera lokal historik, molnhistorik och Firebase-kontot är tre olika åtgärder. De är ännu inte tillgängliga här eftersom säker radering och skydd mot att synkronisering återskapar data behöver färdigställas först. Använd JSON-säkerhetskopian under Profil → Säkerhetskopiering för att spara en kopia.</Text>
   <Btn title="Öppna säkerhetskopiering" secondary onPress={()=>onOpenSettings()}/>
  </Card>:null}
  {!accountUser?<Card style={{gap:10,padding:17,borderColor:'#9D793E',backgroundColor:'#272218'}}>
