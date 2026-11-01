@@ -15,8 +15,18 @@ function Bars({values}:{values:number[]}){const max=Math.max(1,...values);return
 function Stat({label,value,detail}:{label:string;value:string;detail?:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text>{detail?<Text style={styles.muted}>{detail}</Text>:null}</Card>}
 export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
  const checkin=data.checkins.find(x=>x.date===today);
+ const encouragement=checkin?.complete&&checkin.smokeFree
+  ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
+  :todayCount>goal
+   ?'En svårare dag tar inte bort dina tidigare framsteg. Du kan fortsätta när du vill.'
+   :checkin?.complete
+    ?'Du har stämt av dagen. Varje ärlig registrering hjälper dig att förstå dina vanor.'
+    :todayCount===0
+     ?'Ta dagen i din egen takt. Registrera det som händer och ge dig själv utrymme att lyckas.'
+     :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
   <Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1}}><Text style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>
+  <Card><Label>DAGENS UPPMUNTRAN</Label><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
   <Card><View style={styles.inline}><Clock color={C.lime} size={22}/><View style={{flex:1,gap:5}}><Label>TID SEDAN SENASTE CIGARETTEN</Label><Text style={styles.statValue}>{duration}</Text></View></View></Card>
   <View style={styles.sectionRow}><Text style={styles.heading}>Din utveckling</Text><Pressable accessibilityRole="button" onPress={onStats}><Text style={styles.link}>Visa mer</Text></Pressable></View><Card><Bars values={weekly}/></Card>
