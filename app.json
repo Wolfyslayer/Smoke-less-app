@@ -40,7 +40,10 @@
         "foregroundImage": "./assets/branding/adaptive-icon.png",
         "backgroundColor": "#101a15"
       },
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ]
     },
     "icon": "./assets/branding/icon.png",
     "splash": {
