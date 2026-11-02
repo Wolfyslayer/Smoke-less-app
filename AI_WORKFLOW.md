@@ -1,6 +1,6 @@
 # AI_WORKFLOW.md – obligatoriskt arbetsflöde för Smoke Less
 
-Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Kontrollera också aktuell fasplan, PR-beskrivning och senaste CI-status. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.
+Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Läs också `docs/MASTER_ROADMAP.md`, aktuell fasplan, PR-beskrivning och senaste CI-status. Masterplanen anger fasernas ordning och omfattning; den aktiva PR:ns fasta checklista anger verifierad framdrift. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.
 
 ## En fas = en pull request
 - Arbeta **endast i den aktiva fasens befintliga branch och PR**. Skapa inte en ny PR för varje uppgift, fix eller commit.
@@ -33,8 +33,7 @@ Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/r
 - Fortsätt sedan till **nästa dokumenterade fas** och skapa **en** PR för den fasen. Om ingen fas finns: planera och föreslå nästa meningsfulla uppgraderingsfas för appen, med prioriterade funktioner och testbara acceptanskriterier, innan implementationen börjar.
 - Behåll användarens fokus: en fungerande, vältestad Android-app och tydlig framdrift, inte många små PR:er.
 
-## Nuvarande fas vid införandet
-- Fas: **7.0 – Betatestning, kvalitetssäkring och lanseringsförberedelser**
-- Aktiv PR: **https://github.com/Wolfyslayer/Smoke-less-app/pull/138**
-- PR-beskrivningens huvudchecklista är auktoritativ. Den kan ändras; läs den på nytt inför nästa steg.
-- Pågående arbete får **inte** flyttas till en ny PR för denna instruktion.
+## Aktuell fas och historik
+- Aktuell fas och PR finns i `docs/MASTER_ROADMAP.md`. Verifiera alltid mot GitHub innan du arbetar.
+- Fas 7.0 avslutades i PR #138. Fas 8.0 pågår i PR #140.
+- Ändra roadmap-status när en fas verkligen mergats och verifierats, inte när enstaka commits skapats.
