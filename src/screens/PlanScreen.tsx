@@ -30,21 +30,21 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
-   <Text style={styles.cardTitle}>{scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
+   <Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt rökstopp':scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
    {scheduled?<Pressable accessibilityRole="button" accessibilityLabel="Ändra planerat stoppdatum" accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" onPress={()=>{setDateInput([end.getFullYear(),String(end.getMonth()+1).padStart(2,'0'),String(end.getDate()).padStart(2,'0')].join('-'));setDateError('');setEditingDate(true)}}><Text style={styles.label}>ÄNDRA STOPPDATUM</Text></Pressable>:null}
    {scheduled&&editingDate?<View style={{gap:9}}><TextInput style={styles.dateInput} value={dateInput} onChangeText={setDateInput} placeholder="ÅÅÅÅ-MM-DD" placeholderTextColor={C.muted} accessibilityLabel="Nytt stoppdatum, år månad dag" accessibilityHint="Ange datum med fyra siffror för år, två för månad och två för dag" keyboardType="numbers-and-punctuation"/><Pressable accessibilityRole="button" accessibilityLabel="Spara nytt stoppdatum" onPress={saveDate}><Text style={styles.label}>SPARA NYTT DATUM</Text></Pressable><Pressable accessibilityRole="button" onPress={()=>setEditingDate(false)}><Text style={styles.muted}>Avbryt</Text></Pressable>{dateError?<Text accessibilityRole="alert" style={styles.error}>{dateError}</Text>:null}</View>:null}
    {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt egna mål.</Text>:null}
   </Card>
-  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget kommande minskningssteg i grundplanen'}</Text><Text style={styles.muted}>Om sju dagar är riktvärdet {nextGoal} cigaretter per dag. {scheduled?'Planen är anpassad till ditt valda stoppdatum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
-  <Heading>Din nedtrappning</Heading>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt dagsmål är noll cigaretter':customGoal?'Ditt egna dagsmål är '+goal+' cigaretter':nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget kommande minskningssteg i grundplanen'}</Text><Text style={styles.muted}>Om sju dagar är riktvärdet {nextGoal} cigaretter per dag. {p.mode==='quit'?'Du kan fortsätta registrera dina framsteg i din egen takt.':customGoal?'Ditt egna riktvärde gäller tills du ändrar eller återställer det.':scheduled?'Planen är anpassad till ditt valda stoppdatum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
+  <Heading>{p.mode==='quit'?'Ditt rökstopp':'Din nedtrappning'}</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
-    <View style={{flex:1,minWidth:115}}><Label>MINSKNING AV DAGSMÅL</Label><Text style={styles.statValue}>{todayReduction} <Text style={{fontSize:13,color:C.muted}}>färre/dag</Text></Text></View>
+    <View style={{flex:1,minWidth:115}}><Label>{p.mode==='quit'?'MÅL JÄMFÖRT MED START':'MINSKNING AV DAGSMÅL'}</Label><Text style={styles.statValue}>{todayReduction} <Text style={{fontSize:13,color:C.muted}}>färre/dag</Text></Text></View>
     <View style={{flex:1,minWidth:115}}><Label>JÄMFÖRT MED START</Label><Text style={styles.statValue}>{percentage}%</Text></View>
    </View>
    <View style={styles.progressTrack} accessible accessibilityRole="progressbar" accessibilityLabel="Minskning av dagsmål jämfört med start" accessibilityValue={{min:0,max:100,now:percentage}}><View style={[styles.progressFill,{width:`${Math.min(100,percentage)}%` as `${number}%`}]}/></View>
-   <Text style={styles.muted}>Visar hur dagsmålet har förändrats från startnivån, inte hur mycket du faktiskt rökt.{customGoal?' Ett eget riktvärde gäller tills det återställs.':''}</Text>
+   <Text style={styles.muted}>Visar skillnaden mellan dagens mål och startnivån, inte hur mycket du faktiskt rökt.{customGoal?' Ett eget riktvärde gäller tills det återställs.':''}</Text>
   </Card>
   <Card style={{gap:10}}>
    <Label>PLANEN KAN ANPASSAS</Label>
