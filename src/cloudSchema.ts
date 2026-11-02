@@ -11,13 +11,13 @@ const shortText = (v: unknown) => typeof v === 'string' && v.length <= 200;
 const keys = (v: Record<string, unknown>, allowed: readonly string[]) => Object.keys(v).every(k => allowed.includes(k));
 
 export function isCloudProfile(v: unknown): v is Profile {
-  if (!isObject(v) || !keys(v, ['mode','baseline','packSize','packPrice','speed','startAt','dailyTargetOverride'])) return false;
+  if (!isObject(v) || !keys(v, ['mode','baseline','packSize','packPrice','speed','startAt','dailyTargetOverride','plannedQuitAt'])) return false;
   return (v.mode === 'reduce' || v.mode === 'quit') &&
     (v.speed === 'gentle' || v.speed === 'balanced' || v.speed === 'fast') &&
     Number.isInteger(v.baseline) && (v.baseline as number) >= 0 && (v.baseline as number) <= 200 &&
     Number.isInteger(v.packSize) && (v.packSize as number) >= 1 && (v.packSize as number) <= 200 &&
     typeof v.packPrice === 'number' && Number.isFinite(v.packPrice) && v.packPrice >= 0 && v.packPrice <= 100000 &&
-    iso(v.startAt) && (v.dailyTargetOverride === null || (Number.isInteger(v.dailyTargetOverride) && (v.dailyTargetOverride as number) >= 0 && (v.dailyTargetOverride as number) <= 200));
+    iso(v.startAt) && (v.plannedQuitAt === undefined || (iso(v.plannedQuitAt) && Date.parse(v.plannedQuitAt as string)>Date.parse(v.startAt as string))) && (v.dailyTargetOverride === null || (Number.isInteger(v.dailyTargetOverride) && (v.dailyTargetOverride as number) >= 0 && (v.dailyTargetOverride as number) <= 200));
 }
 export function isCloudEntry(v: unknown): v is Cigarette {
   return isObject(v) && keys(v,['id','at','feeling','trigger']) && id(v.id) && iso(v.at) &&
