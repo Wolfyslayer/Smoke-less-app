@@ -4,11 +4,12 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({records = 3, failBatch = false, failCompletion = false, lockState = null} = {}) {
+function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false} = {}) {
   let remaining = records;
   let authDeleted = false;
   let lock = lockState && {state: lockState};
   const events = [];
+  const COLLECTION_NAMES = ['entries', 'cravings', 'checkins', 'settings', 'control'];
   const lockRef = {
     async create(value) {
       if (lock) {const e = new Error('exists'); e.code = 6; throw e;}
@@ -21,8 +22,10 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
     collection(name) {
       assert.equal(name, 'users');
       return {doc() {return {
+        get: async () => ({exists: parentExists}),
+        listCollections: async () => [...COLLECTION_NAMES, ...unknownCollections].map(id => ({id})),
         collection(name) {
-          if (name === 'control') return {doc: () => lockRef};
+          if (name === 'control') return {doc: () => lockRef, limit: () => ({get: async () => ({docs: [{id: 'deletion'}, ...(extraControl ? [{id: 'other'}] : [])]})})};
           return {
             limit() {return {async get() {
               const count = Math.min(remaining, 200);
@@ -99,4 +102,13 @@ test('unexpected lock state blocks deletion without touching Auth', async () => 
   await assert.rejects(h.invoke(), error => error.code === 'failed-precondition');
   assert.equal(h.authDeleted, false);
   assert.equal(h.lock.state, 'unknown');
+});
+
+test('does not delete Auth when unknown collections, parent or control data exist', async () => {
+  for (const options of [{unknownCollections: ['devices']}, {parentExists: true}, {extraControl: true}]) {
+    const h = harness(options);
+    await assert.rejects(h.invoke(), error => error.code === 'internal');
+    assert.equal(h.authDeleted, false);
+    assert.equal(h.lock.state, 'deleting');
+  }
 });
