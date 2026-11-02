@@ -1,5 +1,5 @@
-import React from 'react';
-import {Pressable,StyleSheet,Text,View} from 'react-native';
+import React,{useState} from 'react';
+import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import {C} from '../theme';
 import {target,quitDate,type Profile,type Speed} from '../domain';
 
@@ -12,6 +12,10 @@ function Heading({children}:{children:React.ReactNode}){return <Text style={styl
 export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile}:Props){
  const percentage=p.baseline>0?Math.max(0,Math.min(100,Math.round(todayReduction/p.baseline*100))):0;
  const customGoal=p.dailyTargetOverride!==null;
+ const [editingDate,setEditingDate]=useState(false);
+ const [dateInput,setDateInput]=useState('');
+ const [dateError,setDateError]=useState('');
+ const saveDate=()=>{const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.trim());const parsed=match?new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12):null;const today=new Date(clock);today.setHours(0,0,0,0);if(!parsed||!Number.isFinite(parsed.getTime())||parsed.getFullYear()!==Number(match?.[1])||parsed.getMonth()+1!==Number(match?.[2])||parsed.getDate()!==Number(match?.[3])||parsed<=today){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}const current=target({...p,dailyTargetOverride:null},new Date(clock));onChangeProfile({plannedQuitAt:parsed.toISOString(),startAt:new Date(clock).toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt});setEditingDate(false);setDateError('');};
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
  const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
@@ -24,6 +28,8 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
    <Text style={styles.cardTitle}>{scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
+   {scheduled?<Pressable accessibilityRole="button" onPress={()=>{setDateInput([end.getFullYear(),String(end.getMonth()+1).padStart(2,'0'),String(end.getDate()).padStart(2,'0')].join('-'));setDateError('');setEditingDate(true)}}><Text style={styles.label}>ÄNDRA STOPPDATUM</Text></Pressable>:null}
+   {scheduled&&editingDate?<View style={{gap:9}}><TextInput style={styles.dateInput} value={dateInput} onChangeText={setDateInput} placeholder="ÅÅÅÅ-MM-DD" placeholderTextColor={C.muted} accessibilityLabel="Nytt stoppdatum" keyboardType="numbers-and-punctuation"/><Pressable accessibilityRole="button" onPress={saveDate}><Text style={styles.label}>SPARA NYTT DATUM</Text></Pressable><Pressable accessibilityRole="button" onPress={()=>setEditingDate(false)}><Text style={styles.muted}>Avbryt</Text></Pressable>{dateError?<Text style={styles.error}>{dateError}</Text>:null}</View>:null}
    {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt egna mål.</Text>:null}
   </Card>
@@ -73,4 +79,5 @@ const styles=StyleSheet.create({
  dayCell:{width:'21%',flexGrow:1,alignItems:'center',padding:10,gap:5,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
  choice:{gap:5},selected:{borderColor:C.lime,backgroundColor:C.limeSoft},
  recoveryCard:{gap:7,padding:14,borderRadius:14,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
+ dateInput:{borderWidth:1,borderColor:C.border,borderRadius:10,padding:12,color:C.white,fontSize:16},error:{color:C.danger,fontSize:13},
 });
