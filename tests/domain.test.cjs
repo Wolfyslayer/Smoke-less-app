@@ -288,3 +288,13 @@ test('cloud update permission requires an exact previously observed plan', () =>
  assert.equal(permitted(fingerprint,{...remote,plannedQuitAt:'2026-12-02T12:00:00.000Z'}),false);
  assert.equal(permitted(fingerprint,{...remote,planStartTarget:7}),false);
 });
+
+
+test('cloud sync aborts stale sessions before restoring observed plan baselines', () => {
+ const source=fs.readFileSync('src/cloudSync.native.ts','utf8');
+ assert.match(source,/let accountEpoch=0/);
+ assert.match(source,/resetObservedCloudPlans\(\):void \{ accountEpoch\+\+; observedPlans\.clear\(\); \}/);
+ assert.match(source,/const startedEpoch=accountEpoch/);
+ assert.match(source,/if\(startedEpoch!==accountEpoch\) throw new Error/);
+ assert.match(source,/assertUser\(\);\s*const finalPlan=/);
+});

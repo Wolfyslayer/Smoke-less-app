@@ -8,8 +8,9 @@ import {previewMerge,canUpdateObservedPlan} from './syncMerge';
 // Only a profile successfully observed during this app session can be updated.
 // The remote document is rechecked inside a transaction before any write.
 const observedPlans = new Map<string,string>();
+let accountEpoch=0;
 /** Forget in-memory cloud baselines on account transitions. */
-export function resetObservedCloudPlans():void { observedPlans.clear(); }
+export function resetObservedCloudPlans():void { accountEpoch++; observedPlans.clear(); }
 const fingerprint = (profile:Profile) => JSON.stringify(Object.fromEntries(Object.entries(profile).filter(([,v])=>v!==undefined).sort(([a],[b])=>a.localeCompare(b))));
 
 /**
@@ -18,7 +19,9 @@ const fingerprint = (profile:Profile) => JSON.stringify(Object.fromEntries(Objec
  * Never overwrites a remote document or silently resurrects deletions.
  */
 export async function syncCloudData(uid: string, local: Data): Promise<Data> {
+  const startedEpoch=accountEpoch;
   const assertUser = () => {
+    if(startedEpoch!==accountEpoch) throw new Error('Kontosessionen ändrades. Synkronisering avbruten.');
     if (getAuth().currentUser?.uid !== uid) throw new Error('Kontot ändrades. Synkronisering avbruten.');
   };
   assertUser();
