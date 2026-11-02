@@ -15,10 +15,13 @@ Appen kan hantera uppgifter som användaren själv registrerar om rökvanor, må
 Gästhistorik lagras lokalt på enheten. När användaren väljer att skapa eller använda ett konto kan e-postadress och kontouppgifter behandlas via Firebase Authentication. Kontofunktioner kan även använda Firestore för molnhistorik och synkronisering. Exakt omfattning, tidpunkt och villkor för molnöverföring måste verifieras i den faktiska implementationen.
 
 ## Användarens val
-Appen kan användas i gästläge utan konto. Användaren kan själv välja att aktivera lokala påminnelser och måste ge telefonens notisbehörighet där det krävs. Manuell JSON-export av historik kan innehålla personliga uppgifter; användaren ansvarar för hur den exporterade filen förvaras och delas.
+Appen kan användas i gästläge utan konto. Användaren kan själv välja att aktivera lokala påminnelser och måste ge telefonens notisbehörighet där det krävs. Manuell JSON-export och JSON-återställning erbjuds inte i appens gränssnitt. Kontohistorik synkroniseras via Firebase medan gästhistorik lagras lokalt på enheten.
 
 ## Lagring, mottagare och överföringar
 Lokala data lagras på enheten. För kontofunktioner används Firebase-tjänster från Google. **Kontrollera före publicering:** exakta Firebase-tjänster, regioner, underbiträden, överföringar utanför EU/EES, lagringstider, säkerhetsåtgärder och eventuell analys-/kraschrapportering. Påstå inte att data aldrig lämnar enheten när konto eller molnsynkronisering används.
+
+## Säker kontoradering – blockerande implementationskrav
+En säker raderingsfunktion är ännu inte implementerad. Firestore-reglerna tillåter inte klienten att skapa raderingslås eller hårdradera dokument. En betrodd serverfunktion med Firebase Admin SDK krävs för att skapa ett raderingslås, stoppa samtidiga och äldre klienters skrivningar, radera samtliga underkollektioner samt hantera borttagning av Firebase Authentication-kontot. Funktionen måste vara återupptagbar vid avbrott, verifiera användarens identitet och inte rapportera slutförd radering förrän alla steg lyckats. Lokal kontohistorik behöver hanteras separat och får inte återskapas genom synkronisering. Implementera och testa med separata testkonton; radera aldrig befintliga användardata i QA.
 
 ## Rättigheter, radering och support
 Användaren ska få tydlig information om hur data kan begäras ut, rättas och raderas samt hur ett konto avslutas. **Blockerande inför publicering:** kontrollera faktiskt fungerande radering av lokal data, molnhistorik och Firebase-konto samt att synkronisering inte återställer raderade uppgifter. Ange en fungerande kontaktväg och svarsrutin.
