@@ -52,3 +52,19 @@ test('unlisted paths and parent documents are denied', async () => {
   await assertFails(setDoc(doc(db('alice'), 'users/alice'), {test: true}));
   await assertFails(setDoc(doc(db('alice'), 'users/alice/sync/device1'), {test: true}));
 });
+
+test('account deletion lock blocks all client writes including tombstones', async () => {
+  const uid = 'locked-user';
+  const ref = doc(db(uid), path(uid, 'before'));
+  await assertSucceeds(setDoc(ref, valid('before')));
+  await env.withSecurityRulesDisabled(async context => {
+    await setDoc(doc(context.firestore(), `users/${uid}/control/deletion`), {state: 'deleting'});
+  });
+  await assertSucceeds(getDoc(ref));
+  await assertFails(setDoc(doc(db(uid), path(uid, 'new')), valid('new')));
+  await assertFails(updateDoc(ref, {revision: 2, deleted: true}));
+  await assertFails(updateDoc(ref, {revision: 2, at: '2025-01-02T12:00:00.000Z'}));
+  await assertFails(deleteDoc(ref));
+  await assertFails(setDoc(doc(db(uid), `users/${uid}/control/deletion`), {state: 'completed'}));
+  await assertFails(deleteDoc(doc(db(uid), `users/${uid}/control/deletion`)));
+});
