@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({records = 3, failBatch = false, lockState = null} = {}) {
+function harness({records = 3, failBatch = false, failCompletion = false, lockState = null} = {}) {
   let remaining = records;
   let authDeleted = false;
   let lock = lockState && {state: lockState};
@@ -15,7 +15,7 @@ function harness({records = 3, failBatch = false, lockState = null} = {}) {
       lock = {...value}; events.push('lock');
     },
     async get() {return {exists: !!lock, get: key => lock?.[key]};},
-    async set(value) {lock = {...lock, ...value}; events.push('complete');}
+    async set(value) {if (failCompletion) throw new Error('final status unavailable'); lock = {...lock, ...value}; events.push('complete');}
   };
   const db = {
     collection(name) {
@@ -83,4 +83,20 @@ test('completed lock is never downgraded or rerun', async () => {
   assert.equal((await h.invoke()).deleted, true);
   assert.equal(h.authDeleted, false);
   assert.equal(h.lock.state, 'completed');
+});
+
+test('final status failure after Auth deletion retains lock for admin recovery', async () => {
+  const h = harness({failCompletion: true});
+  await assert.rejects(h.invoke(), error => error.code === 'internal');
+  assert.equal(h.remaining, 0);
+  assert.equal(h.authDeleted, true);
+  assert.equal(h.lock.state, 'deleting');
+  assert.deepEqual(h.events, ['lock', 'batch', 'auth']);
+});
+
+test('unexpected lock state blocks deletion without touching Auth', async () => {
+  const h = harness({lockState: 'unknown'});
+  await assert.rejects(h.invoke(), error => error.code === 'failed-precondition');
+  assert.equal(h.authDeleted, false);
+  assert.equal(h.lock.state, 'unknown');
 });
