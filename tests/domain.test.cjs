@@ -210,7 +210,7 @@ test('restarting a scheduled reduction removes quit date but preserves baseline 
  const current=target({...original,dailyTargetOverride:null},when);
  const restarted=restartReductionPlan(original,when);
  assert.equal(restarted.plannedQuitAt,undefined);
- assert.equal(Object.hasOwn(restarted,'plannedQuitAt'),false);
+ assert.equal(Object.hasOwn(restarted,'plannedQuitAt'),true);
  assert.equal(restarted.dailyTargetOverride,null);
  assert.equal(restarted.baseline,12);
  assert.equal(restarted.originalStartAt,original.startAt);
@@ -237,4 +237,13 @@ test('restarting twice keeps historical savings and does not alter saved records
 test('restart is a no-op for immediate quit plans', () => {
  const original=profile({mode:'quit'});
  assert.equal(restartReductionPlan(original,date('2026-10-09')),original);
+});
+
+
+test('restart patch explicitly clears a previously scheduled quit date when merged', () => {
+ const original=profile({plannedQuitAt:'2026-10-21T12:00:00.000Z'});
+ const patch=restartReductionPlan(original,date('2026-10-09'));
+ const merged={...original,...patch};
+ assert.equal(merged.plannedQuitAt,undefined);
+ assert.equal(target(merged,date('2026-10-10')),patch.planStartTarget);
 });

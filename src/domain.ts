@@ -12,7 +12,7 @@ export function restartReductionPlan(p:Profile,now:Date):Profile {
  if(p.mode!=='reduce')return p;
  const current=target({...p,dailyTargetOverride:null},now);
  const {plannedQuitAt:_previousDate,...rest}=p;
- return {...rest,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:current,dailyTargetOverride:null};
+ return {...rest,plannedQuitAt:undefined,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:current,dailyTargetOverride:null};
 }
 export function quitDate(p:Profile){if(p.mode==='quit')return new Date(p.startAt);if(p.plannedQuitAt)return new Date(p.plannedQuitAt);const interval=p.speed==='gentle'?7:p.speed==='fast'?2:4;const start=new Date(p.startAt);start.setDate(start.getDate()+(p.planStartTarget??p.baseline)*interval);return start;}
 export function countOn(entries:Cigarette[],date:string){return entries.filter(e=>dayKey(new Date(e.at))===date).length;}
