@@ -273,3 +273,18 @@ test('changing quit date twice keeps the original savings anchor and does not mu
  assert.equal(savings(data,date('2026-10-12')),savings({...data,profile:original},date('2026-10-12')));
  assert.equal(target(second,date('2026-10-12')),target(first,date('2026-10-12')));
 });
+
+
+test('cloud update permission requires an exact previously observed plan', () => {
+ const source=fs.readFileSync('src/syncMerge.ts','utf8');
+ const output=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const module={exports:{}};
+ vm.runInNewContext(output,{module,exports:module.exports,Object,Map,JSON,Set});
+ const permitted=module.exports.canUpdateObservedPlan;
+ const remote=profile({plannedQuitAt:'2026-12-01T12:00:00.000Z'});
+ const fingerprint=JSON.stringify(Object.fromEntries(Object.entries(remote).sort(([a],[b])=>a.localeCompare(b))));
+ assert.equal(permitted(undefined,remote),false);
+ assert.equal(permitted(fingerprint,remote),true);
+ assert.equal(permitted(fingerprint,{...remote,plannedQuitAt:'2026-12-02T12:00:00.000Z'}),false);
+ assert.equal(permitted(fingerprint,{...remote,planStartTarget:7}),false);
+});

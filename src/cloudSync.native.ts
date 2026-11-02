@@ -3,7 +3,7 @@ import {getAuth} from '@react-native-firebase/auth';
 import type {Data,Profile} from './domain';
 import {isCloudData, userDocumentPath} from './cloudSchema';
 import {readCloudSnapshot} from './cloudRead.native';
-import {previewMerge} from './syncMerge';
+import {previewMerge,canUpdateObservedPlan} from './syncMerge';
 
 // Only a profile successfully observed during this app session can be updated.
 // The remote document is rechecked inside a transaction before any write.
@@ -29,7 +29,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   const known = observedPlans.get(uid);
   const planChanged = !!localPlan && !!remotePlan && fingerprint(localPlan)!==fingerprint(remotePlan);
   // A mismatch without an observed baseline remains a conflict, never an overwrite.
-  const canUpdatePlan = planChanged && known!==undefined && known===fingerprint(remotePlan);
+  const canUpdatePlan = planChanged && canUpdateObservedPlan(known,remotePlan);
   const preview = previewMerge(canUpdatePlan?{...local,profile:remotePlan}:local, remote.data);
   if (!preview.safeToApply) {
     const types=[...new Set(preview.conflicts.map(conflict=>conflict.collection))].join(', ');
