@@ -13,14 +13,7 @@ service cloud.firestore {
     function normalWrite(uid) {
       return owner(uid) && !deletionLocked(uid);
     }
-    // During deletion, allow only revisioned tombstones of existing records.
-    // No new records or resurrection while the lock exists.
-    function tombstoneWrite(uid) {
-      return owner(uid) && deletionLocked(uid)
-        && resource.data.deleted == false
-        && request.resource.data.deleted == true
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted','revision','updatedAt']);
-    }
+    // Account deletion blocks ALL client writes, including tombstones.
     function metadata(d) {
       return d.keys().hasAll(['schemaVersion','updatedAt','revision','deleted'])
         && d.schemaVersion == 1
@@ -70,25 +63,25 @@ service cloud.firestore {
       match /entries/{entryId} {
         allow read: if owner(uid);
         allow create: if normalWrite(uid) && request.resource.data.revision == 1 && entry(request.resource.data,entryId);
-        allow update: if (normalWrite(uid) || tombstoneWrite(uid)) && request.resource.data.revision == resource.data.revision + 1 && entry(request.resource.data,entryId);
+        allow update: if normalWrite(uid) && request.resource.data.revision == resource.data.revision + 1 && entry(request.resource.data,entryId);
         allow delete: if false; // Tombstones only.
       }
       match /cravings/{cravingId} {
         allow read: if owner(uid);
         allow create: if normalWrite(uid) && request.resource.data.revision == 1 && craving(request.resource.data,cravingId);
-        allow update: if (normalWrite(uid) || tombstoneWrite(uid)) && request.resource.data.revision == resource.data.revision + 1 && craving(request.resource.data,cravingId);
+        allow update: if normalWrite(uid) && request.resource.data.revision == resource.data.revision + 1 && craving(request.resource.data,cravingId);
         allow delete: if false;
       }
       match /checkins/{day} {
         allow read: if owner(uid);
         allow create: if normalWrite(uid) && request.resource.data.revision == 1 && checkin(request.resource.data,day);
-        allow update: if (normalWrite(uid) || tombstoneWrite(uid)) && request.resource.data.revision == resource.data.revision + 1 && checkin(request.resource.data,day);
+        allow update: if normalWrite(uid) && request.resource.data.revision == resource.data.revision + 1 && checkin(request.resource.data,day);
         allow delete: if false;
       }
       match /settings/{document} {
         allow read: if owner(uid) && document == 'plan';
         allow create: if normalWrite(uid) && document == 'plan' && request.resource.data.revision == 1 && plan(request.resource.data);
-        allow update: if document == 'plan' && (normalWrite(uid) || tombstoneWrite(uid)) && request.resource.data.revision == resource.data.revision + 1 && plan(request.resource.data);
+        allow update: if document == 'plan' && normalWrite(uid) && request.resource.data.revision == resource.data.revision + 1 && plan(request.resource.data);
         allow delete: if false;
       }
     }
