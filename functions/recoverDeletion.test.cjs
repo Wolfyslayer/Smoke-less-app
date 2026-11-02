@@ -12,7 +12,12 @@ function harness({state = 'deleting', authExists = false, remaining = [], confir
   };
   const db = {
     doc: path => {
-      if (path === 'users/test-uid') return {get: async () => ({exists: parentExists}), listCollections: async () => [...['control', 'entries', 'cravings', 'checkins', 'settings'], ...unknownCollections].map(id => ({id}))};
+      if (path === 'users/test-uid') {
+        return {
+          get: async () => ({exists: parentExists}),
+          listCollections: async () => [...['control', 'entries', 'cravings', 'checkins', 'settings'], ...unknownCollections].map(id => ({id}))
+        };
+      }
       assert.equal(path, 'users/test-uid/control/deletion');
       return {get: async () => lock};
     },
