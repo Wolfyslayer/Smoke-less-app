@@ -13,7 +13,7 @@ Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och ut
 2. Kontrollera att tester/CI körs på **senaste commit**. Rapportera korrekt status; påstå aldrig att tester är gröna innan de faktiskt är det.
 3. **Vänta på att användaren säger att kontrollerna är gröna** innan du fortsätter till nästa punkt eller commit. Om de är röda, åtgärda felet i **samma PR**.
 4. När användaren bekräftar grönt: fortsätt automatiskt med nästa kvarvarande punkt i **samma fas och PR**. Fråga inte om nytt godkännande för varje rutinmässigt steg.
-5. Gör inte en ny native Android-build för enbart server-/test-/dokumentationsändringar. Begär en ny build när nativ konfiguration, paket eller annan ändring kräver det. Fysiska testresultat får aldrig hittas på.
+5. **Efter varje commit ska AI kontrollera om en ny Android-build krävs**. Granska särskilt ändringar i `package.json` och lockfil, Expo-plugins, `app.json`, `android/`, Firebase-konfiguration, Android-behörigheter, appikon, splash och andra nativa resurser. Rapportera alltid **Ny Android-build: JA/NEJ**, kort motivering och, vid JA, vilka bygg- och installationskommandon användaren ska köra. Vid osäkerhet: redovisa osäkerheten och rekommendera verifierande build. Enbart server-, test- och dokumentationsändringar kräver normalt ingen ny native build. JavaScript-/TypeScript-ändringar kan normalt testas genom omladdning av utvecklingsappen men behöver fortfarande funktionstestas. Fysiska testresultat får aldrig hittas på.
 
 ## Obligatorisk rapport i chatten efter VARJE commit
 Efter varje commit, visa en uppdaterad **checklista över fasens samtliga huvudpunkter**, med `[x]` för verifierat klara och `[ ]` för återstående. Visa även en **completion-stapel**, antal klara/total och procent, t.ex.:
