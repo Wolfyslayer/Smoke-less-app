@@ -315,3 +315,18 @@ test('next milestone respects scheduled stop and manual override',()=>{
  assert.equal(nextReductionMilestone({...p,dailyTargetOverride:1},date('2026-10-01')),null);
  assert.equal(nextReductionMilestone({...p,mode:'quit'},date('2026-10-01')),null);
 });
+
+
+test('milestone is based on calendar days across daylight saving transitions',()=>{
+ const p=profile({baseline:2,startAt:'2026-03-25T12:00:00.000Z',plannedQuitAt:'2026-04-03T12:00:00.000Z'});
+ const next=nextReductionMilestone(p,date('2026-03-28'));
+ assert.ok(next);
+ assert.equal(next.goal,1);
+ assert.equal(next.date.toISOString().slice(0,10),'2026-03-30');
+});
+
+test('milestone returns none after reaching zero or for fixed custom targets',()=>{
+ const p=profile({baseline:1,startAt:'2026-10-01T12:00:00.000Z',speed:'fast'});
+ assert.equal(nextReductionMilestone(p,date('2026-10-05')),null);
+ assert.equal(nextReductionMilestone({...p,dailyTargetOverride:1},date('2026-10-01')),null);
+});

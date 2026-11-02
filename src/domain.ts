@@ -11,7 +11,7 @@ export function target(p:Profile,now=new Date()){if(p.mode==='quit')return 0;if(
 export function nextReductionMilestone(p:Profile,now:Date):{date:Date;goal:number}|null {
  const current=target(p,now);
  if(p.mode!=='reduce'||current<=0||p.dailyTargetOverride!==null)return null;
- const horizon=p.plannedQuitAt?Math.min(3660,Math.max(0,Math.ceil((new Date(p.plannedQuitAt).getTime()-now.getTime())/86400000)+2)):Math.min(3660,current*7+8);
+ const horizon=p.plannedQuitAt?Math.min(3660,Math.max(0,calendarDay(new Date(p.plannedQuitAt))-calendarDay(now)+1)):Math.min(3660,current*7+8);
  for(let offset=1;offset<=horizon;offset++){
   const day=new Date(now);day.setDate(day.getDate()+offset);
   const goal=target(p,day);
