@@ -25,6 +25,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const nextGoal=target(p,nextWeek);
  const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
  const nextDecrease=remainingSteps.find((step,i)=>i>0 && step.goal<goal);
+ const milestones=remainingSteps.slice(0,14);
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
@@ -57,7 +58,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   </Card>:null}
   <Heading>Senaste sju dagarna</Heading>
   <Card style={{gap:10}}>
-   <View style={styles.sectionRow}><Text style={styles.cardTitle}>{withinDays} av {confirmedDays} bekräftade dagar inom målet</Text><Text style={styles.muted}>{confirmedDays}/7 avstämda</Text></View>
+   <View style={styles.sectionRow}><Text style={[styles.cardTitle,styles.flexText]}>{withinDays} av {confirmedDays} bekräftade dagar inom målet</Text><Text style={[styles.muted,styles.flexText]}>{confirmedDays}/7 avstämda</Text></View>
    <View style={{flexDirection:'row',gap:5}}>{planWeek.map(d=><View key={d.key} accessible accessibilityRole="text" accessibilityLabel={d.key+': '+(d.confirmed?(d.within?'inom målet':'över målet'):'ej bekräftad')} style={{flex:1,height:12,borderRadius:5,backgroundColor:!d.confirmed?C.soft:d.within?C.lime:C.danger}}/>)}</View>
    <Text style={styles.muted}>Endast dagar du bekräftat räknas. En missad dag betyder inte att dina framsteg är förlorade.</Text>
    {confirmedDays>withinDays?<View style={styles.recoveryCard}><Text style={styles.cardTitle}>Fortsätt där du är</Text><Text style={styles.muted}>Du har {confirmedDays-withinDays} {confirmedDays-withinDays===1?'bekräftad dag':'bekräftade dagar'} över riktvärdet den senaste veckan. Det betyder inte att du behöver börja om. Registrera som vanligt, använd SOS vid röksug och justera planen om du behöver mer tid.</Text></View>:null}
@@ -70,16 +71,16 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    </Pressable>)}
   <Heading>Kommande mål</Heading>
   {customGoal?<Text style={styles.muted}>Du använder ett eget dagsmål. Därför visas samma riktvärde för alla kommande dagar tills du återställer det i Inställningar.</Text>:null}
-  <Card><View style={styles.grid}>{Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return <View key={i} style={[styles.dayCell,i===0&&{borderColor:C.lime,backgroundColor:C.limeSoft}]}><Text style={styles.muted}>{d.toLocaleDateString('sv-SE',{weekday:'short'})}</Text><Text style={styles.cardTitle}>{target(p,d)}</Text></View>})}</View></Card>
+  <Card><View style={styles.milestoneList}>{milestones.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', högsta dagsmål '+dayGoal+' cigaretter'} style={[styles.milestoneRow,i===0&&styles.milestoneToday]}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View></Card>
   <Text style={styles.muted}>Dagsmålet är ett högsta riktvärde. Du behöver aldrig röka för att nå det.</Text>
  </View>;
 }
 const styles=StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
+ screen:{gap:20},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  muted:{fontSize:13,lineHeight:19,color:C.dim},divider:{height:1,backgroundColor:C.border},
- grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
+ grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:10},
  progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
  dayCell:{width:'21%',flexGrow:1,alignItems:'center',padding:10,gap:5,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
  choice:{gap:5},selected:{borderColor:C.lime,backgroundColor:C.limeSoft},
