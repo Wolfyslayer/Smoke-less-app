@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false} = {}) {
+function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false} = {}) {
   let remaining = records;
   let authDeleted = false;
   let lock = lockState && {state: lockState};
@@ -29,7 +29,7 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
           return {
             limit() {return {async get() {
               const count = Math.min(remaining, 200);
-              return {empty: count === 0, docs: Array.from({length: count}, (_, i) => ({ref: {id: i}}))};
+              return {empty: count === 0, docs: Array.from({length: count}, (_, i) => ({ref: {id: i, listCollections: async () => nestedDocuments ? [{id: 'attachments'}] : []}}))};
             }};}
           };
         }
@@ -137,4 +137,13 @@ test('rejects deletion requests with parameters before creating the lock', async
   await assert.rejects(h.invoke({data: {uid: 'another-user'}}), error => error.code === 'invalid-argument');
   assert.equal(h.lock, null);
   assert.equal(h.authDeleted, false);
+});
+
+test('refuses nested Firestore data before deleting documents or Auth', async () => {
+  const h = harness({nestedDocuments: true});
+  await assert.rejects(h.invoke(), error => error.code === 'internal');
+  assert.equal(h.authDeleted, false);
+  assert.equal(h.remaining, 3);
+  assert.equal(h.lock.state, 'deleting');
+  assert.deepEqual(h.events, ['lock']);
 });
