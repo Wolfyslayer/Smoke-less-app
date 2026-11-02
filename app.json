@@ -14,13 +14,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/branding/splash.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
           "backgroundColor": "#101a15",
           "dark": {
-            "image": "./assets/branding/splash.png",
-            "backgroundColor": "#101a15"
+            "backgroundColor": "#0D1B13"
           }
         }
       ]
@@ -37,15 +33,14 @@
       "package": "com.smokeless.app",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/branding/adaptive-icon.png",
-        "backgroundColor": "#101a15"
-      }
+        "foregroundImage": "./assets/branding/adaptive-icon-foreground.png",
+        "backgroundImage": "./assets/branding/adaptive-icon-background.png"
+      },
+      "versionCode": 1,
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ]
     },
-    "icon": "./assets/branding/icon.png",
-    "splash": {
-      "image": "./assets/branding/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#101a15"
-    }
+    "icon": "./assets/branding/icon.png"
   }
 }

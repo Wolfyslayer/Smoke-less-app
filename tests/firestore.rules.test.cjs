@@ -52,3 +52,38 @@ test('unlisted paths and parent documents are denied', async () => {
   await assertFails(setDoc(doc(db('alice'), 'users/alice'), {test: true}));
   await assertFails(setDoc(doc(db('alice'), 'users/alice/sync/device1'), {test: true}));
 });
+
+test('account deletion lock blocks all client writes including tombstones', async () => {
+  const uid = 'locked-user';
+  const ref = doc(db(uid), path(uid, 'before'));
+  await assertSucceeds(setDoc(ref, valid('before')));
+  await env.withSecurityRulesDisabled(async context => {
+    await setDoc(doc(context.firestore(), `users/${uid}/control/deletion`), {state: 'deleting'});
+  });
+  await assertSucceeds(getDoc(ref));
+  await assertFails(setDoc(doc(db(uid), path(uid, 'new')), valid('new')));
+  await assertFails(updateDoc(ref, {revision: 2, deleted: true}));
+  await assertFails(updateDoc(ref, {revision: 2, at: '2025-01-02T12:00:00.000Z'}));
+  await assertFails(deleteDoc(ref));
+  await assertFails(setDoc(doc(db(uid), `users/${uid}/control/deletion`), {state: 'completed'}));
+  await assertFails(deleteDoc(doc(db(uid), `users/${uid}/control/deletion`)));
+});
+
+test('deletion lock persists through interrupted and completed states', async () => {
+  const uid = 'recovery-user';
+  const record = doc(db(uid), path(uid, 'existing'));
+  const lockPath = `users/${uid}/control/deletion`;
+  await assertSucceeds(setDoc(record, valid('existing')));
+  for (const state of ['deleting', 'completed']) {
+    await env.withSecurityRulesDisabled(async context => {
+      await setDoc(doc(context.firestore(), lockPath), {state});
+    });
+    await assertFails(setDoc(doc(db(uid), path(uid, 'resurrected')), valid('resurrected')));
+    await assertFails(updateDoc(record, {revision: 2, deleted: true}));
+    await assertFails(deleteDoc(record));
+    await assertFails(deleteDoc(doc(db(uid), lockPath)));
+  }
+  // The lock is server-owned, even when a different authenticated user tries.
+  await assertFails(getDoc(doc(db('intruder'), lockPath)));
+  await assertFails(setDoc(doc(db('intruder'), lockPath), {state: 'completed'}));
+});

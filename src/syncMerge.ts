@@ -9,7 +9,20 @@ import type {Data, Profile, Cigarette, Craving, Checkin} from './domain';
 export type SyncConflict = {collection: 'profile' | 'entries' | 'cravings' | 'checkins'; key: string};
 export type MergePreview = {merged: Data; conflicts: SyncConflict[]; safeToApply: boolean};
 
-const equal = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+// Firestore may return fields in a different key order than AsyncStorage.
+// Compare values structurally rather than comparing JSON property insertion order.
+// Do not normalize or discard actual values: differing records must remain conflicts.
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>)
+      .filter(([, item]) => item !== undefined)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, item]) => [key, canonical(item)]));
+  }
+  return value;
+}
+const equal = (a: unknown, b: unknown) => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
 
 function combine<T>(
   collection: 'entries' | 'cravings' | 'checkins',
