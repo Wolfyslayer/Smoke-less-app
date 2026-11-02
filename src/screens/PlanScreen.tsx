@@ -17,6 +17,8 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
  const nextWeek=new Date(clock);nextWeek.setDate(nextWeek.getDate()+7);
  const nextGoal=target(p,nextWeek);
+ const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
+ const nextDecrease=remainingSteps.find((step,i)=>i>0 && step.goal<goal);
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
@@ -25,7 +27,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt egna mål.</Text>:null}
   </Card>
-  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>Om sju dagar: högst {nextGoal} cigaretter per dag</Text><Text style={styles.muted}>Dagens riktvärde är {goal}. {scheduled?'Planen minskar successivt fram till ditt valda datum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget nytt steg de närmaste 14 dagarna'}</Text><Text style={styles.muted}>Om sju dagar är riktvärdet {nextGoal} cigaretter per dag. {scheduled?'Planen är anpassad till ditt valda stoppdatum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
   <Heading>Din nedtrappning</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
@@ -50,9 +52,9 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {confirmedDays>withinDays?<View style={styles.recoveryCard}><Text style={styles.cardTitle}>Fortsätt där du är</Text><Text style={styles.muted}>Du har {confirmedDays-withinDays} {confirmedDays-withinDays===1?'bekräftad dag':'bekräftade dagar'} över riktvärdet den senaste veckan. Det betyder inte att du behöver börja om. Registrera som vanligt, använd SOS vid röksug och justera planen om du behöver mer tid.</Text></View>:null}
   </Card>
   <Heading>Välj din takt</Heading>
-  {scheduled?<Text style={styles.muted}>Du har ett bestämt stoppdatum. Om du väljer en annan takt nedan gäller fortfarande ditt valda datum.</Text>:null}
+  {scheduled?<Text style={styles.muted}>Du har ett bestämt stoppdatum. Ditt stoppdatum styr nedtrappningen, så takten nedan ändrar inte målen så länge datumet är valt.</Text>:null}
   {([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
-   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock)),originalStartAt:p.originalStartAt??p.startAt})}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
+   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id){const current=target({...p,dailyTargetOverride:null},new Date(clock));onChangeProfile({speed:id,...(scheduled?{}:{startAt:new Date(clock).toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt})})}}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>)}
   <Heading>Kommande mål</Heading>
