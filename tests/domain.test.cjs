@@ -170,3 +170,35 @@ test('scheduled date keeps history and validates future date', () => {
  assert.equal(validateData({...data,profile:{...p,plannedQuitAt:'2026-09-30T12:00:00.000Z'}}),false);
  assert.equal(target(profile(),date('2026-10-05')),11);
 });
+
+test('cloud profile schema accepts restarted and scheduled plans without accepting invalid anchors', () => {
+  const source = fs.readFileSync('src/cloudSchema.ts', 'utf8');
+  const output = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022}}).outputText;
+  const module = {exports: {}};
+  vm.runInNewContext(output, {module, exports: module.exports, Date, Number, Object, Array});
+  const valid = module.exports.isCloudProfile;
+  const p = profile({planStartTarget: 7, originalStartAt: '2026-09-01T12:00:00.000Z', plannedQuitAt: '2026-12-01T12:00:00.000Z'});
+  assert.equal(valid(p), true);
+  assert.equal(valid(profile()), true);
+  assert.equal(valid({...p, planStartTarget: -1}), false);
+  assert.equal(valid({...p, planStartTarget: 2.5}), false);
+  assert.equal(valid({...p, originalStartAt: 'not-a-date'}), false);
+});
+
+test('cloud merge never silently overwrites conflicting plans or historical entries', () => {
+  const source = fs.readFileSync('src/syncMerge.ts', 'utf8');
+  const output = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022}}).outputText;
+  const module = {exports: {}};
+  vm.runInNewContext(output, {module, exports: module.exports, Object, Map, JSON, Set});
+  const merge = module.exports.previewMerge;
+  const remote = {profile: profile(), entries: [{id:'existing',at:'2026-10-02T12:00:00.000Z'}], cravings:[], checkins:[]};
+  const local = {profile: {...remote.profile, planStartTarget:8}, entries:[...remote.entries], cravings:[], checkins:[]};
+  const conflict = merge(local, remote);
+  assert.equal(conflict.safeToApply, false);
+  assert.equal(conflict.conflicts.some(c=>c.collection==='profile'), true);
+  assert.equal(conflict.merged.profile.planStartTarget, undefined);
+  assert.equal(conflict.merged.entries.length, 1);
+  const same = merge(remote, remote);
+  assert.equal(same.safeToApply, true);
+  assert.equal(same.conflicts.length, 0);
+});
