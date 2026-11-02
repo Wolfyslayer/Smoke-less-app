@@ -1,0 +1,17 @@
+{
+  "name": "smoke-less-functions",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Server-only account deletion; do not deploy before emulator QA",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "check": "node --check index.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "firebase-functions": "^6.0.0"
+  }
+}
