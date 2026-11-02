@@ -28,6 +28,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   const localPlan = local.profile;
   const known = observedPlans.get(uid);
   const planChanged = !!localPlan && !!remotePlan && fingerprint(localPlan)!==fingerprint(remotePlan);
+  // A mismatch without an observed baseline remains a conflict, never an overwrite.
   const canUpdatePlan = planChanged && known!==undefined && known===fingerprint(remotePlan);
   const preview = previewMerge(canUpdatePlan?{...local,profile:remotePlan}:local, remote.data);
   if (!preview.safeToApply) {
@@ -52,7 +53,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
       const current=await transaction.get(planDoc);
       if (!current.exists()) throw new Error('Planen ändrades i molnet. Försök igen.');
       const raw=current.data() as Record<string,unknown>;
-      if (raw.deleted!==false || !Number.isInteger(raw.revision)) throw new Error('Planens molnversion är ogiltig.');
+      if (raw.schemaVersion!==1 || raw.deleted!==false || !Number.isInteger(raw.revision) || (raw.revision as number)<1) throw new Error('Planens molnversion är ogiltig.');
       const {schemaVersion,revision,deleted,updatedAt,...payload}=raw;
       if (fingerprint(payload as Profile)!==known) throw new Error('Planen ändrades på en annan enhet. Ingen information har skrivits över.');
       assertUser();
@@ -81,5 +82,6 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   assertUser();
   const finalPlan=canUpdatePlan?localPlan:preview.merged.profile;
   if(finalPlan) observedPlans.set(uid,fingerprint(finalPlan));
+  else observedPlans.delete(uid);
   return {...preview.merged,profile:finalPlan};
 }
