@@ -14,7 +14,7 @@ Följ dina rökvanor, minska i din takt och se dina framsteg.
 ## Full description (Swedish, draft)
 Smoke Less hjälper dig att förstå dina rökvanor och följa din resa mot färre cigaretter eller ett rökstopp. Sätt personliga mål, registrera dina framsteg och använd stöd när röksuget kommer.
 
-Appen erbjuder bland annat en plan för nedtrappning eller rökstopp, översikt över historik och statistik, påminnelser som du själv väljer att aktivera och möjlighet att använda appen i gästläge. Kontofunktioner och säkerhetskopiering måste verifieras på en riktig Android-enhet innan de marknadsförs som fullt tillgängliga.
+Appen erbjuder bland annat en plan för nedtrappning eller rökstopp, översikt över historik och statistik, påminnelser som du själv väljer att aktivera och möjlighet att använda appen i gästläge. Med ett konto kan historik synkroniseras via Firebase. Gästläget lagrar historik lokalt på enheten. Ingen manuell JSON-export eller JSON-återställning erbjuds. Slutlig butikstext ska stämmas av mot acceptanstestad version.
 
 Smoke Less är ett hjälpmedel för egen uppföljning och ersätter inte medicinsk rådgivning.
 
@@ -25,7 +25,7 @@ Smoke Less är ett hjälpmedel för egen uppföljning och ersätter inte medicin
 - [ ] Prepare feature graphic at Google Play's current required dimensions.
 - [ ] Review Swedish copy and optional English translation.
 - [ ] Provide an accessible published privacy policy URL, not the draft in this repository.
-- [ ] Verify Data safety, account deletion and user data deletion disclosures.
+- [ ] Verify Data safety, account deletion and user data deletion disclosures; serverbaserad kontoradering är ännu inte driftsatt eller tillgänglig i appen.
 - [ ] Confirm contact details, support channel, target audience, content rating and permissions.
 - [ ] Prepare a signed release build and test the install/upgrade path.
 - [ ] Confirm Play Console requirements and release track before submission.
