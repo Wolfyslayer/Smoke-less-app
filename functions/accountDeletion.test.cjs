@@ -4,10 +4,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false} = {}) {
+function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false, activeLease = false} = {}) {
   let remaining = records;
   let authDeleted = false;
-  let lock = lockState && {state: lockState};
+  let lock = lockState && {state: lockState, leaseUntilMs: activeLease ? Date.now() + 600000 : Date.now() - 1000};
   const events = [];
   const COLLECTION_NAMES = ['entries', 'cravings', 'checkins', 'settings', 'control'];
   const lockRef = {
@@ -34,6 +34,12 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
           };
         }
       };}};
+    },
+    async runTransaction(fn) {
+      return fn({
+        get: async () => ({exists: !!lock, get: key => lock?.[key]}),
+        update: (_ref, value) => {lock = {...lock, ...value}; events.push('lease');}
+      });
     },
     batch() {let count = 0; return {
       delete() {count++;},
@@ -146,4 +152,12 @@ test('refuses nested Firestore data before deleting documents or Auth', async ()
   assert.equal(h.remaining, 3);
   assert.equal(h.lock.state, 'deleting');
   assert.deepEqual(h.events, ['lock']);
+});
+
+test('active deletion lease rejects a concurrent retry without touching Auth', async () => {
+  const h = harness({lockState: 'deleting', activeLease: true});
+  await assert.rejects(h.invoke(), error => error.code === 'failed-precondition');
+  assert.equal(h.authDeleted, false);
+  assert.equal(h.remaining, 3);
+  assert.deepEqual(h.events, []);
 });
