@@ -151,3 +151,22 @@ test('reminder status distinguishes opt-out, revoked permission and missing sche
   assert.match(status(true,true,true,false), /Ingen aktiv/);
   assert.match(status(true,true,true,true), /schemalagd och notiser är tillåtna/);
 });
+
+
+test('scheduled quit date progressively reduces target to zero', () => {
+ const p=profile({baseline:10,plannedQuitAt:'2026-10-11T12:00:00.000Z'});
+ assert.equal(target(p,date('2026-10-01')),10);
+ assert.equal(target(p,date('2026-10-06')),5);
+ assert.equal(target(p,date('2026-10-11')),0);
+ assert.equal(target(p,date('2026-10-20')),0);
+ assert.equal(quitDate(p).toISOString().slice(0,10),'2026-10-11');
+});
+
+test('scheduled date keeps history and validates future date', () => {
+ const p=profile({plannedQuitAt:'2026-10-11T12:00:00.000Z'});
+ const data={profile:p,entries:[{id:'old',at:'2026-10-02T12:00:00.000Z'}],cravings:[],checkins:[]};
+ assert.equal(validateData(data),true);
+ assert.equal(countOn(data.entries,'2026-10-02'),1);
+ assert.equal(validateData({...data,profile:{...p,plannedQuitAt:'2026-09-30T12:00:00.000Z'}}),false);
+ assert.equal(target(profile(),date('2026-10-05')),11);
+});
