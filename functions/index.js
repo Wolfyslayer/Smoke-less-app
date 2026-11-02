@@ -22,6 +22,12 @@ async function deleteCollection(db, collectionRef) {
   while (true) {
     const snapshot = await collectionRef.limit(200).get();
     if (snapshot.empty) return;
+    for (const doc of snapshot.docs) {
+      const nested = await doc.ref.listCollections();
+      if (nested.length > 0) {
+        throw new HttpsError('failed-precondition', 'Nested data requires admin review.');
+      }
+    }
     const batch = db.batch();
     snapshot.docs.forEach(doc => batch.delete(doc.ref));
     await batch.commit();
