@@ -3,8 +3,8 @@
 ## Mål
 En sammanhållen, begriplig och trygg plan för användare som vill sluta direkt eller trappa ned. Återanvänd befintliga profil-, plan- och historikmodeller. Bevara gästläge, Firestore-synk och tidigare data.
 
-## Fast huvudchecklista (0 av 8)
-- [ ] Inventera befintlig plan, datamodell, skärmar och testtäckning; dokumentera kompatibilitetsrisker.
+## Fast huvudchecklista (1 av 8)
+- [x] Inventera befintlig plan, datamodell, skärmar och testtäckning; dokumentera kompatibilitetsrisker. Se `docs/PHASE_8_TECHNICAL_AUDIT.md`.
 - [ ] Stöd tre vägar: sluta direkt, trappa ned gradvis, planerat stoppdatum.
 - [ ] Bygg individuella mål och en rimlig veckovis progression utan överraskande omräkning av historik.
 - [ ] Skapa tydlig planöversikt med nästa delmål och lättbegripliga justeringar.
