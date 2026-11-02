@@ -15,7 +15,9 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [editingDate,setEditingDate]=useState(false);
  const [dateInput,setDateInput]=useState('');
  const [dateError,setDateError]=useState('');
+ const [confirmRestart,setConfirmRestart]=useState(false);
  const saveDate=()=>{const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.trim());const parsed=match?new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12):null;const today=new Date(clock);today.setHours(0,0,0,0);if(!parsed||!Number.isFinite(parsed.getTime())||parsed.getFullYear()!==Number(match?.[1])||parsed.getMonth()+1!==Number(match?.[2])||parsed.getDate()!==Number(match?.[3])||parsed<=today){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}const current=target({...p,dailyTargetOverride:null},new Date(clock));onChangeProfile({plannedQuitAt:parsed.toISOString(),startAt:new Date(clock).toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt});setEditingDate(false);setDateError('');};
+ const restart=()=>{const now=new Date(clock);const current=target({...p,dailyTargetOverride:null},now);onChangeProfile({startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:current,plannedQuitAt:undefined,dailyTargetOverride:null});setConfirmRestart(false);};
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
  const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
@@ -50,6 +52,9 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Text style={styles.muted}>Behöver du en lugnare takt? Välj Lugn nedan. När du byter takt fortsätter grundplanen från dagens planerade nivå, inte från din ursprungliga startnivå. Tidigare registreringar finns kvar.</Text>
    <Text style={styles.muted}>Vill du ha ett eget dagsmål kan du ändra det i Inställningar. Det gäller tills du återställer det. Det är ett högsta riktvärde, inte något du måste röka upp till.</Text>
   </Card>
+  {p.mode==='reduce'?<Card style={{gap:10}}><Label>BÖRJA OM MED PLANEN</Label><Text style={styles.cardTitle}>En ny start utan att radera din historik</Text><Text style={styles.muted}>Starta en ny nedtrappning från dagens planerade nivå. Tidigare registreringar och ditt ursprungliga startdatum behålls. Ett eventuellt stoppdatum och ett eget dagsmål tas bort.</Text>
+   {!confirmRestart?<Pressable accessibilityRole="button" onPress={()=>setConfirmRestart(true)}><Text style={styles.label}>STARTA OM PLANEN</Text></Pressable>:<View style={{gap:12}}><Text style={styles.muted}>Vill du starta om nedtrappningen? Dina tidigare registreringar raderas inte.</Text><Pressable accessibilityRole="button" onPress={restart}><Text style={styles.label}>JA, STARTA OM</Text></Pressable><Pressable accessibilityRole="button" onPress={()=>setConfirmRestart(false)}><Text style={styles.muted}>Avbryt</Text></Pressable></View>}
+  </Card>:null}
   <Heading>Senaste sju dagarna</Heading>
   <Card style={{gap:10}}>
    <View style={styles.sectionRow}><Text style={styles.cardTitle}>{withinDays} av {confirmedDays} bekräftade dagar inom målet</Text><Text style={styles.muted}>{confirmedDays}/7 avstämda</Text></View>

@@ -57,7 +57,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
       const {schemaVersion,revision,deleted,updatedAt,...payload}=raw;
       if (fingerprint(payload as Profile)!==known) throw new Error('Planen ändrades på en annan enhet. Ingen information har skrivits över.');
       assertUser();
-      transaction.set(planDoc,{...localPlan,schemaVersion:1,revision:(revision as number)+1,deleted:false,updatedAt:firestore.FieldValue.serverTimestamp()});
+      transaction.set(planDoc,{...Object.fromEntries(Object.entries(localPlan).filter(([,value])=>value!==undefined)),schemaVersion:1,revision:(revision as number)+1,deleted:false,updatedAt:firestore.FieldValue.serverTimestamp()});
     });
   }
   for (const job of jobs) {
@@ -71,7 +71,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
       }
       assertUser();
       transaction.set(targetDoc,{
-        ...job.payload,
+        ...Object.fromEntries(Object.entries(job.payload).filter(([,value])=>value!==undefined)),
         schemaVersion:1,
         revision:1,
         deleted:false,
