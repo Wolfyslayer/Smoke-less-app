@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, restartReductionPlan} = context.exports;
+const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -246,4 +246,30 @@ test('restart patch explicitly clears a previously scheduled quit date when merg
  const merged={...original,...patch};
  assert.equal(merged.plannedQuitAt,undefined);
  assert.equal(target(merged,date('2026-10-10')),patch.planStartTarget);
+});
+
+
+test('changing scheduled quit date preserves current planned target and original savings start', () => {
+ const original=profile({baseline:10,plannedQuitAt:'2026-10-21T12:00:00.000Z'});
+ const today=date('2026-10-09');
+ const current=target(original,today);
+ const revised=rescheduleQuitPlan(original,date('2026-11-01'),today);
+ assert.equal(target(revised,today),current);
+ assert.equal(revised.originalStartAt,original.startAt);
+ assert.equal(revised.baseline,original.baseline);
+ assert.equal(quitDate(revised).toISOString().slice(0,10),'2026-11-01');
+ assert.equal(target(revised,date('2026-11-01')),0);
+ assert.equal(validateData({profile:revised,entries:[],cravings:[],checkins:[]}),true);
+});
+
+test('changing quit date twice keeps the original savings anchor and does not mutate history', () => {
+ const original=profile({baseline:10,plannedQuitAt:'2026-10-21T12:00:00.000Z'});
+ const entries=[{id:'old',at:'2026-10-02T12:00:00.000Z'}];
+ const first=rescheduleQuitPlan(original,date('2026-11-01'),date('2026-10-09'));
+ const second=rescheduleQuitPlan(first,date('2026-11-15'),date('2026-10-12'));
+ const data={profile:second,entries,cravings:[],checkins:[]};
+ assert.equal(second.originalStartAt,original.startAt);
+ assert.equal(data.entries,entries);
+ assert.equal(savings(data,date('2026-10-12')),savings({...data,profile:original},date('2026-10-12')));
+ assert.equal(target(second,date('2026-10-12')),target(first,date('2026-10-12')));
 });

@@ -14,6 +14,11 @@ export function restartReductionPlan(p:Profile,now:Date):Profile {
  const {plannedQuitAt:_previousDate,...rest}=p;
  return {...rest,plannedQuitAt:undefined,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:current,dailyTargetOverride:null};
 }
+/** Reschedule only future targets, keeping the current planned reduction level. */
+export function rescheduleQuitPlan(p:Profile,quitAt:Date,now:Date):Profile {
+ const current=target({...p,dailyTargetOverride:null},now);
+ return {...p,plannedQuitAt:quitAt.toISOString(),startAt:now.toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt};
+}
 export function quitDate(p:Profile){if(p.mode==='quit')return new Date(p.startAt);if(p.plannedQuitAt)return new Date(p.plannedQuitAt);const interval=p.speed==='gentle'?7:p.speed==='fast'?2:4;const start=new Date(p.startAt);start.setDate(start.getDate()+(p.planStartTarget??p.baseline)*interval);return start;}
 export function countOn(entries:Cigarette[],date:string){return entries.filter(e=>dayKey(new Date(e.at))===date).length;}
 export function savings(data:Data,now=new Date()){const p=data.profile;if(!p)return 0;const days=Math.max(0,calendarDay(now)-calendarDay(new Date(p.originalStartAt??p.startAt))+1);const expected=p.baseline*days;const actual=data.entries.filter(e=>new Date(e.at)>=new Date(p.originalStartAt??p.startAt)&&new Date(e.at)<=now).length;return Math.max(0,expected-actual)*p.packPrice/p.packSize;}
