@@ -27,16 +27,20 @@ async function main() {
     authExists = false;
   }
   const collections = ['entries', 'cravings', 'checkins', 'settings'];
+  const userDoc = db.doc(`users/${uid}`);
+  const parentSnapshot = await userDoc.get();
+  const actualCollections = await userDoc.listCollections();
+  const unknownCollections = actualCollections.map(ref => ref.id).filter(name => ![...collections, 'control'].includes(name));
   const counts = {};
   for (const collection of collections) {
     const sample = await db.collection(`users/${uid}/${collection}`).limit(1).get();
     counts[collection] = !sample.empty;
   }
   const hasData = Object.values(counts).some(Boolean);
-  console.log(JSON.stringify({uid, authExists, collectionsWithRemainingData: Object.keys(counts).filter(k => counts[k]), action: confirm ? 'verify-and-finalize' : 'dry-run'}, null, 2));
+  console.log(JSON.stringify({uid, authExists, collectionsWithRemainingData: Object.keys(counts).filter(k => counts[k]), parentDocumentExists: parentSnapshot.exists, unknownCollections, action: confirm ? 'verify-and-finalize' : 'dry-run'}, null, 2));
   if (!confirm) return;
-  if (authExists || hasData) {
-    throw new Error('Cannot finalize: Auth user or user data still exists. Escalate for manual investigation.');
+  if (authExists || hasData || parentSnapshot.exists || unknownCollections.length) {
+    throw new Error('Cannot finalize: Auth user, parent document, unknown collections or user data still exists. Escalate for manual investigation.');
   }
   await db.runTransaction(async tx => {
     const current = await tx.get(lock);
