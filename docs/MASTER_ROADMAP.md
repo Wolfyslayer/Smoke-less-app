@@ -24,6 +24,7 @@
 | 14.0 | Smart coach | Planerad | — |
 | 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
+| 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 17.0 | Säkerhet, integritet och Google Play-lansering | Planerad | — |
@@ -100,6 +101,16 @@ Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övr
 - Skärmläsarstöd, kontrast, tryckytor, tydliga felmeddelanden och robust navigering.
 - Prestanda, uppstart, offlinehantering, stabilitet och regressionskontroller.
 - Förbered språkstöd och utöka språk först när svensk grundupplevelse är kvalitetssäkrad.
+
+## Fas 16.3 – Android-tillbakaknapp och navigations-UX
+**Mål:** Förutsägbar Android-navigering utan att appen stängs av misstag, med sammanhållen UI-polering.
+- Androids systemknapp/gest för Tillbaka ska gå tillbaka i appens faktiska navigationshistorik, inte stänga appen när det finns en föregående vy.
+- Öppna modaler, formulär, datumväljare och SOS-övningar ska stängas eller avbrytas säkert före sidbyte; osparade ändringar ska hanteras begripligt.
+- På startsidan, när ingen modal eller annan intern vy är öppen, ska Tillbaka visa en tillgänglig bekräftelsedialog med **Avbryt** och **Avsluta appen**; avsluta bara efter uttrycklig bekräftelse.
+- Säkerställ korrekt samspel med Androids gestnavigering, hårdvaruknapp, Expo Router/navigationsstack och återupptagning efter bakgrundsläge. Undvik dubbelregistreringar och oavsiktligt tappad formulärdata.
+- Samla mindre UI/UX-fixar som konsekventa knappar, tillbakaindikatorer, modaler, tryckytor, safe area, små skärmar och stora textstorlekar. Behåll större visuell helhetsöversyn i fas 16.0.
+- Testa på fysisk Android-enhet med flera skärmstorlekar och TalkBack. Bedöm behovet av ny native-build när implementationen är klar.
+**Acceptans:** Tillbaka navigerar ett steg bakåt eller stänger översta modalen; från startsidan visas avslutsfrågan; Avbryt behåller appen öppen; inga oavsiktliga avslut eller förlorade registreringar.
 
 ## Fas 16.1 – Android-hemskärmswidgets
 **Mål:** Användbara och snygga widgets på Android-hemskärmen utan att behöva öppna appen.
