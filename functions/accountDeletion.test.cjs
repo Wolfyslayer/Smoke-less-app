@@ -60,7 +60,7 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
   }, console: {error() {}}};
   vm.runInNewContext(fs.readFileSync('functions/index.js', 'utf8'), context);
   const request = {auth: {uid: 'test-user', token: {auth_time: Math.floor(Date.now()/1000)}}, data: {}};
-  return {invoke: () => context.exports.deleteMyAccount(request), events, get remaining() {return remaining;}, get authDeleted() {return authDeleted;}, get lock() {return lock;}};
+  return {invoke: (overrides = {}) => context.exports.deleteMyAccount({...request, ...overrides}), events, get remaining() {return remaining;}, get authDeleted() {return authDeleted;}, get lock() {return lock;}};
 }
 
 test('deletes all documents before Auth and completes the lock', async () => {
@@ -111,4 +111,30 @@ test('does not delete Auth when unknown collections, parent or control data exis
     assert.equal(h.authDeleted, false);
     assert.equal(h.lock.state, 'deleting');
   }
+});
+
+test('rejects unauthenticated requests before creating a deletion lock', async () => {
+  const h = harness();
+  await assert.rejects(h.invoke({auth: null}), error => error.code === 'unauthenticated');
+  assert.equal(h.lock, null);
+  assert.equal(h.authDeleted, false);
+});
+
+test('rejects stale or future authentication before touching user data', async () => {
+  for (const authTime of [Math.floor(Date.now() / 1000) - 601, Math.floor(Date.now() / 1000) + 120, undefined]) {
+    const h = harness();
+    await assert.rejects(
+      h.invoke({auth: {uid: 'test-user', token: {auth_time: authTime}}}),
+      error => error.code === 'failed-precondition'
+    );
+    assert.equal(h.lock, null);
+    assert.equal(h.authDeleted, false);
+  }
+});
+
+test('rejects deletion requests with parameters before creating the lock', async () => {
+  const h = harness();
+  await assert.rejects(h.invoke({data: {uid: 'another-user'}}), error => error.code === 'invalid-argument');
+  assert.equal(h.lock, null);
+  assert.equal(h.authDeleted, false);
 });
