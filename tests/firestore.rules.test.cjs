@@ -68,3 +68,22 @@ test('account deletion lock blocks all client writes including tombstones', asyn
   await assertFails(setDoc(doc(db(uid), `users/${uid}/control/deletion`), {state: 'completed'}));
   await assertFails(deleteDoc(doc(db(uid), `users/${uid}/control/deletion`)));
 });
+
+test('deletion lock persists through interrupted and completed states', async () => {
+  const uid = 'recovery-user';
+  const record = doc(db(uid), path(uid, 'existing'));
+  const lockPath = `users/${uid}/control/deletion`;
+  await assertSucceeds(setDoc(record, valid('existing')));
+  for (const state of ['deleting', 'completed']) {
+    await env.withSecurityRulesDisabled(async context => {
+      await setDoc(doc(context.firestore(), lockPath), {state});
+    });
+    await assertFails(setDoc(doc(db(uid), path(uid, 'resurrected')), valid('resurrected')));
+    await assertFails(updateDoc(record, {revision: 2, deleted: true}));
+    await assertFails(deleteDoc(record));
+    await assertFails(deleteDoc(doc(db(uid), lockPath)));
+  }
+  // The lock is server-owned, even when a different authenticated user tries.
+  await assertFails(getDoc(doc(db('intruder'), lockPath)));
+  await assertFails(setDoc(doc(db('intruder'), lockPath), {state: 'completed'}));
+});
