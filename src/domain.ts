@@ -7,6 +7,13 @@ export const EMPTY:Data={profile:null,entries:[],cravings:[],checkins:[]};
 export const dayKey=(d:Date)=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 const calendarDay=(d:Date)=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
 export function target(p:Profile,now=new Date()){if(p.mode==='quit')return 0;if(p.plannedQuitAt && Number.isFinite(Date.parse(p.plannedQuitAt))){const start=dayKey(new Date(p.startAt)),end=dayKey(new Date(p.plannedQuitAt)),today=dayKey(now);if(today>=end)return 0;if(p.dailyTargetOverride!==null)return p.dailyTargetOverride;const startCount=p.planStartTarget??p.baseline;if(today<=start)return startCount;const dayNumber=(key:string)=>Math.floor(Date.UTC(Number(key.slice(0,4)),Number(key.slice(5,7))-1,Number(key.slice(8,10)))/86400000);const total=Math.max(1,dayNumber(end)-dayNumber(start));const remaining=Math.max(0,total-(dayNumber(today)-dayNumber(start)));return Math.max(0,Math.ceil(startCount*remaining/total));}if(p.dailyTargetOverride!==null)return p.dailyTargetOverride;const days=Math.max(0,calendarDay(now)-calendarDay(new Date(p.startAt)));const interval=p.speed==='gentle'?7:p.speed==='fast'?2:4;return Math.max(0,(p.planStartTarget??p.baseline)-Math.floor(days/interval));}
+/** Restart only the future reduction schedule; the caller retains all historical records. */
+export function restartReductionPlan(p:Profile,now:Date):Profile {
+ if(p.mode!=='reduce')return p;
+ const current=target({...p,dailyTargetOverride:null},now);
+ const {plannedQuitAt:_previousDate,...rest}=p;
+ return {...rest,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:current,dailyTargetOverride:null};
+}
 export function quitDate(p:Profile){if(p.mode==='quit')return new Date(p.startAt);if(p.plannedQuitAt)return new Date(p.plannedQuitAt);const interval=p.speed==='gentle'?7:p.speed==='fast'?2:4;const start=new Date(p.startAt);start.setDate(start.getDate()+(p.planStartTarget??p.baseline)*interval);return start;}
 export function countOn(entries:Cigarette[],date:string){return entries.filter(e=>dayKey(new Date(e.at))===date).length;}
 export function savings(data:Data,now=new Date()){const p=data.profile;if(!p)return 0;const days=Math.max(0,calendarDay(now)-calendarDay(new Date(p.originalStartAt??p.startAt))+1);const expected=p.baseline*days;const actual=data.entries.filter(e=>new Date(e.at)>=new Date(p.originalStartAt??p.startAt)&&new Date(e.at)<=now).length;return Math.max(0,expected-actual)*p.packPrice/p.packSize;}

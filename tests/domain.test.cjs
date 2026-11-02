@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData} = context.exports;
+const {target, quitDate, countOn, savings, validateData, restartReductionPlan} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -201,4 +201,40 @@ test('cloud merge never silently overwrites conflicting plans or historical entr
   const same = merge(remote, remote);
   assert.equal(same.safeToApply, true);
   assert.equal(same.conflicts.length, 0);
+});
+
+
+test('restarting a scheduled reduction removes quit date but preserves baseline and original start', () => {
+ const original=profile({baseline:12,plannedQuitAt:'2026-10-21T12:00:00.000Z',dailyTargetOverride:5});
+ const when=date('2026-10-09');
+ const current=target({...original,dailyTargetOverride:null},when);
+ const restarted=restartReductionPlan(original,when);
+ assert.equal(restarted.plannedQuitAt,undefined);
+ assert.equal(Object.hasOwn(restarted,'plannedQuitAt'),false);
+ assert.equal(restarted.dailyTargetOverride,null);
+ assert.equal(restarted.baseline,12);
+ assert.equal(restarted.originalStartAt,original.startAt);
+ assert.equal(restarted.planStartTarget,current);
+ assert.equal(target(restarted,when),current);
+ assert.equal(validateData({profile:restarted,entries:[],cravings:[],checkins:[]}),true);
+});
+
+test('restarting twice keeps historical savings and does not alter saved records', () => {
+ const entries=[{id:'first',at:'2026-10-02T12:00:00.000Z'}];
+ const cravings=[{id:'urge',at:'2026-10-03T12:00:00.000Z',intensity:3,trigger:'stress'}];
+ const checkins=[{date:'2026-10-04',complete:true,smokeFree:false}];
+ const original=profile();
+ const first=restartReductionPlan(original,date('2026-10-09'));
+ const second=restartReductionPlan(first,date('2026-10-12'));
+ const data={profile:second,entries,cravings,checkins};
+ assert.equal(second.originalStartAt,original.startAt);
+ assert.equal(data.entries,entries);
+ assert.equal(data.cravings,cravings);
+ assert.equal(data.checkins,checkins);
+ assert.equal(savings(data,date('2026-10-12')),savings({...data,profile:original},date('2026-10-12')));
+});
+
+test('restart is a no-op for immediate quit plans', () => {
+ const original=profile({mode:'quit'});
+ assert.equal(restartReductionPlan(original,date('2026-10-09')),original);
 });
