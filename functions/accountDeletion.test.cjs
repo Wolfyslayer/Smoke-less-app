@@ -4,10 +4,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false, activeLease = false} = {}) {
+function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false, activeLease = false, missingLease = false} = {}) {
   let remaining = records;
   let authDeleted = false;
-  let lock = lockState && {state: lockState, leaseUntilMs: activeLease ? Date.now() + 600000 : Date.now() - 1000};
+  let lock = lockState && {state: lockState, leaseUntilMs: missingLease ? undefined : activeLease ? Date.now() + 600000 : Date.now() - 1000};
   const events = [];
   const COLLECTION_NAMES = ['entries', 'cravings', 'checkins', 'settings', 'control'];
   const lockRef = {
@@ -159,5 +159,21 @@ test('active deletion lease rejects a concurrent retry without touching Auth', a
   await assert.rejects(h.invoke(), error => error.code === 'failed-precondition');
   assert.equal(h.authDeleted, false);
   assert.equal(h.remaining, 3);
+  assert.deepEqual(h.events, []);
+});
+
+test('expired deletion lease can be claimed and the interrupted deletion resumed', async () => {
+  const h = harness({lockState: 'deleting'});
+  assert.equal((await h.invoke()).deleted, true);
+  assert.equal(h.remaining, 0);
+  assert.equal(h.lock.state, 'completed');
+  assert.deepEqual(h.events, ['lease', 'batch', 'auth', 'complete']);
+});
+
+test('legacy deletion lock without lease requires manual review', async () => {
+  const h = harness({lockState: 'deleting', missingLease: true});
+  await assert.rejects(h.invoke(), error => error.code === 'failed-precondition');
+  assert.equal(h.remaining, 3);
+  assert.equal(h.authDeleted, false);
   assert.deepEqual(h.events, []);
 });
