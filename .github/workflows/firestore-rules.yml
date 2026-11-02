@@ -19,6 +19,6 @@ jobs:
       - name: Install isolated emulator test dependencies (without modifying lockfile)
         run: npm install --no-save --package-lock=false --no-audit --no-fund @firebase/rules-unit-testing firebase
       - name: Test account deletion server logic (mock Firebase, no production data)
-        run: node --test functions/accountDeletion.test.cjs
+        run: node --test functions/accountDeletion.test.cjs functions/recoverDeletion.test.cjs
       - name: Execute rules tests against Firestore emulator
         run: npx --yes firebase-tools emulators:exec --only firestore --project smokeless-rules-test "node --test tests/firestore.rules.test.cjs"
