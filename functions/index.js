@@ -17,6 +17,7 @@ if (!getApps().length) initializeApp();
 
 const COLLECTIONS = ['entries', 'cravings', 'checkins', 'settings'];
 const MAX_AUTH_AGE_SECONDS = 5 * 60;
+const DELETE_LEASE_MS = 10 * 60 * 1000;
 
 async function deleteCollection(db, collectionRef) {
   while (true) {
@@ -60,6 +61,7 @@ exports.deleteMyAccount = onCall(
       await lock.create({
         state: 'deleting',
         requestedAt: FieldValue.serverTimestamp(),
+        leaseUntilMs: Date.now() + DELETE_LEASE_MS,
       });
     } catch (error) {
       if (error.code !== 6 && error.code !== 'already-exists') throw error;
@@ -69,7 +71,19 @@ exports.deleteMyAccount = onCall(
       if (existing.get('state') !== 'deleting') {
         throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
       }
-      // A previous attempt was interrupted. Resume from remaining documents.
+      // An active invocation owns the lease. After it expires, a single
+      // retry may take over through a Firestore transaction.
+      await db.runTransaction(async transaction => {
+        const current = await transaction.get(lock);
+        if (!current.exists || current.get('state') !== 'deleting') {
+          throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
+        }
+        const leaseUntil = current.get('leaseUntilMs');
+        if (typeof leaseUntil !== 'number' || !Number.isFinite(leaseUntil) || leaseUntil > Date.now()) {
+          throw new HttpsError('failed-precondition', 'Kontoraderingen pågår redan.');
+        }
+        transaction.update(lock, {leaseUntilMs: Date.now() + DELETE_LEASE_MS});
+      });
     }
 
     try {
