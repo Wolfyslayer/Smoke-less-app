@@ -70,6 +70,16 @@ exports.deleteMyAccount = onCall(
       for (const collection of COLLECTIONS) {
         await deleteCollection(db, base.collection(collection));
       }
+      // Fail closed if data outside the audited schema exists. Never delete
+      // Authentication while unknown collections or a parent document remain.
+      const parent = await base.get();
+      const collections = await base.listCollections();
+      const unknown = collections.map(ref => ref.id).filter(name => ![...COLLECTIONS, 'control'].includes(name));
+      const control = await base.collection('control').limit(2).get();
+      const unexpectedControl = control.docs.some(doc => doc.id !== 'deletion');
+      if (parent.exists || unknown.length || unexpectedControl) {
+        throw new HttpsError('failed-precondition', 'Okända användardata hittades. Kontakta support.');
+      }
       // Auth deletion is LAST: a failure before this point can be retried by
       // the same user; after it succeeds, the server-owned lock remains.
       await getAuth().deleteUser(uid);
