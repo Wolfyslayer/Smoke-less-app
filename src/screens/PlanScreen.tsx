@@ -12,13 +12,20 @@ function Heading({children}:{children:React.ReactNode}){return <Text style={styl
 export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile}:Props){
  const percentage=p.baseline>0?Math.max(0,Math.min(100,Math.round(todayReduction/p.baseline*100))):0;
  const customGoal=p.dailyTargetOverride!==null;
+ const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
+ const end=quitDate(p);
+ const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
+ const nextWeek=new Date(clock);nextWeek.setDate(nextWeek.getDate()+7);
+ const nextGoal=target(p,nextWeek);
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
-   <Text style={styles.cardTitle}>{customGoal?'Rökstopp enligt grundplanen':'Planerat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
+   <Text style={styles.cardTitle}>{scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
+   {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt egna mål.</Text>:null}
   </Card>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>Om sju dagar: högst {nextGoal} cigaretter per dag</Text><Text style={styles.muted}>Dagens riktvärde är {goal}. {scheduled?'Planen minskar successivt fram till ditt valda datum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
   <Heading>Din nedtrappning</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
@@ -43,6 +50,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {confirmedDays>withinDays?<View style={styles.recoveryCard}><Text style={styles.cardTitle}>Fortsätt där du är</Text><Text style={styles.muted}>Du har {confirmedDays-withinDays} {confirmedDays-withinDays===1?'bekräftad dag':'bekräftade dagar'} över riktvärdet den senaste veckan. Det betyder inte att du behöver börja om. Registrera som vanligt, använd SOS vid röksug och justera planen om du behöver mer tid.</Text></View>:null}
   </Card>
   <Heading>Välj din takt</Heading>
+  {scheduled?<Text style={styles.muted}>Du har ett bestämt stoppdatum. Om du väljer en annan takt nedan gäller fortfarande ditt valda datum.</Text>:null}
   {([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
    <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock)),originalStartAt:p.originalStartAt??p.startAt})}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
