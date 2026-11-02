@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan} = context.exports;
+const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -297,4 +297,21 @@ test('cloud sync aborts stale sessions before restoring observed plan baselines'
  assert.match(source,/const startedEpoch=accountEpoch/);
  assert.match(source,/if\(startedEpoch!==accountEpoch\) throw new Error/);
  assert.match(source,/assertUser\(\);\s*const finalPlan=/);
+});
+
+
+test('next milestone finds slow reduction beyond fourteen days',()=>{
+ const p=profile({baseline:12,speed:'gentle',startAt:'2026-10-01T12:00:00.000Z'});
+ const next=nextReductionMilestone(p,date('2026-10-10'));
+ assert.equal(next.goal,10);
+ assert.equal(next.date.toISOString().slice(0,10),'2026-10-15');
+});
+
+test('next milestone respects scheduled stop and manual override',()=>{
+ const p=profile({baseline:2,plannedQuitAt:'2026-11-20T12:00:00.000Z'});
+ const next=nextReductionMilestone(p,date('2026-10-01'));
+ assert.ok(next);
+ assert.equal(next.goal,1);
+ assert.equal(nextReductionMilestone({...p,dailyTargetOverride:1},date('2026-10-01')),null);
+ assert.equal(nextReductionMilestone({...p,mode:'quit'},date('2026-10-01')),null);
 });

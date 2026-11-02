@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import {C} from '../theme';
-import {target,quitDate,restartReductionPlan,rescheduleQuitPlan,type Profile,type Speed} from '../domain';
+import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,type Profile,type Speed} from '../domain';
 
 type WeekDay={key:string;confirmed:boolean;within:boolean};
 type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void};
@@ -24,7 +24,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const nextWeek=new Date(clock);nextWeek.setDate(nextWeek.getDate()+7);
  const nextGoal=target(p,nextWeek);
  const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
- const nextDecrease=remainingSteps.find((step,i)=>i>0 && step.goal<goal);
+ const nextDecrease=nextReductionMilestone(p,new Date(clock));
  const milestones=remainingSteps.slice(0,14);
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
@@ -36,7 +36,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt egna mål.</Text>:null}
   </Card>
-  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget nytt steg de närmaste 14 dagarna'}</Text><Text style={styles.muted}>Om sju dagar är riktvärdet {nextGoal} cigaretter per dag. {scheduled?'Planen är anpassad till ditt valda stoppdatum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget kommande minskningssteg i grundplanen'}</Text><Text style={styles.muted}>Om sju dagar är riktvärdet {nextGoal} cigaretter per dag. {scheduled?'Planen är anpassad till ditt valda stoppdatum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
   <Heading>Din nedtrappning</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>

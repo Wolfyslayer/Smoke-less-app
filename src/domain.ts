@@ -7,6 +7,18 @@ export const EMPTY:Data={profile:null,entries:[],cravings:[],checkins:[]};
 export const dayKey=(d:Date)=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 const calendarDay=(d:Date)=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
 export function target(p:Profile,now=new Date()){if(p.mode==='quit')return 0;if(p.plannedQuitAt && Number.isFinite(Date.parse(p.plannedQuitAt))){const start=dayKey(new Date(p.startAt)),end=dayKey(new Date(p.plannedQuitAt)),today=dayKey(now);if(today>=end)return 0;if(p.dailyTargetOverride!==null)return p.dailyTargetOverride;const startCount=p.planStartTarget??p.baseline;if(today<=start)return startCount;const dayNumber=(key:string)=>Math.floor(Date.UTC(Number(key.slice(0,4)),Number(key.slice(5,7))-1,Number(key.slice(8,10)))/86400000);const total=Math.max(1,dayNumber(end)-dayNumber(start));const remaining=Math.max(0,total-(dayNumber(today)-dayNumber(start)));return Math.max(0,Math.ceil(startCount*remaining/total));}if(p.dailyTargetOverride!==null)return p.dailyTargetOverride;const days=Math.max(0,calendarDay(now)-calendarDay(new Date(p.startAt)));const interval=p.speed==='gentle'?7:p.speed==='fast'?2:4;return Math.max(0,(p.planStartTarget??p.baseline)-Math.floor(days/interval));}
+/** Find the next strictly lower planned daily target, including slow schedules beyond 14 days. */
+export function nextReductionMilestone(p:Profile,now:Date):{date:Date;goal:number}|null {
+ const current=target(p,now);
+ if(p.mode!=='reduce'||current<=0||p.dailyTargetOverride!==null)return null;
+ const horizon=p.plannedQuitAt?Math.min(3660,Math.max(0,Math.ceil((new Date(p.plannedQuitAt).getTime()-now.getTime())/86400000)+2)):Math.min(3660,current*7+8);
+ for(let offset=1;offset<=horizon;offset++){
+  const day=new Date(now);day.setDate(day.getDate()+offset);
+  const goal=target(p,day);
+  if(goal<current)return {date:day,goal};
+ }
+ return null;
+}
 /** Restart only the future reduction schedule; the caller retains all historical records. */
 export function restartReductionPlan(p:Profile,now:Date):Profile {
  if(p.mode!=='reduce')return p;
