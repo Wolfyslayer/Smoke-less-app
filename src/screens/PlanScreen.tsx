@@ -16,6 +16,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [dateInput,setDateInput]=useState('');
  const [dateError,setDateError]=useState('');
  const [confirmRestart,setConfirmRestart]=useState(false);
+ const [showAllGoals,setShowAllGoals]=useState(false);
  const saveDate=()=>{const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.trim());const parsed=match?new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12):null;const today=new Date(clock);today.setHours(0,0,0,0);if(!parsed||!Number.isFinite(parsed.getTime())||parsed.getFullYear()!==Number(match?.[1])||parsed.getMonth()+1!==Number(match?.[2])||parsed.getDate()!==Number(match?.[3])||parsed<=today){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
@@ -25,7 +26,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const nextGoal=target(p,nextWeek);
  const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
  const nextDecrease=nextReductionMilestone(p,new Date(clock));
- const milestones=remainingSteps.slice(0,14);
+ const milestones=remainingSteps.slice(0,showAllGoals?14:7);
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
@@ -71,12 +72,12 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    </Pressable>):null}
   <Heading>Kommande mål</Heading>
   {customGoal?<Text style={styles.muted}>Du använder ett eget dagsmål. Därför visas samma riktvärde för alla kommande dagar tills du återställer det i Inställningar.</Text>:null}
-  <Card><View style={styles.milestoneList}>{milestones.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', högsta dagsmål '+dayGoal+' cigaretter'} style={[styles.milestoneRow,i===0&&styles.milestoneToday]}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View></Card>
+  <Card><View style={styles.milestoneList}>{milestones.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', högsta dagsmål '+dayGoal+' cigaretter'} style={[styles.milestoneRow,i===0&&styles.milestoneToday]}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View><Pressable accessibilityRole="button" accessibilityState={{expanded:showAllGoals}} accessibilityLabel={showAllGoals?'Visa färre kommande mål':'Visa alla fjorton kommande mål'} onPress={()=>setShowAllGoals(v=>!v)} style={styles.moreGoalsButton}><Text style={styles.label}>{showAllGoals?'VISA FÄRRE DAGAR':'VISA ALLA 14 DAGAR'}</Text></Pressable></Card>
   <Text style={styles.muted}>Dagsmålet är ett högsta riktvärde. Du behöver aldrig röka för att nå det.</Text>
  </View>;
 }
 const styles=StyleSheet.create({
- screen:{gap:20},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
+ screen:{gap:20},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:44,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  muted:{fontSize:13,lineHeight:19,color:C.dim},divider:{height:1,backgroundColor:C.border},
