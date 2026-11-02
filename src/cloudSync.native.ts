@@ -8,6 +8,8 @@ import {previewMerge,canUpdateObservedPlan} from './syncMerge';
 // Only a profile successfully observed during this app session can be updated.
 // The remote document is rechecked inside a transaction before any write.
 const observedPlans = new Map<string,string>();
+/** Forget in-memory cloud baselines on account transitions. */
+export function resetObservedCloudPlans():void { observedPlans.clear(); }
 const fingerprint = (profile:Profile) => JSON.stringify(Object.fromEntries(Object.entries(profile).filter(([,v])=>v!==undefined).sort(([a],[b])=>a.localeCompare(b))));
 
 /**

@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import type {Dispatch,MutableRefObject,SetStateAction} from 'react';
 import type {Data} from '../domain';
-import {syncCloudData} from '../cloudSync';
+import {syncCloudData,resetObservedCloudPlans} from '../cloudSync';
 import {backupBeforeCloudImport} from '../storage';
 import {useAppResumeTrigger} from './useAppResumeTrigger';
 
@@ -16,6 +16,11 @@ export function useCloudSync({
  const [syncStatus,setSyncStatus]=useState('');
  const [syncTrigger,setSyncTrigger]=useState(0);
  const syncInFlight=useRef(false);
+ const lastUid=useRef<string|null|undefined>(undefined);
+ useEffect(()=>{
+  const uid=sessionUser?.uid??null;
+  if(lastUid.current!==uid){resetObservedCloudPlans();lastUid.current=uid;}
+ },[sessionUser?.uid]);
  useEffect(()=>{
   if(!sessionUser || !ready || migrationBusy || cloudPreviewBusy)return;
   const uid=sessionUser.uid;
