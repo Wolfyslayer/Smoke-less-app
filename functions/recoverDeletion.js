@@ -36,10 +36,12 @@ async function main() {
     const sample = await db.collection(`users/${uid}/${collection}`).limit(1).get();
     counts[collection] = !sample.empty;
   }
+  const controlSnapshot = await db.collection(`users/${uid}/control`).limit(2).get();
+  const unexpectedControlDocuments = controlSnapshot.docs.filter(doc => doc.id !== 'deletion').map(doc => doc.id);
   const hasData = Object.values(counts).some(Boolean);
-  console.log(JSON.stringify({uid, authExists, collectionsWithRemainingData: Object.keys(counts).filter(k => counts[k]), parentDocumentExists: parentSnapshot.exists, unknownCollections, action: confirm ? 'verify-and-finalize' : 'dry-run'}, null, 2));
+  console.log(JSON.stringify({uid, authExists, collectionsWithRemainingData: Object.keys(counts).filter(k => counts[k]), parentDocumentExists: parentSnapshot.exists, unknownCollections, unexpectedControlDocuments, action: confirm ? 'verify-and-finalize' : 'dry-run'}, null, 2));
   if (!confirm) return;
-  if (authExists || hasData || parentSnapshot.exists || unknownCollections.length) {
+  if (authExists || hasData || parentSnapshot.exists || unknownCollections.length || unexpectedControlDocuments.length) {
     throw new Error('Cannot finalize: Auth user, parent document, unknown collections or user data still exists. Escalate for manual investigation.');
   }
   await db.runTransaction(async tx => {

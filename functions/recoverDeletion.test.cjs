@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({state = 'deleting', authExists = false, remaining = [], confirm = false, parentExists = false, unknownCollections = []} = {}) {
+function harness({state = 'deleting', authExists = false, remaining = [], confirm = false, parentExists = false, unknownCollections = [], extraControl = false} = {}) {
   let updated = false;
   const lock = {
     exists: state !== null,
@@ -22,6 +22,10 @@ function harness({state = 'deleting', authExists = false, remaining = [], confir
       return {get: async () => lock};
     },
     collection: path => ({limit: n => {
+      if (path === 'users/test-uid/control') {
+        assert.equal(n, 2);
+        return {get: async () => ({docs: [{id: 'deletion'}, ...(extraControl ? [{id: 'other'}] : [])]})};
+      }
       assert.equal(n, 1);
       return {get: async () => ({empty: !remaining.some(name => path.endsWith('/' + name))})};
     }}),
@@ -98,4 +102,10 @@ test('refuses completion when unknown collections or parent document exist', asy
     await assert.rejects(h.run(), /Cannot finalize/);
     assert.equal(h.updated, false);
   }
+});
+
+test('refuses recovery when unexpected control documents exist', async () => {
+  const h = harness({confirm: true, extraControl: true});
+  await assert.rejects(h.run(), /Cannot finalize/);
+  assert.equal(h.updated, false);
 });
