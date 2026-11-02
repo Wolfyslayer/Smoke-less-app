@@ -48,10 +48,23 @@ exports.deleteMyAccount = onCall(
 
     // Never remove the lock. Existing Firestore security rules reject all
     // client writes while it exists, even after Authentication deletion.
-    await lock.set({
-      state: 'deleting',
-      requestedAt: FieldValue.serverTimestamp(),
-    }, {merge: true});
+    // Preserve the original request timestamp on retries. A completed lock
+    // must never be downgraded to "deleting" by a delayed duplicate request.
+    try {
+      await lock.create({
+        state: 'deleting',
+        requestedAt: FieldValue.serverTimestamp(),
+      });
+    } catch (error) {
+      if (error.code !== 6 && error.code !== 'already-exists') throw error;
+      const existing = await lock.get();
+      if (!existing.exists) throw error;
+      if (existing.get('state') === 'completed') return {deleted: true};
+      if (existing.get('state') !== 'deleting') {
+        throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
+      }
+      // A previous attempt was interrupted. Resume from remaining documents.
+    }
 
     try {
       for (const collection of COLLECTIONS) {
