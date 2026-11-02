@@ -4,14 +4,17 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({state = 'deleting', authExists = false, remaining = [], confirm = false} = {}) {
+function harness({state = 'deleting', authExists = false, remaining = [], confirm = false, parentExists = false, unknownCollections = []} = {}) {
   let updated = false;
   const lock = {
     exists: state !== null,
     get: key => key === 'state' ? state : undefined
   };
   const db = {
-    doc: path => {assert.equal(path, 'users/test-uid/control/deletion'); return {get: async () => lock};},
+    doc: path => {
+      if (path === 'users/test-uid') return {get: async () => ({exists: parentExists}), listCollections: async () => [...['control', 'entries', 'cravings', 'checkins', 'settings'], ...unknownCollections].map(id => ({id}))};
+      assert.equal(path, 'users/test-uid/control/deletion'); return {get: async () => lock};
+    },
     collection: path => ({limit: n => {
       assert.equal(n, 1);
       return {get: async () => ({empty: !remaining.some(name => path.endsWith('/' + name))})};
@@ -67,18 +70,26 @@ test('explicit confirmation completes only an empty, auth-less deletion', async 
 });
 test('refuses completion while Authentication user still exists', async () => {
   const h = harness({confirm: true, authExists: true});
-  await assert.rejects(h.run(), /Auth user or user data still exists/);
+  await assert.rejects(h.run(), /Auth user, parent document, unknown collections or user data still exists/);
   assert.equal(h.updated, false);
 });
 test('refuses completion while known user data remains', async () => {
   const h = harness({confirm: true, remaining: ['entries']});
-  await assert.rejects(h.run(), /Auth user or user data still exists/);
+  await assert.rejects(h.run(), /Auth user, parent document, unknown collections or user data still exists/);
   assert.equal(h.updated, false);
 });
 test('refuses completion without a pending deletion lock', async () => {
   for (const state of [null, 'completed', 'unexpected']) {
     const h = harness({confirm: true, state});
     await assert.rejects(h.run(), /existing deletion lock in deleting state/);
+    assert.equal(h.updated, false);
+  }
+});
+
+test('refuses completion when unknown collections or parent document exist', async () => {
+  for (const options of [{unknownCollections: ['devices']}, {parentExists: true}]) {
+    const h = harness({confirm: true, ...options});
+    await assert.rejects(h.run(), /Cannot finalize/);
     assert.equal(h.updated, false);
   }
 });
