@@ -24,6 +24,8 @@
 | 14.0 | Smart coach | Planerad | — |
 | 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
+| 16.1 | Android-hemskärmswidgets | Planerad | — |
+| 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 17.0 | Säkerhet, integritet och Google Play-lansering | Planerad | — |
 
 Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övriga dokument. Fas 7.0 var **intern beta**, inte offentlig Play Store-lansering.
@@ -98,6 +100,26 @@ Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övr
 - Skärmläsarstöd, kontrast, tryckytor, tydliga felmeddelanden och robust navigering.
 - Prestanda, uppstart, offlinehantering, stabilitet och regressionskontroller.
 - Förbered språkstöd och utöka språk först när svensk grundupplevelse är kvalitetssäkrad.
+
+## Fas 16.1 – Android-hemskärmswidgets
+**Mål:** Användbara och snygga widgets på Android-hemskärmen utan att behöva öppna appen.
+- Utred lämplig native/Expo-kompatibel widgetlösning, underhåll, Android-versioner och behov av ny utvecklings-/releasebuild innan implementation.
+- Skapa minst en kompakt widget med dagens mål, registrerat antal och begriplig progressindikator; erbjud vid behov en större variant med kommande delmål, rökfri tid eller besparingar.
+- Utred säkra snabbåtgärder för att registrera en cigarett eller öppna SOS; undvik oavsiktliga dubbelregistreringar och se till att gästläge fungerar.
+- Håll widgeten uppdaterad vid lokala registreringar, omstart, datumbyte och rimliga bakgrundsuppdateringar utan onödig batteriförbrukning.
+- Skydda känsliga uppgifter på hemskärmen; låt användaren välja vad som visas och hantera saknad data, utloggning och kontobyte.
+- Testa storleksändring, ljus/mörkt tema där relevant, olika Android-versioner, tillgänglighet och verklig enhet.
+**Acceptans:** Widgets kan läggas till och tas bort via Android, visar korrekta mål och registreringar, fungerar säkert utan nätverk och påverkar inte appens historik.
+
+## Fas 16.2 – Google-inloggning med Firebase
+**Mål:** Erbjud "Fortsätt med Google" som frivilligt alternativ till befintlig e-post/lösenord och gästläge.
+- Kontrollera befintlig Firebase Authentication-implementation, appens Android package ID, SHA-1/SHA-256, OAuth-konfiguration och kompatibilitet med Expo/native-build innan kodändring.
+- Aktivera Google som provider i Firebase och implementera Android Google Sign-In med tydliga avbrotts- och felmeddelanden.
+- Hantera kontolänkning: användare med befintligt e-postkonto ska inte av misstag få ett separat konto eller förlora historik; kräv säker identitetsverifiering vid länkning.
+- Säkerställ samma säkra Firestore-synk, behörigheter, utloggning, kontobyte och kontoradering som för övriga inloggningsmetoder.
+- Behåll e-post/lösenord och gästläge som fullt fungerande alternativ; Google-inloggning får inte krävas.
+- Testa på riktig Android-enhet, inklusive ny användare, återkommande användare, avbrutet flöde, saknade Google Play-tjänster, offline och felaktig konfiguration.
+**Acceptans:** Google-inloggning fungerar på Android utan dubbla konton eller dataförlust, och övriga inloggningssätt fortsätter fungera.
 
 ## Fas 17.0 – Säkerhet, integritet och Google Play-lansering
 - Säker kontohantering, verifierad radering av konto och tillhörande data samt tydliga användarflöden.
