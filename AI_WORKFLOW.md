@@ -20,7 +20,13 @@ Efter varje commit, visa en uppdaterad **checklista över fasens samtliga huvudp
 
 `███████░░ 7/9 (78 %)`
 
-Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/röd) och vad som ska ske när användaren bekräftar testerna. Räkna endast färdiga huvudpunkter; underuppgifter höjer inte procenten. Om en punkt ännu inte är verifierad, lämna den omarkerad.
+Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/röd) och vad som ska ske när användaren bekräftar testerna. Visa TVÅ separata framstegsmått: färdiga huvudpunkter/alla huvudpunkter och verifierade delpunkter/alla delpunkter, båda med procent. Visa varje huvudpunkt med egen delpunktsräknare (t.ex. 2/4) och underliggande fasta delpunkter med `[x]`/`[ ]` i varje rapport. Räkna bara verifierade delpunkter, aldrig enbart kod som ännu inte testats. Huvudpunkten får `[x]` först när alla dess delpunkter är verifierade. Ändra inte fasta delpunkter eller nämnare utan uttryckligt beslut; undvik att skapa nya delpunkter för att förlänga fasen. Om en punkt ännu inte är verifierad, lämna den omarkerad.
+
+## Detaljerad checklista och beständig AI-plan
+- Varje aktiv fas ska ha en fast numrerad underchecklista i `docs/MASTER_ROADMAP.md`, med 3–5 konkreta, testbara delpunkter per huvudpunkt. Fas 8 har exakt fyra per huvudpunkt (32 totalt).
+- Rapportera efter varje commit **samtliga huvudpunkter med delpunktsstatus**, två framstegsmått och vad som återstår i den aktiva huvudpunkten. Redovisa verifierad status; nya commits med väntande CI räknas inte automatiskt som verifierade.
+- Synka checklistan mellan masterplan, PR-beskrivning och chatten. Vid skillnad: kontrollera faktisk implementation, tester och senaste CI innan status justeras. Ingen falsk avprickning.
+- Kommande faser ska få en fast underchecklista när fasens PR öppnas, innan implementationen börjar.
 
 ## Fasavslut, merge och nästa fas
 - När **alla huvudpunkter är genomförda och verifierade**, slutligt acceptanstest är godkänt och senaste commit har gröna obligatoriska kontroller: **merga fasens befintliga PR till `main`**. Merga inte innan dessa villkor är uppfyllda.

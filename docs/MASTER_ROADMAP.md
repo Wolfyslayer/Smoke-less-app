@@ -35,15 +35,52 @@ Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övr
 
 **Mål:** En personlig, begriplig och ändringsbar rökstoppsplan utan förlorad historik.
 
-**Fast huvudchecklista – exakt åtta punkter:**
-1. [x] Inventera befintlig plan, datamodell, skärmar och testtäckning; dokumentera kompatibilitetsrisker.
-2. [x] Stöd tre vägar: sluta direkt, trappa ned gradvis, planerat stoppdatum.
-3. [ ] Bygg individuella mål och rimlig veckovis progression utan överraskande omräkning av historik.
-4. [ ] Skapa tydlig planöversikt med nästa delmål och lättbegripliga justeringar.
-5. [ ] Hantera missade mål, ändrat stoppdatum och återstart utan skuld eller förlust av historik.
-6. [ ] Säkerställ migration, offline-/gästläge och kontosynk utan datakonflikter.
-7. [ ] Lägg till automatiska tester och verifiera tillgänglighet, små skärmar och stora textstorlekar.
-8. [ ] Slutligt acceptanstest, gröna obligatoriska CI-kontroller och automatisk merge till main.
+**Fast huvudchecklista – exakt åtta huvudpunkter, fyra delpunkter per huvudpunkt (32 totalt):**
+
+Status nedan är en konservativ arbetsbedömning utifrån implementerad funktionalitet. `[x]` betyder verifierat färdig delpunkt, `[ ]` betyder återstår att verifiera eller färdigställa. Behåll samma ID och antal under fasen. När CI är väntande räknas nya ändringar inte som verifierade. Rapportera både huvudpunkter och delpunkter i varje chattuppdatering.
+
+1. [x] **Inventering och kompatibilitet (4/4)**
+   - [x] 1.1 Inventera planmodell och sparade profilfält.
+   - [x] 1.2 Inventera befintliga skärmar och planflöden.
+   - [x] 1.3 Inventera befintliga tester och molnsynk.
+   - [x] 1.4 Dokumentera risker och kompatibilitetskontrakt i `docs/PHASE_8_TECHNICAL_AUDIT.md`.
+2. [x] **Tre vägar till rökstopp (4/4)**
+   - [x] 2.1 Sluta direkt med nollmål.
+   - [x] 2.2 Gradvis nedtrappning med valbar takt.
+   - [x] 2.3 Nedtrappning mot valt stoppdatum.
+   - [x] 2.4 Validera och spara metodval i onboarding/profil.
+3. [x] **Personliga mål och progression (4/4)**
+   - [x] 3.1 Utgå från användarens individuella dagsmål.
+   - [x] 3.2 Beräkna framtida mål och delmål per kalenderdag.
+   - [x] 3.3 Bevara historik och ursprunglig start vid planändring.
+   - [x] 3.4 Testa mållogik för stoppdatum, nedtrappning och återstart.
+4. [ ] **Planöversikt och enkla justeringar (2/4)**
+   - [x] 4.1 Visa dagens mål, nästa delmål och veckosammanfattning.
+   - [x] 4.2 Erbjud ändring av takt och stoppdatum med bekräftelse.
+   - [ ] 4.3 Verifiera sju dagars förhandsvisning för båda ändringstyperna med grönt CI.
+   - [ ] 4.4 Säkerställ kompakt, begriplig planvy och konsekvent återkoppling vid justering.
+5. [ ] **Missade mål, omplanering och omstart (2/4)**
+   - [x] 5.1 Visa icke-skuldbeläggande stöd vid missat mål.
+   - [x] 5.2 Erbjud omstart med bibehållen registreringshistorik.
+   - [ ] 5.3 Verifiera ändrat stoppdatum och tidigare passerat datum i alla relevanta lägen.
+   - [ ] 5.4 Testa upprepade ändringar utan att historik eller sparstart påverkas.
+6. [ ] **Migration, offline, gäst och kontosynk (1/4)**
+   - [x] 6.1 Behåll bakåtkompatibla valfria profilfält.
+   - [ ] 6.2 Verifiera offline- och gästflöde vid planändringar.
+   - [ ] 6.3 Verifiera synk av ändrade planer och konflikter mellan enheter.
+   - [ ] 6.4 Verifiera kontobyte, utloggning och att fel användares data aldrig skrivs över.
+7. [ ] **Tester och tillgänglighet (1/4)**
+   - [x] 7.1 Lägg till automatiska domäntester för planberäkningar.
+   - [ ] 7.2 Lägg till regressionstester för planändringar och synk.
+   - [ ] 7.3 Verifiera TalkBack, etiketter och tryckytor.
+   - [ ] 7.4 Verifiera små skärmar och maximal systemtextstorlek på Android.
+8. [ ] **Acceptans, CI och merge (0/4)**
+   - [ ] 8.1 Genomför funktionellt acceptanstest av alla tre metoderna.
+   - [ ] 8.2 Genomför regressionstest av historik, gästläge och molnsynk.
+   - [ ] 8.3 Verifiera gröna obligatoriska CI-kontroller på slutlig commit.
+   - [ ] 8.4 Squash-merga PR #140 till `main` efter godkänd acceptans.
+
+**Framsteg vid införandet:** 3/8 huvudpunkter (37,5 %); 18/32 delpunkter (56,25 %). Delpunktsstatus är en initial bedömning och ska justeras efter verifiering, aldrig automatiskt vid commit.
 
 **Tekniska nyckelkrav:** Valfritt `plannedQuitAt` får inte förväxlas med `startAt`/`originalStartAt`. Lokala kalenderdagar ska fungera över sommartid. Ändringar får inte skriva om cigaretter, röksug eller avstämningar. Firestore-profiluppdateringar kräver uttrycklig konflikt-/revisionshantering: nuvarande additiva synk uppdaterar inte befintlig fjärrprofil. Läs `docs/PHASE_8_TECHNICAL_AUDIT.md`.
 
