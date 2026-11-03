@@ -4,9 +4,9 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const ts=require('typescript');
 const source=ts.transpileModule(fs.readFileSync('src/guestMerge.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-const exports={};
-vm.runInNewContext(source,{exports});
-const preview=exports.previewGuestMerge;
+const moduleExports={};
+vm.runInNewContext(source,{exports:moduleExports});
+const preview=moduleExports.previewGuestMerge;
 const entry=(id,at='2026-11-01T10:00:00Z')=>({id,at});
 const data=(entries=[],cravings=[],checkins=[],profile=null)=>({entries,cravings,checkins,profile});
 
