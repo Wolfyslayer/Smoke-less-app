@@ -37,6 +37,19 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
  const nextDecrease=nextReductionMilestone(p,new Date(clock));
  const milestones=remainingSteps.slice(0,showAllGoals?14:7);
+ const nextMilestoneTitle=p.mode==='quit'
+  ?'Ditt dagsmål är noll cigaretter'
+  :scheduled&&daysRemaining===0
+   ?'Ditt planerade rökstopp är idag'
+   :scheduled&&customGoal
+    ?'Nästa delmål: rökstopp '+date(end)
+    :customGoal
+     ?'Ditt eget dagsmål är '+goal+' cigaretter'
+     :nextDecrease
+      ?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag'
+      :goal===0
+       ?'Du har nått målet noll cigaretter'
+       :'Inget kommande minskningssteg i grundplanen';
  return <View style={styles.screen}>
   <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
@@ -47,7 +60,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt eget mål.</Text>:null}
   </Card>
-  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt dagsmål är noll cigaretter':customGoal?'Ditt eget dagsmål är '+goal+' cigaretter':nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget kommande minskningssteg i grundplanen'}</Text><Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextMilestoneTitle}</Text><Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
   <Heading>{p.mode==='quit'?'Ditt rökstopp':'Din nedtrappning'}</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
