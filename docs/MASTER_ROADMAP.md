@@ -10,6 +10,12 @@
 - Prioritera gratis/låga driftskostnader, minimera onödiga tjänster och håll AI-funktioner frivilliga tills kostnad och integritet utretts.
 - Vid varje commit: följ `AI_WORKFLOW.md`, kontrollera CI och rapportera om ny Android-build behövs.
 
+## Policy för Firestore-regler och snabb CI
+- Samla **alla icke-nödvändiga ändringar** av `firestore.rules` och tillhörande regeltester i en gemensam **avslutande säkerhetsfas före Google Play-lansering**, efter funktionsfaserna. För in varje identifierat behov i fasplanen utan att ändra reglerna i vanliga funktions-PR:er.
+- **Undantag:** Om en aktuell fas kräver ändrade regler för att funktionen ska fungera korrekt och säkert, gör en **separat, avgränsad PR mot `main`** med regler och tester. Verifiera Firestore-CI och merga den innan den beroende funktionen godkänns.
+- Behåll säkerhetstester och ändringsdetektion. Skjut aldrig upp en regeländring som krävs för åtkomstkontroll, integritet eller säker dataseparering bara för att spara CI-tid.
+- **Fas 17, slutlig regelgranskning före release:** samla uppskjutna regelbehov, granska läs-/skrivrättigheter och kontoägarskap, testa med emulator (även nekade anrop), verifiera synk och kontoradering och merga den separata säkerhets-PR:en före publicering. Denna policy gäller även efter fas 8.
+
 ## Statusöversikt
 
 | Fas | Namn | Status | PR / referens |
