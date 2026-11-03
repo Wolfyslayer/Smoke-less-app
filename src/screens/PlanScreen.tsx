@@ -50,7 +50,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const nextDecrease=nextReductionMilestone(p,new Date(clock));
  const milestones=remainingSteps.slice(0,showAllGoals?14:7);
  const nextDecreaseDays=nextDecrease?Math.round((Date.UTC(nextDecrease.date.getFullYear(),nextDecrease.date.getMonth(),nextDecrease.date.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000):null;
- const milestoneCountdown=scheduled&&daysUntilStop>0&&customGoal
+ const milestoneCountdown=scheduled&&daysUntilStop>0&&(customGoal||nextDecreaseDays===null)
   ?daysUntilStop===1?'Imorgon är ditt planerade stoppdatum.':'Det är '+daysUntilStop+' dagar kvar till ditt planerade stoppdatum.'
   :nextDecreaseDays!==null&&nextDecreaseDays>0
    ?nextDecreaseDays===1?'Nästa minskning sker imorgon.':'Nästa minskning sker om '+nextDecreaseDays+' dagar.'
@@ -59,7 +59,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   ?'Ditt dagsmål är noll cigaretter'
   :scheduled&&daysUntilStop<=0
    ?daysUntilStop===0?'Ditt planerade rökstopp är idag':'Ditt planerade stoppdatum har passerat'
-   :scheduled&&customGoal
+   :scheduled&&(customGoal||!nextDecrease)
     ?'Nästa delmål: rökstopp '+date(end)
     :customGoal
      ?'Ditt eget dagsmål är '+goal+' cigaretter'
