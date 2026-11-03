@@ -170,3 +170,23 @@ test('failed account switch hides previous plan and refuses saves until recovery
  assert.equal(c.getSnapshot().data.entries.length,0);
  assert.equal(records.get('account:a').entries[0].id,'private');
 });
+
+
+test('signing in after repeating guest onboarding never writes guest plan or history into existing account',async()=>{
+ const {controller:c,records,events}=setup();
+ const savedAccount={...withEntry('account-original'),profile:{mode:'quit',baseline:6,startAt:'2026-09-01T10:00:00Z'}};
+ records.set('account:alice',savedAccount);
+ await c.switchTo({kind:'guest'});
+ const repeatedOnboarding={...withEntry('new-onboarding'),profile:{mode:'reduce',baseline:24,startAt:'2026-11-03T10:00:00Z'}};
+ await c.save({kind:'guest'},repeatedOnboarding);
+ const writesBefore=events.filter(x=>x==='save:alice').length;
+ await c.switchTo({kind:'account',uid:'alice'});
+ assert.equal(c.getSnapshot().data.profile.baseline,6);
+ assert.equal(c.getSnapshot().data.entries[0].id,'account-original');
+ assert.equal(events.filter(x=>x==='save:alice').length,writesBefore);
+ assert.equal(records.get('account:alice'),savedAccount);
+ await assert.rejects(c.save({kind:'guest'},repeatedOnboarding),/Kontot har ändrats/);
+ await c.switchTo({kind:'guest'});
+ assert.equal(c.getSnapshot().data.profile.baseline,24);
+ assert.equal(c.getSnapshot().data.entries[0].id,'new-onboarding');
+});
