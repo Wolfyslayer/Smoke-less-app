@@ -60,17 +60,17 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [x] 3.2 Beräkna framtida mål och delmål per kalenderdag.
    - [x] 3.3 Bevara historik och ursprunglig start vid planändring.
    - [x] 3.4 Testa mållogik för stoppdatum, nedtrappning och återstart.
-4. [ ] **Planöversikt och enkla justeringar (4/4)**
+4. [x] **Planöversikt och enkla justeringar (4/4)**
    - [x] 4.1 Visa dagens mål, nästa delmål och veckosammanfattning.
    - [x] 4.2 Erbjud ändring av takt och stoppdatum med bekräftelse.
    - [x] 4.3 Verifiera sju dagars förhandsvisning för båda ändringstyperna med grönt TypeScript-CI.
    - [x] 4.4 Visa tre närmaste dagar som standard med expanderbara 14 dagar; konsekvent förhandsvisning och avbryt för planjusteringar (kod implementerad, slutlig Android-verifiering i 7.4/8.1).
-5. [ ] **Missade mål, omplanering och omstart (4/4)**
+5. [x] **Missade mål, omplanering och omstart (4/4)**
    - [x] 5.1 Visa icke-skuldbeläggande stöd vid missat mål.
    - [x] 5.2 Erbjud omstart med bibehållen registreringshistorik.
    - [x] 5.3 Verifiera ändrat stoppdatum, passerat datum, eget dagsmål och strikt datumval med automatiska domäntester (slutlig Android-acceptans återstår).
    - [x] 5.4 Testa upprepade datumändringar och omstart med bibehållna registreringar, röksug, avstämningar och besparingsstart.
-6. [ ] **Migration, offline, gäst och kontosynk (4/4)**
+6. [x] **Migration, offline, gäst och kontosynk (4/4)**
    - [x] 6.1 Behåll bakåtkompatibla valfria profilfält.
    - [x] 6.2 Automatiska sessionstester verifierar lokalt sparade gästplaner utan nätverk, bevarad historik och isolering från inloggade konton (manuellt Android-test återstår i 8.2).
    - [x] 6.3 Automatiska tester verifierar konfliktförhandsvisning, observerad planversion och transaktionskontroll mot konkurrerande ändringar (verifiering på två riktiga enheter återstår i 8.2).
