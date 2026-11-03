@@ -88,7 +88,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
     <View style={{flex:1,minWidth:115}}><Label>JÄMFÖRT MED START</Label><Text style={styles.statValue}>{percentage}%</Text></View>
    </View>
    <View style={styles.progressTrack} accessible accessibilityRole="progressbar" accessibilityLabel="Minskning av dagsmål jämfört med start" accessibilityValue={{min:0,max:100,now:percentage}}><View style={[styles.progressFill,{width:`${Math.min(100,percentage)}%` as `${number}%`}]}/></View>
-   <Text style={styles.muted}>Visar skillnaden mellan dagens mål och startnivån, inte hur mycket du faktiskt rökt.{customGoal?' Ett eget riktvärde gäller tills det återställs.':''}</Text>
+   <Text style={styles.muted}>Visar skillnaden mellan dagens mål och startnivån, inte hur mycket du faktiskt rökt.{customGoal?(scheduled?' Ditt egna riktvärde gäller bara fram till stoppdatumet.':' Ett eget riktvärde gäller tills det återställs.'):''}</Text>
   </Card>
   <Card style={{gap:10}}>
    <Label>PLANEN KAN ANPASSAS</Label>
@@ -114,7 +114,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>):null}
   <Heading>Kommande mål</Heading>
-  {customGoal?<Text style={styles.muted}>Du använder ett eget dagsmål. Det gäller tills du återställer det i Inställningar{scheduled?', men på stoppdatumet blir målet alltid noll.':'.'}</Text>:null}
+  {customGoal?<Text style={styles.muted}>{scheduled&&daysUntilStop<=0?'Ditt tidigare egna dagsmål har ersatts av målet noll på stoppdatumet. Du kan ändra stoppdatumet ovan om du behöver en ny plan.':scheduled?'Du använder ett eget dagsmål fram till stoppdatumet. På stoppdatumet blir målet noll.':'Du använder ett eget dagsmål. Det gäller tills du återställer det i Inställningar.'}</Text>:null}
   <Card><View style={styles.milestoneList}>{milestones.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', högsta dagsmål '+dayGoal+' cigaretter'} style={[styles.milestoneRow,i===0&&styles.milestoneToday]}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View><Pressable accessibilityRole="button" accessibilityState={{expanded:showAllGoals}} accessibilityLabel={showAllGoals?'Visa färre kommande mål':'Visa alla fjorton kommande mål'} onPress={()=>setShowAllGoals(v=>!v)} style={styles.moreGoalsButton}><Text style={styles.label}>{showAllGoals?'VISA FÄRRE DAGAR':'VISA ALLA 14 DAGAR'}</Text></Pressable></Card>
   <Text style={styles.muted}>Dagsmålet är ett högsta riktvärde. Du behöver aldrig röka för att nå det.</Text>
  </View>;
