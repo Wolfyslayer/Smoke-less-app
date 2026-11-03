@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Modal,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
+import {Modal,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {C} from '../theme';
 import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
 
@@ -10,6 +10,7 @@ function Card({children,style}:{children:React.ReactNode;style?:any}){return <Vi
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
 export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile}:Props){
+ const {height:windowHeight}=useWindowDimensions();
  const percentage=p.baseline>0?Math.max(0,Math.min(100,Math.round(todayReduction/p.baseline*100))):0;
  const customGoal=p.dailyTargetOverride!==null;
  const [editingDate,setEditingDate]=useState(false);
@@ -90,7 +91,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt rökstopp':scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
    {p.mode==='reduce'?<Pressable accessibilityRole="button" accessibilityLabel={scheduled?'Ändra planerat stoppdatum':'Välj eget stoppdatum'} accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" style={styles.actionButton} onPress={()=>{const initial=scheduled&&p.plannedQuitAt?new Date(p.plannedQuitAt):new Date(clock);const valid=initial.getTime()>new Date(clock).getTime();const chosen=valid?initial:null;setSelectedDate(chosen);const month=chosen??new Date(clock);setCalendarYear(month.getFullYear());setCalendarMonth(month.getMonth());setDateError('');setEditingDate(true);}}><Text style={styles.label}>{scheduled?'ÄNDRA STOPPDATUM':'VÄLJ EGET STOPPDATUM'}</Text></Pressable>:null}
    <Modal visible={p.mode==='reduce'&&editingDate} transparent animationType="fade" onRequestClose={()=>setEditingDate(false)} accessibilityViewIsModal>
-    <View style={styles.modalBackdrop}><View style={styles.modalPanel}>
+    <View style={styles.modalBackdrop}><View style={[styles.modalPanel,{maxHeight:Math.max(260,windowHeight-48)}]}>
      <Text accessibilityRole="header" style={styles.heading}>Välj stoppdatum</Text>
      <Text style={styles.muted}>Välj ett framtida datum. Dina tidigare registreringar behålls.</Text>
      <View style={styles.calendarNav}>
@@ -99,7 +100,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
       <Pressable accessibilityRole="button" accessibilityLabel="Nästa månad" style={styles.calendarNavButton} onPress={()=>moveMonth(1)}><Text style={styles.cardTitle}>›</Text></Pressable>
      </View>
      <View style={styles.calendarGrid}>{['M','T','O','T','F','L','S'].map((d,i)=><Text key={i} style={styles.calendarWeekday}>{d}</Text>)}{Array.from({length:calendarOffset},(_,i)=><View key={'blank'+i} style={styles.calendarDay}/>)}{calendarDays.map(day=>{const enabled=isFutureDay(day);const selected=selectedDate?.getFullYear()===calendarYear&&selectedDate?.getMonth()===calendarMonth&&selectedDate?.getDate()===day;return <Pressable key={day} accessibilityRole="button" accessibilityLabel={new Date(calendarYear,calendarMonth,day).toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'})} accessibilityState={{disabled:!enabled,selected}} disabled={!enabled} style={[styles.calendarDay,selected&&styles.calendarSelected,!enabled&&styles.calendarDisabled]} onPress={()=>{setSelectedDate(new Date(calendarYear,calendarMonth,day,12));setDateError('');}}><Text style={[styles.muted,selected&&styles.calendarSelectedText]}>{day}</Text></Pressable>})}</View>
-     <ScrollView style={styles.calendarPreview} contentContainerStyle={{gap:8}} nestedScrollEnabled>
+     <ScrollView style={styles.calendarPreview} contentContainerStyle={{gap:8,paddingBottom:12}} nestedScrollEnabled keyboardShouldPersistTaps="handled">
       {previewDate&&previewProfile?<><Text accessibilityRole="header" style={styles.cardTitle}>Så påverkas din plan</Text><Text style={styles.muted}>Nytt stoppdatum: {date(previewDate)}. Dagens mål: {previewTodayGoal}. Om sju dagar: {previewNextWeekGoal}. På stoppdatumet: {previewStopGoal}. Din historik behålls.</Text><View style={styles.milestoneList}>{previewWeek.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', dagsmål '+dayGoal+' cigaretter'} style={styles.milestoneRow}><Text style={[styles.muted,styles.flexText]}>{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View></>:<Text style={styles.muted}>Välj ett datum i kalendern för att se förhandsvisningen.</Text>}
      </ScrollView>
      <View style={styles.modalActions}><Pressable accessibilityRole="button" accessibilityLabel="Avbryt datumval" style={styles.actionButton} onPress={()=>setEditingDate(false)}><Text style={styles.muted}>AVBRYT</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Spara valt stoppdatum" accessibilityState={{disabled:!previewDate}} disabled={!previewDate} style={[styles.actionButton,!previewDate&&styles.calendarDisabled]} onPress={saveDate}><Text style={styles.label}>SPARA DATUM</Text></Pressable></View>
@@ -152,11 +153,23 @@ const styles=StyleSheet.create({
  screen:{gap:20,minWidth:0},actionButton:{minHeight:48,justifyContent:'center',alignSelf:'stretch',paddingHorizontal:12},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:48,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime,flexShrink:1},heading:{fontSize:19,fontWeight:'800',color:C.white,flexShrink:1},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white,flexShrink:1},statValue:{fontSize:26,fontWeight:'800',color:C.white,flexShrink:1},cardTitle:{fontSize:16,fontWeight:'800',color:C.white,flexShrink:1},
- muted:{fontSize:13,lineHeight:19,color:C.dim,flexShrink:1},divider:{height:1,backgroundColor:C.border},
+ muted:{fontSize:13,color:C.dim,flexShrink:1},divider:{height:1,backgroundColor:C.border},
  grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:10},
  progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
  dayCell:{width:'21%',flexGrow:1,alignItems:'center',padding:10,gap:5,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
  choice:{gap:5,minHeight:56,justifyContent:'center',minWidth:0},disabledChoice:{opacity:0.55},selected:{borderColor:C.lime,backgroundColor:C.limeSoft},
  previewCard:{padding:12,gap:6,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},recoveryCard:{gap:7,padding:14,borderRadius:14,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
+ modalBackdrop:{flex:1,backgroundColor:'rgba(0,0,0,0.82)',justifyContent:'center',paddingHorizontal:16,paddingVertical:24},
+ modalPanel:{width:'100%',maxWidth:520,alignSelf:'center',minHeight:0,backgroundColor:C.elevated,borderColor:C.border,borderWidth:1,borderRadius:22,padding:16,gap:12,overflow:'hidden'},
+ calendarNav:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8},
+ calendarNavButton:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
+ calendarGrid:{flexDirection:'row',flexWrap:'wrap',alignItems:'stretch'},
+ calendarWeekday:{width:'14.2857%',textAlign:'center',fontSize:12,fontWeight:'700',color:C.dim,paddingVertical:8},
+ calendarDay:{width:'14.2857%',minHeight:40,alignItems:'center',justifyContent:'center',borderRadius:8},
+ calendarSelected:{backgroundColor:C.lime},
+ calendarSelectedText:{color:'#111111',fontWeight:'800'},
+ calendarDisabled:{opacity:0.35},
+ calendarPreview:{flexShrink:1,minHeight:44},
+ modalActions:{flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',gap:12,borderTopWidth:1,borderTopColor:C.border,paddingTop:8},
  dateInput:{borderWidth:1,borderColor:C.border,borderRadius:10,padding:12,color:C.white,fontSize:16,minHeight:48,width:'100%'},error:{color:C.danger,fontSize:13},
 });
