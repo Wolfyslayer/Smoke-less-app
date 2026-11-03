@@ -32,7 +32,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const previewStopGoal=previewProfile&&previewDate?target(previewProfile,previewDate):null;
  const speedPreview=pendingSpeed?{...p,dailyTargetOverride:null,speed:pendingSpeed,startAt:new Date(clock).toISOString(),planStartTarget:target(p,new Date(clock)),originalStartAt:p.originalStartAt??p.startAt}:null;
  const speedPreviewGoal=speedPreview?target(speedPreview,previewNextWeek):null;
- const applySpeed=()=>{if(!speedPreview||pendingSpeed===p.speed){setPendingSpeed(null);return;}onChangeProfile({speed:pendingSpeed!,dailyTargetOverride:null,startAt:speedPreview.startAt,planStartTarget:speedPreview.planStartTarget,originalStartAt:speedPreview.originalStartAt});setPendingSpeed(null);setConfirmPaceOverride(false);};
+ const applySpeed=()=>{if(!speedPreview||pendingSpeed===p.speed){setPendingSpeed(null);return;}onChangeProfile({speed:pendingSpeed!,dailyTargetOverride:null,startAt:speedPreview.startAt,planStartTarget:speedPreview.planStartTarget,originalStartAt:speedPreview.originalStartAt});setPendingSpeed(null);};
 
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
@@ -114,7 +114,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   {p.mode==='reduce'&&!scheduled?<Heading>Välj din takt</Heading>:null}
   {scheduled?<Text style={styles.muted}>Ditt stoppdatum styr nedtrappningen. Vill du välja en annan takt kan du starta om planen ovan utan ett bestämt datum.</Text>:null}
   {p.mode==='reduce'&&!scheduled?([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
-   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{setConfirmPaceOverride(false);if(p.speed!==id)setPendingSpeed(id);else setPendingSpeed(null)}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
+   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)setPendingSpeed(id);else setPendingSpeed(null)}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>):null}
   {pendingSpeed&&speedPreview?<Card style={{gap:10}}><Label>BEKRÄFTA NY TAKT</Label><Text style={styles.cardTitle}>Ändra nedtrappningen?</Text><Text style={styles.muted}>Dagens planerade mål förblir {speedPreview.planStartTarget} cigaretter. Med den nya takten blir målet om sju dagar {speedPreviewGoal} cigaretter per dag. Tidigare registreringar och ditt ursprungliga startdatum behålls.{customGoal?' Ditt egna dagsmål tas bort när du bekräftar, så att den nya takten kan börja gälla.':''}</Text><Pressable accessibilityRole="button" accessibilityLabel="Bekräfta ny nedtrappningstakt" style={styles.actionButton} onPress={applySpeed}><Text style={styles.label}>JA, ÄNDRA TAKT</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Avbryt ändring av nedtrappningstakt" style={styles.actionButton} onPress={()=>{setPendingSpeed(null);setConfirmPaceOverride(false)}}><Text style={styles.muted}>Avbryt</Text></Pressable></Card>:null}
