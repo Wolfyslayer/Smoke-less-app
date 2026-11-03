@@ -32,7 +32,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const previewStopGoal=previewProfile&&previewDate?target(previewProfile,previewDate):null;
  const speedPreview=pendingSpeed?{...p,speed:pendingSpeed,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock)),originalStartAt:p.originalStartAt??p.startAt}:null;
  const speedPreviewGoal=speedPreview?target(speedPreview,previewNextWeek):null;
- const applySpeed=()=>{if(!speedPreview||pendingSpeed===p.speed){setPendingSpeed(null);return;}onChangeProfile({speed:pendingSpeed,startAt:speedPreview.startAt,planStartTarget:speedPreview.planStartTarget,originalStartAt:speedPreview.originalStartAt});setPendingSpeed(null);};
+ const applySpeed=()=>{if(!speedPreview||pendingSpeed===p.speed){setPendingSpeed(null);return;}onChangeProfile({speed:pendingSpeed!,startAt:speedPreview.startAt,planStartTarget:speedPreview.planStartTarget,originalStartAt:speedPreview.originalStartAt});setPendingSpeed(null);};
 
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
