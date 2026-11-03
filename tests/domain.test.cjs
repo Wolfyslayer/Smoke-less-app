@@ -632,3 +632,28 @@ test('changed remote plan and duplicate historical ID both block a local restart
  assert.equal(preview.merged.entries[0].at,remote.entries[0].at);
  assert.equal(JSON.stringify({local,remote}),snapshot);
 });
+
+test('custom quit date reaches zero on deadline without losing original baseline',()=>{
+ const p=profile({baseline:20,plannedQuitAt:'2026-10-31T12:00:00.000Z'});
+ const goals=Array.from({length:31},(_,i)=>target(p,date('2026-10-'+String(i+1).padStart(2,'0'))));
+ assert.equal(goals[0],20);
+ assert.equal(goals[30],0);
+ for(let i=1;i<goals.length;i++){
+  assert.ok(goals[i]<=goals[i-1],'planned daily target must never increase');
+  assert.ok(goals[i]>=0,'planned daily target cannot be negative');
+ }
+ assert.equal(p.baseline,20);
+});
+
+test('short custom quit dates still reach zero on the selected calendar day',()=>{
+ const p=profile({baseline:20,plannedQuitAt:'2026-10-03T12:00:00.000Z'});
+ assert.equal(target(p,date('2026-10-01')),20);
+ assert.equal(target(p,date('2026-10-02')),10);
+ assert.equal(target(p,date('2026-10-03')),0);
+});
+
+test('custom quit date remains independent of previously chosen gradual pace',()=>{
+ const common={baseline:15,plannedQuitAt:'2026-10-16T12:00:00.000Z'};
+ const goals=['gentle','balanced','fast'].map(speed=>target(profile({...common,speed}),date('2026-10-09')));
+ assert.deepEqual(goals,[7,7,7]);
+});
