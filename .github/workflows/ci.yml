@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci --no-audit --no-fund
+      - run: npm install --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run test
       - run: npm run test:storage
