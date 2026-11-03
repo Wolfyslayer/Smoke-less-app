@@ -555,3 +555,46 @@ test('repeated same-day rescheduling keeps todays goal and never changes histori
   assert.equal(p.baseline,original.baseline);
  }
 });
+
+
+test('sync preview refuses competing plan edits without overwriting either history', () => {
+ const source=fs.readFileSync('src/syncMerge.ts','utf8');
+ const output=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const module={exports:{}};
+ vm.runInNewContext(output,{module,exports:module.exports,Object,Map,JSON,Set});
+ const merge=module.exports.previewMerge;
+ const base=profile({plannedQuitAt:'2026-12-01T12:00:00.000Z'});
+ const remote={profile:{...base,plannedQuitAt:'2026-12-15T12:00:00.000Z'},entries:[{id:'remote',at:'2026-10-02T12:00:00.000Z'}],cravings:[],checkins:[]};
+ const local={profile:{...base,plannedQuitAt:'2026-11-25T12:00:00.000Z'},entries:[{id:'local',at:'2026-10-03T12:00:00.000Z'}],cravings:[],checkins:[]};
+ const before=JSON.stringify({local,remote});
+ const preview=merge(local,remote);
+ assert.equal(preview.safeToApply,false);
+ assert.equal(preview.conflicts.some(c=>c.collection==='profile'),true);
+ assert.equal(preview.merged.profile.plannedQuitAt,remote.profile.plannedQuitAt);
+ assert.equal(preview.merged.entries.length,2);
+ assert.equal(JSON.stringify({local,remote}),before);
+});
+
+test('observed plan baseline rejects stale remote edits and accepts equivalent field order', () => {
+ const source=fs.readFileSync('src/syncMerge.ts','utf8');
+ const output=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const module={exports:{}};
+ vm.runInNewContext(output,{module,exports:module.exports,Object,Map,JSON,Set});
+ const allowed=module.exports.canUpdateObservedPlan;
+ const base=profile({plannedQuitAt:'2026-12-01T12:00:00.000Z'});
+ const canonical=JSON.stringify(Object.fromEntries(Object.entries(base).sort(([a],[b])=>a.localeCompare(b))));
+ const reordered=Object.fromEntries(Object.entries(base).reverse());
+ assert.equal(allowed(canonical,reordered),true);
+ assert.equal(allowed(canonical,{...base,plannedQuitAt:'2026-12-15T12:00:00.000Z'}),false);
+ assert.equal(allowed(canonical,{...base,dailyTargetOverride:3}),false);
+ assert.equal(allowed(undefined,base),false);
+});
+
+test('cloud plan writes are transactionally checked against the last observed version', () => {
+ const cloud=fs.readFileSync('src/cloudSync.native.ts','utf8');
+ assert.match(cloud,/canUpdateObservedPlan\(known,remotePlan\)/);
+ assert.match(cloud,/db\.runTransaction\(async transaction=>/);
+ assert.match(cloud,/fingerprint\(payload as Profile\)!==known/);
+ assert.match(cloud,/Planen ändrades på en annan enhet/);
+ assert.match(cloud,/assertUser\(\)/);
+});

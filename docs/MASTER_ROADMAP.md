@@ -70,10 +70,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [x] 5.2 Erbjud omstart med bibehållen registreringshistorik.
    - [x] 5.3 Verifiera ändrat stoppdatum, passerat datum, eget dagsmål och strikt datumval med automatiska domäntester (slutlig Android-acceptans återstår).
    - [x] 5.4 Testa upprepade datumändringar och omstart med bibehållna registreringar, röksug, avstämningar och besparingsstart.
-6. [ ] **Migration, offline, gäst och kontosynk (2/4)**
+6. [ ] **Migration, offline, gäst och kontosynk (3/4)**
    - [x] 6.1 Behåll bakåtkompatibla valfria profilfält.
    - [x] 6.2 Automatiska sessionstester verifierar lokalt sparade gästplaner utan nätverk, bevarad historik och isolering från inloggade konton (manuellt Android-test återstår i 8.2).
-   - [ ] 6.3 Verifiera synk av ändrade planer och konflikter mellan enheter.
+   - [x] 6.3 Automatiska tester verifierar konfliktförhandsvisning, observerad planversion och transaktionskontroll mot konkurrerande ändringar (verifiering på två riktiga enheter återstår i 8.2).
    - [ ] 6.4 Verifiera kontobyte, utloggning och att fel användares data aldrig skrivs över.
 7. [ ] **Tester och tillgänglighet (1/4)**
    - [x] 7.1 Lägg till automatiska domäntester för planberäkningar.
@@ -86,7 +86,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.3 Verifiera gröna obligatoriska CI-kontroller på slutlig commit.
    - [ ] 8.4 Squash-merga PR #140 till `main` efter godkänd acceptans.
 
-**Framsteg vid införandet:** 5/8 huvudpunkter (62,5 %); 23/32 delpunkter (71,875 %). Delpunktsstatus är en initial bedömning och ska justeras efter verifiering, aldrig automatiskt vid commit.
+**Framsteg vid införandet:** 5/8 huvudpunkter (62,5 %); 24/32 delpunkter (75 %). Delpunktsstatus är en initial bedömning och ska justeras efter verifiering, aldrig automatiskt vid commit.
 
 **Tekniska nyckelkrav:** Valfritt `plannedQuitAt` får inte förväxlas med `startAt`/`originalStartAt`. Lokala kalenderdagar ska fungera över sommartid. Ändringar får inte skriva om cigaretter, röksug eller avstämningar. Firestore-profiluppdateringar kräver uttrycklig konflikt-/revisionshantering: nuvarande additiva synk uppdaterar inte befintlig fjärrprofil. Läs `docs/PHASE_8_TECHNICAL_AUDIT.md`.
 
