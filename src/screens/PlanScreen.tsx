@@ -127,14 +127,14 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  </View>;
 }
 const styles=StyleSheet.create({
- screen:{gap:20},actionButton:{minHeight:48,justifyContent:'center',alignSelf:'flex-start',paddingHorizontal:12},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:48,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
- label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
- heroNumber:{fontSize:48,fontWeight:'900',color:C.white},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
- muted:{fontSize:13,lineHeight:19,color:C.dim},divider:{height:1,backgroundColor:C.border},
+ screen:{gap:20,minWidth:0},actionButton:{minHeight:48,justifyContent:'center',alignSelf:'stretch',paddingHorizontal:12},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:48,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
+ label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime,flexShrink:1},heading:{fontSize:19,fontWeight:'800',color:C.white,flexShrink:1},
+ heroNumber:{fontSize:48,fontWeight:'900',color:C.white,flexShrink:1},statValue:{fontSize:26,fontWeight:'800',color:C.white,flexShrink:1},cardTitle:{fontSize:16,fontWeight:'800',color:C.white,flexShrink:1},
+ muted:{fontSize:13,lineHeight:19,color:C.dim,flexShrink:1},divider:{height:1,backgroundColor:C.border},
  grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:10},
  progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
  dayCell:{width:'21%',flexGrow:1,alignItems:'center',padding:10,gap:5,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
- choice:{gap:5,minHeight:56,justifyContent:'center'},disabledChoice:{opacity:0.55},selected:{borderColor:C.lime,backgroundColor:C.limeSoft},
+ choice:{gap:5,minHeight:56,justifyContent:'center',minWidth:0},disabledChoice:{opacity:0.55},selected:{borderColor:C.lime,backgroundColor:C.limeSoft},
  previewCard:{padding:12,gap:6,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},recoveryCard:{gap:7,padding:14,borderRadius:14,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
- dateInput:{borderWidth:1,borderColor:C.border,borderRadius:10,padding:12,color:C.white,fontSize:16},error:{color:C.danger,fontSize:13},
+ dateInput:{borderWidth:1,borderColor:C.border,borderRadius:10,padding:12,color:C.white,fontSize:16,minHeight:48,width:'100%'},error:{color:C.danger,fontSize:13},
 });
