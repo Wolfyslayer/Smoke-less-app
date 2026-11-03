@@ -19,6 +19,10 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [showAllGoals,setShowAllGoals]=useState(false);
  const saveDate=()=>{const parsed=parseFutureQuitDate(dateInput,new Date(clock));if(!parsed){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
+ const restartPreview=confirmRestart?restartReductionPlan(p,new Date(clock)):null;
+ const restartNextWeek=new Date(clock);restartNextWeek.setDate(restartNextWeek.getDate()+7);
+ const restartTodayGoal=restartPreview?target(restartPreview,new Date(clock)):null;
+ const restartNextWeekGoal=restartPreview?target(restartPreview,restartNextWeek):null;
  const previewDate=editingDate?parseFutureQuitDate(dateInput,new Date(clock)):null;
  const previewProfile=previewDate?rescheduleQuitPlan(p,previewDate,new Date(clock)):null;
  const previewNextWeek=new Date(clock);previewNextWeek.setDate(previewNextWeek.getDate()+7);
@@ -86,7 +90,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Text style={styles.muted}>Vill du ha ett eget dagsmål kan du ändra det i Inställningar. Det gäller tills du återställer det. Det är ett högsta riktvärde, inte något du måste röka upp till.</Text>
   </Card>
   {p.mode==='reduce'?<Card style={{gap:10}}><Label>BÖRJA OM MED PLANEN</Label><Text style={styles.cardTitle}>En ny start utan att radera din historik</Text><Text style={styles.muted}>Starta en ny nedtrappning från dagens planerade nivå. Tidigare registreringar och ditt ursprungliga startdatum behålls. Ett eventuellt stoppdatum och ett eget dagsmål tas bort.</Text>
-   {!confirmRestart?<Pressable accessibilityRole="button" accessibilityLabel="Starta om nedtrappningsplanen" accessibilityHint="Visar en bekräftelse innan planen ändras" style={styles.actionButton} onPress={()=>setConfirmRestart(true)}><Text style={styles.label}>STARTA OM PLANEN</Text></Pressable>:<View style={{gap:12}}><Text style={styles.muted}>Vill du starta om nedtrappningen? Dina tidigare registreringar raderas inte.</Text><Pressable accessibilityRole="button" accessibilityLabel="Bekräfta omstart av planen" accessibilityHint="Behåller registreringar och ursprungligt startdatum" style={styles.actionButton} onPress={restart}><Text style={styles.label}>JA, STARTA OM</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Avbryt omstart av planen" style={styles.actionButton} onPress={()=>setConfirmRestart(false)}><Text style={styles.muted}>Avbryt</Text></Pressable></View>}
+   {!confirmRestart?<Pressable accessibilityRole="button" accessibilityLabel="Starta om nedtrappningsplanen" accessibilityHint="Visar en bekräftelse innan planen ändras" style={styles.actionButton} onPress={()=>setConfirmRestart(true)}><Text style={styles.label}>STARTA OM PLANEN</Text></Pressable>:<View style={{gap:12}}><Text style={styles.muted}>Vill du starta om nedtrappningen? Dagens grundmål blir {restartTodayGoal} cigaretter och om sju dagar {restartNextWeekGoal}. Ett tidigare stoppdatum och eget dagsmål tas bort. Dina tidigare registreringar raderas inte.</Text><Pressable accessibilityRole="button" accessibilityLabel="Bekräfta omstart av planen" accessibilityHint="Behåller registreringar och ursprungligt startdatum" style={styles.actionButton} onPress={restart}><Text style={styles.label}>JA, STARTA OM</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Avbryt omstart av planen" style={styles.actionButton} onPress={()=>setConfirmRestart(false)}><Text style={styles.muted}>Avbryt</Text></Pressable></View>}
   </Card>:null}
   <Heading>Senaste sju dagarna</Heading>
   <Card style={{gap:10}}>
