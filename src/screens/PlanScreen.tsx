@@ -21,7 +21,8 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
- const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
+ const daysUntilStop=Math.round((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000);
+ const daysRemaining=Math.max(0,daysUntilStop);
  const {nextGoal,reduction:weeklyReduction}=weeklyPlanProgress(p,new Date(clock));
  const weeklySummary=p.mode==='quit'
   ?'Ditt mål är noll cigaretter varje dag. Du behöver inte ändra något för att fortsätta.'
@@ -39,8 +40,8 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const milestones=remainingSteps.slice(0,showAllGoals?14:7);
  const nextMilestoneTitle=p.mode==='quit'
   ?'Ditt dagsmål är noll cigaretter'
-  :scheduled&&daysRemaining===0
-   ?'Ditt planerade rökstopp är idag'
+  :scheduled&&daysUntilStop<=0
+   ?daysUntilStop===0?'Ditt planerade rökstopp är idag':'Ditt planerade stoppdatum har passerat'
    :scheduled&&customGoal
     ?'Nästa delmål: rökstopp '+date(end)
     :customGoal
@@ -57,7 +58,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt rökstopp':scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
    {scheduled?<Pressable accessibilityRole="button" accessibilityLabel="Ändra planerat stoppdatum" accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" onPress={()=>{setDateInput([end.getFullYear(),String(end.getMonth()+1).padStart(2,'0'),String(end.getDate()).padStart(2,'0')].join('-'));setDateError('');setEditingDate(true)}}><Text style={styles.label}>ÄNDRA STOPPDATUM</Text></Pressable>:null}
    {scheduled&&editingDate?<View style={{gap:9}}><TextInput style={styles.dateInput} value={dateInput} onChangeText={setDateInput} placeholder="ÅÅÅÅ-MM-DD" placeholderTextColor={C.muted} accessibilityLabel="Nytt stoppdatum, år månad dag" accessibilityHint="Ange datum med fyra siffror för år, två för månad och två för dag" keyboardType="numbers-and-punctuation"/><Pressable accessibilityRole="button" accessibilityLabel="Spara nytt stoppdatum" onPress={saveDate}><Text style={styles.label}>SPARA NYTT DATUM</Text></Pressable><Pressable accessibilityRole="button" onPress={()=>setEditingDate(false)}><Text style={styles.muted}>Avbryt</Text></Pressable>{dateError?<Text accessibilityRole="alert" style={styles.error}>{dateError}</Text>:null}</View>:null}
-   {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
+   {scheduled?<Text style={styles.muted}>{daysUntilStop<0?'Ditt planerade stoppdatum har passerat. Du kan fortsätta med målet noll eller välja ett nytt framtida datum.':daysUntilStop===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt eget mål.</Text>:null}
   </Card>
   <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextMilestoneTitle}</Text><Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
