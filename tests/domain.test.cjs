@@ -519,3 +519,39 @@ test('quit-date input rejects past, same-day, rollover and malformed dates', () 
  assert.equal(valid.getMonth(),10);
  assert.equal(valid.getDate(),4);
 });
+
+
+test('multiple reschedules and restart preserve all historical collections and savings anchor', () => {
+ const original=profile({baseline:12,plannedQuitAt:'2026-10-25T12:00:00.000Z',packPrice:100,packSize:20});
+ const entries=[{id:'one',at:'2026-10-02T12:00:00.000Z'},{id:'two',at:'2026-10-04T12:00:00.000Z'}];
+ const cravings=[{id:'urge',at:'2026-10-05T12:00:00.000Z',intensity:3,trigger:'stress'}];
+ const checkins=[{date:'2026-10-06',complete:true,smokeFree:false}];
+ const snapshots=JSON.stringify({entries,cravings,checkins});
+ const first=rescheduleQuitPlan(original,date('2026-11-10'),date('2026-10-09'));
+ const second=rescheduleQuitPlan(first,date('2026-11-20'),date('2026-10-12'));
+ const restarted=restartReductionPlan(second,date('2026-10-14'));
+ const third=rescheduleQuitPlan(restarted,date('2026-12-01'),date('2026-10-15'));
+ for(const p of [first,second,restarted,third]){
+  assert.equal(p.originalStartAt,original.startAt);
+  assert.equal(p.baseline,original.baseline);
+  assert.equal(validateData({profile:p,entries,cravings,checkins}),true);
+  assert.equal(savings({profile:p,entries,cravings,checkins},date('2026-10-15')),savings({profile:original,entries,cravings,checkins},date('2026-10-15')));
+ }
+ assert.equal(JSON.stringify({entries,cravings,checkins}),snapshots);
+ assert.equal(third.plannedQuitAt,date('2026-12-01').toISOString());
+ assert.equal(target(third,date('2026-12-01')),0);
+});
+
+test('repeated same-day rescheduling keeps todays goal and never changes historical savings start', () => {
+ const now=date('2026-10-09');
+ const original=profile({baseline:12,plannedQuitAt:'2026-10-25T12:00:00.000Z'});
+ const todayGoal=target(original,now);
+ const first=rescheduleQuitPlan(original,date('2026-11-01'),now);
+ const second=rescheduleQuitPlan(first,date('2026-11-15'),now);
+ const third=rescheduleQuitPlan(second,date('2026-12-01'),now);
+ for(const p of [first,second,third]){
+  assert.equal(target(p,now),todayGoal);
+  assert.equal(p.originalStartAt,original.startAt);
+  assert.equal(p.baseline,original.baseline);
+ }
+});

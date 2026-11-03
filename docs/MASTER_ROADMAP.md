@@ -59,11 +59,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [x] 4.2 Erbjud ändring av takt och stoppdatum med bekräftelse.
    - [x] 4.3 Verifiera sju dagars förhandsvisning för båda ändringstyperna med grönt TypeScript-CI.
    - [x] 4.4 Visa tre närmaste dagar som standard med expanderbara 14 dagar; konsekvent förhandsvisning och avbryt för planjusteringar (kod implementerad, slutlig Android-verifiering i 7.4/8.1).
-5. [ ] **Missade mål, omplanering och omstart (3/4)**
+5. [ ] **Missade mål, omplanering och omstart (4/4)**
    - [x] 5.1 Visa icke-skuldbeläggande stöd vid missat mål.
    - [x] 5.2 Erbjud omstart med bibehållen registreringshistorik.
    - [x] 5.3 Verifiera ändrat stoppdatum, passerat datum, eget dagsmål och strikt datumval med automatiska domäntester (slutlig Android-acceptans återstår).
-   - [ ] 5.4 Testa upprepade ändringar utan att historik eller sparstart påverkas.
+   - [x] 5.4 Testa upprepade datumändringar och omstart med bibehållna registreringar, röksug, avstämningar och besparingsstart.
 6. [ ] **Migration, offline, gäst och kontosynk (1/4)**
    - [x] 6.1 Behåll bakåtkompatibla valfria profilfält.
    - [ ] 6.2 Verifiera offline- och gästflöde vid planändringar.
@@ -80,7 +80,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.3 Verifiera gröna obligatoriska CI-kontroller på slutlig commit.
    - [ ] 8.4 Squash-merga PR #140 till `main` efter godkänd acceptans.
 
-**Framsteg vid införandet:** 4/8 huvudpunkter (50 %); 21/32 delpunkter (65,625 %). Delpunktsstatus är en initial bedömning och ska justeras efter verifiering, aldrig automatiskt vid commit.
+**Framsteg vid införandet:** 5/8 huvudpunkter (62,5 %); 22/32 delpunkter (68,75 %). Delpunktsstatus är en initial bedömning och ska justeras efter verifiering, aldrig automatiskt vid commit.
 
 **Tekniska nyckelkrav:** Valfritt `plannedQuitAt` får inte förväxlas med `startAt`/`originalStartAt`. Lokala kalenderdagar ska fungera över sommartid. Ändringar får inte skriva om cigaretter, röksug eller avstämningar. Firestore-profiluppdateringar kräver uttrycklig konflikt-/revisionshantering: nuvarande additiva synk uppdaterar inte befintlig fjärrprofil. Läs `docs/PHASE_8_TECHNICAL_AUDIT.md`.
 
