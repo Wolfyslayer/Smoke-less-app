@@ -8,6 +8,13 @@ Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och ut
 - Gör **meningsfulla, sammanhängande commits** som ger mätbar funktionalitet eller avhjälper konkreta problem. Samla relaterad kod och tester i **samma commit** så att inte halvfärdiga ändringar orsakar röda CI-kontroller.
 - Följ fasens fastställda huvudchecklista i ordning. Skapa inte nya deluppgifter som skjuter upp fasavslut i onödan. Särskilj huvudpunkter och underuppgifter; ändra inte nämnaren utan ett uttryckligt beslut.
 
+## Firestore-regler: samla ändringar till sista säkerhetsfasen
+- **Standardregel:** Planera och samla alla icke-blockerande ändringar i `firestore.rules` och tillhörande regeltester till en **gemensam avslutande säkerhetsfas före offentlig lansering**, efter övriga funktionsfaser. Dokumentera behov och beroenden i masterplanen, men ändra inte reglerna i vanliga funktions-PR:er.
+- **Undantag endast när nödvändigt:** Om en funktion i den aktiva fasen inte kan fungera säkert eller korrekt utan ändrade Firestore-regler, skapa **en separat, avgränsad PR mot `main`** för just de nödvändiga regeländringarna och testerna. Kör och verifiera Firestore-regel-CI, merga den PR:en innan funktionen betraktas som klar. Dokumentera beroendet i fas-PR:en.
+- **Inga genvägar i säkerheten:** Skjut aldrig upp en regeländring som krävs för åtkomstkontroll, integritet, korrekt dataseparering eller säker drift. Utöka aldrig behörigheter bara för att få CI grönt.
+- **CI-optimering:** Låt vanliga funktions-PR:er vara fria från Firestore-regeländringar så att regel-workflowens ändringsdetektion kan hoppa över onödiga emulatortester. Ändra inte CI för att kringgå obligatoriska tester när relevanta regler eller säkerhetsberoenden ändras.
+- **Avslutande fas:** Granska och testa samtliga uppskjutna regelbehov tillsammans med säkerhet, kontoradering, synk och Firebase-konfiguration **innan** release till Google Play. Skapa en separat PR för den samlade regeluppdateringen; verifiera emulator, negativa behörighetstester och regressioner.
+
 ## CI-grind och användarens klartecken
 1. Gör nästa meningsfulla ändring på den aktiva fasens branch och dokumentera vad den löser.
 2. Kontrollera att tester/CI körs på **senaste commit**. Rapportera korrekt status; påstå aldrig att tester är gröna innan de faktiskt är det.
