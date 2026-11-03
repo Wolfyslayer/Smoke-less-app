@@ -36,7 +36,7 @@ export function OnboardingScreen({onStep,setOnStep,mode,setMode,scheduled,setSch
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.eyebrow}>{children}</Text>}
 const styles=StyleSheet.create({
  root:{flex:1,backgroundColor:C.background},
- brandLogo:{width:150,height:150},
+ brandLogo:{width:175,height:175},
  benefitWindow:{height:48,overflow:'hidden',justifyContent:'flex-start'},
  benefitLine:{height:48,fontSize:16,color:C.muted,lineHeight:24,textAlign:'left',textAlignVertical:'center'},
  eyebrow:{fontSize:11,color:C.muted,fontWeight:'800',letterSpacing:1.7},
