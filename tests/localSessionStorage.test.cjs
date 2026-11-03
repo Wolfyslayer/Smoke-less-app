@@ -84,3 +84,40 @@ test('disposed controller refuses new operations', async () => {
   c.dispose();
   await assert.rejects(c.switchTo({kind:'guest'}),/avslutad/);
 });
+
+
+test('guest plan edits persist locally without authentication or network and preserve history', async () => {
+  const {controller:c,records} = setup();
+  await c.switchTo({kind:'guest'});
+  const original = {...withEntry('guest-old'),profile:{mode:'reduce',baseline:12,packSize:20,packPrice:85,speed:'balanced',startAt:'2026-10-01T12:00:00.000Z',dailyTargetOverride:null}};
+  original.cravings=[{id:'urge',at:'2026-10-02T12:00:00.000Z',intensity:3,trigger:'stress'}];
+  original.checkins=[{date:'2026-10-03',complete:true,smokeFree:false}];
+  await c.save({kind:'guest'},original);
+  const changed={...original,profile:{...original.profile,plannedQuitAt:'2026-12-01T12:00:00.000Z',planStartTarget:10,originalStartAt:original.profile.startAt}};
+  await c.save({kind:'guest'},changed);
+  await c.switchTo({kind:'account',uid:'alice'});
+  assert.equal(c.getSnapshot().data.profile,null);
+  assert.equal(c.getSnapshot().data.entries.length,0);
+  await c.switchTo({kind:'guest'});
+  const restored=c.getSnapshot().data;
+  assert.equal(restored.profile.plannedQuitAt,'2026-12-01T12:00:00.000Z');
+  assert.equal(restored.profile.originalStartAt,original.profile.startAt);
+  assert.deepEqual(restored.entries,original.entries);
+  assert.deepEqual(restored.cravings,original.cravings);
+  assert.deepEqual(restored.checkins,original.checkins);
+  assert.equal(records.get('account:alice'),undefined);
+});
+
+test('account plan changes do not overwrite offline guest plan after switching back', async () => {
+  const {controller:c}=setup();
+  const guest={...empty(),profile:{mode:'reduce',baseline:8,packSize:20,packPrice:80,speed:'gentle',startAt:'2026-10-01T12:00:00.000Z',dailyTargetOverride:null,plannedQuitAt:'2026-12-01T12:00:00.000Z'}};
+  await c.switchTo({kind:'guest'});
+  await c.save({kind:'guest'},guest);
+  await c.switchTo({kind:'account',uid:'alice'});
+  await c.save({kind:'account',uid:'alice'},{...empty(),profile:{...guest.profile,plannedQuitAt:'2027-01-01T12:00:00.000Z'}});
+  await assert.rejects(c.save({kind:'guest'},guest),/Kontot har ändrats/);
+  await c.switchTo({kind:'guest'});
+  assert.equal(c.getSnapshot().data.profile.plannedQuitAt,'2026-12-01T12:00:00.000Z');
+  await c.switchTo({kind:'account',uid:'alice'});
+  assert.equal(c.getSnapshot().data.profile.plannedQuitAt,'2027-01-01T12:00:00.000Z');
+});
