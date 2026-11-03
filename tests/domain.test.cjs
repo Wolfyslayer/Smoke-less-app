@@ -330,3 +330,41 @@ test('milestone returns none after reaching zero or for fixed custom targets',()
  assert.equal(nextReductionMilestone(p,date('2026-10-05')),null);
  assert.equal(nextReductionMilestone({...p,dailyTargetOverride:1},date('2026-10-01')),null);
 });
+
+
+test('rescheduling a quit date preserves every historical record and todays planned goal',()=>{
+ const before=profile({baseline:10,plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const now=date('2026-10-12');
+ const entries=[{id:'old',at:'2026-10-02T12:00:00.000Z'}];
+ const cravings=[{id:'craving',at:'2026-10-03T12:00:00.000Z',intensity:3,trigger:'stress'}];
+ const checkins=[{date:'2026-10-04',complete:true,smokeFree:false}];
+ const history=JSON.stringify({entries,cravings,checkins});
+ const current=target(before,now);
+ const after=rescheduleQuitPlan(before,date('2026-12-01'),now);
+ assert.equal(target(after,now),current);
+ assert.equal(after.baseline,before.baseline);
+ assert.equal(after.originalStartAt,before.startAt);
+ assert.equal(after.plannedQuitAt,date('2026-12-01').toISOString());
+ assert.equal(target(after,date('2026-12-01')),0);
+ assert.equal(JSON.stringify({entries,cravings,checkins}),history);
+ assert.equal(validateData({profile:after,entries,cravings,checkins}),true);
+});
+
+test('restarting a scheduled reduction clears its old stop date without losing history',()=>{
+ const before=profile({baseline:10,plannedQuitAt:'2026-11-01T12:00:00.000Z',dailyTargetOverride:4});
+ const now=date('2026-10-12');
+ const expected=target({...before,dailyTargetOverride:null},now);
+ const after=restartReductionPlan(before,now);
+ assert.equal(after.plannedQuitAt,undefined);
+ assert.equal(after.dailyTargetOverride,null);
+ assert.equal(after.originalStartAt,before.startAt);
+ assert.equal(after.baseline,before.baseline);
+ assert.equal(target(after,now),expected);
+ assert.equal(target(after,date('2026-10-16')),expected-1);
+ assert.equal(before.plannedQuitAt,'2026-11-01T12:00:00.000Z');
+ const entries=[{id:'old',at:'2026-10-02T12:00:00.000Z'}];
+ const cravings=[];
+ const checkins=[{date:'2026-10-04',complete:true,smokeFree:false}];
+ assert.equal(validateData({profile:after,entries,cravings,checkins}),true);
+ assert.equal(countOn(entries,'2026-10-02'),1);
+});
