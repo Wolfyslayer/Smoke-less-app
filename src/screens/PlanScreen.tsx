@@ -24,6 +24,18 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
  const nextWeek=new Date(clock);nextWeek.setDate(nextWeek.getDate()+7);
  const nextGoal=target(p,nextWeek);
+ const weeklyReduction=Math.max(0,goal-nextGoal);
+ const weeklySummary=p.mode==='quit'
+  ?'Ditt mål är noll cigaretter varje dag. Du behöver inte ändra något för att fortsätta.'
+  :customGoal
+   ?scheduled
+    ?'Ditt eget dagsmål gäller fram till stoppdatumet. På stoppdatumet är målet alltid noll.'
+    :'Ditt eget dagsmål ligger kvar tills du ändrar eller återställer det i Inställningar.'
+   :weeklyReduction>0
+    ?'Under kommande sju dagar minskar ditt planerade dagsmål med '+weeklyReduction+' '+(weeklyReduction===1?'cigarett':'cigaretter')+'.'
+    :goal===0
+     ?'Ditt planerade dagsmål är redan noll cigaretter.'
+     :'Dagsmålet är oförändrat den närmaste veckan. Nästa minskning visas ovan.';
  const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
  const nextDecrease=nextReductionMilestone(p,new Date(clock));
  const milestones=remainingSteps.slice(0,showAllGoals?14:7);
@@ -37,7 +49,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {scheduled?<Text style={styles.muted}>{daysRemaining===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt eget mål.</Text>:null}
   </Card>
-  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt dagsmål är noll cigaretter':customGoal?'Ditt eget dagsmål är '+goal+' cigaretter':nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget kommande minskningssteg i grundplanen'}</Text><Text style={styles.muted}>Om sju dagar är riktvärdet {nextGoal} cigaretter per dag. {p.mode==='quit'?'Du kan fortsätta registrera dina framsteg i din egen takt.':customGoal?'Ditt eget riktvärde gäller tills du ändrar eller återställer det.':scheduled?'Planen är anpassad till ditt valda stoppdatum.':'Följ utvecklingen i din egen takt.'}</Text></Card>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt dagsmål är noll cigaretter':customGoal?'Ditt eget dagsmål är '+goal+' cigaretter':nextDecrease?'Nästa minskning '+date(nextDecrease.date)+': '+nextDecrease.goal+' cigaretter per dag':goal===0?'Du har nått målet noll cigaretter':'Inget kommande minskningssteg i grundplanen'}</Text><Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
   <Heading>{p.mode==='quit'?'Ditt rökstopp':'Din nedtrappning'}</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
