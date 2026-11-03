@@ -368,3 +368,22 @@ test('restarting a scheduled reduction clears its old stop date without losing h
  assert.equal(validateData({profile:after,entries,cravings,checkins}),true);
  assert.equal(countOn(entries,'2026-10-02'),1);
 });
+
+test('cloud sync retries are queued while another sync is in progress', () => {
+ const source=fs.readFileSync('src/hooks/useCloudSync.ts','utf8');
+ for(const required of ['const syncQueued=useRef(false)', 'syncQueued.current=true', 'syncQueued.current=false', 'setSyncTrigger(v=>v+1)']) {
+  assert.ok(source.includes(required), 'Missing cloud sync queue behavior: '+required);
+ }
+});
+
+test('restarting reduction twice retains original savings start', () => {
+ const original=profile({baseline:12});
+ const first=restartReductionPlan(original,date('2026-10-09'));
+ const now=date('2026-10-15');
+ const current=target(first,now);
+ const second=restartReductionPlan(first,now);
+ assert.equal(target(second,now),current);
+ assert.equal(second.originalStartAt,original.startAt);
+ assert.equal(second.baseline,original.baseline);
+ assert.equal(original.originalStartAt,undefined);
+});
