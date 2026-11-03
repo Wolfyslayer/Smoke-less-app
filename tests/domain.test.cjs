@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
+const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, resumeGradualReduction, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -735,4 +735,34 @@ test('changing daily target multiple times keeps original savings start and sele
  assert.equal(second.plannedQuitAt,p.plannedQuitAt);
  assert.equal(target(second,date('2026-10-12')),16);
  assert.equal(target(second,date('2026-11-01')),0);
+});
+
+test('returning to gradual reduction after selecting a quit date keeps chosen pace and history',()=>{
+ const before=profile({baseline:20,speed:'gentle',plannedQuitAt:'2026-12-01T12:00:00.000Z'});
+ const now=date('2026-10-09');
+ const current=target(before,now);
+ const after=resumeGradualReduction(before,now);
+ assert.equal(after.plannedQuitAt,undefined);
+ assert.equal(after.speed,'gentle');
+ assert.equal(after.baseline,20);
+ assert.equal(after.originalStartAt,before.startAt);
+ assert.equal(target(after,now),current);
+ assert.equal(target(after,date('2026-10-16')),Math.max(0,current-1));
+ assert.ok(quitDate(after).getTime()>now.getTime());
+ assert.equal(before.plannedQuitAt,'2026-12-01T12:00:00.000Z');
+});
+
+test('onboarding fixed-date plan can switch to automatic gradual reduction',()=>{
+ const initial=profile({speed:'balanced',plannedQuitAt:'2026-11-15T12:00:00.000Z'});
+ const now=date('2026-10-02');
+ const after=resumeGradualReduction(initial,now);
+ assert.equal(after.plannedQuitAt,undefined);
+ assert.equal(after.speed,'balanced');
+ assert.equal(target(after,date('2026-10-06')),target(initial,now)-1);
+ assert.equal(after.originalStartAt,initial.startAt);
+});
+
+test('resume gradual reduction leaves a plan without custom date unchanged',()=>{
+ const p=profile();
+ assert.equal(resumeGradualReduction(p,date('2026-10-09')),p);
 });
