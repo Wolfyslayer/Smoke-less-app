@@ -56,8 +56,8 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    ?'Stoppdatumet är här eller har passerat. Ditt planerade dagsmål är noll cigaretter. Du kan ändra datumet utan att förlora tidigare registreringar.'
   :customGoal
    ?scheduled
-    ?'Ditt eget dagsmål gäller fram till stoppdatumet. På stoppdatumet är målet alltid noll.'
-    :'Ditt eget dagsmål ligger kvar tills du ändrar eller återställer det i Inställningar.'
+    ?'Ditt valda stoppdatum ligger fast. Nedtrappningen anpassas så att målet är noll på stoppdatumet.'
+    :'Ditt dagsmål följer den valda takten och det beräknade stoppdatumet anpassas automatiskt.'
    :weeklyReduction>0
     ?'Under kommande sju dagar minskar ditt planerade dagsmål med '+weeklyReduction+' '+(weeklyReduction===1?'cigarett':'cigaretter')+'.'
     :goal===0
@@ -93,7 +93,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {p.mode==='reduce'?<Pressable accessibilityRole="button" accessibilityLabel={scheduled?'Ändra planerat stoppdatum':'Välj eget stoppdatum'} accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" style={styles.actionButton} onPress={()=>{const initial=scheduled&&p.plannedQuitAt?new Date(p.plannedQuitAt):new Date(clock);const valid=initial.getTime()>new Date(clock).getTime();const chosen=valid?initial:null;setSelectedDate(chosen);const month=chosen??new Date(clock);setCalendarYear(month.getFullYear());setCalendarMonth(month.getMonth());setDateError('');setEditingDate(true);}}><Text style={styles.label}>{scheduled?'ÄNDRA STOPPDATUM':'VÄLJ EGET STOPPDATUM'}</Text></Pressable>:null}
    <CompactDateModal visible={p.mode==='reduce'&&editingDate} value={selectedDate} onCancel={()=>setEditingDate(false)} onConfirm={date=>{onChangeProfile(rescheduleQuitPlan(p,date,new Date(clock)));setEditingDate(false);setDateError('');}}/>
    {scheduled?<Text style={styles.muted}>{daysUntilStop<0?'Ditt planerade stoppdatum har passerat. Du kan fortsätta med målet noll eller välja ett nytt framtida datum.':daysUntilStop===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
-   {customGoal?<Text style={styles.muted}>{scheduled?daysUntilStop<=0?'Ditt tidigare egna dagsmål gäller inte efter stoppdatumet. Dagens mål är noll.':'Ditt egna dagsmål gäller fram till stoppdatumet, då målet blir noll.':'Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt eget mål.'}</Text>:null}
+   {customGoal?<Text style={styles.muted}>{scheduled?daysUntilStop<=0?'Ditt tidigare egna dagsmål gäller inte efter stoppdatumet. Dagens mål är noll.':'Ditt valda stoppdatum ligger kvar och nedtrappningen anpassas till den nya nivån.':'Ditt beräknade stoppdatum anpassas när du ändrar dagsmålet.'}</Text>:null}
   </Card>
   <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextMilestoneTitle}</Text>{milestoneCountdown?<Text style={styles.muted}>{milestoneCountdown}</Text>:null}<Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
   <Heading>{p.mode==='quit'?'Ditt rökstopp':'Din nedtrappning'}</Heading>
@@ -103,14 +103,14 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
     <View style={{flex:1,minWidth:115}}><Label>JÄMFÖRT MED START</Label><Text style={styles.statValue}>{percentage}%</Text></View>
    </View>
    <View style={styles.progressTrack} accessible accessibilityRole="progressbar" accessibilityLabel="Minskning av dagsmål jämfört med start, inte faktisk konsumtion" accessibilityValue={{min:0,max:100,now:percentage}}><View style={[styles.progressFill,{width:`${Math.min(100,percentage)}%` as `${number}%`}]}/></View>
-   <Text style={styles.muted}>Visar skillnaden mellan dagens mål och startnivån, inte hur mycket du faktiskt rökt.{customGoal?(scheduled?' Ditt egna riktvärde gäller bara fram till stoppdatumet.':' Ett eget riktvärde gäller tills det återställs.'):''}</Text>
+   <Text style={styles.muted}>Visar skillnaden mellan dagens mål och startnivån, inte hur mycket du faktiskt rökt.{customGoal?(scheduled?' Ditt egna riktvärde gäller bara fram till stoppdatumet.':' Ändrat dagsmål påverkar framtida nedtrappning och beräknat stoppdatum.'):''}</Text>
   </Card>
   <Card style={{gap:10}}>
    <Label>PLANEN KAN ANPASSAS</Label>
    <Text style={styles.cardTitle}>En svår dag ändrar inte dina framsteg</Text>
    <Text style={styles.muted}>Om du röker mer än planerat behöver du inte börja om. Din registrerade historik finns kvar, och du kan fortsätta från nästa stund.</Text>
    {p.mode==='quit'?<Text style={styles.muted}>Du har valt att sluta direkt. Ditt mål är noll cigaretter, men en svår stund raderar aldrig tidigare registreringar eller framsteg.</Text>:scheduled?<Text style={styles.muted}>Ditt valda stoppdatum styr nedtrappningen. Du kan ändra datumet ovan eller starta om planen för att välja en annan takt. Tidigare registreringar finns kvar.</Text>:<Text style={styles.muted}>Behöver du en lugnare takt? Välj Lugn nedan. När du byter takt fortsätter grundplanen från dagens planerade nivå, inte från din ursprungliga startnivå. Tidigare registreringar finns kvar.</Text>}
-   <Text style={styles.muted}>Vill du ha ett eget dagsmål kan du ändra det i Inställningar. Det gäller tills du återställer det. Det är ett högsta riktvärde, inte något du måste röka upp till.</Text>
+   <Text style={styles.muted}>Du kan ändra ditt dagsmål i Inställningar. Då räknas framtida mål om. Ett eget valt stoppdatum ligger fast, medan ett automatiskt beräknat datum kan flyttas. Dagsmålet är ett högsta riktvärde, inte något du måste röka upp till.</Text>
   </Card>
   {p.mode==='reduce'?<Card style={{gap:10}}><Label>BÖRJA OM MED PLANEN</Label><Text style={styles.cardTitle}>En ny start utan att radera din historik</Text><Text style={styles.muted}>Starta en ny nedtrappning från dagens planerade nivå. Tidigare registreringar och ditt ursprungliga startdatum behålls. Ett eventuellt stoppdatum och ett eget dagsmål tas bort.</Text>
    {!confirmRestart?<Pressable accessibilityRole="button" accessibilityLabel="Starta om nedtrappningsplanen" accessibilityHint="Visar en bekräftelse innan planen ändras" style={styles.actionButton} onPress={()=>setConfirmRestart(true)}><Text style={styles.label}>STARTA OM PLANEN</Text></Pressable>:<View style={{gap:12}}><Text style={styles.muted}>Vill du starta om nedtrappningen? Dagens grundmål blir {restartTodayGoal} cigaretter och om sju dagar {restartNextWeekGoal}. Ett tidigare stoppdatum och eget dagsmål tas bort. Dina tidigare registreringar raderas inte.</Text><Pressable accessibilityRole="button" accessibilityLabel="Bekräfta omstart av planen" accessibilityHint="Behåller registreringar och ursprungligt startdatum" style={styles.actionButton} onPress={restart}><Text style={styles.label}>JA, STARTA OM</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Avbryt omstart av planen" style={styles.actionButton} onPress={()=>setConfirmRestart(false)}><Text style={styles.muted}>Avbryt</Text></Pressable></View>}
