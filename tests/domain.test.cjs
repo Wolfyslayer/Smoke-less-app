@@ -428,3 +428,39 @@ test('weekly progression respects immediate quit and manual goals',()=>{
  assert.equal(scheduled.nextGoal,0);
  assert.equal(scheduled.reduction,5);
 });
+
+test('quit-date preview matches saved targets and does not mutate profile',()=>{
+ const now=date('2026-10-12');
+ const before=profile({baseline:10,plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const original=JSON.stringify(before);
+ const chosen=date('2026-12-01');
+ const preview=rescheduleQuitPlan(before,chosen,now);
+ const saved=rescheduleQuitPlan(before,chosen,now);
+ const week=date('2026-10-19');
+ for(const day of [now,week,chosen])assert.equal(target(preview,day),target(saved,day));
+ assert.equal(target(preview,chosen),0);
+ assert.equal(target(preview,now),target(before,now));
+ assert.equal(JSON.stringify(before),original);
+});
+test('quit-date preview respects manual target until the chosen stop date',()=>{
+ const now=date('2026-10-12');
+ const before=profile({dailyTargetOverride:4,plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const changed=rescheduleQuitPlan(before,date('2026-10-20'),now);
+ assert.equal(target(changed,now),4);
+ assert.equal(target(changed,date('2026-10-19')),4);
+ assert.equal(target(changed,date('2026-10-20')),0);
+ assert.equal(before.plannedQuitAt,'2026-11-01T12:00:00.000Z');
+});
+test('restart confirmation preview matches the resulting plan without history changes',()=>{
+ const now=date('2026-10-12');
+ const before=profile({baseline:10,dailyTargetOverride:4,plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const data={profile:before,entries:[{id:'e',at:'2026-10-02T12:00:00.000Z'}],cravings:[{id:'c',at:'2026-10-03T12:00:00.000Z',intensity:2,trigger:'stress'}],checkins:[{date:'2026-10-04',complete:true,smokeFree:false}]};
+ const historical=JSON.stringify({entries:data.entries,cravings:data.cravings,checkins:data.checkins});
+ const preview=restartReductionPlan(before,now);
+ const saved=restartReductionPlan(before,now);
+ for(const day of [now,date('2026-10-19')])assert.equal(target(preview,day),target(saved,day));
+ assert.equal(preview.plannedQuitAt,undefined);
+ assert.equal(preview.dailyTargetOverride,null);
+ assert.equal(preview.originalStartAt,before.startAt);
+ assert.equal(JSON.stringify({entries:data.entries,cravings:data.cravings,checkins:data.checkins}),historical);
+});
