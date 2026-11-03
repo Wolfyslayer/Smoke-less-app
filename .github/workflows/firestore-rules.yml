@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+concurrency:
+  group: firestore-rules-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   rules:
     runs-on: ubuntu-latest
@@ -38,12 +41,21 @@ jobs:
         if: steps.changes.outputs.run_tests == 'true'
         with:
           node-version: '22'
+          cache: npm
+      - name: Cache Firestore emulator binaries
+        if: steps.changes.outputs.run_tests == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firestore-emulator-${{ runner.os }}-${{ hashFiles('firebase.json') }}
+          restore-keys: |
+            firestore-emulator-${{ runner.os }}-
       - uses: actions/setup-java@v4
         if: steps.changes.outputs.run_tests == 'true'
         with:
           distribution: temurin
           java-version: '21'
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
         if: steps.changes.outputs.run_tests == 'true'
       - name: Install isolated emulator test dependencies (without modifying lockfile)
         if: steps.changes.outputs.run_tests == 'true'

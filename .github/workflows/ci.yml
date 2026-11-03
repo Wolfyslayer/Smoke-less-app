@@ -3,6 +3,9 @@ on:
   push:
     branches: [main, feat/smoke-less-6-rebuild]
   pull_request:
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -11,9 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-audit --no-fund
+          cache: npm
+      - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run test
       - run: npm run test:storage
       - run: npm run test:migration
-      - run: npm run build:web
