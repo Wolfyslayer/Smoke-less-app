@@ -80,8 +80,8 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [x] 7.2 Regressionstester täcker omplanering med additiv historik och konflikter i både plan och registreringar, utan tysta överskrivningar (CI-verifiering krävs).
    - [ ] 7.3 Verifiera TalkBack, etiketter och tryckytor.
    - [ ] 7.4 Verifiera små skärmar och maximal systemtextstorlek på Android.
-8. [ ] **Acceptans, CI och merge (0/4)**
-   - [ ] 8.1 Genomför funktionellt acceptanstest av alla tre metoderna.
+8. [ ] **Acceptans, CI och merge (1/4)**
+   - [x] 8.1 Genomför funktionellt acceptanstest av alla tre metoderna (bekräftat på Android: metodbyte, sparande och korrekt mål efter omstart).
    - [ ] 8.2 Genomför regressionstest av historik, gästläge och molnsynk.
    - [ ] 8.3 Verifiera gröna obligatoriska CI-kontroller på slutlig commit.
    - [ ] 8.4 Squash-merga PR #140 till `main` efter godkänd acceptans.
