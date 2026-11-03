@@ -45,3 +45,32 @@ test('existing account plan wins over a newly created guest onboarding plan',()=
  assert.deepEqual(Array.from(result.merged.entries,x=>x.id),['saved-account','guest-only']);
  assert.equal(guest.profile,onboardingPlan);
 });
+
+test('guest history import keeps the existing account quit plan and does not mutate source data',()=>{
+ const accountPlan={mode:'reduce',baseline:8,speed:'balanced',plannedQuitAt:'2026-12-24T12:00:00.000Z'};
+ const guestPlan={mode:'reduce',baseline:20,speed:'fast',plannedQuitAt:'2027-01-15T12:00:00.000Z'};
+ const account=data([entry('account-only')],[],[],accountPlan);
+ const guest=data([entry('guest-only')],[{id:'urge-1',at:'2026-11-02T10:00:00Z',intensity:3,trigger:'stress'}],[],guestPlan);
+ const beforeAccount=JSON.stringify(account),beforeGuest=JSON.stringify(guest);
+ const result=preview(account,guest);
+ assert.equal(result.conflicts.length,0);
+ assert.equal(result.merged.profile,accountPlan);
+ assert.equal(result.merged.profile.plannedQuitAt,accountPlan.plannedQuitAt);
+ assert.deepEqual(Array.from(result.merged.entries,x=>x.id),['account-only','guest-only']);
+ assert.equal(result.added.entries,1);
+ assert.equal(result.added.cravings,1);
+ assert.equal(JSON.stringify(account),beforeAccount);
+ assert.equal(JSON.stringify(guest),beforeGuest);
+});
+
+test('guest record ID conflict is surfaced while the account plan and conflicting entry remain intact',()=>{
+ const plan={mode:'reduce',baseline:10,plannedQuitAt:'2026-12-01T12:00:00.000Z'};
+ const account=data([entry('same','2026-11-01T10:00:00Z')],[],[],plan);
+ const guest=data([entry('same','2026-11-02T10:00:00Z'),entry('new')],[],[],{mode:'quit',baseline:25});
+ const result=preview(account,guest);
+ assert.equal(result.conflicts.length,1);
+ assert.equal(result.merged.profile,plan);
+ assert.equal(result.merged.entries.find(x=>x.id==='same').at,'2026-11-01T10:00:00Z');
+ assert.equal(result.merged.entries.find(x=>x.id==='new').id,'new');
+ assert.equal(account.entries.length,1);
+});
