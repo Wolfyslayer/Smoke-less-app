@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import {C} from '../theme';
-import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,parseFutureQuitDate,type Profile,type Speed} from '../domain';
+import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
 
 type WeekDay={key:string;confirmed:boolean;within:boolean};
 type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void};
@@ -22,9 +22,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
  const daysRemaining=Math.max(0,Math.ceil((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000));
- const nextWeek=new Date(clock);nextWeek.setDate(nextWeek.getDate()+7);
- const nextGoal=target(p,nextWeek);
- const weeklyReduction=Math.max(0,goal-nextGoal);
+ const {nextGoal,reduction:weeklyReduction}=weeklyPlanProgress(p,new Date(clock));
  const weeklySummary=p.mode==='quit'
   ?'Ditt mål är noll cigaretter varje dag. Du behöver inte ändra något för att fortsätta.'
   :customGoal

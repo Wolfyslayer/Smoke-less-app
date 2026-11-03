@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate} = context.exports;
+const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -403,4 +403,28 @@ test('quit date input handles leap days and midnight boundaries',()=>{
  assert.ok(leap);
  assert.equal(leap.getDate(),29);
  assert.equal(parseFutureQuitDate('2028-02-29',new Date(2028,1,29,0,1)),null);
+});
+
+test('weekly progression matches scheduled and gradual reduction',()=>{
+ const now=date('2026-10-01');
+ const regular=weeklyPlanProgress(profile(),now);
+ assert.equal(regular.todayGoal,12);
+ assert.equal(regular.nextGoal,11);
+ assert.equal(regular.reduction,1);
+ const scheduled=weeklyPlanProgress(profile({baseline:10,plannedQuitAt:'2026-10-06T12:00:00.000Z'}),now);
+ assert.equal(scheduled.todayGoal,10);
+ assert.equal(scheduled.nextGoal,0);
+ assert.equal(scheduled.reduction,10);
+});
+test('weekly progression respects immediate quit and manual goals',()=>{
+ const now=date('2026-10-01');
+ for(const p of [profile({mode:'quit'}),profile({dailyTargetOverride:5})]){
+  const result=weeklyPlanProgress(p,now);
+  assert.equal(result.todayGoal,result.nextGoal);
+  assert.equal(result.reduction,0);
+ }
+ const scheduled=weeklyPlanProgress(profile({dailyTargetOverride:5,plannedQuitAt:'2026-10-05T12:00:00.000Z'}),now);
+ assert.equal(scheduled.todayGoal,5);
+ assert.equal(scheduled.nextGoal,0);
+ assert.equal(scheduled.reduction,5);
 });
