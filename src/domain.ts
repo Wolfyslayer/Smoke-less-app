@@ -25,6 +25,15 @@ export function nextReductionMilestone(p:Profile,now:Date):{date:Date;goal:numbe
  }
  return null;
 }
+/** Re-anchor future reduction goals after a user changes their daily cigarette target.
+ * Existing entries, baseline and original savings start are retained by the caller.
+ * A scheduled quit date remains fixed; normal plans keep their selected pace. */
+export function adjustReductionTarget(p:Profile,value:number|null,now:Date):Profile {
+ if(p.mode!=='reduce')return p;
+ if(value===null)return {...p,dailyTargetOverride:null};
+ if(!Number.isInteger(value)||value<0) return p;
+ return {...p,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:value,dailyTargetOverride:null};
+}
 /** Restart only the future reduction schedule; the caller retains all historical records. */
 export function restartReductionPlan(p:Profile,now:Date):Profile {
  if(p.mode!=='reduce')return p;
