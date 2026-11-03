@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
+import {Modal,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {C} from '../theme';
 import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
 
@@ -13,19 +13,26 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const percentage=p.baseline>0?Math.max(0,Math.min(100,Math.round(todayReduction/p.baseline*100))):0;
  const customGoal=p.dailyTargetOverride!==null;
  const [editingDate,setEditingDate]=useState(false);
- const [dateInput,setDateInput]=useState('');
+ const [selectedDate,setSelectedDate]=useState<Date|null>(null);
+ const [calendarMonth,setCalendarMonth]=useState(new Date(clock).getMonth());
+ const [calendarYear,setCalendarYear]=useState(new Date(clock).getFullYear());
  const [dateError,setDateError]=useState('');
  const [confirmRestart,setConfirmRestart]=useState(false);
  const [showAllGoals,setShowAllGoals]=useState(false);
  const [pendingSpeed,setPendingSpeed]=useState<Speed|null>(null);
  const [showPaceDetails,setShowPaceDetails]=useState(false);
- const saveDate=()=>{const parsed=parseFutureQuitDate(dateInput,new Date(clock));if(!parsed){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
+ const saveDate=()=>{if(!selectedDate)return;onChangeProfile(rescheduleQuitPlan(p,selectedDate,new Date(clock)));setEditingDate(false);setDateError('');};
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
  const restartPreview=confirmRestart?restartReductionPlan(p,new Date(clock)):null;
  const restartNextWeek=new Date(clock);restartNextWeek.setDate(restartNextWeek.getDate()+7);
  const restartTodayGoal=restartPreview?target(restartPreview,new Date(clock)):null;
  const restartNextWeekGoal=restartPreview?target(restartPreview,restartNextWeek):null;
- const previewDate=editingDate?parseFutureQuitDate(dateInput,new Date(clock)):null;
+ const previewDate=editingDate?selectedDate:null;
+ const calendarDays=Array.from({length:new Date(calendarYear,calendarMonth+1,0).getDate()},(_,i)=>i+1);
+ const calendarOffset=(new Date(calendarYear,calendarMonth,1).getDay()+6)%7;
+ const today=new Date(clock);
+ const moveMonth=(delta:number)=>{const next=new Date(calendarYear,calendarMonth+delta,1);setCalendarYear(next.getFullYear());setCalendarMonth(next.getMonth());};
+ const isFutureDay=(day:number)=>new Date(calendarYear,calendarMonth,day).getTime()>new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
  const previewProfile=previewDate?rescheduleQuitPlan(p,previewDate,new Date(clock)):null;
  const previewNextWeek=new Date(clock);previewNextWeek.setDate(previewNextWeek.getDate()+7);
  const previewNextWeekGoal=previewProfile?target(previewProfile,previewNextWeek):null;
@@ -81,8 +88,23 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
    <Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt rökstopp':scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
-   {p.mode==='reduce'?<Pressable accessibilityRole="button" accessibilityLabel={scheduled?'Ändra planerat stoppdatum':'Välj eget stoppdatum'} accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" style={styles.actionButton} onPress={()=>{setDateInput(scheduled?[end.getFullYear(),String(end.getMonth()+1).padStart(2,'0'),String(end.getDate()).padStart(2,'0')].join('-'):'');setDateError('');setEditingDate(true)}}><Text style={styles.label}>{scheduled?'ÄNDRA STOPPDATUM':'VÄLJ EGET STOPPDATUM'}</Text></Pressable>:null}
-   {p.mode==='reduce'&&editingDate?<View style={{gap:9}}><TextInput style={styles.dateInput} value={dateInput} onChangeText={value=>{setDateInput(value);if(dateError)setDateError("");}} placeholder="ÅÅÅÅ-MM-DD" placeholderTextColor={C.muted} accessibilityLabel="Nytt stoppdatum, år månad dag" accessibilityHint="Ange datum med fyra siffror för år, två för månad och två för dag" keyboardType="numbers-and-punctuation"/>{previewDate&&previewProfile?<View style={styles.previewCard}><Text accessibilityRole="header" style={styles.cardTitle}>Så påverkas din plan</Text><Text style={styles.muted}>Nytt stoppdatum: {date(previewDate)}. Dagens planerade mål förblir {previewTodayGoal} cigaretter. Om sju dagar blir ditt dagsmål {previewNextWeekGoal} cigaretter och på stoppdatumet {previewStopGoal}. Dina tidigare registreringar finns kvar.</Text><View style={styles.milestoneList}>{previewWeek.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', föreslaget dagsmål '+dayGoal+' cigaretter'} style={styles.milestoneRow}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View></View>:null}{!previewDate?<Text style={styles.muted}>Välj ett giltigt framtida datum för att se hur planen ändras och kunna spara.</Text>:null}<Pressable accessibilityRole="button" accessibilityLabel="Spara nytt stoppdatum" accessibilityHint="Sparar det valda datumet och behåller tidigare registreringar" accessibilityState={{disabled:!previewDate}} disabled={!previewDate} style={[styles.actionButton,!previewDate&&{opacity:0.5}]} onPress={saveDate}><Text style={styles.label}>SPARA NYTT DATUM</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Avbryt ändring av stoppdatum" style={styles.actionButton} onPress={()=>{setEditingDate(false);setDateError("");}}><Text style={styles.muted}>Avbryt</Text></Pressable>{dateError?<Text accessibilityRole="alert" style={styles.error}>{dateError}</Text>:null}</View>:null}
+   {p.mode==='reduce'?<Pressable accessibilityRole="button" accessibilityLabel={scheduled?'Ändra planerat stoppdatum':'Välj eget stoppdatum'} accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" style={styles.actionButton} onPress={()=>{const initial=scheduled&&p.plannedQuitAt?new Date(p.plannedQuitAt):new Date(clock);const valid=initial.getTime()>new Date(clock).getTime();const chosen=valid?initial:null;setSelectedDate(chosen);const month=chosen??new Date(clock);setCalendarYear(month.getFullYear());setCalendarMonth(month.getMonth());setDateError('');setEditingDate(true);}}><Text style={styles.label}>{scheduled?'ÄNDRA STOPPDATUM':'VÄLJ EGET STOPPDATUM'}</Text></Pressable>:null}
+   <Modal visible={p.mode==='reduce'&&editingDate} transparent animationType="fade" onRequestClose={()=>setEditingDate(false)} accessibilityViewIsModal>
+    <View style={styles.modalBackdrop}><View style={styles.modalPanel}>
+     <Text accessibilityRole="header" style={styles.heading}>Välj stoppdatum</Text>
+     <Text style={styles.muted}>Välj ett framtida datum. Dina tidigare registreringar behålls.</Text>
+     <View style={styles.calendarNav}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Föregående månad" style={styles.calendarNavButton} onPress={()=>moveMonth(-1)}><Text style={styles.cardTitle}>‹</Text></Pressable>
+      <Text style={styles.cardTitle}>{new Date(calendarYear,calendarMonth,1).toLocaleDateString('sv-SE',{month:'long',year:'numeric'})}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel="Nästa månad" style={styles.calendarNavButton} onPress={()=>moveMonth(1)}><Text style={styles.cardTitle}>›</Text></Pressable>
+     </View>
+     <View style={styles.calendarGrid}>{['M','T','O','T','F','L','S'].map((d,i)=><Text key={i} style={styles.calendarWeekday}>{d}</Text>)}{Array.from({length:calendarOffset},(_,i)=><View key={'blank'+i} style={styles.calendarDay}/>)}{calendarDays.map(day=>{const enabled=isFutureDay(day);const selected=selectedDate?.getFullYear()===calendarYear&&selectedDate?.getMonth()===calendarMonth&&selectedDate?.getDate()===day;return <Pressable key={day} accessibilityRole="button" accessibilityLabel={new Date(calendarYear,calendarMonth,day).toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'})} accessibilityState={{disabled:!enabled,selected}} disabled={!enabled} style={[styles.calendarDay,selected&&styles.calendarSelected,!enabled&&styles.calendarDisabled]} onPress={()=>{setSelectedDate(new Date(calendarYear,calendarMonth,day,12));setDateError('');}}><Text style={[styles.muted,selected&&styles.calendarSelectedText]}>{day}</Text></Pressable>})}</View>
+     <ScrollView style={styles.calendarPreview} contentContainerStyle={{gap:8}} nestedScrollEnabled>
+      {previewDate&&previewProfile?<><Text accessibilityRole="header" style={styles.cardTitle}>Så påverkas din plan</Text><Text style={styles.muted}>Nytt stoppdatum: {date(previewDate)}. Dagens mål: {previewTodayGoal}. Om sju dagar: {previewNextWeekGoal}. På stoppdatumet: {previewStopGoal}. Din historik behålls.</Text><View style={styles.milestoneList}>{previewWeek.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', dagsmål '+dayGoal+' cigaretter'} style={styles.milestoneRow}><Text style={[styles.muted,styles.flexText]}>{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View></>:<Text style={styles.muted}>Välj ett datum i kalendern för att se förhandsvisningen.</Text>}
+     </ScrollView>
+     <View style={styles.modalActions}><Pressable accessibilityRole="button" accessibilityLabel="Avbryt datumval" style={styles.actionButton} onPress={()=>setEditingDate(false)}><Text style={styles.muted}>AVBRYT</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Spara valt stoppdatum" accessibilityState={{disabled:!previewDate}} disabled={!previewDate} style={[styles.actionButton,!previewDate&&styles.calendarDisabled]} onPress={saveDate}><Text style={styles.label}>SPARA DATUM</Text></Pressable></View>
+    </View></View>
+   </Modal>
    {scheduled?<Text style={styles.muted}>{daysUntilStop<0?'Ditt planerade stoppdatum har passerat. Du kan fortsätta med målet noll eller välja ett nytt framtida datum.':daysUntilStop===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>{scheduled?daysUntilStop<=0?'Ditt tidigare egna dagsmål gäller inte efter stoppdatumet. Dagens mål är noll.':'Ditt egna dagsmål gäller fram till stoppdatumet, då målet blir noll.':'Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt eget mål.'}</Text>:null}
   </Card>
