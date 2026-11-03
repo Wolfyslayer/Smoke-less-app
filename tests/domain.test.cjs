@@ -598,3 +598,37 @@ test('cloud plan writes are transactionally checked against the last observed ve
  assert.match(cloud,/Planen ändrades på en annan enhet/);
  assert.match(cloud,/assertUser\(\)/);
 });
+
+
+test('rescheduled plan merges with additional remote history only after cloud plan baseline matches', () => {
+ const source=fs.readFileSync('src/syncMerge.ts','utf8');
+ const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const exports={};vm.runInNewContext(js,{exports});
+ const base=profile({plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const revised=rescheduleQuitPlan(base,date('2026-12-01'),date('2026-10-09'));
+ const local={profile:revised,entries:[{id:'local',at:'2026-10-03T12:00:00.000Z'}],cravings:[],checkins:[]};
+ const remote={profile:base,entries:[{id:'remote',at:'2026-10-04T12:00:00.000Z'}],cravings:[],checkins:[]};
+ const baseline=JSON.stringify(Object.fromEntries(Object.entries(base).sort(([a],[b])=>a.localeCompare(b))));
+ assert.equal(exports.canUpdateObservedPlan(baseline,remote.profile),true);
+ const preview=exports.previewMerge({...local,profile:remote.profile},remote);
+ assert.equal(preview.safeToApply,true);
+ assert.deepEqual(preview.merged.entries.map(x=>x.id).sort(),['local','remote']);
+ assert.equal(preview.merged.profile.plannedQuitAt,base.plannedQuitAt);
+ assert.equal(revised.originalStartAt,base.startAt);
+ assert.equal(target(revised,date('2026-12-01')),0);
+});
+
+test('changed remote plan and duplicate historical ID both block a local restart sync', () => {
+ const source=fs.readFileSync('src/syncMerge.ts','utf8');
+ const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const exports={};vm.runInNewContext(js,{exports});
+ const base=profile({plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const local={profile:restartReductionPlan(base,date('2026-10-09')),entries:[{id:'same',at:'2026-10-03T12:00:00.000Z'}],cravings:[],checkins:[]};
+ const remote={profile:{...base,plannedQuitAt:'2026-11-15T12:00:00.000Z'},entries:[{id:'same',at:'2026-10-04T12:00:00.000Z'}],cravings:[],checkins:[]};
+ const snapshot=JSON.stringify({local,remote});
+ const preview=exports.previewMerge(local,remote);
+ assert.equal(preview.safeToApply,false);
+ assert.deepEqual(preview.conflicts.map(c=>c.collection).sort(),['entries','profile']);
+ assert.equal(preview.merged.entries[0].at,remote.entries[0].at);
+ assert.equal(JSON.stringify({local,remote}),snapshot);
+});
