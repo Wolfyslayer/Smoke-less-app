@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import {Modal,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {C} from '../theme';
 import {CompactDateModal} from '../components/CompactDateModal';
-import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
+import {target,quitDate,nextReductionMilestone,restartReductionPlan,resumeGradualReduction,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
 
 type WeekDay={key:string;confirmed:boolean;within:boolean};
 type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void};
@@ -20,6 +20,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [calendarYear,setCalendarYear]=useState(new Date(clock).getFullYear());
  const [dateError,setDateError]=useState('');
  const [confirmRestart,setConfirmRestart]=useState(false);
+ const [confirmResume,setConfirmResume]=useState(false);
  const [showAllGoals,setShowAllGoals]=useState(false);
  const [pendingSpeed,setPendingSpeed]=useState<Speed|null>(null);
  const [showPaceDetails,setShowPaceDetails]=useState(false);
@@ -92,6 +93,14 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt rökstopp':scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
    {p.mode==='reduce'?<Pressable accessibilityRole="button" accessibilityLabel={scheduled?'Ändra planerat stoppdatum':'Välj eget stoppdatum'} accessibilityHint="Öppnar fältet för att välja ett nytt stoppdatum" style={styles.actionButton} onPress={()=>{const initial=scheduled&&p.plannedQuitAt?new Date(p.plannedQuitAt):new Date(clock);const valid=initial.getTime()>new Date(clock).getTime();const chosen=valid?initial:null;setSelectedDate(chosen);const month=chosen??new Date(clock);setCalendarYear(month.getFullYear());setCalendarMonth(month.getMonth());setDateError('');setEditingDate(true);}}><Text style={styles.label}>{scheduled?'ÄNDRA STOPPDATUM':'VÄLJ EGET STOPPDATUM'}</Text></Pressable>:null}
    <CompactDateModal visible={p.mode==='reduce'&&editingDate} value={selectedDate} onCancel={()=>setEditingDate(false)} onConfirm={date=>{onChangeProfile(rescheduleQuitPlan(p,date,new Date(clock)));setEditingDate(false);setDateError('');}}/>
+   {scheduled?<View style={{gap:10}}>
+    <Pressable accessibilityRole="button" accessibilityLabel="Återgå till gradvis nedtrappning" accessibilityHint="Behåll din tidigare valda takt och fortsätt utan ett fast stoppdatum" style={styles.actionButton} onPress={()=>setConfirmResume(true)}><Text style={styles.label}>ÅTERGÅ TILL MINSKA GRADVIS</Text></Pressable>
+    {confirmResume?<View style={{gap:10}}>
+     <Text style={styles.muted}>Ditt fasta stoppdatum tas bort. Du fortsätter från dagens planerade mål med din tidigare valda takt ({p.speed==='gentle'?'lugn':p.speed==='fast'?'snabb':'balanserad'}). Ett nytt beräknat stoppdatum visas. Dina tidigare registreringar och ursprungliga startnivå behålls.</Text>
+     <Pressable accessibilityRole="button" accessibilityLabel="Bekräfta återgång till gradvis nedtrappning" style={styles.actionButton} onPress={()=>{onChangeProfile(resumeGradualReduction(p,new Date(clock)));setConfirmResume(false);}}><Text style={styles.label}>JA, ÅTERGÅ TILL GRADVIS</Text></Pressable>
+     <Pressable accessibilityRole="button" accessibilityLabel="Avbryt återgång till gradvis nedtrappning" style={styles.actionButton} onPress={()=>setConfirmResume(false)}><Text style={styles.muted}>Avbryt</Text></Pressable>
+    </View>:null}
+   </View>:null}
    {scheduled?<Text style={styles.muted}>{daysUntilStop<0?'Ditt planerade stoppdatum har passerat. Du kan fortsätta med målet noll eller välja ett nytt framtida datum.':daysUntilStop===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>{scheduled?daysUntilStop<=0?'Ditt tidigare egna dagsmål gäller inte efter stoppdatumet. Dagens mål är noll.':'Ditt valda stoppdatum ligger kvar och nedtrappningen anpassas till den nya nivån.':'Ditt beräknade stoppdatum anpassas när du ändrar dagsmålet.'}</Text>:null}
   </Card>
