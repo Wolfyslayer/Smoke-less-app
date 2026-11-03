@@ -1,0 +1,57 @@
+name: BrowserStack standalone Android APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-release-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: npm ci --no-audit --no-fund
+      - name: Restore Firebase Android configuration
+        shell: bash
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON_BASE64" ]; then
+            echo "::error::Missing repository secret GOOGLE_SERVICES_JSON_BASE64."
+            exit 1
+          fi
+          printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
+          node -e "const x=require('./google-services.json'); if (!x.client?.some(c=>c.client_info?.android_client_info?.package_name==='com.smokeless.app')) process.exit(1)"
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --non-interactive --clean
+      - name: Build standalone release APK (includes JS bundle)
+        working-directory: android
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
+      - name: Verify release APK and embedded JavaScript
+        shell: bash
+        run: |
+          apk="android/app/build/outputs/apk/release/app-release.apk"
+          test -s "$apk" || { echo "::error::Release APK missing"; exit 1; }
+          unzip -Z1 "$apk" | grep -Eq '(^|/)index.android.bundle$' || {
+            echo "::error::APK does not contain bundled JavaScript"
+            exit 1
+          }
+          echo "Standalone APK: $(du -h "$apk" | cut -f1)"
+      - name: Upload BrowserStack APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-less-browserstack-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 7
