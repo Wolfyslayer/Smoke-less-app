@@ -695,3 +695,44 @@ test('immediate quit plan cannot be changed into a smoking goal via daily adjust
  assert.equal(adjustReductionTarget(p,10,date('2026-10-09')),p);
  assert.equal(target(p,date('2026-10-09')),0);
 });
+
+test('automatic gradual plan moves its quit date when daily cigarette count changes',()=>{
+ const p=profile({baseline:10,speed:'balanced'});
+ const now=date('2026-10-09');
+ const before=quitDate(p);
+ const increased=adjustReductionTarget(p,18,now);
+ const decreased=adjustReductionTarget(p,4,now);
+ assert.equal(increased.plannedQuitAt,undefined);
+ assert.equal(increased.speed,'balanced');
+ assert.equal(target(increased,now),18);
+ assert.ok(quitDate(increased).getTime()>before.getTime());
+ assert.equal(quitDate(increased).toISOString().slice(0,10),'2026-12-20');
+ assert.equal(quitDate(decreased).toISOString().slice(0,10),'2026-10-25');
+ assert.equal(target(increased,quitDate(increased)),0);
+ assert.equal(target(decreased,quitDate(decreased)),0);
+});
+
+test('user selected quit date stays fixed even when new count exceeds original baseline',()=>{
+ const p=profile({baseline:10,speed:'gentle',plannedQuitAt:'2026-10-19T12:00:00.000Z'});
+ const now=date('2026-10-09');
+ const increased=adjustReductionTarget(p,30,now);
+ assert.equal(increased.baseline,10);
+ assert.equal(increased.planStartTarget,30);
+ assert.equal(increased.plannedQuitAt,p.plannedQuitAt);
+ assert.equal(quitDate(increased).toISOString().slice(0,10),'2026-10-19');
+ assert.equal(target(increased,now),30);
+ assert.equal(target(increased,date('2026-10-14')),15);
+ assert.equal(target(increased,date('2026-10-19')),0);
+ assert.equal(increased.speed,'gentle');
+});
+
+test('changing daily target multiple times keeps original savings start and selected deadline',()=>{
+ const p=profile({baseline:12,plannedQuitAt:'2026-11-01T12:00:00.000Z'});
+ const first=adjustReductionTarget(p,22,date('2026-10-09'));
+ const second=adjustReductionTarget(first,16,date('2026-10-12'));
+ assert.equal(second.originalStartAt,p.startAt);
+ assert.equal(second.baseline,12);
+ assert.equal(second.plannedQuitAt,p.plannedQuitAt);
+ assert.equal(target(second,date('2026-10-12')),16);
+ assert.equal(target(second,date('2026-11-01')),0);
+});
