@@ -19,7 +19,8 @@
             "backgroundColor": "#0D1B13"
           }
         }
-      ]
+      ],
+      "./plugins/withAndroidConfigChanges"
     ],
     "web": {
       "bundler": "metro",
