@@ -49,6 +49,12 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const remainingSteps=Array.from({length:14},(_,i)=>{const d=new Date(clock);d.setDate(d.getDate()+i);return {date:d,goal:target(p,d)};});
  const nextDecrease=nextReductionMilestone(p,new Date(clock));
  const milestones=remainingSteps.slice(0,showAllGoals?14:7);
+ const nextDecreaseDays=nextDecrease?Math.round((Date.UTC(nextDecrease.date.getFullYear(),nextDecrease.date.getMonth(),nextDecrease.date.getDate())-Date.UTC(new Date(clock).getFullYear(),new Date(clock).getMonth(),new Date(clock).getDate()))/86400000):null;
+ const milestoneCountdown=scheduled&&daysUntilStop>0&&customGoal
+  ?daysUntilStop===1?'Imorgon är ditt planerade stoppdatum.':'Det är '+daysUntilStop+' dagar kvar till ditt planerade stoppdatum.'
+  :nextDecreaseDays!==null&&nextDecreaseDays>0
+   ?nextDecreaseDays===1?'Nästa minskning sker imorgon.':'Nästa minskning sker om '+nextDecreaseDays+' dagar.'
+   :null;
  const nextMilestoneTitle=p.mode==='quit'
   ?'Ditt dagsmål är noll cigaretter'
   :scheduled&&daysUntilStop<=0
@@ -72,7 +78,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    {scheduled?<Text style={styles.muted}>{daysUntilStop<0?'Ditt planerade stoppdatum har passerat. Du kan fortsätta med målet noll eller välja ett nytt framtida datum.':daysUntilStop===0?'Ditt planerade stoppdatum är här.':daysRemaining+' dagar kvar till ditt planerade stoppdatum.'} Om en dag blir svår finns din tidigare historik kvar.</Text>:null}
    {customGoal?<Text style={styles.muted}>Du har valt ett eget dagligt riktvärde. Datumet bygger på grundplanen och påverkas inte av ditt eget mål.</Text>:null}
   </Card>
-  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextMilestoneTitle}</Text><Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
+  <Card style={{gap:10}}><Label>NÄSTA DELMÅL</Label><Text style={styles.cardTitle}>{nextMilestoneTitle}</Text>{milestoneCountdown?<Text style={styles.muted}>{milestoneCountdown}</Text>:null}<Text style={styles.muted}>Om sju dagar är ditt planerade dagsmål {nextGoal} cigaretter per dag. {weeklySummary}</Text></Card>
   <Heading>{p.mode==='quit'?'Ditt rökstopp':'Din nedtrappning'}</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
