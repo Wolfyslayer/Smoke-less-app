@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
+const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -656,4 +656,42 @@ test('custom quit date remains independent of previously chosen gradual pace',()
  const common={baseline:15,plannedQuitAt:'2026-10-16T12:00:00.000Z'};
  const goals=['gentle','balanced','fast'].map(speed=>target(profile({...common,speed}),date('2026-10-09')));
  assert.deepEqual(goals,[7,7,7]);
+});
+
+test('changing cigarettes per day restarts future gradual goals at new count',()=>{
+ const original=profile({baseline:20,speed:'fast'});
+ const now=date('2026-10-09');
+ const changed=adjustReductionTarget(original,8,now);
+ assert.equal(target(changed,now),8);
+ assert.equal(target(changed,date('2026-10-11')),7);
+ assert.equal(changed.baseline,20);
+ assert.equal(changed.originalStartAt,original.startAt);
+ assert.equal(changed.dailyTargetOverride,null);
+ assert.equal(original.planStartTarget,undefined);
+});
+
+test('changing daily cigarette count preserves selected quit date and reaches zero on time',()=>{
+ const original=profile({baseline:20,plannedQuitAt:'2026-10-21T12:00:00.000Z'});
+ const changed=adjustReductionTarget(original,12,date('2026-10-09'));
+ assert.equal(target(changed,date('2026-10-09')),12);
+ assert.equal(target(changed,date('2026-10-15')),6);
+ assert.equal(target(changed,date('2026-10-21')),0);
+ assert.equal(changed.plannedQuitAt,original.plannedQuitAt);
+});
+
+test('daily cigarette goal adjustment preserves saved history and savings anchor',()=>{
+ const original=profile({baseline:15});
+ const entries=[{id:'existing',at:'2026-10-02T12:00:00.000Z'}];
+ const data={profile:original,entries,cravings:[],checkins:[]};
+ const now=date('2026-10-09');
+ const changed={...data,profile:adjustReductionTarget(original,6,now)};
+ assert.equal(changed.entries,entries);
+ assert.equal(changed.profile.originalStartAt,original.startAt);
+ assert.equal(savings(changed,now),savings(data,now));
+});
+
+test('immediate quit plan cannot be changed into a smoking goal via daily adjustment',()=>{
+ const p=profile({mode:'quit'});
+ assert.equal(adjustReductionTarget(p,10,date('2026-10-09')),p);
+ assert.equal(target(p,date('2026-10-09')),0);
 });
