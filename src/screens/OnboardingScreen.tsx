@@ -36,7 +36,7 @@ export function OnboardingScreen({onStep,setOnStep,mode,setMode,scheduled,setSch
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.eyebrow}>{children}</Text>}
 const styles=StyleSheet.create({
  root:{flex:1,backgroundColor:C.background},
- brandLogo:{width:175,height:175},
+ brandLogo:{width:225,height:225},
  benefitWindow:{height:48,overflow:'hidden',justifyContent:'flex-start'},
  benefitLine:{height:48,fontSize:16,color:C.muted,lineHeight:24,textAlign:'left',textAlignVertical:'center'},
  eyebrow:{fontSize:11,color:C.muted,fontWeight:'800',letterSpacing:1.7},
@@ -44,9 +44,9 @@ const styles=StyleSheet.create({
  subhead:{fontSize:16,color:C.muted,lineHeight:24},
  statValue:{fontSize:25,fontWeight:'900',color:C.white,letterSpacing:-1},
  muted:{fontSize:13,color:C.muted,lineHeight:20},
- welcomeArt:{height:220,borderRadius:30,backgroundColor:'#171D10',alignItems:'center',justifyContent:'center',overflow:'hidden'},
- artOuter:{width:190,height:190,borderWidth:2,borderColor:'#485E1B',borderRadius:100,alignItems:'center',justifyContent:'center'},
- artInner:{width:135,height:135,borderRadius:90,backgroundColor:C.limeSoft,borderWidth:12,borderColor:C.lime,alignItems:'center',justifyContent:'center'},
+ welcomeArt:{height:300,borderRadius:30,backgroundColor:'#171D10',alignItems:'center',justifyContent:'center',overflow:'hidden'},
+ artOuter:{width:270,height:270,borderWidth:2,borderColor:'#485E1B',borderRadius:140,alignItems:'center',justifyContent:'center'},
+ artInner:{width:240,height:240,borderRadius:125,backgroundColor:C.limeSoft,borderWidth:12,borderColor:C.lime,alignItems:'center',justifyContent:'center'},
  progressTrack:{height:5,borderRadius:4,backgroundColor:C.soft,overflow:'hidden'},
  progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:4}
 });
