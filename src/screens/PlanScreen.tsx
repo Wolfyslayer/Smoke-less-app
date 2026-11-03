@@ -64,10 +64,10 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
    <Text style={styles.muted}>Endast dagar du bekräftat räknas. En missad dag betyder inte att dina framsteg är förlorade.</Text>
    {confirmedDays>withinDays?<View style={styles.recoveryCard}><Text style={styles.cardTitle}>Fortsätt där du är</Text><Text style={styles.muted}>Du har {confirmedDays-withinDays} {confirmedDays-withinDays===1?'bekräftad dag':'bekräftade dagar'} över riktvärdet den senaste veckan. Det betyder inte att du behöver börja om. Registrera som vanligt, använd SOS vid röksug och justera planen om du behöver mer tid.</Text></View>:null}
   </Card>
-  {p.mode==='reduce'?<Heading>Välj din takt</Heading>:null}
-  {scheduled?<Text style={styles.muted}>Ditt stoppdatum styr nedtrappningen. Taktvalen är pausade tills du startar om planen utan ett bestämt datum.</Text>:null}
-  {p.mode==='reduce'?([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
-   <Pressable key={id} accessibilityRole="button" disabled={scheduled} accessibilityState={{selected:p.speed===id,disabled:scheduled}} onPress={()=>{if(!scheduled&&p.speed!==id){const current=target({...p,dailyTargetOverride:null},new Date(clock));onChangeProfile({speed:id,...(scheduled?{}:{startAt:new Date(clock).toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt})})}}} style={[styles.card,styles.choice,p.speed===id&&styles.selected,scheduled&&styles.disabledChoice]}>
+  {p.mode==='reduce'&&!scheduled?<Heading>Välj din takt</Heading>:null}
+  {scheduled?<Text style={styles.muted}>Ditt stoppdatum styr nedtrappningen. Vill du välja en annan takt kan du starta om planen ovan utan ett bestämt datum.</Text>:null}
+  {p.mode==='reduce'&&!scheduled?([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
+   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id){const current=target({...p,dailyTargetOverride:null},new Date(clock));onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt})}}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>):null}
   <Heading>Kommande mål</Heading>
