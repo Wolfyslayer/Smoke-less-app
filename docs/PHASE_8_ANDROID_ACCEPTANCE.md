@@ -1,13 +1,10 @@
 # Fas 8.0 – Android-acceptansprotokoll
 
-Detta protokoll skiljer **automatiskt verifierade tester** från **manuella Android-tester**. Markera inte 7.3, 7.4, 8.1 eller 8.2 som färdiga förrän testaren har bekräftat utfallet. Använd testkonton och testdata; ändra inte produktionsdata.
+Detta protokoll skiljer **automatiskt verifierade tester** från **manuella Android-tester**. Markera inte 7.4, 8.1 eller 8.2 som färdiga förrän testaren har bekräftat utfallet. TalkBack i 7.3 är uttryckligen flyttat till sista fasen och är inte ett godkänt test. Använd testkonton och testdata; ändra inte produktionsdata.
 
-## 7.3 – TalkBack och tryckytor
+## 7.3 – TalkBack (flyttat till sista fasen)
 
-- [ ] Slå på TalkBack i Androids tillgänglighetsinställningar. Navigera genom planvyn utan att använda synen; verifiera logisk fokusordning.
-- [ ] Kontrollera att rubriker, dagens mål, delmål, taktval, förhandsvisning och framsteg läses begripligt; vald takt ska anges.
-- [ ] Öppna datumväljaren, byt månad, välj datum, avbryt och bekräfta. Kontrollera att knappar har begriplig uppläsning och att fokus inte fastnar bakom dialogen.
-- [ ] Kontrollera tryckytor för datumceller, navigering, avbryt, spara och omstart. Dokumentera eventuella svårträffade element och skärmbilder.
+TalkBack-navigering, uppläsning, fokusordning och tillhörande tryckytor ingår inte längre i fas 8.0:s acceptansgrind. Testerna är uppskjutna, **inte godkända eller borttagna**. Se `docs/FINAL_PHASE_ACCESSIBILITY.md` för obligatorisk slutverifiering före lansering.
 
 ## 7.4 – Små skärmar och maximal text
 
@@ -44,7 +41,7 @@ Detta protokoll skiljer **automatiskt verifierade tester** från **manuella Andr
 
 ## Slutgrind
 
-- [ ] Alla ovanstående manuella tester godkända eller dokumenterade avvikelser åtgärdade.
+- [ ] Fas 8.0:s kvarvarande manuella tester godkända eller dokumenterade avvikelser åtgärdade. TalkBack är uppskjutet till sista fasen och blockerar inte denna merge.
 - [ ] Båda obligatoriska CI-kontrollerna gröna på **slutlig commit**.
 - [ ] PR #140 mergas först efter bekräftad Android-acceptans.
 
