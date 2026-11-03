@@ -32,3 +32,16 @@ test('repeat merge adds no duplicate records',()=>{
  assert.equal(twice.added.entries,0);
  assert.equal(twice.merged.entries.length,2);
 });
+
+
+test('existing account plan wins over a newly created guest onboarding plan',()=>{
+ const accountPlan={mode:'quit',baseline:5,startAt:'2026-09-01T10:00:00Z'};
+ const onboardingPlan={mode:'reduce',baseline:30,startAt:'2026-11-03T10:00:00Z'};
+ const account=data([entry('saved-account')],[],[],accountPlan);
+ const guest=data([entry('guest-only')],[],[],onboardingPlan);
+ const result=preview(account,guest);
+ assert.equal(result.merged.profile,accountPlan);
+ assert.equal(result.merged.profile.baseline,5);
+ assert.deepEqual(Array.from(result.merged.entries,x=>x.id),['saved-account','guest-only']);
+ assert.equal(guest.profile,onboardingPlan);
+});
