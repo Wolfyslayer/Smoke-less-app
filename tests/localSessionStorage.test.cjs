@@ -121,3 +121,50 @@ test('account plan changes do not overwrite offline guest plan after switching b
   await c.switchTo({kind:'account',uid:'alice'});
   assert.equal(c.getSnapshot().data.profile.plannedQuitAt,'2027-01-01T12:00:00.000Z');
 });
+
+
+test('logout to guest retains each account plan and blocks stale writes',async()=>{
+ const {controller:c,records}=setup();
+ const a={...withEntry('a-entry'),profile:{mode:'reduce',baseline:12,packSize:20,packPrice:80,speed:'balanced',startAt:'2026-10-01T12:00:00.000Z',dailyTargetOverride:null,plannedQuitAt:'2026-12-01T12:00:00.000Z'}};
+ const b={...withEntry('b-entry'),profile:{...a.profile,plannedQuitAt:'2027-01-01T12:00:00.000Z'}};
+ await c.switchTo({kind:'account',uid:'a'});
+ await c.save({kind:'account',uid:'a'},a);
+ await c.switchTo({kind:'guest'});
+ assert.equal(c.getSnapshot().data.profile,null);
+ await assert.rejects(c.save({kind:'account',uid:'a'},b),/Kontot har ändrats/);
+ await c.switchTo({kind:'account',uid:'b'});
+ assert.equal(c.getSnapshot().data.profile,null);
+ await c.save({kind:'account',uid:'b'},b);
+ await c.switchTo({kind:'account',uid:'a'});
+ assert.equal(c.getSnapshot().data.profile.plannedQuitAt,a.profile.plannedQuitAt);
+ assert.equal(c.getSnapshot().data.entries[0].id,'a-entry');
+ assert.equal(records.get('account:b').profile.plannedQuitAt,b.profile.plannedQuitAt);
+ await c.switchTo({kind:'guest'});
+ assert.equal(c.getSnapshot().data.entries.length,0);
+});
+
+test('queued plan save cannot leak into a new account after switch',async()=>{
+ const {controller:c,events,records}=setup();
+ await c.switchTo({kind:'account',uid:'a'});
+ const plan={...empty(),profile:{mode:'reduce',baseline:10,packSize:20,packPrice:80,speed:'gentle',startAt:'2026-10-01T12:00:00.000Z',dailyTargetOverride:null,plannedQuitAt:'2026-12-01T12:00:00.000Z'}};
+ const pending=c.save({kind:'account',uid:'a'},plan);
+ const switching=c.switchTo({kind:'account',uid:'b'});
+ await Promise.all([pending,switching]);
+ assert.ok(events.indexOf('save:a')<events.indexOf('load:b'));
+ assert.equal(c.getSnapshot().data.profile,null);
+ assert.equal(records.get('account:a').profile.plannedQuitAt,plan.profile.plannedQuitAt);
+ await assert.rejects(c.save({kind:'account',uid:'a'},plan),/Kontot har ändrats/);
+ assert.equal(records.get('account:b'),undefined);
+});
+
+test('failed account switch hides previous plan and refuses saves until recovery',async()=>{
+ const {controller:c,records}=setup();
+ await c.switchTo({kind:'account',uid:'a'});
+ await c.save({kind:'account',uid:'a'},withEntry('private'));
+ await assert.rejects(c.switchTo({kind:'account',uid:'broken'}),/Invalid account record/);
+ assert.equal(c.getSnapshot(),null);
+ await assert.rejects(c.save({kind:'account',uid:'a'},withEntry('stale')),/Kontot har ändrats/);
+ await c.switchTo({kind:'guest'});
+ assert.equal(c.getSnapshot().data.entries.length,0);
+ assert.equal(records.get('account:a').entries[0].id,'private');
+});
