@@ -612,7 +612,7 @@ test('rescheduled plan merges with additional remote history only after cloud pl
  assert.equal(exports.canUpdateObservedPlan(baseline,remote.profile),true);
  const preview=exports.previewMerge({...local,profile:remote.profile},remote);
  assert.equal(preview.safeToApply,true);
- assert.deepEqual(preview.merged.entries.map(x=>x.id).sort(),['local','remote']);
+ assert.equal(Array.from(preview.merged.entries,x=>x.id).sort().join(','),'local,remote');
  assert.equal(preview.merged.profile.plannedQuitAt,base.plannedQuitAt);
  assert.equal(revised.originalStartAt,base.startAt);
  assert.equal(target(revised,date('2026-12-01')),0);
@@ -628,7 +628,7 @@ test('changed remote plan and duplicate historical ID both block a local restart
  const snapshot=JSON.stringify({local,remote});
  const preview=exports.previewMerge(local,remote);
  assert.equal(preview.safeToApply,false);
- assert.deepEqual(preview.conflicts.map(c=>c.collection).sort(),['entries','profile']);
+ assert.equal(Array.from(preview.conflicts,x=>x.collection).sort().join(','),'entries,profile');
  assert.equal(preview.merged.entries[0].at,remote.entries[0].at);
  assert.equal(JSON.stringify({local,remote}),snapshot);
 });
