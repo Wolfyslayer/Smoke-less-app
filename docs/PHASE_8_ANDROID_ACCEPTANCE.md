@@ -24,6 +24,17 @@ Detta protokoll skiljer **automatiskt verifierade tester** från **manuella Andr
 - [ ] Ny användare: välj **planerat stoppdatum**; kontrollera kalendergränser, passerat datum, förhandsvisning och sparad plan.
 - [ ] Ändra plan flera gånger och starta om den; tidigare registreringar och besparingsstart ska inte försvinna.
 
+### 8.1a – Anpassning av dagsmål och byte av plan
+
+- [ ] Välj **Minska gradvis** utan eget datum. Höj dagsmålet i Inställningar och kontrollera att beräknat stoppdatum flyttas framåt med samma valda takt.
+- [ ] Sänk dagsmålet igen. Kontrollera att stoppdatum flyttas närmare och att kommande delmål räknas om.
+- [ ] Välj eget stoppdatum på Plan-skärmen. Höj dagsmålet till **fler cigaretter än ursprunglig startnivå**. Kontrollera att stoppdatumet är oförändrat, att nedtrappningen anpassas och att målet är noll på stoppdatumet.
+- [ ] Ändra dagsmålet flera gånger med eget stoppdatum. Kontrollera att historik, ursprunglig startnivå och besparingsstart bevaras.
+- [ ] Välj **Återgå till minska gradvis** efter att ett datum valts i efterhand. Kontrollera bekräftelse/avbryt, att tidigare takt återkommer och att ett automatiskt slutdatum visas.
+- [ ] Skapa en ny plan med **eget stoppdatum redan i onboarding**. Återgå därefter till gradvis nedtrappning på Plan-skärmen och kontrollera att samma beteende gäller.
+- [ ] Kontrollera att **Sluta helt** fortfarande har dagsmål noll och inte kan ändras till ett positivt dagsmål via Inställningar.
+- [ ] Kontrollera att knappar, bekräftelsetexter och datum inte klipps av vid maximal Android-textstorlek.
+
 ## 8.2 – Gästläge, historik och synk
 
 - [ ] Gäst utan nätverk: ändra plan, registrera cigarett och starta om appen. Kontrollera att plan och historik finns kvar.
