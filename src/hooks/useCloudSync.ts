@@ -16,6 +16,7 @@ export function useCloudSync({
  const [syncStatus,setSyncStatus]=useState('');
  const [syncTrigger,setSyncTrigger]=useState(0);
  const syncInFlight=useRef(false);
+ const syncQueued=useRef(false);
  const lastUid=useRef<string|null|undefined>(undefined);
  useEffect(()=>{
   const uid=sessionUser?.uid??null;
@@ -25,7 +26,8 @@ export function useCloudSync({
   if(!sessionUser || !ready || migrationBusy || cloudPreviewBusy)return;
   const uid=sessionUser.uid;
   const timer=setTimeout(()=>{
-   if(syncInFlight.current || verifyCurrentUid()!==uid)return;
+   if(verifyCurrentUid()!==uid)return;
+   if(syncInFlight.current){syncQueued.current=true;return;}
    const original=JSON.stringify(dataRef.current);
    syncInFlight.current=true;
    setSyncStatus('Synkroniserar…');
@@ -42,12 +44,15 @@ export function useCloudSync({
      setSyncStatus('Synkroniserad med Firestore');
     }catch(error){
      if(verifyCurrentUid()===uid)setSyncStatus(error instanceof Error?error.message:'Synkronisering misslyckades. Försöker igen nästa gång appen öppnas.');
-    }finally{syncInFlight.current=false;}
+    }finally{
+     syncInFlight.current=false;
+     if(syncQueued.current){syncQueued.current=false;setSyncTrigger(v=>v+1);}
+    }
    })();
   },1200);
   return()=>clearTimeout(timer);
  },[data,ready,sessionUser?.uid,syncTrigger,migrationBusy,cloudPreviewBusy]);
  useAppResumeTrigger(setSyncTrigger);
- const retrySync=()=>{if(!syncInFlight.current){setSyncStatus('');setSyncTrigger(v=>v+1);}};
+ const retrySync=()=>{setSyncStatus('');if(syncInFlight.current){syncQueued.current=true;}else{setSyncTrigger(v=>v+1);}};
  return {syncStatus,retrySync};
 }
