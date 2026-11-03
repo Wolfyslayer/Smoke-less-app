@@ -42,13 +42,16 @@ service cloud.firestore {
         && d.complete is bool && d.smokeFree is bool;
     }
     function plan(d) {
-      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','mode','baseline','packSize','packPrice','speed','startAt','dailyTargetOverride'])
+      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','mode','baseline','packSize','packPrice','speed','startAt','dailyTargetOverride','plannedQuitAt','planStartTarget','originalStartAt'])
         && metadata(d)
         && d.mode in ['reduce','quit'] && d.speed in ['gentle','balanced','fast']
         && d.baseline is int && d.baseline >= 0 && d.baseline <= 200
         && d.packSize is int && d.packSize >= 1 && d.packSize <= 200
         && d.packPrice is number && d.packPrice >= 0 && d.packPrice <= 100000
         && d.startAt is string && d.startAt.size() <= 40
+        && (!('originalStartAt' in d) || (d.originalStartAt is string && d.originalStartAt.size() <= 40))
+        && (!('planStartTarget' in d) || (d.planStartTarget is int && d.planStartTarget >= 0 && d.planStartTarget <= 200))
+        && (!('plannedQuitAt' in d) || (d.plannedQuitAt is string && d.plannedQuitAt.size() <= 40))
         && (d.dailyTargetOverride == null || (d.dailyTargetOverride is int && d.dailyTargetOverride >= 0 && d.dailyTargetOverride <= 200));
     }
     match /users/{uid} {
