@@ -17,6 +17,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [dateError,setDateError]=useState('');
  const [confirmRestart,setConfirmRestart]=useState(false);
  const [showAllGoals,setShowAllGoals]=useState(false);
+ const [pendingSpeed,setPendingSpeed]=useState<Speed|null>(null);
  const saveDate=()=>{const parsed=parseFutureQuitDate(dateInput,new Date(clock));if(!parsed){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
  const restartPreview=confirmRestart?restartReductionPlan(p,new Date(clock)):null;
@@ -29,6 +30,9 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const previewNextWeekGoal=previewProfile?target(previewProfile,previewNextWeek):null;
  const previewTodayGoal=previewProfile?target(previewProfile,new Date(clock)):null;
  const previewStopGoal=previewProfile&&previewDate?target(previewProfile,previewDate):null;
+ const speedPreview=pendingSpeed?{...p,speed:pendingSpeed,startAt:new Date(clock).toISOString(),planStartTarget:target({...p,dailyTargetOverride:null},new Date(clock)),originalStartAt:p.originalStartAt??p.startAt}:null;
+ const speedPreviewGoal=speedPreview?target(speedPreview,previewNextWeek):null;
+ const applySpeed=()=>{if(!speedPreview||pendingSpeed===p.speed){setPendingSpeed(null);return;}onChangeProfile({speed:pendingSpeed,startAt:speedPreview.startAt,planStartTarget:speedPreview.planStartTarget,originalStartAt:speedPreview.originalStartAt});setPendingSpeed(null);};
 
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
@@ -110,9 +114,10 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   {p.mode==='reduce'&&!scheduled?<Heading>Välj din takt</Heading>:null}
   {scheduled?<Text style={styles.muted}>Ditt stoppdatum styr nedtrappningen. Vill du välja en annan takt kan du starta om planen ovan utan ett bestämt datum.</Text>:null}
   {p.mode==='reduce'&&!scheduled?([['gentle','Lugn','Minska ungefär en cigarett per vecka.'],['balanced','Balanserad','Minska ungefär en cigarett var fjärde dag.'],['fast','Snabb','Minska ungefär en cigarett varannan dag.']] as [Speed,string,string][]).map(([id,title,subtitle])=>
-   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id){const current=target({...p,dailyTargetOverride:null},new Date(clock));onChangeProfile({speed:id,startAt:new Date(clock).toISOString(),planStartTarget:current,originalStartAt:p.originalStartAt??p.startAt})}}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
+   <Pressable key={id} accessibilityRole="button" accessibilityState={{selected:p.speed===id}} onPress={()=>{if(p.speed!==id)setPendingSpeed(id);else setPendingSpeed(null)}} style={[styles.card,styles.choice,p.speed===id&&styles.selected]}>
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>):null}
+  {pendingSpeed&&speedPreview?<Card style={{gap:10}}><Label>BEKRÄFTA NY TAKT</Label><Text style={styles.cardTitle}>Ändra nedtrappningen?</Text><Text style={styles.muted}>Dagens grundmål förblir {speedPreview.planStartTarget} cigaretter. Med den nya takten blir målet om sju dagar {speedPreviewGoal} cigaretter per dag. Tidigare registreringar och ditt ursprungliga startdatum behålls.</Text><Pressable accessibilityRole="button" accessibilityLabel="Bekräfta ny nedtrappningstakt" style={styles.actionButton} onPress={applySpeed}><Text style={styles.label}>JA, ÄNDRA TAKT</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Avbryt ändring av nedtrappningstakt" style={styles.actionButton} onPress={()=>setPendingSpeed(null)}><Text style={styles.muted}>Avbryt</Text></Pressable></Card>:null}
   <Heading>Kommande mål</Heading>
   {customGoal?<Text style={styles.muted}>{scheduled&&daysUntilStop<=0?'Ditt tidigare egna dagsmål har ersatts av målet noll på stoppdatumet. Du kan ändra stoppdatumet ovan om du behöver en ny plan.':scheduled?'Du använder ett eget dagsmål fram till stoppdatumet. På stoppdatumet blir målet noll.':'Du använder ett eget dagsmål. Det gäller tills du återställer det i Inställningar.'}</Text>:null}
   <Card><View style={styles.milestoneList}>{milestones.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', högsta dagsmål '+dayGoal+' cigaretter'} style={[styles.milestoneRow,i===0&&styles.milestoneToday]}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View><Pressable accessibilityRole="button" accessibilityState={{expanded:showAllGoals}} accessibilityLabel={showAllGoals?'Visa färre kommande mål':'Visa alla fjorton kommande mål'} onPress={()=>setShowAllGoals(v=>!v)} style={styles.moreGoalsButton}><Text style={styles.label}>{showAllGoals?'VISA FÄRRE DAGAR':'VISA ALLA 14 DAGAR'}</Text></Pressable></Card>
