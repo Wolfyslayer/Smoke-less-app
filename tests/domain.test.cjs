@@ -464,3 +464,22 @@ test('restart confirmation preview matches the resulting plan without history ch
  assert.equal(preview.originalStartAt,before.startAt);
  assert.equal(JSON.stringify({entries:data.entries,cravings:data.cravings,checkins:data.checkins}),historical);
 });
+
+test('scheduled quit overrides a manual goal on and after the stop date',()=>{
+ const p=profile({baseline:12,dailyTargetOverride:5,plannedQuitAt:'2026-10-20T12:00:00.000Z'});
+ assert.equal(target(p,date('2026-10-19')),5);
+ assert.equal(target(p,date('2026-10-20')),0);
+ assert.equal(target(p,date('2026-10-21')),0);
+ assert.equal(nextReductionMilestone(p,date('2026-10-19')),null);
+ assert.equal(weeklyPlanProgress(p,date('2026-10-19')).nextGoal,0);
+});
+test('scheduled quit remains the next reduction milestone when no earlier reduction remains',()=>{
+ const p=profile({baseline:1,plannedQuitAt:'2026-10-20T12:00:00.000Z'});
+ const now=date('2026-10-19');
+ assert.equal(target(p,now),1);
+ const milestone=nextReductionMilestone(p,now);
+ assert.ok(milestone);
+ assert.equal(milestone.date.toISOString().slice(0,10),'2026-10-20');
+ assert.equal(milestone.goal,0);
+ assert.equal(target(p,date('2026-10-21')),0);
+});
