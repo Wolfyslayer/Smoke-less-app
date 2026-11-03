@@ -15,7 +15,7 @@ test('merges new guest records but keeps existing account records and plan',()=>
  const account=data([entry('a')],[],[],plan);
  const guest=data([entry('a'),entry('b')],[{id:'c',at:'2026-11-01T10:00:00Z',intensity:2,trigger:'stress'}],[{date:'2026-11-01',complete:true,smokeFree:false}]);
  const result=preview(account,guest);
- assert.deepEqual(result.added,{entries:1,cravings:1,checkins:1});
+ assert.deepEqual(JSON.parse(JSON.stringify(result.added)),{entries:1,cravings:1,checkins:1});
  assert.equal(result.merged.profile,plan);
  assert.deepEqual(Array.from(result.merged.entries,x=>x.id),['a','b']);
  assert.equal(result.conflicts.length,0);
