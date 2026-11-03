@@ -17,7 +17,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [dateError,setDateError]=useState('');
  const [confirmRestart,setConfirmRestart]=useState(false);
  const [showAllGoals,setShowAllGoals]=useState(false);
- const saveDate=()=>{const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.trim());const parsed=match?new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12):null;const today=new Date(clock);today.setHours(0,0,0,0);if(!parsed||!Number.isFinite(parsed.getTime())||parsed.getFullYear()!==Number(match?.[1])||parsed.getMonth()+1!==Number(match?.[2])||parsed.getDate()!==Number(match?.[3])||parsed<=today){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
+ const saveDate=()=>{const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.trim());const parsed=match?new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12):null;const today=new Date(clock);today.setHours(0,0,0,0);if(!parsed||!Number.isFinite(parsed.getTime())||parsed.getFullYear()!==Number(match?.[1])||parsed.getMonth()+1!==Number(match?.[2])||parsed.getDate()!==Number(match?.[3])||new Date(parsed.getFullYear(),parsed.getMonth(),parsed.getDate()).getTime()<=today.getTime()){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);
@@ -71,7 +71,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
     <Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text>
    </Pressable>):null}
   <Heading>Kommande mål</Heading>
-  {customGoal?<Text style={styles.muted}>Du använder ett eget dagsmål. Därför visas samma riktvärde för alla kommande dagar tills du återställer det i Inställningar.</Text>:null}
+  {customGoal?<Text style={styles.muted}>Du använder ett eget dagsmål. Det gäller tills du återställer det i Inställningar{scheduled?', men på stoppdatumet blir målet alltid noll.':'.'}</Text>:null}
   <Card><View style={styles.milestoneList}>{milestones.map(({date:d,goal:dayGoal},i)=><View key={i} accessible accessibilityRole="text" accessibilityLabel={date(d)+', högsta dagsmål '+dayGoal+' cigaretter'} style={[styles.milestoneRow,i===0&&styles.milestoneToday]}><Text style={[styles.muted,styles.flexText]}>{i===0?'Idag · ':''}{date(d)}</Text><Text style={styles.cardTitle}>{dayGoal} / dag</Text></View>)}</View><Pressable accessibilityRole="button" accessibilityState={{expanded:showAllGoals}} accessibilityLabel={showAllGoals?'Visa färre kommande mål':'Visa alla fjorton kommande mål'} onPress={()=>setShowAllGoals(v=>!v)} style={styles.moreGoalsButton}><Text style={styles.label}>{showAllGoals?'VISA FÄRRE DAGAR':'VISA ALLA 14 DAGAR'}</Text></Pressable></Card>
   <Text style={styles.muted}>Dagsmålet är ett högsta riktvärde. Du behöver aldrig röka för att nå det.</Text>
  </View>;
