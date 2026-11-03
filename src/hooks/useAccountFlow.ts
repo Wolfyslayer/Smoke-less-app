@@ -29,22 +29,18 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
  const requestGuestMigration=()=>{
   if(!accountUser || migrationBusyRef.current || cloudPreviewBusy || accountBusy)return;
   const uid=accountUser.uid;
-  ask('Kopiera gästhistorik?', 'Detta kopierar gästhistoriken till ditt inloggade konto på den här enheten. En separat säkerhetskopia sparas först. Gästhistoriken raderas inte och inget laddas upp till Firebase. Om kontot redan har lokal historik skrivs den inte över. Vill du fortsätta?',()=>{
+  ask('Synka gästhistorik?', 'Vill du lägga till gästregistreringarna i ditt konto? Kontots plan och tidigare registreringar behålls. Dubbletter hoppas över och konflikter avbryter. Gästhistoriken finns kvar och en säkerhetskopia skapas före ändringen. Fortsätt?',()=>{
    if(migrationBusyRef.current)return;
    migrationBusyRef.current=true;
    setMigrationBusy(true);
    void (async()=>{
     try{
-     const result=await storageRef.current.migrateGuestToActiveAccount(uid,()=>accountUidRef.current);
-     if(result.status==='already-exists'){
-      showMessage('Kopiering avbruten','Det finns redan lokal historik för detta konto. Ingen historik har skrivits över.');
-     }else{
+     const result=await storageRef.current.mergeGuestHistory(uid,()=>accountUidRef.current);
       const snapshot=storageRef.current.getSnapshot();
       if(!snapshot || snapshot.session.kind!=='account' || snapshot.session.uid!==uid || accountUidRef.current!==uid)throw Error('Kontot ändrades. Gästhistoriken finns kvar.');
       loadedDataRef.current=snapshot.data;
       setData(snapshot.data);
-      showMessage('Historiken kopierad','Gästhistoriken finns nu även på detta konto. En säkerhetskopia sparades på enheten. Gästhistoriken är oförändrad.');
-     }
+      showMessage('Historiken synkad',`Tillagt: ${result.added.entries} cigaretter, ${result.added.cravings} röksug och ${result.added.checkins} avstämningar. Gästhistoriken är oförändrad.`);
     }catch(error){showMessage('Kopiering avbruten',error instanceof Error?error.message:'Ingen historik har ändrats.');}
     finally{migrationBusyRef.current=false;setMigrationBusy(false);}
    })();
