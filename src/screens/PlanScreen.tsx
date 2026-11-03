@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import {C} from '../theme';
-import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,type Profile,type Speed} from '../domain';
+import {target,quitDate,nextReductionMilestone,restartReductionPlan,rescheduleQuitPlan,parseFutureQuitDate,type Profile,type Speed} from '../domain';
 
 type WeekDay={key:string;confirmed:boolean;within:boolean};
 type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void};
@@ -17,7 +17,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  const [dateError,setDateError]=useState('');
  const [confirmRestart,setConfirmRestart]=useState(false);
  const [showAllGoals,setShowAllGoals]=useState(false);
- const saveDate=()=>{const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.trim());const parsed=match?new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12):null;const today=new Date(clock);today.setHours(0,0,0,0);if(!parsed||!Number.isFinite(parsed.getTime())||parsed.getFullYear()!==Number(match?.[1])||parsed.getMonth()+1!==Number(match?.[2])||parsed.getDate()!==Number(match?.[3])||new Date(parsed.getFullYear(),parsed.getMonth(),parsed.getDate()).getTime()<=today.getTime()){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
+ const saveDate=()=>{const parsed=parseFutureQuitDate(dateInput,new Date(clock));if(!parsed){setDateError('Ange ett giltigt framtida datum (ÅÅÅÅ-MM-DD).');return;}onChangeProfile(rescheduleQuitPlan(p,parsed,new Date(clock)));setEditingDate(false);setDateError('');};
  const restart=()=>{onChangeProfile(restartReductionPlan(p,new Date(clock)));setConfirmRestart(false);};
  const scheduled=!!p.plannedQuitAt && p.mode==='reduce';
  const end=quitDate(p);

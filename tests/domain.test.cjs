@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone} = context.exports;
+const {target, quitDate, countOn, savings, validateData, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -386,4 +386,21 @@ test('restarting reduction twice retains original savings start', () => {
  assert.equal(second.originalStartAt,original.startAt);
  assert.equal(second.baseline,original.baseline);
  assert.equal(original.originalStartAt,undefined);
+});
+
+test('quit date input accepts only future valid calendar dates',()=>{
+ const now=new Date(2026,10,3,7,30);
+ for(const value of ['2026-11-03','2026-11-02','2026-02-30','2026-13-01','2026-11-3','not-a-date'])assert.equal(parseFutureQuitDate(value,now),null);
+ const tomorrow=parseFutureQuitDate('2026-11-04',now);
+ assert.ok(tomorrow);
+ assert.equal(tomorrow.getFullYear(),2026);
+ assert.equal(tomorrow.getMonth(),10);
+ assert.equal(tomorrow.getDate(),4);
+});
+test('quit date input handles leap days and midnight boundaries',()=>{
+ assert.equal(parseFutureQuitDate('2027-02-29',new Date(2027,0,1)),null);
+ const leap=parseFutureQuitDate('2028-02-29',new Date(2028,1,28,23,59));
+ assert.ok(leap);
+ assert.equal(leap.getDate(),29);
+ assert.equal(parseFutureQuitDate('2028-02-29',new Date(2028,1,29,0,1)),null);
 });
