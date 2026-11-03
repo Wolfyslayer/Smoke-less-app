@@ -37,11 +37,13 @@ function setup() {
   const migration = {
     async migrateGuestHistoryWithBackup() {throw Error('Migration not expected in session tests');},
   };
+  const guestMerge = loadModule('src/guestMerge.ts', {});
   const mod = loadModule('src/localSessionStorage.ts', {
     './domain':{validateData:valid}, './storage':storage,
     './accountStorage':accounts,
     '@react-native-async-storage/async-storage':asyncStorage,
     './accountMigration':migration,
+    './guestMerge':guestMerge,
   });
   return {controller:new mod.LocalSessionStorage(), records, events};
 }
