@@ -34,6 +34,14 @@ export function adjustReductionTarget(p:Profile,value:number|null,now:Date):Prof
  if(!Number.isInteger(value)||value<0) return p;
  return {...p,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:value,dailyTargetOverride:null};
 }
+/** Switch from a fixed quit date back to the saved gradual pace.
+ * Resume at today's planned level rather than retroactively changing history. */
+export function resumeGradualReduction(p:Profile,now:Date):Profile {
+ if(p.mode!=='reduce'||!p.plannedQuitAt)return p;
+ const current=target({...p,dailyTargetOverride:null},now);
+ const {plannedQuitAt:_previousDate,...rest}=p;
+ return {...rest,plannedQuitAt:undefined,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:current,dailyTargetOverride:null};
+}
 /** Restart only the future reduction schedule; the caller retains all historical records. */
 export function restartReductionPlan(p:Profile,now:Date):Profile {
  if(p.mode!=='reduce')return p;
