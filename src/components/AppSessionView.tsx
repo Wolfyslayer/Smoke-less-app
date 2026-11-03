@@ -1,4 +1,7 @@
-import React,{useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {validateData} from '../domain';
+import {previewGuestMerge} from '../guestMerge';
 import {CloudOff,ChevronDown,ChevronUp,ShieldCheck} from 'lucide-react-native';
 import {ActivityIndicator,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -18,6 +21,27 @@ export function AppSessionView({model}:{model:SessionModel}){
  const [showLogin,setShowLogin]=useState(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
+ const guestPromptedRef=useRef(false);
+ useEffect(()=>{
+  if(!ready || !accountUser || guestPromptedRef.current || syncStatus!=='Synkroniserad med Firestore')return;
+  guestPromptedRef.current=true;
+  let cancelled=false;
+  void (async()=>{
+   try{
+    const raw=await AsyncStorage.getItem('smoke-less-v6');
+    if(!raw || cancelled)return;
+    const guest:unknown=JSON.parse(raw);
+    if(!validateData(guest))return;
+    const preview=previewGuestMerge(model.data,guest);
+    const additions=preview.added.entries+preview.added.cravings+preview.added.checkins;
+    if(!cancelled && additions>0 && preview.conflicts.length===0)model.requestGuestMigration();
+   }catch{
+    // Invalid guest data must never block the signed-in session.
+   }
+  })();
+  return ()=>{cancelled=true;};
+ },[ready,accountUser?.uid,syncStatus,model.data]);
+
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
