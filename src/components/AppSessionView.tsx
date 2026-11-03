@@ -34,10 +34,10 @@ export function AppSessionView({model}:{model:SessionModel}){
  useEffect(()=>{
   if(accountUser && authPrompt!==null)setAuthPrompt(null);
  },[accountUser,authPrompt]);
- const loginOriginRef=useRef(accountUser?consumeLoginOrigin():null);
+ const [loginOrigin]=useState(()=>accountUser?consumeLoginOrigin():null);
  const guestPromptedRef=useRef(false);
  useEffect(()=>{
-  if(!ready || !accountUser || loginOriginRef.current!=='profile' || guestPromptedRef.current || syncStatus!=='Synkroniserad med Firestore')return;
+  if(!ready || !accountUser || loginOrigin!=='profile' || guestPromptedRef.current || syncStatus!=='Synkroniserad med Firestore')return;
   guestPromptedRef.current=true;
   let cancelled=false;
   void (async()=>{
