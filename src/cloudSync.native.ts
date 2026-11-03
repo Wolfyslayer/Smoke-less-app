@@ -33,9 +33,16 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   const localPlan = local.profile;
   const known = observedPlans.get(uid);
   const planChanged = !!localPlan && !!remotePlan && fingerprint(localPlan)!==fingerprint(remotePlan);
-  // A mismatch without an observed baseline remains a conflict, never an overwrite.
+  // The cloud owns an existing plan on the first sync after login (or after a
+  // different device changed it). A locally edited plan may only be uploaded
+  // after this session has observed the exact remote baseline. This prevents
+  // a stale local plan from blocking all history synchronization.
   const canUpdatePlan = planChanged && canUpdateObservedPlan(known,remotePlan);
-  const preview = previewMerge(canUpdatePlan?{...local,profile:remotePlan}:local, remote.data);
+  const cloudOwnsPlan = planChanged && !canUpdatePlan;
+  const preview = previewMerge(
+    cloudOwnsPlan || canUpdatePlan ? {...local,profile:remotePlan} : local,
+    remote.data,
+  );
   if (!preview.safeToApply) {
     const types=[...new Set(preview.conflicts.map(conflict=>conflict.collection))].join(', ');
     throw new Error('Lokal historik och molnhistorik skiljer sig ('+types+'). Automatisk synkronisering pausad för att undvika överskrivning.');
