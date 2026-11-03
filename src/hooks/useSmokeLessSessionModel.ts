@@ -21,7 +21,7 @@ export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurr
  const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
  const {sosProps,startSos}=useSosFlow(setData,()=>setTab('home'));
  const {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup}=useSettingsFlow({data,setData,ask,showMessage});
- const {onStep,setOnStep,mode,setMode,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
+ const {onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
  const hadProfileRef=useRef(false);
  useEffect(()=>{
   if(!ready)return;
