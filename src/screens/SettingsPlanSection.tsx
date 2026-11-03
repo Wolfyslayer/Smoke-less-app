@@ -23,14 +23,14 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
    <Choice title="Sluta helt" subtitle="Sätt målet till noll cigaretter" selected={p.mode==='quit'} onPress={()=>{if(p.mode!=='quit')onChangeMode('quit')}}/>
   </View>
   <Card style={{gap:15,padding:18}}>
-   <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text accessibilityRole="header" style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Justera riktvärdet om du behöver. Ett eget värde gäller varje dag tills du återställer det.</Text></View></View>
+   <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text accessibilityRole="header" style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Ändra dagens antal om dina vanor förändras. Din framtida nedtrappning räknas om, men historiken behålls.</Text></View></View>
    <View style={styles.sectionRow}>
     <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" accessibilityHint="Minskar riktvärdet med en cigarett" accessibilityState={{disabled:goal<=0}} disabled={goal<=0} style={[styles.stepper,goal<=0&&styles.disabled]} onPress={()=>onChangeDailyTarget(Math.max(0,(p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
     <View style={{alignItems:'center',gap:2,flexShrink:1,minWidth:90}}><Text accessibilityLabel={`Dagligt riktvärde: ${goal} cigaretter`} style={styles.goal}>{goal}</Text><Text style={styles.muted}>cigaretter per dag</Text></View>
     <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" accessibilityHint="Ökar riktvärdet med en cigarett" style={styles.stepper} onPress={()=>onChangeDailyTarget((p.dailyTargetOverride??goal)+1)}><Plus size={21} color={C.lime}/></Pressable>
    </View>
-   {p.dailyTargetOverride!==null?<Text accessibilityRole="text" style={styles.muted}>Eget riktvärde aktivt: {p.dailyTargetOverride} cigaretter per dag. Den automatiska nedtrappningen pausas tills du återställer.</Text>:<Text style={styles.muted}>Ditt riktvärde följer den valda nedtrappningstakten.</Text>}
-   <Pressable accessibilityRole="button" accessibilityLabel="Återställ planens riktvärde" accessibilityState={{disabled:p.dailyTargetOverride===null}} disabled={p.dailyTargetOverride===null} onPress={()=>onChangeDailyTarget(null)} style={[styles.button,p.dailyTargetOverride===null&&styles.disabled]}><Text style={styles.buttonText}>Återställ planens riktvärde</Text></Pressable>
+   <Text style={styles.muted}>{p.mode==='quit'?'Vid rökstopp är dagsmålet alltid noll.':p.plannedQuitAt?'Ändringar anpassar nedtrappningen, men ditt stoppdatum ligger kvar.':'Ändringar blir ny utgångspunkt och den valda takten fortsätter.'}</Text>
+
   </Card>
  </>;
 }
