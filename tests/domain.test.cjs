@@ -483,3 +483,39 @@ test('scheduled quit remains the next reduction milestone when no earlier reduct
  assert.equal(milestone.goal,0);
  assert.equal(target(p,date('2026-10-21')),0);
 });
+
+
+test('a passed scheduled quit date stays at zero until explicitly rescheduled', () => {
+ const original=profile({baseline:10,plannedQuitAt:'2026-10-11T12:00:00.000Z'});
+ const today=date('2026-10-20');
+ assert.equal(target(original,today),0);
+ assert.equal(target(original,date('2026-11-02')),0);
+ const revised=rescheduleQuitPlan(original,date('2026-11-10'),today);
+ assert.equal(revised.originalStartAt,original.startAt);
+ assert.equal(target(revised,today),0);
+ assert.equal(target(revised,date('2026-11-09')),0);
+ assert.equal(target(revised,date('2026-11-10')),0);
+ assert.equal(validateData({profile:revised,entries:[],cravings:[],checkins:[]}),true);
+});
+
+test('rescheduling a future quit date preserves manual target until the new stop date', () => {
+ const original=profile({baseline:12,dailyTargetOverride:4,plannedQuitAt:'2026-10-21T12:00:00.000Z'});
+ const now=date('2026-10-09');
+ const revised=rescheduleQuitPlan(original,date('2026-11-01'),now);
+ assert.equal(target(revised,now),4);
+ assert.equal(target(revised,date('2026-10-31')),4);
+ assert.equal(target(revised,date('2026-11-01')),0);
+ assert.equal(revised.originalStartAt,original.startAt);
+});
+
+test('quit-date input rejects past, same-day, rollover and malformed dates', () => {
+ const now=date('2026-11-03');
+ for(const input of ['2026-11-02','2026-11-03','2026-02-30','2026-13-01','2026-11-3','2026/11/04','']){
+  assert.equal(parseFutureQuitDate(input,now),null,input);
+ }
+ const valid=parseFutureQuitDate('2026-11-04',now);
+ assert.ok(valid instanceof Date);
+ assert.equal(valid.getFullYear(),2026);
+ assert.equal(valid.getMonth(),10);
+ assert.equal(valid.getDate(),4);
+});
