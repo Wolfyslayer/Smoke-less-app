@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import type {Dispatch,MutableRefObject,SetStateAction} from 'react';
 import type {Data} from '../domain';
-import {syncCloudData,resetObservedCloudPlans} from '../cloudSync';
+import {syncCloudData,resetObservedCloudPlans,subscribeCloudChanges} from '../cloudSync';
 import {backupBeforeCloudImport} from '../storage';
 import {useAppResumeTrigger} from './useAppResumeTrigger';
 
@@ -52,6 +52,20 @@ export function useCloudSync({
   },1200);
   return()=>clearTimeout(timer);
  },[data,ready,sessionUser?.uid,syncTrigger,migrationBusy,cloudPreviewBusy]);
+ useEffect(()=>{
+  if(!sessionUser || !ready || migrationBusy || cloudPreviewBusy)return;
+  const uid=sessionUser.uid;
+  let active=true;
+  const unsubscribe=subscribeCloudChanges(uid,()=>{
+   if(active && verifyCurrentUid()===uid){
+    if(syncInFlight.current)syncQueued.current=true;
+    else setSyncTrigger(v=>v+1);
+   }
+  },error=>{
+   if(active && verifyCurrentUid()===uid)setSyncStatus('Firestore-lyssnare: '+error.message);
+  });
+  return()=>{active=false;unsubscribe();};
+ },[sessionUser?.uid,ready,migrationBusy,cloudPreviewBusy]);
  useAppResumeTrigger(setSyncTrigger);
  const retrySync=()=>{setSyncStatus('');if(syncInFlight.current){syncQueued.current=true;}else{setSyncTrigger(v=>v+1);}};
  return {syncStatus,retrySync};
