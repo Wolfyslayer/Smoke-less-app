@@ -24,7 +24,7 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
  }
  const frequentTrigger=[...triggerCounts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
- const encouragement=checkin?.complete&&checkin.smokeFree
+ const encouragement=checkin?.complete&&checkin.smokeFree&&todayCount===0
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal
    ?'En svårare dag tar inte bort dina tidigare framsteg. Du kan fortsätta när du vill.'
