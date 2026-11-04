@@ -24,6 +24,24 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
  }
  const frequentTrigger=[...triggerCounts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const helpfulStrategies=new Map<string,number>();
+ for(const craving of data.cravings){
+  const date=new Date(craving.at);
+  if(craving.helpful!==true||!craving.strategy?.trim()||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+  const strategy=craving.strategy.trim();
+  helpfulStrategies.set(strategy,(helpfulStrategies.get(strategy)??0)+1);
+ }
+ const bestStrategy=[...helpfulStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const triggerStrategies=new Map<string,number>();
+ if(frequentTrigger){
+  for(const craving of data.cravings){
+   const date=new Date(craving.at);
+   if(craving.trigger!==frequentTrigger[0]||craving.helpful!==true||!craving.strategy?.trim()||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+   const strategy=craving.strategy.trim();
+   triggerStrategies.set(strategy,(triggerStrategies.get(strategy)??0)+1);
+  }
+ }
+ const matchingStrategy=[...triggerStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
  const encouragement=checkin?.complete&&checkin.smokeFree&&todayCount===0
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal
@@ -35,12 +53,19 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
      :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
   <Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1}}><Text style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>
-  <Card><Label>DAGENS UPPMUNTRAN</Label><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
+  <Card><Text accessibilityRole="header" style={styles.label}>DAGENS UPPMUNTRAN</Text><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
+  {bestStrategy?<Card style={{gap:9}}>
+   <Text style={styles.label}>DIN PERSONLIGA COACH</Text>
+   <Text accessibilityRole="header" style={styles.cardTitle}>Ett tips som du själv tyckt hjälpte</Text>
+   <Text style={styles.muted}>Du har markerat ”{bestStrategy[0]}” som hjälpsamt vid röksug {bestStrategy[1]} {bestStrategy[1]===1?'gång':'gånger'}. Du kan prova samma strategi igen om den passar situationen.</Text>
+   <Text style={styles.muted}>Tipset väljs utifrån de strategier du själv markerat som hjälpsamma i SOS. Om flera passar visas den du markerat flest gånger. Uppgifterna används här i appen, även utan konto. Tipset är varken en förutsägelse eller en medicinsk rekommendation.</Text>
+   <Pressable accessibilityRole="button" accessibilityLabel="Öppna SOS-stöd från din personliga coach" accessibilityHint="Öppnar övningar och strategier vid röksug utan att ändra tidigare registreringar" onPress={onSOS} style={styles.recoveryLink}><Text style={styles.link}>Öppna SOS-stöd</Text></Pressable>
+  </Card>:null}
   {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text accessibilityRole="header" style={styles.cardTitle}>Du behöver inte börja om</Text>
    <Text style={styles.muted}>{previousDays>0?`Du har gjort ${previousDays} tidigare ${previousDays===1?"daglig avstämning":"dagliga avstämningar"}. Din historik finns kvar.`:"Även om du inte har några tidigare dagliga avstämningar kan du fortsätta härifrån."} Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
-   {frequentTrigger?<View style={{gap:6}}><Text accessibilityRole="header" style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS.</Text></View>:null}
+   {frequentTrigger?<View style={{gap:6}}><Text accessibilityRole="header" style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är en sammanställning av dina egna SOS-registreringar, inte en förutsägelse om framtida röksug.</Text><Text style={styles.muted}>{matchingStrategy?`Vid just den här situationen har du tidigare markerat ”${matchingStrategy[0]}” som hjälpsamt ${matchingStrategy[1]} ${matchingStrategy[1]===1?"gång":"gånger"}. Du kan prova det igen om det passar.`:"Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS."}</Text></View>:null}
    <Text accessibilityRole="header" style={styles.cardTitle}>Välj ett nästa steg</Text>
    <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
    <Pressable accessibilityRole="button" accessibilityHint="Öppnar stöd vid röksug utan att ändra din plan eller historik" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>

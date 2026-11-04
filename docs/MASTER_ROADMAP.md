@@ -32,8 +32,8 @@
 | 10.0 | Statistik och beteendeinsikter | Mergad; bred manuell QA i fas 17 | #150 |
 | 11.0 | Motivation, milstolpar, ekonomi och hälsa | Mergad; bred manuell QA i fas 17 | #151 |
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
-| 13.0 | Kunskapsbank och svenskt stöd | Slutgranskad – inväntar grön CI och merge | #153 |
-| 14.0 | Smart coach | Planerad | — |
+| 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
+| 14.0 | Smart coach och personligt stöd | Aktiv – befintlig coach inventerad | #154 |
 | 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
@@ -214,3 +214,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Inget konto, nya behörigheter eller nya native-paket krävs för att läsa innehållet.
 - Automatiska tester för innehåll, länkar, tillgänglighet och kontofri åtkomst finns i `tests/knowledgeContent.test.cjs`.
 - CI var grön för `e0124d7`; denna dokumentationsändring kräver ny grön CI före merge. Bred manuell Android-QA kvarstår i fas 17.
+
+### Fas 14.0 – inventering av befintlig coach
+
+- `src/screens/HomeScreen.tsx`: dagsberoende uppmuntran, stöd vid överskridet mål, historikbevarande råd och sammanställning av självrapporterade röksugstriggers. Råden bygger redan på lokala uppgifter, men triggeranalysen visas bara vid en svår dag.
+- `src/screens/SOSScreen.tsx` och `src/data/sosIdeas.ts`: praktiska tips för stress, måltider, sociala situationer och vanor samt stöd för att utvärdera hur hjälpsam en strategi var.
+- `src/screens/PlanScreen.tsx`: stöd för att ändra takt, fortsätta eller starta om en nedtrappning utan att förlora historik.
+- `src/screens/BenefitsScreen.tsx`: allmän kunskap och svenska stödresurser, inte personliga behandlingsråd.
+- Nästa steg: samla begränsad, transparent lokal coachlogik som kan använda tidigare självrapporterade röksug och hjälpsamma strategier utan att göra medicinska förutsägelser. Behåll generiska råd när data saknas och undvik att upprepa känslig information i notiser.
