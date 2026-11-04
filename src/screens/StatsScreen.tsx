@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {C} from '../theme';
-import {dayKey,savings,type Data} from '../domain';
+import {calendarDaysInclusive,dayKey,savings,type Data} from '../domain';
 
 type Props={data:Data;period:number;onPeriodChange:(days:number)=>void;clock:number;weekly:number[];todayCount:number;recentCravingsCount:number;cravingTriggers:[string,number][];cigaretteTriggers:[string,number][]};
 const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
@@ -36,7 +36,7 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const firstDay=startDate?periodStart(startDate.getTime(),1):null;
  const todayStart=periodStart(clock,1);
  const effectiveStart=firstDay===null?null:period===0?firstDay:Math.max(firstDay,periodStart(clock,period));
- const observedDays=effectiveStart===null||effectiveStart>todayStart?0:Math.round((Date.UTC(new Date(todayStart).getFullYear(),new Date(todayStart).getMonth(),new Date(todayStart).getDate())-Date.UTC(new Date(effectiveStart).getFullYear(),new Date(effectiveStart).getMonth(),new Date(effectiveStart).getDate()))/86400000)+1;
+ const observedDays=effectiveStart===null||effectiveStart>todayStart?0:calendarDaysInclusive(new Date(effectiveStart),new Date(todayStart));
  const entriesDuringPlan=effectiveStart===null?[]:periodEntries.filter(e=>new Date(e.at).getTime()>=effectiveStart);
  const averagePerDay=observedDays>0?entriesDuringPlan.length/observedDays:0;
  const baseline=data.profile?.baseline??0;
