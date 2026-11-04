@@ -248,3 +248,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - `src/screens/SettingsScreen.tsx`: påminnelseinställningar hanterar sparad tid, behörighet och schemalagd notis. Vid polering ska asynkrona statusuppdateringar och feltexter kontrolleras utan att ändra schemaläggningens logik.
 - `src/screens/HomeScreen.tsx`: hemvyn innehåller dagsprogression och personliga coachråd. Kontrollera beräkningskostnad/omrendering innan optimering; undvik prestandaändringar utan belägg.
 - Nästa konkreta åtgärd: rätta den föråldrade profilgenvägen, därefter skärmläsar-/textstorleksgranskning och riktade tester.
+
+### Fas 16.0 – uppdaterat delningsmål (användarönskemål)
+
+- Ersätt den generiska uppmuntringsdelningen med **frivillig delning av dagens framsteg som en snygg bild, liknande en skärmbild**, med kort positiv text om att det går bra. Bilden ska vara ett separat utformat delningskort, inte en skärmbild av hela appen.
+- Visa en **förhandsgranskning** och låt användaren välja att dela eller avbryta. Dela endast dagens framsteg som användaren uttryckligen godkänner; inga namn, e-postadresser, historik, kontouppgifter eller andra skärmelement ska följa med.
+- Undvik överdrivna hälsopåståenden. Anpassa positiv text till faktiska framsteg; även en svårare dag ska få ett respektfullt, icke-skuldbeläggande budskap.
+- Utred lämplig befintlig bildgenerering/delning i Expo och om ett native-beroende eller Android-rebuild krävs innan implementation. Lägg till tester för valda fält och frivilligt samtycke. Androids systemdelning och bildformat testas manuellt i fas 17.
+- Denna ändring ersätter den tidigare planen om enbart neutral textdelning; tidigare fas 15 förblir avslutad, och vidareutvecklingen sker i fas 16.0.
