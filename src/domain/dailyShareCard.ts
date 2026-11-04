@@ -9,9 +9,9 @@ export function buildDailyShareCard(input:DailyShareProgress):DailyShareCard{
  const message=dailyGoal===0
   ?'Varje steg räknas. Fortsätt i din egen takt!'
   :todayCount<dailyGoal
-   ?'Bra jobbat med dagens mål! Fortsätt i din egen takt.'
+   ?'Du ligger inom dagens gräns. Fortsätt i din egen takt.'
    :todayCount===dailyGoal
-    ?'Du har nått dagens mål. Varje steg framåt räknas!'
+    ?'Du håller dagens gräns. Varje steg framåt räknas!'
     :'En dag i taget. Du kan fortsätta mot ditt mål utan att ge upp.';
  return {todayCount,dailyGoal,progressPercent,message};
 }
