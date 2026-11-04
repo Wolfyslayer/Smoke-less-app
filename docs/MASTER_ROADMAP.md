@@ -29,8 +29,8 @@
 | 7.0 | Intern Android-beta, kvalitet och förberedelser | Klar, mergad | #138 |
 | 8.0 | Personal Quit Plan 2.0 | Mergad; bred manuell regression flyttad till slutfas | #140 |
 | 9.0 | SOS och röksug 2.0 | Mergad; bred manuell QA i fas 17 | #149 |
-| 10.0 | Statistik och beteendeinsikter | Aktiv | Fas-PR |
-| 11.0 | Motivation, milstolpar, ekonomi och hälsa | Planerad | — |
+| 10.0 | Statistik och beteendeinsikter | Mergad; bred manuell QA i fas 17 | #150 |
+| 11.0 | Motivation, milstolpar, ekonomi och hälsa | Aktiv | Fas-PR |
 | 12.0 | Återfallsprevention och långsiktigt stöd | Planerad | — |
 | 13.0 | Kunskapsbank och svenskt stöd | Planerad | — |
 | 14.0 | Smart coach | Planerad | — |
