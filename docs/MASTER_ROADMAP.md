@@ -2,6 +2,12 @@
 
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.
 
+## Teststrategi beslutad 2026-11-04
+- Samla omfattande manuell Android-acceptans, BrowserStack, skärmstorlekar, maximal text, TalkBack, tillgänglighet och full regression i **fas 17.0:s slutliga QA-grind före Google Play-lansering**. Tidigare ej utförda testpunkter förs dit och markeras inte som godkända.
+- Under varje funktionsfas krävs fortsatt automatiska relevanta tester och gröna obligatoriska CI-kontroller på slutlig commit. Utför begränsade riktade manuella tester när en ny funktion eller datarisk motiverar det; inga påhittade testresultat.
+- Skjut aldrig upp blockerande säkerhetsbrister, dataförlust, kontoöverskrivning eller trasig kärnfunktion till slutfasen. Åtgärda sådant innan fasen mergas.
+- En fas = en PR, inklusive dokumentationsändringar för fasen. Undvik separata PR:er enbart för testpolicy.
+
 ## Projektets principer
 - Android först (Expo/React Native); professionellt, lugnt svenskt gränssnitt, liten scrollmängd, stora textstorlekar och god tillgänglighet.
 - Stöd både rökminskning och fullständigt rökstopp. Ingen skuldbeläggning, inga påhittade hälsolöften; evidensbaserat stöd och tydlig skillnad mellan mål och verklig konsumtion.
@@ -21,8 +27,8 @@
 | Fas | Namn | Status | PR / referens |
 | --- | --- | --- | --- |
 | 7.0 | Intern Android-beta, kvalitet och förberedelser | Klar, mergad | #138 |
-| 8.0 | Personal Quit Plan 2.0 | Pågår | #140 |
-| 9.0 | SOS och röksug 2.0 | Planerad | — |
+| 8.0 | Personal Quit Plan 2.0 | Mergad; bred manuell regression flyttad till slutfas | #140 |
+| 9.0 | SOS och röksug 2.0 | Aktiv | Pågående fas-PR |
 | 10.0 | Statistik och beteendeinsikter | Planerad | — |
 | 11.0 | Motivation, milstolpar, ekonomi och hälsa | Planerad | — |
 | 12.0 | Återfallsprevention och långsiktigt stöd | Planerad | — |
@@ -37,7 +43,7 @@
 
 Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övriga dokument. Fas 7.0 var **intern beta**, inte offentlig Play Store-lansering.
 
-## Fas 8.0 – Personal Quit Plan 2.0 (AKTIV, PR #140)
+## Fas 8.0 – Personal Quit Plan 2.0 (MERGAD, PR #140)
 
 **Mål:** En personlig, begriplig och ändringsbar rökstoppsplan utan förlorad historik.
 
@@ -175,7 +181,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Testa på riktig Android-enhet, inklusive ny användare, återkommande användare, avbrutet flöde, saknade Google Play-tjänster, offline och felaktig konfiguration.
 **Acceptans:** Google-inloggning fungerar på Android utan dubbla konton eller dataförlust, och övriga inloggningssätt fortsätter fungera.
 
-## Fas 17.0 – Säkerhet, integritet och Google Play-lansering
+## Fas 17.0 – Slutlig QA, säkerhet, integritet och Google Play-lansering
+- Genomför uppskjutna manuella tester från tidigare faser, inklusive `docs/PHASE_8_ANDROID_ACCEPTANCE.md` (7.4, 8.1, 8.1a, 8.2), på riktiga Android-enheter och BrowserStack. Dokumentera PASS/FAIL, enhet, Android-version och testad commit.
+- Verifiera full regression: onboarding, planer, SOS, historik, offline, gästläge, kontobyten, tvåenhetssynk och konflikter, notiser, tillgänglighet, TalkBack, stor text och små skärmar.
+- Säkerställ gröna CI, native releasebygge och blockeringsfri slutacceptans innan publicering.
 - Säker kontohantering, verifierad radering av konto och tillhörande data samt tydliga användarflöden.
 - Granska Firebase-regler, serverfunktioner, datalagring, behörigheter och loggning.
 - Färdigställ integritetspolicy, Google Play Data safety, butikstexter, skärmbilder och supportkontakt.
