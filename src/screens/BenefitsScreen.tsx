@@ -19,6 +19,15 @@ export function BenefitsScreen({data}:{data:Data}){
     <View style={styles.milestone}><Leaf size={21} color={C.lime}/></View>
     <View style={{flex:1,gap:4}}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{description}</Text></View>
    </View>)}
+  <Text accessibilityRole="header" style={styles.heading}>Kunskap som hjälper</Text>
+  {([
+   ['Vad är nikotinberoende?','Nikotin kan skapa ett beroende. När kroppen vant sig vid nikotin kan det kännas svårt att avstå, även när du vill sluta.'],
+   ['När röksuget kommer','Röksug kan kopplas till både nikotinberoende och inlärda vanor, till exempel en paus eller en måltid. Pröva att byta rutin och ge suget lite tid.'],
+   ['Om abstinens','När du minskar eller slutar kan du tillfälligt känna irritation, oro, rastlöshet eller koncentrationssvårigheter. Besvären brukar minska med tiden, men upplevelsen varierar.'],
+   ['Om du röker mer än planerat','En svår dag betyder inte att dina tidigare försök saknar värde. Fortsätt registrera, fundera på vad som utlöste situationen och justera planen vid behov.']
+  ] as const).map(([title,description])=>
+   <View key={title} style={[styles.card,{gap:7}]}><Text accessibilityRole="header" style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{description}</Text></View>)}
+  <Text style={styles.muted}>Allmän information, inte en personlig medicinsk bedömning. Om du behöver hjälp med abstinens eller behandling, kontakta vården.</Text>
   <Text style={styles.muted}>Hälsoeffekter varierar mellan personer. Appen ersätter inte medicinsk rådgivning.</Text>
  </View>;
 }
