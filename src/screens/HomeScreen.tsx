@@ -16,7 +16,7 @@ function Stat({label,value,detail}:{label:string;value:string;detail?:string}){r
 export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
  const checkin=data.checkins.find(x=>x.date===today);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
- const previousDays=data.checkins.filter(x=>x.date<today&&x.complete).length;
+ const previousDays=new Set(data.checkins.filter(x=>x.date<today&&x.complete).map(x=>x.date)).size;
  const encouragement=checkin?.complete&&checkin.smokeFree
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal
@@ -35,7 +35,8 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
    <Text style={styles.muted}>Du har redan gjort {previousDays} tidigare dagliga avstämningar. Din historik och dina framsteg finns kvar. Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
    <Text style={styles.cardTitle}>Välj ett nästa steg</Text>
    <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
-   <Pressable accessibilityRole="button" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityHint="Öppnar stöd vid röksug utan att ändra din plan eller historik" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityHint="Visar tidigare registreringar utan att ändra dem" onPress={onHistory} style={{paddingVertical:8}}><Text style={styles.link}>Se mina tidigare framsteg</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={onPlan} style={{paddingVertical:8}}><Text style={styles.link}>Se eller anpassa min plan</Text></Pressable>
   </Card>:null}
   <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
