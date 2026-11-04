@@ -53,13 +53,13 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
      :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
   <Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1}}><Text style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>
-  <Card><Label>DAGENS UPPMUNTRAN</Label><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
+  <Card><Text accessibilityRole="header" style={styles.label}>DAGENS UPPMUNTRAN</Text><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   {bestStrategy?<Card style={{gap:9}}>
-   <Label>DIN PERSONLIGA COACH</Label>
+   <Text style={styles.label}>DIN PERSONLIGA COACH</Text>
    <Text accessibilityRole="header" style={styles.cardTitle}>Ett tips som du själv tyckt hjälpte</Text>
    <Text style={styles.muted}>Du har markerat ”{bestStrategy[0]}” som hjälpsamt vid röksug {bestStrategy[1]} {bestStrategy[1]===1?'gång':'gånger'}. Du kan prova samma strategi igen om den passar situationen.</Text>
    <Text style={styles.muted}>Tipset väljs utifrån de strategier du själv markerat som hjälpsamma i SOS. Om flera passar visas den du markerat flest gånger. Uppgifterna används här i appen, även utan konto. Tipset är varken en förutsägelse eller en medicinsk rekommendation.</Text>
-   <Pressable accessibilityRole="button" accessibilityHint="Öppnar SOS-stöd utan att ändra tidigare registreringar" onPress={onSOS} style={styles.recoveryLink}><Text style={styles.link}>Öppna SOS-stöd</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="Öppna SOS-stöd från din personliga coach" accessibilityHint="Öppnar övningar och strategier vid röksug utan att ändra tidigare registreringar" onPress={onSOS} style={styles.recoveryLink}><Text style={styles.link}>Öppna SOS-stöd</Text></Pressable>
   </Card>:null}
   {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
