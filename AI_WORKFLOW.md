@@ -2,6 +2,12 @@
 
 Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Läs också `docs/MASTER_ROADMAP.md`, aktuell fasplan, PR-beskrivning och senaste CI-status. Masterplanen anger fasernas ordning och omfattning; den aktiva PR:ns fasta checklista anger verifierad framdrift. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.
 
+## Testpolicy: slutlig gemensam QA-fas
+- Samla omfattande manuella Android-, BrowserStack-, tillgänglighets- och regressionstester i fas 17.0 före offentlig lansering. Flytta kvarstående manuella acceptanspunkter dit utan att markera dem godkända.
+- Under funktionsfaser: behåll relevanta automatiska tester och obligatorisk grön CI, samt riktade manuella tester när risk motiverar det.
+- Blockerande säkerhetsfel, dataförlust, felaktig kontoåtkomst eller trasig kärnfunktion måste åtgärdas direkt; de får inte skjutas upp.
+- Dokumentera i fas-PR vilka manuella kontroller som flyttats till slutfasen.
+
 ## En fas = en pull request
 - Arbeta **endast i den aktiva fasens befintliga branch och PR**. Skapa inte en ny PR för varje uppgift, fix eller commit.
 - Alla commits för fasen läggs i samma PR tills fasen är klar. Gör inte ändringar direkt på `main` under pågående fas.
@@ -36,7 +42,7 @@ Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/r
 - Kommande faser ska få en fast underchecklista när fasens PR öppnas, innan implementationen börjar.
 
 ## Fasavslut, merge och nästa fas
-- När **alla huvudpunkter är genomförda och verifierade**, slutligt acceptanstest är godkänt och senaste commit har gröna obligatoriska kontroller: **merga fasens befintliga PR till `main`**. Merga inte innan dessa villkor är uppfyllda.
+- När **alla huvudpunkter är genomförda och verifierade**, fasens automatiska acceptanskriterier och eventuella riskkritiska riktade tester är godkända, och senaste commit har gröna obligatoriska kontroller: **merga fasens befintliga PR till `main`**. Merga inte innan dessa villkor är uppfyllda.
 - Meddela därefter användaren att köra:
   ```bash
   git checkout main
@@ -48,5 +54,5 @@ Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/r
 
 ## Aktuell fas och historik
 - Aktuell fas och PR finns i `docs/MASTER_ROADMAP.md`. Verifiera alltid mot GitHub innan du arbetar.
-- Fas 7.0 avslutades i PR #138. Fas 8.0 pågår i PR #140.
+- Fas 7.0 avslutades i PR #138. Fas 8.0 mergades i PR #140. Fas 9.0 är nästa utvecklingsfas; bred manuell QA samlas i fas 17.0.
 - Ändra roadmap-status när en fas verkligen mergats och verifierats, inte när enstaka commits skapats.
