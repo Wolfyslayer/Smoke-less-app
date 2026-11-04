@@ -41,7 +41,8 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const averagePerDay=observedDays>0?entriesDuringPlan.length/observedDays:0;
  const baseline=data.profile?.baseline??0;
  const reductionPercent=baseline>0&&observedDays>0?Math.round((1-averagePerDay/baseline)*100):null;
- const confirmedKeys=new Set(data.checkins.filter(c=>c.complete&&c.smokeFree&&c.date<=todayKey).map(c=>c.date));
+ const planStartKey=startDate&&Number.isFinite(startDate.getTime())?dayKey(startDate):null;
+ const confirmedKeys=new Set(data.checkins.filter(c=>planStartKey!==null&&c.complete&&c.smokeFree&&c.date>=planStartKey&&c.date<=todayKey).map(c=>c.date));
  let confirmedStreak=0;
  const cursor=new Date(clock);
  cursor.setHours(12,0,0,0);
@@ -52,7 +53,7 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const totalSavings=savings(data,new Date(clock));
  const previousSavings=period===0?0:savings(data,new Date(periodStart(clock,period)-1));
  const selectedSavings=Math.max(0,totalSavings-previousSavings);
- const confirmedSmokeFreeDays=new Set(data.checkins.filter(c=>c.complete&&c.smokeFree&&c.date<=todayKey&&(startKey===null||c.date>=startKey)).map(c=>c.date)).size;
+ const confirmedSmokeFreeDays=new Set(data.checkins.filter(c=>planStartKey!==null&&c.complete&&c.smokeFree&&c.date>=planStartKey&&c.date<=todayKey&&(startKey===null||c.date>=startKey)).map(c=>c.date)).size;
  return <View style={styles.screen}>
   <Card style={{padding:19,borderColor:'#425C29'}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{periodEntries.length}</Text><Text style={styles.muted}>{period===0?'Alla registreringar':'Kalenderdagar inklusive idag'}</Text></Card>
   <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" accessibilityState={{selected:period===v}} accessibilityLabel={`Visa statistik för ${label.toLowerCase()}`} key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.background:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
