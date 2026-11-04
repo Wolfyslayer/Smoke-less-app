@@ -35,7 +35,7 @@
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
 | 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
-| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – inledande inventering | #156 |
+| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – första gränssnittsinventering klar | #156 |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
@@ -240,3 +240,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 4. **Ingen spårning.** Inga analytics-händelser, delningsloggar, nya push-notiser eller externa AI-tjänster. Appen ska inte kunna se vem som tar emot meddelandet.
 5. **Tydlig avsändare och gräns.** Gränssnittet ska förklara att användaren väljer mottagare och att meddelandet lämnar appen först efter användarens eget val. Delningsappen kan ha egna integritetsvillkor.
 6. **Testkrav.** Automatiska tester ska säkerställa att den förvalda texten är statisk, att den inte interpolerar användardata och att funktionen inte kräver konto. Androids delningsdialog testas manuellt i fas 17.
+
+### Fas 16.0 – första gränssnittsinventering
+
+- `src/screens/ProfileScreen.tsx`: profilens snabbåtkomst visar fortfarande `Säkerhetskopiering`, `Molnstatus och JSON-kopia` och `Exportera och skydda din historik`, trots beslutet att inte använda JSON-export som säkerhetskopia. Detta ska rättas så att genvägen beskriver kontosynk, inte export.
+- `src/screens/ProfileScreen.tsx`: den nya frivilliga delningsfunktionen har explicit tryckhändelse, skärmläsaretikett och informativ text; kontrollera layout med stor text i fas 17.
+- `src/screens/SettingsScreen.tsx`: påminnelseinställningar hanterar sparad tid, behörighet och schemalagd notis. Vid polering ska asynkrona statusuppdateringar och feltexter kontrolleras utan att ändra schemaläggningens logik.
+- `src/screens/HomeScreen.tsx`: hemvyn innehåller dagsprogression och personliga coachråd. Kontrollera beräkningskostnad/omrendering innan optimering; undvik prestandaändringar utan belägg.
+- Nästa konkreta åtgärd: rätta den föråldrade profilgenvägen, därefter skärmläsar-/textstorleksgranskning och riktade tester.
