@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text,View,StyleSheet} from 'react-native';
+import {Linking,Pressable,Text,View,StyleSheet} from 'react-native';
 import {Leaf} from 'lucide-react-native';
 import {C} from '../theme';
 import {savings,type Data} from '../domain';
@@ -27,6 +27,18 @@ export function BenefitsScreen({data}:{data:Data}){
    ['Om du röker mer än planerat','En svår dag betyder inte att dina tidigare försök saknar värde. Fortsätt registrera, fundera på vad som utlöste situationen och justera planen vid behov.']
   ] as const).map(([title,description])=>
    <View key={title} style={[styles.card,{gap:7}]}><Text accessibilityRole="header" style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{description}</Text></View>)}
+  <Text accessibilityRole="header" style={styles.heading}>Svenska stödresurser och källor</Text>
+  <View style={[styles.card,{gap:12}]}>
+   <Text style={styles.cardTitle}>1177 – Hjälp att sluta röka</Text>
+   <Text style={styles.muted}>Information om nikotinberoende, abstinens, stöd och behandling från svensk sjukvård.</Text>
+   <Pressable accessibilityRole="link" accessibilityLabel="Läs om rökstopp på 1177, öppnas i webbläsaren" onPress={()=>void Linking.openURL('https://www.1177.se/liv--halsa/tobak-och-alkohol/tobak/hjalp-att-sluta-roka/')} style={styles.resourceLink}><Text style={styles.resourceText}>Läs på 1177</Text></Pressable>
+  </View>
+  <View style={[styles.card,{gap:12}]}>
+   <Text style={styles.cardTitle}>Sluta-röka-linjen</Text>
+   <Text style={styles.muted}>Kostnadsfritt samtalsstöd på telefon 020-84 00 00 och chatt. Se webbplatsen för aktuella öppettider.</Text>
+   <Pressable accessibilityRole="link" accessibilityLabel="Öppna Sluta-röka-linjens webbplats i webbläsaren" onPress={()=>void Linking.openURL('https://www.slutarokalinjen.se/')} style={styles.resourceLink}><Text style={styles.resourceText}>Besök Sluta-röka-linjen</Text></Pressable>
+  </View>
+  <Text style={styles.muted}>Källor kontrollerade 4 november 2026: 1177 och Sluta-röka-linjen. Externa webbplatser kan ändras. Appen skickar inga registreringar till dessa länkar.</Text>
   <Text style={styles.muted}>Allmän information, inte en personlig medicinsk bedömning. Om du behöver hjälp med abstinens eller behandling, kontakta vården.</Text>
   <Text style={styles.muted}>Hälsoeffekter varierar mellan personer. Appen ersätter inte medicinsk rådgivning.</Text>
  </View>;
@@ -43,4 +55,6 @@ const styles=StyleSheet.create({
  inline:{flexDirection:'row',alignItems:'center',gap:14},
  milestone:{width:42,height:42,borderRadius:13,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
+ resourceLink:{minHeight:48,justifyContent:'center',alignSelf:'flex-start',paddingVertical:10,paddingHorizontal:4},
+ resourceText:{color:C.lime,fontSize:15,fontWeight:'800',textDecorationLine:'underline'},
 });
