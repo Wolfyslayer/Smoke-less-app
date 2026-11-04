@@ -33,8 +33,8 @@ test('share card model does not leak unrelated fields',()=>{
 test('preview is opt-in and card does not access account data',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/showSharePreview,setShowSharePreview/);
- assert.match(profile,/showSharePreview\?<><DailyProgressShareCard/);
+ assert.match(profile,/showSharePreview\?<><View[^>]*><DailyProgressShareArtwork/);
  assert.match(profile,/onPress=\{\(\)=>setShowSharePreview\(v=>!v\)\}/);
- const card=fs.readFileSync('src/components/DailyProgressShareCard.tsx','utf8');
+ const card=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
  assert.doesNotMatch(card,/accountEmail|profile\.|entries|cravings|Share\.share/);
 });
