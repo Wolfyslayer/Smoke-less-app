@@ -1,8 +1,13 @@
-import React,{useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {validateData} from '../domain';
+import {previewGuestMerge} from '../guestMerge';
+import {consumeLoginOrigin} from '../loginOrigin';
 import {CloudOff,ChevronDown,ChevronUp,ShieldCheck} from 'lucide-react-native';
 import {ActivityIndicator,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppSessionOnboarding} from './AppSessionOnboarding';
+import {OnboardingAuthModal,type OnboardingAuthStep} from './OnboardingAuthModal';
 import {AppScreenRouter} from './AppScreenRouter';
 import {SectionIntroCard} from './SectionIntroCard';
 import {BottomNavigation} from './BottomNavigation';
@@ -16,8 +21,41 @@ type SessionModel=ReturnType<typeof useSmokeLessSessionModel>;
 export function AppSessionView({model}:{model:SessionModel}){
  const insets=useSafeAreaInsets();
  const [showLogin,setShowLogin]=useState(false);
+ const [authPrompt,setAuthPrompt]=useState<OnboardingAuthStep>(null);
+ const completedOnboardingRef=useRef(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
+ useEffect(()=>{
+  if(ready && p && !accountUser && completedOnboardingRef.current){
+   completedOnboardingRef.current=false;
+   setAuthPrompt('choice');
+  }
+ },[ready,p,accountUser]);
+ useEffect(()=>{
+  if(accountUser && authPrompt!==null)setAuthPrompt(null);
+ },[accountUser,authPrompt]);
+ const [loginOrigin]=useState(()=>accountUser?consumeLoginOrigin():null);
+ const guestPromptedRef=useRef(false);
+ useEffect(()=>{
+  if(!ready || !accountUser || loginOrigin!=='profile' || guestPromptedRef.current || syncStatus!=='Synkroniserad med Firestore')return;
+  guestPromptedRef.current=true;
+  let cancelled=false;
+  void (async()=>{
+   try{
+    const raw=await AsyncStorage.getItem('smoke-less-v6');
+    if(!raw || cancelled)return;
+    const guest:unknown=JSON.parse(raw);
+    if(!validateData(guest))return;
+    const preview=previewGuestMerge(model.data,guest);
+    const additions=preview.added.entries+preview.added.cravings+preview.added.checkins;
+    if(!cancelled && additions>0 && preview.conflicts.length===0)model.requestGuestMigration();
+   }catch{
+    // Invalid guest data must never block the signed-in session.
+   }
+  })();
+  return ()=>{cancelled=true;};
+ },[ready,accountUser?.uid,syncStatus,model.data]);
+
  if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
@@ -35,6 +73,19 @@ export function AppSessionView({model}:{model:SessionModel}){
    </View>
   </View>;
  }
+ const authModal=<OnboardingAuthModal step={authPrompt}
+ onEmail={()=>setAuthPrompt('email')}
+ onGoogle={()=>{}}
+ onLater={()=>setAuthPrompt('benefits')}
+ onDecline={()=>setAuthPrompt(null)}
+ onBack={()=>setAuthPrompt('choice')}
+ emailForm={<View style={{gap:12}}>
+  <Text style={{color:C.muted}}>Har du redan ett konto? När du loggar in hämtas kontots sparade plan och historik. Den nya onboarding-planen ersätter aldrig ditt befintliga konto. Gästregistreringar kan läggas till separat efter ditt godkännande.</Text>
+  <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
+  <TextInput accessibilityLabel="Lösenord" autoCapitalize="none" autoComplete={model.accountMode==='signup'?'new-password':'current-password'} secureTextEntry placeholder="Lösenord" placeholderTextColor={C.dim} value={model.accountPassword} onChangeText={model.setAccountPassword} style={s.input}/>
+  <Pressable accessibilityRole="button" disabled={model.accountBusy||!model.accountEmail.includes('@')||model.accountPassword.length<6} onPress={()=>model.accountAction(model.accountMode,'onboarding')} style={[s.loginButton,{opacity:model.accountBusy||!model.accountEmail.includes('@')||model.accountPassword.length<6?.5:1}]}><Text style={{fontWeight:'900',color:C.background}}>{model.accountBusy?'Vänta…':model.accountMode==='signup'?'Skapa konto':'Logga in'}</Text></Pressable>
+  <Pressable accessibilityRole="button" onPress={()=>model.setAccountMode(model.accountMode==='signup'?'login':'signup')} style={{minHeight:44,justifyContent:'center',alignItems:'center'}}><Text style={{color:C.lime,fontWeight:'800'}}>{model.accountMode==='signup'?'Jag har redan ett konto':'Skapa ett nytt konto'}</Text></Pressable>
+ </View>}/>;
  if(!p)return <View style={s.root}>{showLogin && !accountUser?
  <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal:24,paddingTop:Math.max(insets.top,30)+36,paddingBottom:40,gap:18}}>
  <Pressable accessibilityRole="button" onPress={()=>setShowLogin(false)}><Text style={{color:C.lime,fontWeight:'800'}}>‹ Tillbaka till onboarding</Text></Pressable>
@@ -42,14 +93,17 @@ export function AppSessionView({model}:{model:SessionModel}){
  <Text style={{color:C.muted,lineHeight:22}}>Logga in för att hämta din sparade plan och historik utan att göra om onboarding.</Text>
  <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
  <TextInput accessibilityLabel="Lösenord" autoCapitalize="none" autoComplete="current-password" secureTextEntry placeholder="Lösenord" placeholderTextColor={C.dim} value={model.accountPassword} onChangeText={model.setAccountPassword} style={s.input}/>
- <Pressable accessibilityRole="button" accessibilityState={{disabled:model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword}} disabled={model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword} onPress={()=>model.accountAction('login')} style={[s.loginButton,{opacity:model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword?0.5:1}]}><Text style={{fontWeight:'900',color:C.background}}>{model.accountBusy?'Loggar in…':'Logga in'}</Text></Pressable>
+ <Pressable accessibilityRole="button" accessibilityState={{disabled:model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword}} disabled={model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword} onPress={()=>model.accountAction('login','onboarding')} style={[s.loginButton,{opacity:model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword?0.5:1}]}><Text style={{fontWeight:'900',color:C.background}}>{model.accountBusy?'Loggar in…':'Logga in'}</Text></Pressable>
  </ScrollView>:
- <View style={{flex:1}}><AppSessionOnboarding model={model}/>{!accountUser?<Pressable accessibilityRole="button" onPress={()=>setShowLogin(true)} style={{padding:16,alignItems:'center',backgroundColor:C.background}}><Text style={{color:C.lime,fontWeight:'800'}}>Har du redan ett konto? Logga in</Text></Pressable>:null}</View>}
+ <View style={{flex:1}}><AppSessionOnboarding model={model} onCompleted={()=>{completedOnboardingRef.current=true;}}/>{!accountUser?<Pressable accessibilityRole="button" onPress={()=>setShowLogin(true)} style={{padding:16,alignItems:'center',backgroundColor:C.background}}><Text style={{color:C.lime,fontWeight:'800'}}>Har du redan ett konto? Logga in</Text></Pressable>:null}</View>}
  <AppSessionOverlays model={model}/></View>;
+ if(authPrompt!==null && !accountUser)return <View style={s.root}><AppSessionOnboarding model={model}/><AppSessionOverlays model={model}/>{authModal}</View>;
  return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingHorizontal:20,paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
  <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
  {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  <AppScreenRouter model={model}/>
- </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><AppSessionOverlays model={model}/></View>
+ </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><AppSessionOverlays model={model}/>
+ {authModal}
+ </View>
 }
 const s=StyleSheet.create({errorCard:{backgroundColor:C.surface,borderColor:C.border,borderWidth:1,borderRadius:28,padding:26,alignItems:'center',gap:18},errorIcon:{width:68,height:68,borderRadius:22,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},errorTitle:{color:C.white,fontSize:23,fontWeight:'900',textAlign:'center',lineHeight:30},errorDescription:{color:C.muted,fontSize:15,lineHeight:23,textAlign:'center'},errorButton:{backgroundColor:C.lime,borderRadius:16,paddingVertical:16,paddingHorizontal:28,alignItems:'center',alignSelf:'stretch'},errorButtonText:{color:C.background,fontSize:16,fontWeight:'900'},safeRow:{flexDirection:'row',alignItems:'center',gap:8},safeText:{color:C.success,fontSize:12,flexShrink:1},detailsButton:{flexDirection:'row',alignItems:'center',gap:8,padding:8},detailsText:{color:C.muted,fontSize:13,fontWeight:'700'},technicalError:{color:C.dim,fontSize:12,lineHeight:18,backgroundColor:C.elevated,borderRadius:12,padding:12,alignSelf:'stretch'},root:{flex:1,backgroundColor:C.background},input:{backgroundColor:C.surface,color:C.white,borderColor:C.border,borderWidth:1,borderRadius:14,padding:14,minHeight:50},loginButton:{backgroundColor:C.lime,borderRadius:14,minHeight:50,alignItems:'center',justifyContent:'center'}});

@@ -4,6 +4,7 @@ import {load as loadGuest, save as saveGuest} from './storage';
 import {loadAccountData, saveAccountData, accountStorageKey} from './accountStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {migrateGuestHistoryWithBackup, type MigrationResult} from './accountMigration';
+import {previewGuestMerge} from './guestMerge';
 
 export type LocalSession = {kind: 'guest'} | {kind: 'account'; uid: string};
 export type SessionSnapshot = {session: LocalSession; data: Data};
@@ -77,6 +78,30 @@ export class LocalSessionStorage {
         this.current = {session: {kind: 'account', uid}, data: guest};
       }
       return result;
+    });
+  }
+
+  async mergeGuestHistory(uid: string, verifyUid: () => string | null) {
+    return this.enqueue(async () => {
+      if (this.current?.session.kind !== 'account' || this.current.session.uid !== uid || verifyUid() !== uid)
+        throw new Error('Kontot ändrades.');
+      const raw = await AsyncStorage.getItem('smoke-less-v6');
+      if (!raw) throw new Error('Ingen gästhistorik finns.');
+      let guest: unknown;
+      try { guest = JSON.parse(raw); } catch { throw new Error('Gästhistoriken kan inte läsas.'); }
+      if (!validateData(guest)) throw new Error('Gästhistoriken är ogiltig.');
+      const current = await loadAccountData(uid);
+      const preview = previewGuestMerge(current, guest);
+      if (preview.conflicts.length) throw new Error('Motstridiga registreringar finns. Ingen historik har ändrats.');
+      if (verifyUid() !== uid) throw new Error('Kontot ändrades.');
+      const backup = 'smoke-less-v6-migration-backup:' + uid + ':' + Date.now();
+      await AsyncStorage.setItem(backup, JSON.stringify(current));
+      if (verifyUid() !== uid) throw new Error('Kontot ändrades.');
+      if (JSON.stringify(await loadAccountData(uid)) !== JSON.stringify(current))
+        throw new Error('Kontohistoriken ändrades. Försök igen.');
+      await saveAccountData(uid, preview.merged);
+      this.current = {session:{kind:'account',uid},data:preview.merged};
+      return preview;
     });
   }
 

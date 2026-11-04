@@ -44,6 +44,11 @@ function combine<T>(
   return [...values.values()];
 }
 
+/** Only an unchanged, previously observed cloud plan can be safely replaced. */
+export function canUpdateObservedPlan(observedFingerprint:string|undefined,remotePlan:Profile):boolean {
+ return observedFingerprint!==undefined && observedFingerprint===JSON.stringify(canonical(remotePlan));
+}
+
 export function previewMerge(local: Data, remote: Data): MergePreview {
   const conflicts: SyncConflict[] = [];
   let profile: Profile | null = local.profile ?? remote.profile;

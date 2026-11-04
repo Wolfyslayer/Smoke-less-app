@@ -1,4 +1,4 @@
-import {useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {useLiveClock} from './useLiveClock';
 import {useCloudSync} from './useCloudSync';
 import {useLocalSession} from './useLocalSession';
@@ -21,16 +21,22 @@ export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurr
  const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
  const {sosProps,startSos}=useSosFlow(setData,()=>setTab('home'));
  const {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup}=useSettingsFlow({data,setData,ask,showMessage});
- const {onStep,setOnStep,mode,setMode,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
+ const {onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
+ const hadProfileRef=useRef(false);
+ useEffect(()=>{
+  if(!ready)return;
+  if(!data.profile && hadProfileRef.current && !sessionUser)setOnStep(0);
+  hadProfileRef.current=!!data.profile;
+ },[ready,data.profile,sessionUser,setOnStep]);
  const {registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister}=useCigaretteRegistration(setData);
- const {storageRef,loadedDataRef}=useLocalSession({sessionUser,data,setData,ready,setReady,setLoadError,showMessage});
+ const {storageRef,loadedDataRef,sessionReady}=useLocalSession({sessionUser,data,setData,ready,setReady,setLoadError,showMessage});
  const {accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,inspectCloudData,requestGuestReset,requestGuestMigration}=useAccountFlow({sessionUser,verifyCurrentUid,data,setData,storageRef,loadedDataRef,setTab,showMessage,ask});
  const dataRef=useRef(data);dataRef.current=data;
- const {syncStatus,retrySync}=useCloudSync({data,setData,dataRef,ready,sessionUser,migrationBusy,cloudPreviewBusy,verifyCurrentUid});
+ const {syncStatus,retrySync}=useCloudSync({data,setData,dataRef,ready:sessionReady,sessionUser,migrationBusy,cloudPreviewBusy,verifyCurrentUid});
 
   const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
  
- const {remove,go,changeProfile,period,setPeriod}=useSessionActions({setData,ask,setTab});
+ const {remove,go,changeProfile,changeDailyTarget,period,setPeriod}=useSessionActions({setData,ask,setTab});
 
- return {data,setData,ready,loadError,tab,clock,dialog,setDialog,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,retrySync,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,period,setPeriod};
+ return {data,setData,ready:sessionReady,loadError,tab,clock,dialog,setDialog,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,retrySync,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,changeDailyTarget,period,setPeriod};
 }

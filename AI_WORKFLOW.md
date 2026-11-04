@@ -1,6 +1,6 @@
 # AI_WORKFLOW.md – obligatoriskt arbetsflöde för Smoke Less
 
-Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Kontrollera också aktuell fasplan, PR-beskrivning och senaste CI-status. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.
+Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Läs också `docs/MASTER_ROADMAP.md`, aktuell fasplan, PR-beskrivning och senaste CI-status. Masterplanen anger fasernas ordning och omfattning; den aktiva PR:ns fasta checklista anger verifierad framdrift. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.
 
 ## En fas = en pull request
 - Arbeta **endast i den aktiva fasens befintliga branch och PR**. Skapa inte en ny PR för varje uppgift, fix eller commit.
@@ -27,7 +27,13 @@ Efter varje commit, visa en uppdaterad **checklista över fasens samtliga huvudp
 
 `███████░░ 7/9 (78 %)`
 
-Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/röd) och vad som ska ske när användaren bekräftar testerna. Räkna endast färdiga huvudpunkter; underuppgifter höjer inte procenten. Om en punkt ännu inte är verifierad, lämna den omarkerad.
+Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/röd) och vad som ska ske när användaren bekräftar testerna. Visa TVÅ separata framstegsmått: färdiga huvudpunkter/alla huvudpunkter och verifierade delpunkter/alla delpunkter, båda med procent. Visa varje huvudpunkt med egen delpunktsräknare (t.ex. 2/4) och underliggande fasta delpunkter med `[x]`/`[ ]` i varje rapport. Räkna bara verifierade delpunkter, aldrig enbart kod som ännu inte testats. Huvudpunkten får `[x]` först när alla dess delpunkter är verifierade. Ändra inte fasta delpunkter eller nämnare utan uttryckligt beslut; undvik att skapa nya delpunkter för att förlänga fasen. Om en punkt ännu inte är verifierad, lämna den omarkerad.
+
+## Detaljerad checklista och beständig AI-plan
+- Varje aktiv fas ska ha en fast numrerad underchecklista i `docs/MASTER_ROADMAP.md`, med 3–5 konkreta, testbara delpunkter per huvudpunkt. Fas 8 har exakt fyra per huvudpunkt (32 totalt).
+- Rapportera efter varje commit **samtliga huvudpunkter med delpunktsstatus**, två framstegsmått och vad som återstår i den aktiva huvudpunkten. Redovisa verifierad status; nya commits med väntande CI räknas inte automatiskt som verifierade.
+- Synka checklistan mellan masterplan, PR-beskrivning och chatten. Vid skillnad: kontrollera faktisk implementation, tester och senaste CI innan status justeras. Ingen falsk avprickning.
+- Kommande faser ska få en fast underchecklista när fasens PR öppnas, innan implementationen börjar.
 
 ## Fasavslut, merge och nästa fas
 - När **alla huvudpunkter är genomförda och verifierade**, slutligt acceptanstest är godkänt och senaste commit har gröna obligatoriska kontroller: **merga fasens befintliga PR till `main`**. Merga inte innan dessa villkor är uppfyllda.
@@ -40,8 +46,7 @@ Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/r
 - Fortsätt sedan till **nästa dokumenterade fas** och skapa **en** PR för den fasen. Om ingen fas finns: planera och föreslå nästa meningsfulla uppgraderingsfas för appen, med prioriterade funktioner och testbara acceptanskriterier, innan implementationen börjar.
 - Behåll användarens fokus: en fungerande, vältestad Android-app och tydlig framdrift, inte många små PR:er.
 
-## Nuvarande fas vid införandet
-- Fas: **7.0 – Betatestning, kvalitetssäkring och lanseringsförberedelser**
-- Aktiv PR: **https://github.com/Wolfyslayer/Smoke-less-app/pull/138**
-- PR-beskrivningens huvudchecklista är auktoritativ. Den kan ändras; läs den på nytt inför nästa steg.
-- Pågående arbete får **inte** flyttas till en ny PR för denna instruktion.
+## Aktuell fas och historik
+- Aktuell fas och PR finns i `docs/MASTER_ROADMAP.md`. Verifiera alltid mot GitHub innan du arbetar.
+- Fas 7.0 avslutades i PR #138. Fas 8.0 pågår i PR #140.
+- Ändra roadmap-status när en fas verkligen mergats och verifierats, inte när enstaka commits skapats.
