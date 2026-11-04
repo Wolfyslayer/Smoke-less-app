@@ -24,6 +24,14 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
  }
  const frequentTrigger=[...triggerCounts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const helpfulStrategies=new Map<string,number>();
+ for(const craving of data.cravings){
+  const date=new Date(craving.at);
+  if(craving.helpful!==true||!craving.strategy?.trim()||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+  const strategy=craving.strategy.trim();
+  helpfulStrategies.set(strategy,(helpfulStrategies.get(strategy)??0)+1);
+ }
+ const bestStrategy=[...helpfulStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
  const encouragement=checkin?.complete&&checkin.smokeFree&&todayCount===0
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal
@@ -36,6 +44,13 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
  return <View style={styles.screen}>
   <Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8}}><View style={{flex:1}}><Text style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>
   <Card><Label>DAGENS UPPMUNTRAN</Label><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
+  {bestStrategy?<Card style={{gap:9}}>
+   <Label>DIN PERSONLIGA COACH</Label>
+   <Text accessibilityRole="header" style={styles.cardTitle}>Ett tips som du själv tyckt hjälpte</Text>
+   <Text style={styles.muted}>Du har markerat ”{bestStrategy[0]}” som hjälpsamt vid röksug {bestStrategy[1]} {bestStrategy[1]===1?'gång':'gånger'}. Du kan prova samma strategi igen om den passar situationen.</Text>
+   <Text style={styles.muted}>Tipset bygger bara på dina egna tidigare svar. Det är ingen förutsägelse eller medicinsk rekommendation.</Text>
+   <Pressable accessibilityRole="button" accessibilityHint="Öppnar SOS-stöd utan att ändra tidigare registreringar" onPress={onSOS} style={styles.recoveryLink}><Text style={styles.link}>Öppna SOS-stöd</Text></Pressable>
+  </Card>:null}
   {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text accessibilityRole="header" style={styles.cardTitle}>Du behöver inte börja om</Text>
