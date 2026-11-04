@@ -18,6 +18,8 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const artworkRef=useRef<Svg|null>(null);
  const [pngStatus,setPngStatus]=useState<'idle'|'rendering'|'ready'|'error'>('idle');
  const exportGenerationRef=useRef(0);
+ const latestCountsRef=useRef({todayCount,dailyGoal});
+ latestCountsRef.current={todayCount,dailyGoal};
  const exportCountsRef=useRef<{todayCount:number;dailyGoal:number}|null>(null);
  const pngPathRef=useRef<string|null>(null);
  const [sharingPng,setSharingPng]=useState(false);
@@ -40,14 +42,14 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
    if(!artworkRef.current){setPngStatus('error');return;}
    artworkRef.current.toDataURL((base64)=>{
     void (async()=>{
-    if(generation!==exportGenerationRef.current)return;
+    if(generation!==exportGenerationRef.current||latestCountsRef.current.todayCount!==todayCount||latestCountsRef.current.dailyGoal!==dailyGoal){if(generation===exportGenerationRef.current)setPngStatus('idle');return;}
     if(!base64){setPngStatus('error');return;}
     try{
      const directory=FileSystem.cacheDirectory;
      if(!directory)throw new Error('Cache unavailable');
      const path=directory+'smokeless-daily-progress-'+generation+'.png';
      await FileSystem.writeAsStringAsync(path,base64,{encoding:FileSystem.EncodingType.Base64});
-     if(generation!==exportGenerationRef.current)return;
+     if(generation!==exportGenerationRef.current||latestCountsRef.current.todayCount!==todayCount||latestCountsRef.current.dailyGoal!==dailyGoal){if(generation===exportGenerationRef.current)setPngStatus('idle');return;}
      pngPathRef.current=path;
      exportCountsRef.current={todayCount,dailyGoal};
      setPngStatus('ready');
