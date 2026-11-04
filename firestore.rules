@@ -30,11 +30,14 @@ service cloud.firestore {
         && (!('trigger' in d) || (d.trigger is string && d.trigger.size() <= 200));
     }
     function craving(d, cravingId) {
-      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','id','at','intensity','trigger'])
+      return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','id','at','intensity','trigger','startIntensity','strategy','helpful'])
         && metadata(d) && d.id == cravingId && d.id is string && d.id.size() <= 128
         && d.at is string && d.at.size() <= 40
         && d.intensity is int && d.intensity >= 1 && d.intensity <= 5
-        && d.trigger is string && d.trigger.size() <= 200;
+        && d.trigger is string && d.trigger.size() <= 200
+        && (!('startIntensity' in d) || (d.startIntensity is int && d.startIntensity >= 1 && d.startIntensity <= 5))
+        && (!('strategy' in d) || (d.strategy is string && d.strategy.size() > 0 && d.strategy.size() <= 200))
+        && (!('helpful' in d) || d.helpful is bool);
     }
     function checkin(d, day) {
       return d.keys().hasOnly(['schemaVersion','updatedAt','revision','deleted','date','complete','smokeFree'])

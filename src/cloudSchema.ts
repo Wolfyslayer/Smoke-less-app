@@ -24,8 +24,11 @@ export function isCloudEntry(v: unknown): v is Cigarette {
     (v.feeling === undefined || shortText(v.feeling)) && (v.trigger === undefined || shortText(v.trigger));
 }
 export function isCloudCraving(v: unknown): v is Craving {
-  return isObject(v) && keys(v,['id','at','intensity','trigger']) && id(v.id) && iso(v.at) &&
-    Number.isInteger(v.intensity) && (v.intensity as number) >= 1 && (v.intensity as number) <= 5 && shortText(v.trigger);
+  return isObject(v) && keys(v,['id','at','intensity','trigger','startIntensity','strategy','helpful']) && id(v.id) && iso(v.at) &&
+    Number.isInteger(v.intensity) && (v.intensity as number) >= 1 && (v.intensity as number) <= 5 && shortText(v.trigger) &&
+    (v.startIntensity === undefined || (Number.isInteger(v.startIntensity) && (v.startIntensity as number) >= 1 && (v.startIntensity as number) <= 5)) &&
+    (v.strategy === undefined || (shortText(v.strategy) && (v.strategy as string).length > 0)) &&
+    (v.helpful === undefined || typeof v.helpful === 'boolean');
 }
 export function isCloudCheckin(v: unknown): v is Checkin {
   return isObject(v) && keys(v,['date','complete','smokeFree']) && typeof v.date === 'string' &&
