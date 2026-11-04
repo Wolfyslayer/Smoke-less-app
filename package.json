@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "build:web": "expo export --platform web",
-    "test": "node --test tests/domain.test.cjs tests/guestMerge.test.cjs",
+    "test": "node --test tests/domain.test.cjs tests/guestMerge.test.cjs tests/sosCraving.test.cjs",
     "test:firestore": "node --test tests/firestore.rules.test.cjs",
     "test:storage": "node --test tests/localSessionStorage.test.cjs",
     "test:migration": "node --test tests/accountMigration.test.cjs"
