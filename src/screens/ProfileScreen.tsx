@@ -1,15 +1,17 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {Pressable,Share,StyleSheet,Text,View} from 'react-native';
 import {UserRound,ChevronRight,Target,History,Leaf,Settings,Heart,Cloud,Share2} from 'lucide-react-native';
 import {C} from '../theme';
 import {AppCard} from '../components/ui';
+import {DailyProgressShareCard} from '../components/DailyProgressShareCard';
 import type {Profile} from '../domain';
 
 type Destination='account'|'backup'|'plan'|'history'|'benefits'|'settings'|'sos';
-type Props={profile:Profile;accountEmail:string|null;onNavigate:(to:Destination)=>void};
+type Props={profile:Profile;accountEmail:string|null;todayCount:number;dailyGoal:number;onNavigate:(to:Destination)=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
-export function ProfileScreen({profile,accountEmail,onNavigate}:Props){
+export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavigate}:Props){
+ const [showSharePreview,setShowSharePreview]=useState(false);
  const loggedIn=accountEmail!==null;
  const shareSupport=async()=>{try{await Share.share({message:'Ett litet steg i taget kan göra skillnad. Jag hejar på dig! 💚'});}catch{/* Delningsappen kan avbrytas eller saknas. Ingen personlig data skickas av appen. */}};
  return <View style={styles.screen}>
@@ -23,6 +25,8 @@ export function ProfileScreen({profile,accountEmail,onNavigate}:Props){
   {([{label:'Min plan',icon:Target,to:'plan',detail:'Mål och framsteg'},{label:'Min logg',icon:History,to:'history',detail:'Din registrerade historik'},{label:'Hälsa och besparing',icon:Leaf,to:'benefits',detail:'Se vad du vinner'},{label:'Konto och säkerhet',icon:UserRound,to:'account',detail:loggedIn?'Inloggning, e-post och lösenord':'Logga in eller skapa konto'},{label:'Synkronisering',icon:Cloud,to:'backup',detail:loggedIn?'Kontrollera kontots molnsynk':'Skapa konto för att synka mellan enheter'},{label:'Inställningar',icon:Settings,to:'settings',detail:'Anpassa appen'},{label:'Stöd vid röksug',icon:Heart,to:'sos',detail:'Hjälp i stunden'}] as const).map(item=><Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} accessibilityHint={item.detail} onPress={()=>onNavigate(item.to)} style={styles.row}><View style={styles.actionIcon}><item.icon size={21} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text style={styles.cardTitle}>{item.label}</Text><Text style={styles.muted}>{item.detail}</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>)}
   <Card style={{gap:12}}>
    <View style={styles.inline}><Share2 size={21} color={C.lime}/><Text accessibilityRole="header" style={styles.cardTitle}>Dela ett stödmeddelande</Text></View>
+   <Pressable accessibilityRole="button" accessibilityLabel={showSharePreview?'Dölj dagens framstegskort':'Förhandsgranska dagens framstegskort'} accessibilityState={{expanded:showSharePreview}} onPress={()=>setShowSharePreview(v=>!v)} style={[styles.row,{minHeight:56}]}><Text style={styles.cardTitle}>{showSharePreview?'Dölj förhandsgranskning':'Förhandsgranska dagens framsteg'}</Text><ChevronRight size={19} color={C.dim}/></Pressable>
+   {showSharePreview?<><DailyProgressShareCard todayCount={todayCount} dailyGoal={dailyGoal}/><Text style={styles.muted}>Förhandsgranskningen stannar på din telefon. Bildexport är ännu inte aktiverad. Knappen nedan delar tills vidare endast ett allmänt stödmeddelande.</Text></>:null}
    <Text style={styles.muted}>Du kan skicka en uppmuntran till någon du väljer. Texten innehåller inga uppgifter om ditt konto, din plan eller dina registreringar.</Text>
    <Text style={styles.muted}>Ingenting delas automatiskt. Du kan avbryta i telefonens delningsdialog, och du väljer själv mottagare. Den app du väljer kan ha egna integritetsvillkor.</Text>
    <Pressable accessibilityRole="button" accessibilityLabel="Dela ett stödmeddelande" accessibilityHint="Öppnar telefonens delningsdialog där du själv väljer mottagare eller avbryter. Inga personliga registreringar följer med." onPress={()=>void shareSupport()} style={[styles.row,{minHeight:56}]}><View style={styles.actionIcon}><Share2 size={21} color={C.lime}/></View><View style={{flex:1}}><Text style={styles.cardTitle}>Dela en uppmuntran</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>
