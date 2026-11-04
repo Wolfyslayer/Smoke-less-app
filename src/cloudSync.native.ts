@@ -47,6 +47,10 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
     const types=[...new Set(preview.conflicts.map(conflict=>conflict.collection))].join(', ');
     throw new Error('Lokal historik och molnhistorik skiljer sig ('+types+'). Automatisk synkronisering pausad för att undvika överskrivning.');
   }
+  const writeStage=async <T>(stage:string,operation:()=>Promise<T>):Promise<T>=>{
+    try{return await operation();}
+    catch(error){const message=error instanceof Error?error.message:String(error);throw new Error('Firestore / '+stage+': '+message);}
+  };
   const db=firestore();
   const base=db.doc(userDocumentPath(uid));
   const jobs: {path:string;payload:Record<string,unknown>}[] = [];
@@ -61,7 +65,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   if (canUpdatePlan && localPlan && remotePlan) {
     assertUser();
     const planDoc=base.collection('settings').doc('plan');
-    await db.runTransaction(async transaction=>{
+    await writeStage('uppdatera plan',()=>db.runTransaction(async transaction=>{
       const current=await transaction.get(planDoc);
       if (!current.exists()) throw new Error('Planen ändrades i molnet. Försök igen.');
       const raw=current.data() as Record<string,unknown>;
@@ -70,12 +74,12 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
       if (fingerprint(payload as Profile)!==known) throw new Error('Planen ändrades på en annan enhet. Ingen information har skrivits över.');
       assertUser();
       transaction.set(planDoc,{...Object.fromEntries(Object.entries(localPlan).filter(([,value])=>value!==undefined)),schemaVersion:1,revision:(revision as number)+1,deleted:false,updatedAt:firestore.FieldValue.serverTimestamp()});
-    });
+    }));
   }
   for (const job of jobs) {
     assertUser();
     const targetDoc=base.collection(job.path.split('/')[0]).doc(job.path.split('/')[1]);
-    await db.runTransaction(async transaction => {
+    await writeStage('skapa '+job.path,()=>db.runTransaction(async transaction => {
       const existing = await transaction.get(targetDoc);
       if (existing.exists()) {
         // A concurrent writer appeared; do not overwrite it.
@@ -89,7 +93,7 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
         deleted:false,
         updatedAt:firestore.FieldValue.serverTimestamp(),
       });
-    });
+    }));
   }
   assertUser();
   const finalPlan=canUpdatePlan?localPlan:preview.merged.profile;
