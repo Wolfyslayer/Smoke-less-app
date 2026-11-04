@@ -7,7 +7,7 @@ export function buildDailyShareCard(input:DailyShareProgress):DailyShareCard{
  const dailyGoal=safeNonNegativeInteger(input.dailyGoal);
  const progressPercent=dailyGoal>0?Math.min(100,Math.round(todayCount/dailyGoal*100)):0;
  const message=dailyGoal===0
-  ?'Varje steg räknas. Fortsätt i din egen takt!'
+  ?'Varje cigarettfri stund räknas. Fortsätt i din egen takt!'
   :todayCount<dailyGoal
    ?'Du ligger inom dagens gräns. Fortsätt i din egen takt.'
    :todayCount===dailyGoal

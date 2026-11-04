@@ -9,6 +9,7 @@ export function DailyProgressShareCard({todayCount,dailyGoal}:DailyShareProgress
  const card=buildDailyShareCard({todayCount,dailyGoal});
  const radius=56,circumference=2*Math.PI*radius;
  const percentage=card.progressPercent;
+ const hasLimit=card.dailyGoal>0;
  return <View accessible accessibilityLabel={`Dagens framsteg. ${card.todayCount} av ${card.dailyGoal} cigaretter. ${card.message}`} style={styles.card}>
   <Text style={styles.brand}>SMOKE LESS</Text>
   <Text style={styles.title}>Dagens framsteg</Text>
@@ -19,13 +20,13 @@ export function DailyProgressShareCard({todayCount,dailyGoal}:DailyShareProgress
    </Svg>
    <View style={styles.center}><Text style={styles.count}>{card.todayCount}/{card.dailyGoal}</Text><Text style={styles.caption}>cigaretter idag</Text></View>
   </View>
-  <Text style={styles.limit}>{percentage}% av dagens gräns använd</Text>
+  <Text style={styles.limit}>{hasLimit?`${percentage}% av dagens gräns använd`:'Dagens mål är 0 cigaretter'}</Text>
   <Text style={styles.message}>{card.message}</Text>
   <Text style={styles.footer}>Små steg räknas 💚</Text>
  </View>;
 }
 const styles=StyleSheet.create({
- card:{width:320,maxWidth:'100%',alignSelf:'center',alignItems:'center',backgroundColor:'#17251B',borderColor:'#435C36',borderWidth:1,borderRadius:26,paddingHorizontal:22,paddingVertical:26,gap:12},
+ card:{width:'100%',maxWidth:320,alignSelf:'center',alignItems:'center',backgroundColor:'#17251B',borderColor:'#435C36',borderWidth:1,borderRadius:26,paddingHorizontal:22,paddingVertical:26,gap:12},
  brand:{color:C.lime,fontSize:13,fontWeight:'900',letterSpacing:2},
  title:{color:C.white,fontSize:24,fontWeight:'900',textAlign:'center'},
  ring:{width:148,height:148,justifyContent:'center',alignItems:'center',marginTop:6},

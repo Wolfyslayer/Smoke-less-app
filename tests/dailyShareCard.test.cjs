@@ -21,6 +21,7 @@ test('at and above limit: percentage capped but actual count preserved',()=>{
 });
 test('zero goal and malformed inputs are safe',()=>{
  assert.equal(buildDailyShareCard({todayCount:0,dailyGoal:0}).progressPercent,0);
+ assert.match(buildDailyShareCard({todayCount:0,dailyGoal:0}).message,/cigarettfri stund/);
  const card=buildDailyShareCard({todayCount:-4,dailyGoal:NaN});
  assert.equal(card.todayCount,0);assert.equal(card.dailyGoal,0);assert.equal(card.progressPercent,0);
 });
