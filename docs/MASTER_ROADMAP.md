@@ -33,8 +33,8 @@
 | 11.0 | Motivation, milstolpar, ekonomi och hälsa | Mergad; bred manuell QA i fas 17 | #151 |
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
-| 14.0 | Smart coach och personligt stöd | Aktiv – befintlig coach inventerad | #154 |
-| 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
+| 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
+| 15.0 | Frivilligt socialt stöd | Aktiv – säker delningsmodell definierad | #155 |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
@@ -222,3 +222,21 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - `src/screens/PlanScreen.tsx`: stöd för att ändra takt, fortsätta eller starta om en nedtrappning utan att förlora historik.
 - `src/screens/BenefitsScreen.tsx`: allmän kunskap och svenska stödresurser, inte personliga behandlingsråd.
 - Nästa steg: samla begränsad, transparent lokal coachlogik som kan använda tidigare självrapporterade röksug och hjälpsamma strategier utan att göra medicinska förutsägelser. Behåll generiska råd när data saknas och undvik att upprepa känslig information i notiser.
+
+### Fas 15.0 – inventering och integritetsgränser
+
+- `src/screens/ProfileScreen.tsx` visar kontostatus och lokal resa; inga offentliga profiler eller sociala flöden finns i den granskade skärmen.
+- `src/screens/SettingsScreen.tsx` hanterar lokala påminnelser och planinställningar, inte social delning.
+- Befintlig molnsynk och konto är för personlig data, inte ett socialt nätverk. Ny delning får aldrig utgå från att inloggning innebär samtycke till publicering.
+- Välj en kontofri, frivillig funktion först: användaren kan själv skapa en neutral stödtext och uttryckligen dela den via telefonens delningsfunktion, utan automatiskt infogade rökregistreringar, mål, datum, kontoidentifierare eller historik.
+- Undvik serverlagring, kontakter, nya molnregler, sociala flöden och pushmeddelanden till tredje part i denna fas. Granska text, avbrytbarhet, tillgänglighet och regressionstester innan merge.
+- En äldre profilgenväg nämner fortfarande JSON-kopia; detta är en separat konsekvens av tidigare beslut att inte använda JSON-backup och bör rättas i lämpligt UI-steg.
+
+### Fas 15.0 – beslut: säker och frivillig delning
+
+1. **Ingen automatisk delning.** Endast ett uttryckligt tryck på knappen `Dela ett stödmeddelande` får öppna telefonens vanliga delningsdialog. Ingen kontakt eller mottagare väljs av appen.
+2. **Förvald text utan persondata.** Texten ska vara generell och positiv, utan namn, e-post, rökvanor, antal cigaretter, datum, mål, SOS-historik eller andra användaruppgifter. Texten får granskas i systemets delningsdialog innan mottagaren väljs.
+3. **Kontofri och frivillig.** Funktionen ska vara tillgänglig i gästläge, utan Firebase-inloggning, kontakter-behörighet eller ny backend. Avbrytande får inte ändra appens data.
+4. **Ingen spårning.** Inga analytics-händelser, delningsloggar, nya push-notiser eller externa AI-tjänster. Appen ska inte kunna se vem som tar emot meddelandet.
+5. **Tydlig avsändare och gräns.** Gränssnittet ska förklara att användaren väljer mottagare och att meddelandet lämnar appen först efter användarens eget val. Delningsappen kan ha egna integritetsvillkor.
+6. **Testkrav.** Automatiska tester ska säkerställa att den förvalda texten är statisk, att den inte interpolerar användardata och att funktionen inte kräver konto. Androids delningsdialog testas manuellt i fas 17.
