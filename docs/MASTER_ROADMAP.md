@@ -33,8 +33,8 @@
 | 11.0 | Motivation, milstolpar, ekonomi och hälsa | Mergad; bred manuell QA i fas 17 | #151 |
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
-| 14.0 | Smart coach och personligt stöd | Aktiv – befintlig coach inventerad | #154 |
-| 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
+| 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
+| 15.0 | Frivilligt socialt stöd | Aktiv – integritetsanalys först | #155 |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
