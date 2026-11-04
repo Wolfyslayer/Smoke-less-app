@@ -12,6 +12,14 @@ function Heading({children}:{children:React.ReactNode}){return <Text style={styl
 function Stat({label,value}:{label:string;value:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
 function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
+ const strategyOutcomes=new Map<string,{yes:number;no:number}>();
+ for(const craving of data.cravings){
+  if(!craving.strategy||typeof craving.helpful!=='boolean'||new Date(craving.at).getTime()>clock)continue;
+  const result=strategyOutcomes.get(craving.strategy)??{yes:0,no:0};
+  if(craving.helpful)result.yes++;else result.no++;
+  strategyOutcomes.set(craving.strategy,result);
+ }
+ const effectiveStrategies=[...strategyOutcomes.entries()].filter(([,counts])=>counts.yes>0).sort((a,b)=>b[1].yes-a[1].yes||a[0].localeCompare(b[0])).slice(0,3);
  const todayKey=dayKey(new Date(clock));
  const startKey=period===0?null:dayKey(new Date(periodStart(clock,period)));
  const periodEntries=data.entries.filter(e=>new Date(e.at).getTime()<=clock&&(period===0||new Date(e.at).getTime()>=periodStart(clock,period)));
@@ -45,6 +53,10 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text>
    {milestones.map(m=><View key={m.days} style={styles.sectionRow}><Text style={styles.cardTitle}>{m.days} {m.days===1?'dag':'dagar'} i följd</Text><Text style={{color:m.reached?C.lime:C.dim,fontWeight:'700'}}>{m.reached?'Uppnått':'Inte ännu'}</Text></View>)}
    <Text style={styles.muted}>Att minska eller sluta röka kan ge hälsofördelar, men hur snabbt de märks varierar. Följ gärna dina framsteg utan att jämföra din kropp med en fast tidslinje.</Text>
+  </Card>
+  <Heading>Strategier som hjälpt dig</Heading>
+  <Card style={{gap:12}}><Text style={styles.muted}>Bygger enbart på dina egna svar när du markerat att en strategi hjälpte. Det är ingen garanti för att den fungerar varje gång.</Text>
+   {effectiveStrategies.length===0?<Text style={styles.muted}>När du provar en strategi under SOS kan du ange om den hjälpte. Dina egna favoriter visas här.</Text>:effectiveStrategies.map(([name,counts])=><View key={name} style={styles.sectionRow}><Text style={[styles.cardTitle,{flex:1}]}>{name}</Text><Text style={styles.muted}>{counts.yes} hjälpte{counts.no>0?` · ${counts.no} hjälpte inte`:''}</Text></View>)}
   </Card>
   <Heading>Förstå dina vanor</Heading>
   <Card style={{gap:14}}><Label>RÖKSUG · SENASTE 30 DAGARNA</Label><Text style={styles.statValue}>{recentCravingsCount} <Text style={{fontSize:14,color:C.muted}}>registrerade tillfällen</Text></Text>
