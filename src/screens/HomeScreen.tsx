@@ -38,14 +38,14 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   <Card><Label>DAGENS UPPMUNTRAN</Label><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
-   <Text style={styles.cardTitle}>Du behöver inte börja om</Text>
+   <Text accessibilityRole="header" style={styles.cardTitle}>Du behöver inte börja om</Text>
    <Text style={styles.muted}>Du har redan gjort {previousDays} tidigare dagliga avstämningar. Din historik och dina framsteg finns kvar. Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
-   {frequentTrigger?<View style={{gap:6}}><Text style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS.</Text></View>:null}
-   <Text style={styles.cardTitle}>Välj ett nästa steg</Text>
+   {frequentTrigger?<View style={{gap:6}}><Text accessibilityRole="header" style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS.</Text></View>:null}
+   <Text accessibilityRole="header" style={styles.cardTitle}>Välj ett nästa steg</Text>
    <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
    <Pressable accessibilityRole="button" accessibilityHint="Öppnar stöd vid röksug utan att ändra din plan eller historik" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>
-   <Pressable accessibilityRole="button" accessibilityHint="Visar tidigare registreringar utan att ändra dem" onPress={onHistory} style={{paddingVertical:8}}><Text style={styles.link}>Se mina tidigare framsteg</Text></Pressable>
-   <Pressable accessibilityRole="button" onPress={onPlan} style={{paddingVertical:8}}><Text style={styles.link}>Se eller anpassa min plan</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityHint="Visar tidigare registreringar utan att ändra dem" onPress={onHistory} style={styles.recoveryLink}><Text style={styles.link}>Se mina tidigare framsteg</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityHint="Öppnar planen där du kan fortsätta eller ändra takten utan att radera historik" onPress={onPlan} style={styles.recoveryLink}><Text style={styles.link}>Se eller anpassa min plan</Text></Pressable>
   </Card>:null}
   <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
   <Card><View style={styles.inline}><Clock color={C.lime} size={22}/><View style={{flex:1,gap:5}}><Label>TID SEDAN SENASTE CIGARETTEN</Label><Text style={styles.statValue}>{duration}</Text></View></View></Card>
@@ -63,5 +63,6 @@ const styles=StyleSheet.create({
  tile:{width:'46%',flexGrow:1,minHeight:105,borderRadius:18,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:15,gap:12},
  tileIcon:{width:39,height:39,borderRadius:12,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},tileText:{color:C.white,fontWeight:'800',fontSize:14},
  bars:{height:120,flexDirection:'row',alignItems:'flex-end',gap:8},ringText:{color:C.white,fontSize:19,fontWeight:'800'},
+ recoveryLink:{minHeight:48,justifyContent:"center",paddingVertical:10},
  button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14},buttonText:{fontWeight:'800',color:C.background,fontSize:14},
 });
