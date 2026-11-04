@@ -101,3 +101,25 @@ export async function syncCloudData(uid: string, local: Data): Promise<Data> {
   else observedPlans.delete(uid);
   return {...preview.merged,profile:finalPlan};
 }
+
+/** Subscribe to server changes in all four account collections.
+ * Listener callbacks only request a safe re-sync; they never overwrite local data.
+ */
+export function subscribeCloudChanges(uid:string,onChange:()=>void,onError:(error:Error)=>void):()=>void {
+ if(getAuth().currentUser?.uid!==uid)return ()=>{};
+ const base=firestore().doc(userDocumentPath(uid));
+ const stops:(()=>void)[]=[];
+ let initial=4;
+ const changed=()=>{if(initial>0){initial--;return;}if(getAuth().currentUser?.uid===uid)onChange();};
+ const failed=(error:Error)=>{if(getAuth().currentUser?.uid===uid)onError(error);};
+ try{
+  stops.push(base.collection('settings').doc('plan').onSnapshot(changed,failed));
+  for(const name of ['entries','cravings','checkins']){
+   stops.push(base.collection(name).onSnapshot(changed,failed));
+  }
+ }catch(error){
+  stops.forEach(stop=>stop());
+  failed(error instanceof Error?error:new Error(String(error)));
+ }
+ return ()=>stops.forEach(stop=>stop());
+}
