@@ -17,6 +17,14 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
  const checkin=data.checkins.find(x=>x.date===today);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
  const previousDays=new Set(data.checkins.filter(x=>x.date<today&&x.complete).map(x=>x.date)).size;
+ const triggerCounts=new Map<string,number>();
+ for(const craving of data.cravings){
+  const date=new Date(craving.at);
+  if(!craving.trigger||!Number.isFinite(date.getTime())||date.toLocaleDateString('sv-SE')==='')continue;
+  if(date.getTime()>Date.now())continue;
+  triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
+ }
+ const frequentTrigger=[...triggerCounts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
  const encouragement=checkin?.complete&&checkin.smokeFree
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal
@@ -33,6 +41,7 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text style={styles.cardTitle}>Du behöver inte börja om</Text>
    <Text style={styles.muted}>Du har redan gjort {previousDays} tidigare dagliga avstämningar. Din historik och dina framsteg finns kvar. Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
+   {frequentTrigger?<View style={{gap:6}}><Text style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS.</Text></View>:null}
    <Text style={styles.cardTitle}>Välj ett nästa steg</Text>
    <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
    <Pressable accessibilityRole="button" accessibilityHint="Öppnar stöd vid röksug utan att ändra din plan eller historik" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>
