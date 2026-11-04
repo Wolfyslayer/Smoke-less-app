@@ -36,6 +36,9 @@ test('preview is opt-in and card does not access account data',()=>{
  assert.match(profile,/showSharePreview\?<><View[^>]*><DailyProgressShareArtwork/);
  assert.match(profile,/setShowSharePreview\(v=>!v\)/);
  assert.match(profile,/pngPathRef\.current=null/);
+ assert.match(profile,/generation!==exportGenerationRef\.current/);
+ assert.match(profile,/exportCountsRef\.current\?\.todayCount!==todayCount/);
+ assert.match(profile,/exportCountsRef\.current\?\.dailyGoal!==dailyGoal/);
  assert.match(profile,/setShareError\(false\)/);
  assert.match(profile,/artworkRef\.current\.toDataURL\(/);
  assert.match(profile,/onPress=\{renderPng\}/);
