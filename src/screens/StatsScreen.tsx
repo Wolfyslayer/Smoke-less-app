@@ -46,7 +46,9 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const cursor=new Date(clock);
  cursor.setHours(12,0,0,0);
  while(confirmedKeys.has(dayKey(cursor))){confirmedStreak++;cursor.setDate(cursor.getDate()-1)}
- const milestones=[1,3,7,14,30].map(days=>({days,reached:confirmedStreak>=days}));
+ const milestoneDays=[1,3,7,14,30];
+ const milestones=milestoneDays.map(days=>({days,reached:confirmedStreak>=days}));
+ const nextMilestone=milestoneDays.find(days=>days>confirmedStreak);
  const totalSavings=savings(data,new Date(clock));
  const previousSavings=period===0?0:savings(data,new Date(periodStart(clock,period)-1));
  const selectedSavings=Math.max(0,totalSavings-previousSavings);
@@ -60,7 +62,7 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <Text style={styles.muted}>{observedDays===0?"Ingen planhistorik ännu. Statistik visas när du har startat en plan.":`Genomsnittet bygger på ${entriesDuringPlan.length} registreringar under ${observedDays} kalenderdagar sedan planens ursprungliga start inom vald period. Tidigare registreringar bevaras men räknas inte in i planens genomsnitt. Dagar utan registrering ingår men bevisar inte rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.`}</Text>
   <Card style={{gap:10}}><Heading>Så räknas din besparing</Heading>{data.profile?<><Text style={styles.muted}>Din angivna startnivå: {data.profile.baseline} cigaretter per dag.</Text><Text style={styles.muted}>Ditt angivna paketpris: {fmt(data.profile.packPrice)} kr för {data.profile.packSize} cigaretter (cirka {(data.profile.packPrice/data.profile.packSize).toLocaleString("sv-SE",{maximumFractionDigits:2})} kr per cigarett).</Text><Text style={styles.muted}>Uppskattningen jämför startnivån med registrerade cigaretter sedan planens ursprungliga start. Den är inte ett kvitto på faktiska inköp eller pengar på kontot.</Text></>:<Text style={styles.muted}>Starta en plan och ange din tidigare förbrukning samt paketpris för att se en uppskattning.</Text>}<Text style={styles.muted}>Periodens besparing är skillnaden mellan den totala uppskattningen vid periodens början och nu. Den kan vara 0 kr även om du registrerat färre cigaretter vissa dagar.</Text></Card>
   <Heading>Dina milstolpar</Heading>
-  <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text>
+  <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text><Text style={styles.cardTitle}>{nextMilestone===undefined?'Alla listade milstolpar är uppnådda!':confirmedStreak===0?'Första milstolpen: en bekräftat rökfri dag.':`${nextMilestone-confirmedStreak} ${nextMilestone-confirmedStreak===1?'dag':'dagar'} kvar till nästa milstolpe på ${nextMilestone} dagar.`}</Text><Text style={styles.muted}>En avbruten följd tar inte bort tidigare framsteg. Du kan fortsätta i din egen takt.</Text>
    {milestones.map(m=><View key={m.days} style={styles.sectionRow}><Text style={styles.cardTitle}>{m.days} {m.days===1?'dag':'dagar'} i följd</Text><Text style={{color:m.reached?C.lime:C.dim,fontWeight:'700'}}>{m.reached?'Uppnått':'Inte ännu'}</Text></View>)}
    <Text style={styles.muted}>Att minska eller sluta röka kan ge hälsofördelar, men hur snabbt de märks varierar. Följ gärna dina framsteg utan att jämföra din kropp med en fast tidslinje.</Text>
   </Card>
