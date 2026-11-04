@@ -6,6 +6,9 @@ export type Data={profile:Profile|null;entries:Cigarette[];cravings:Craving[];ch
 export const EMPTY:Data={profile:null,entries:[],cravings:[],checkins:[]};
 export const dayKey=(d:Date)=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 const calendarDay=(d:Date)=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
+/** Inclusive local calendar-day count, independent of daylight-saving time changes. */
+export function calendarDaysInclusive(start:Date,end:Date){if(!Number.isFinite(start.getTime())||!Number.isFinite(end.getTime()))return 0;return Math.max(0,calendarDay(end)-calendarDay(start)+1);}
+
 export function target(p:Profile,now=new Date()){if(p.mode==='quit')return 0;if(p.plannedQuitAt && Number.isFinite(Date.parse(p.plannedQuitAt))){const start=dayKey(new Date(p.startAt)),end=dayKey(new Date(p.plannedQuitAt)),today=dayKey(now);if(today>=end)return 0;if(p.dailyTargetOverride!==null)return p.dailyTargetOverride;const startCount=p.planStartTarget??p.baseline;if(today<=start)return startCount;const dayNumber=(key:string)=>Math.floor(Date.UTC(Number(key.slice(0,4)),Number(key.slice(5,7))-1,Number(key.slice(8,10)))/86400000);const total=Math.max(1,dayNumber(end)-dayNumber(start));const remaining=Math.max(0,total-(dayNumber(today)-dayNumber(start)));return Math.max(0,Math.ceil(startCount*remaining/total));}if(p.dailyTargetOverride!==null)return p.dailyTargetOverride;const days=Math.max(0,calendarDay(now)-calendarDay(new Date(p.startAt)));const interval=p.speed==='gentle'?7:p.speed==='fast'?2:4;return Math.max(0,(p.planStartTarget??p.baseline)-Math.floor(days/interval));}
 /** Summarize the next seven local calendar days without rewriting past targets. */
 export function weeklyPlanProgress(p:Profile,now:Date){

@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, resumeGradualReduction, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
+const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, resumeGradualReduction, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress, calendarDaysInclusive} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -765,4 +765,36 @@ test('onboarding fixed-date plan can switch to automatic gradual reduction',()=>
 test('resume gradual reduction leaves a plan without custom date unchanged',()=>{
  const p=profile();
  assert.equal(resumeGradualReduction(p,date('2026-10-09')),p);
+});
+
+
+test('statistics keep the original history anchor after a plan restart', () => {
+  const original = profile({baseline: 10, packPrice: 100, packSize: 20});
+  const entries = [
+    {id: 'before', at: '2026-09-30T12:00:00.000Z'},
+    {id: 'first', at: '2026-10-02T12:00:00.000Z'},
+    {id: 'second', at: '2026-10-09T12:00:00.000Z'},
+  ];
+  const changed = restartReductionPlan(original, date('2026-10-08'));
+  const data = {profile: changed, entries, cravings: [], checkins: []};
+  assert.equal(changed.originalStartAt, original.startAt);
+  assert.equal(data.entries.length, 3, 'old records are never removed');
+  assert.equal(savings(data, date('2026-10-09')), 440, 'pre-plan records do not reduce estimated savings');
+});
+
+test('statistics savings exclude future entries and do not go negative', () => {
+  const p = profile({baseline: 1, packPrice: 100, packSize: 20});
+  const data = {profile: p, entries: [
+    {id: 'today', at: '2026-10-01T13:00:00.000Z'},
+    {id: 'future', at: '2026-10-02T12:00:00.000Z'},
+  ], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-01')), 5, 'entries later on the same day must not count yet');
+  assert.equal(savings(data, date('2026-10-02')), 0, 'savings are floored at zero');
+});
+
+test('inclusive calendar-day statistics do not depend on elapsed hours across DST', () => {
+  assert.equal(calendarDaysInclusive(new Date(2026, 2, 28, 23), new Date(2026, 2, 30, 1)), 3);
+  assert.equal(calendarDaysInclusive(new Date(2026, 9, 24, 23), new Date(2026, 9, 26, 1)), 3);
+  assert.equal(calendarDaysInclusive(new Date(2026, 9, 26), new Date(2026, 9, 24)), 0);
+  assert.equal(calendarDaysInclusive(new Date('invalid'), new Date()), 0);
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {C} from '../theme';
-import {dayKey,savings,type Data} from '../domain';
+import {calendarDaysInclusive,dayKey,savings,type Data} from '../domain';
 
 type Props={data:Data;period:number;onPeriodChange:(days:number)=>void;clock:number;weekly:number[];todayCount:number;recentCravingsCount:number;cravingTriggers:[string,number][];cigaretteTriggers:[string,number][]};
 const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
@@ -10,7 +10,7 @@ function Card({children,style}:{children:React.ReactNode;style?:any}){return <Vi
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
 function Stat({label,value}:{label:string;value:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
-function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
+function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessible accessibilityRole="text" accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter${n===0?". Ingen registrering, inte bekräftat rökfri.":""}`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
  const strategyOutcomes=new Map<string,{yes:number;no:number}>();
  for(const craving of data.cravings){
@@ -19,6 +19,15 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   if(craving.helpful)result.yes++;else result.no++;
   strategyOutcomes.set(craving.strategy,result);
  }
+ const triggerOutcomes=new Map<string,{total:number;helped:number}>();
+ for(const craving of data.cravings){
+  const at=new Date(craving.at).getTime();
+  if(!craving.trigger||!Number.isFinite(at)||at>clock||typeof craving.helpful!=='boolean')continue;
+  const counts=triggerOutcomes.get(craving.trigger)??{total:0,helped:0};
+  counts.total++;if(craving.helpful)counts.helped++;
+  triggerOutcomes.set(craving.trigger,counts);
+ }
+ const triggerInsights=[...triggerOutcomes.entries()].sort((a,b)=>b[1].total-a[1].total||a[0].localeCompare(b[0])).slice(0,3);
  const effectiveStrategies=[...strategyOutcomes.entries()].filter(([,counts])=>counts.yes>0).sort((a,b)=>b[1].yes-a[1].yes||a[0].localeCompare(b[0])).slice(0,3);
  const todayKey=dayKey(new Date(clock));
  const startKey=period===0?null:dayKey(new Date(periodStart(clock,period)));
@@ -27,8 +36,9 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const firstDay=startDate?periodStart(startDate.getTime(),1):null;
  const todayStart=periodStart(clock,1);
  const effectiveStart=firstDay===null?null:period===0?firstDay:Math.max(firstDay,periodStart(clock,period));
- const observedDays=effectiveStart===null||effectiveStart>todayStart?0:Math.round((todayStart-effectiveStart)/86400000)+1;
- const averagePerDay=observedDays>0?periodEntries.length/observedDays:0;
+ const observedDays=effectiveStart===null||effectiveStart>todayStart?0:calendarDaysInclusive(new Date(effectiveStart),new Date(todayStart));
+ const entriesDuringPlan=effectiveStart===null||startDate===null?[]:periodEntries.filter(e=>new Date(e.at).getTime()>=Math.max(effectiveStart,startDate.getTime()));
+ const averagePerDay=observedDays>0?entriesDuringPlan.length/observedDays:0;
  const baseline=data.profile?.baseline??0;
  const reductionPercent=baseline>0&&observedDays>0?Math.round((1-averagePerDay/baseline)*100):null;
  const confirmedKeys=new Set(data.checkins.filter(c=>c.complete&&c.smokeFree&&c.date<=todayKey).map(c=>c.date));
@@ -43,11 +53,11 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const confirmedSmokeFreeDays=new Set(data.checkins.filter(c=>c.complete&&c.smokeFree&&c.date<=todayKey&&(startKey===null||c.date>=startKey)).map(c=>c.date)).size;
  return <View style={styles.screen}>
   <Card style={{padding:19,borderColor:'#425C29'}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{periodEntries.length}</Text><Text style={styles.muted}>{period===0?'Alla registreringar':'Kalenderdagar inklusive idag'}</Text></Card>
-  <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.background:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
-  <Heading>Cigaretter per dag</Heading><Card><Bars values={weekly} clock={clock}/><Text style={styles.muted}>De senaste sju kalenderdagarna, med antal registrerade cigaretter ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text></Card>
+  <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" accessibilityState={{selected:period===v}} accessibilityLabel={`Visa statistik för ${label.toLowerCase()}`} key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.background:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
+  <Heading>Cigaretter per dag</Heading><Card><Text style={styles.muted}>Diagrammet visar alltid de senaste sju dagarna, oavsett vald statistikperiod.</Text><Bars values={weekly} clock={clock}/><Text style={styles.muted}>De senaste sju kalenderdagarna, med antal registrerade cigaretter ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text></Card>
   <Text style={styles.muted}>Rökfria dagar räknas bara när dagen har bekräftats och ligger inom vald period. Dagar utan registrering räknas inte automatiskt som rökfria.</Text>
-  <View style={styles.grid}><Stat label="IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.length)}/><Stat label="SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
-  <Text style={styles.muted}>{observedDays===0?"Ingen planhistorik ännu. Statistik visas när du har startat en plan.":`Genomsnittet bygger på ${observedDays} kalenderdagar sedan planens start inom vald period. Dagar utan registrering ingår men bevisar inte rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.`}</Text>
+  <View style={styles.grid}><Stat label="REGISTRERAT IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="UPPSKATTAT SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="UPPSKATTAT SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.length)}/><Stat label="REGISTRERAT SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
+  <Text style={styles.muted}>{observedDays===0?"Ingen planhistorik ännu. Statistik visas när du har startat en plan.":`Genomsnittet bygger på ${entriesDuringPlan.length} registreringar under ${observedDays} kalenderdagar sedan planens ursprungliga start inom vald period. Tidigare registreringar bevaras men räknas inte in i planens genomsnitt. Dagar utan registrering ingår men bevisar inte rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.`}</Text>
   <Text style={styles.muted}>Besparingarna är uppskattningar utifrån din angivna startförbrukning och ditt paketpris. Periodens besparing är skillnaden mellan den totala besparingen vid periodens början och nu; den kan därför vara 0 kr även om du har registrerat färre cigaretter vissa dagar.</Text>
   <Heading>Dina milstolpar</Heading>
   <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text>
@@ -57,6 +67,10 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <Heading>Strategier som hjälpt dig</Heading>
   <Card style={{gap:12}}><Text style={styles.muted}>Bygger enbart på dina egna svar när du markerat att en strategi hjälpte. Det är ingen garanti för att den fungerar varje gång.</Text>
    {effectiveStrategies.length===0?<Text style={styles.muted}>När du provar en strategi under SOS kan du ange om den hjälpte. Dina egna favoriter visas här.</Text>:effectiveStrategies.map(([name,counts])=><View key={name} style={styles.sectionRow}><Text style={[styles.cardTitle,{flex:1}]}>{name}</Text><Text style={styles.muted}>{counts.yes} hjälpte{counts.no>0?` · ${counts.no} hjälpte inte`:''}</Text></View>)}
+  </Card>
+  <Heading>Vad hjälper vid olika röksug?</Heading>
+  <Card style={{gap:12}}><Text style={styles.muted}>Visar situationer där du har svarat om SOS-strategin hjälpte. Antalet svar är inte samma sak som alla registrerade röksug.</Text>
+   {triggerInsights.length===0?<Text style={styles.muted}>När du anger om en SOS-strategi hjälpte kan du se mönster för olika situationer här.</Text>:triggerInsights.map(([name,counts])=><View key={name} style={styles.sectionRow}><Text style={[styles.cardTitle,{flex:1}]}>{name}</Text><Text style={styles.muted}>{counts.helped} av {counts.total} hjälpte</Text></View>)}
   </Card>
   <Heading>Förstå dina vanor</Heading>
   <Card style={{gap:14}}><Label>RÖKSUG · SENASTE 30 DAGARNA</Label><Text style={styles.statValue}>{recentCravingsCount} <Text style={{fontSize:14,color:C.muted}}>registrerade tillfällen</Text></Text>
