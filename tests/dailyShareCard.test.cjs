@@ -45,6 +45,9 @@ test('preview is opt-in and card does not access account data',()=>{
  assert.match(profile,/Sharing\.shareAsync\(pngPathRef\.current/);
  assert.match(profile,/pngStatus!=='ready'/);
  assert.match(profile,/Sharing\.isAvailableAsync\(\)/);
+ assert.match(profile,/aspectRatio:340\/420/);
+ assert.match(profile,/accessibilityLiveRegion="polite"/);
+ assert.match(profile,/accessibilityState=\{\{disabled:sharingPng,busy:sharingPng\}\}/);
  const card=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
  assert.doesNotMatch(card,/accountEmail|profile\.|entries|cravings|Share\.share/);
 });

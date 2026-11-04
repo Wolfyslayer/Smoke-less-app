@@ -17,7 +17,7 @@ export const DailyProgressShareArtwork=forwardRef<Svg,DailyShareProgress>(functi
     ?['Du håller dagens gräns.','Varje steg framåt räknas!']
     :['En dag i taget. Du kan fortsätta','mot ditt mål utan att ge upp.'];
  const label=card.dailyGoal===0?'Dagens mål: 0 cigaretter':`${card.progressPercent}% av dagens gräns använd`;
- return <Svg ref={ref} width="100%" height={420} viewBox="0 0 340 420" accessible accessibilityLabel={`Dagens framsteg. ${card.todayCount} av ${card.dailyGoal} cigaretter. ${card.message}`}>
+ return <Svg ref={ref} width="100%" height="100%" viewBox="0 0 340 420" accessible accessibilityLabel={`Dagens framsteg. ${card.todayCount} av ${card.dailyGoal} cigaretter. ${card.message}`}>
   <Rect x="0" y="0" width="340" height="420" rx="26" fill="#17251B"/>
   <Rect x="1" y="1" width="338" height="418" rx="25" stroke="#435C36" strokeWidth="2" fill="none"/>
   <SvgText x="170" y="42" fill="#B8EB72" fontSize="14" fontWeight="bold" letterSpacing="2" textAnchor="middle">SMOKE LESS</SvgText>
