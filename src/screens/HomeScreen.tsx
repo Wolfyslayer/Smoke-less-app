@@ -32,6 +32,16 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   helpfulStrategies.set(strategy,(helpfulStrategies.get(strategy)??0)+1);
  }
  const bestStrategy=[...helpfulStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const triggerStrategies=new Map<string,number>();
+ if(frequentTrigger){
+  for(const craving of data.cravings){
+   const date=new Date(craving.at);
+   if(craving.trigger!==frequentTrigger[0]||craving.helpful!==true||!craving.strategy?.trim()||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+   const strategy=craving.strategy.trim();
+   triggerStrategies.set(strategy,(triggerStrategies.get(strategy)??0)+1);
+  }
+ }
+ const matchingStrategy=[...triggerStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
  const encouragement=checkin?.complete&&checkin.smokeFree&&todayCount===0
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal
@@ -55,7 +65,7 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text accessibilityRole="header" style={styles.cardTitle}>Du behöver inte börja om</Text>
    <Text style={styles.muted}>{previousDays>0?`Du har gjort ${previousDays} tidigare ${previousDays===1?"daglig avstämning":"dagliga avstämningar"}. Din historik finns kvar.`:"Även om du inte har några tidigare dagliga avstämningar kan du fortsätta härifrån."} Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
-   {frequentTrigger?<View style={{gap:6}}><Text accessibilityRole="header" style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS.</Text></View>:null}
+   {frequentTrigger?<View style={{gap:6}}><Text accessibilityRole="header" style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>{matchingStrategy?`Vid just den här situationen har du tidigare markerat ”${matchingStrategy[0]}” som hjälpsamt ${matchingStrategy[1]} ${matchingStrategy[1]===1?"gång":"gånger"}. Du kan prova det igen om det passar.`:"Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS."}</Text></View>:null}
    <Text accessibilityRole="header" style={styles.cardTitle}>Välj ett nästa steg</Text>
    <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
    <Pressable accessibilityRole="button" accessibilityHint="Öppnar stöd vid röksug utan att ändra din plan eller historik" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>
