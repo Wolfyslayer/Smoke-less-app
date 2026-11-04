@@ -32,7 +32,7 @@
 | 10.0 | Statistik och beteendeinsikter | Mergad; bred manuell QA i fas 17 | #150 |
 | 11.0 | Motivation, milstolpar, ekonomi och hälsa | Mergad; bred manuell QA i fas 17 | #151 |
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
-| 13.0 | Kunskapsbank och svenskt stöd | Aktiv – befintligt stöd inventerat | #153 |
+| 13.0 | Kunskapsbank och svenskt stöd | Slutgranskad – inväntar grön CI och merge | #153 |
 | 14.0 | Smart coach | Planerad | — |
 | 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
@@ -205,3 +205,12 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - `src/screens/SOSScreen.tsx` och `src/data/sosIdeas.ts`: korta, praktiska råd om röksug och vanor; dessa ska återanvändas utan att skapa motstridiga instruktioner.
 - `src/screens/HomeScreen.tsx` och `src/screens/PlanScreen.tsx`: stöd efter svåra dagar och anpassning av nedtrappning finns redan.
 - Nästa steg: skapa en tydlig svensk kunskapsdel med sakliga, källbelagda texter och separata, verifierade stödresurser. Undvik medicinska löften, kontokrav och extern spårning.
+
+### Fas 13.0 – slutgranskning
+
+- Kunskap om nikotinberoende, röksug, abstinens och svåra dagar finns i befintliga fördelar-skärmen.
+- 1177 och Sluta-röka-linjen nås via externa HTTPS-länkar; inga individuella registreringar ingår i länkarnas URL:er.
+- Informationen är allmän och innehåller en tydlig medicinsk begränsning; externa uppgifter och öppettider bör kontrolleras vid behov.
+- Inget konto, nya behörigheter eller nya native-paket krävs för att läsa innehållet.
+- Automatiska tester för innehåll, länkar, tillgänglighet och kontofri åtkomst finns i `tests/knowledgeContent.test.cjs`.
+- CI var grön för `e0124d7`; denna dokumentationsändring kräver ny grön CI före merge. Bred manuell Android-QA kvarstår i fas 17.
