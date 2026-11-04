@@ -3,7 +3,7 @@ import {Pressable,StyleSheet,Text,View} from 'react-native';
 import Svg,{Circle} from 'react-native-svg';
 import {PlusCircle,Heart,Target,History,Clock,ArrowUpRight} from 'lucide-react-native';
 import {C} from '../theme';
-import {savings,type Data} from '../domain';
+import {dayKey,savings,type Data} from '../domain';
 
 type Props={data:Data;goal:number;todayCount:number;duration:string;weekly:number[];today:string;onRegister:()=>void;onSOS:()=>void;onPlan:()=>void;onHistory:()=>void;onStats:()=>void;onConfirmToday:()=>void};
 const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
@@ -20,8 +20,7 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
  const triggerCounts=new Map<string,number>();
  for(const craving of data.cravings){
   const date=new Date(craving.at);
-  if(!craving.trigger||!Number.isFinite(date.getTime())||date.toLocaleDateString('sv-SE')==='')continue;
-  if(date.getTime()>Date.now())continue;
+  if(!craving.trigger||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
   triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
  }
  const frequentTrigger=[...triggerCounts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
