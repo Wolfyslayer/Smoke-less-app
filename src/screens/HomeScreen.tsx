@@ -32,7 +32,9 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text style={styles.cardTitle}>Du behöver inte börja om</Text>
-   <Text style={styles.muted}>Du har redan gjort {previousDays} tidigare dagliga avstämningar. Din historik och dina framsteg finns kvar. Välj ett litet nästa steg, utan krav på att dagen ska bli perfekt.</Text>
+   <Text style={styles.muted}>Du har redan gjort {previousDays} tidigare dagliga avstämningar. Din historik och dina framsteg finns kvar. Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
+   <Text style={styles.cardTitle}>Välj ett nästa steg</Text>
+   <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
    <Pressable accessibilityRole="button" onPress={onSOS} style={styles.button}><Text style={styles.buttonText}>Få stöd just nu</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={onPlan} style={{paddingVertical:8}}><Text style={styles.link}>Se eller anpassa min plan</Text></Pressable>
   </Card>:null}
