@@ -39,7 +39,7 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text accessibilityRole="header" style={styles.cardTitle}>Du behöver inte börja om</Text>
-   <Text style={styles.muted}>Du har redan gjort {previousDays} tidigare dagliga avstämningar. Din historik och dina framsteg finns kvar. Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
+   <Text style={styles.muted}>{previousDays>0?`Du har gjort ${previousDays} tidigare ${previousDays===1?"daglig avstämning":"dagliga avstämningar"}. Din historik finns kvar.`:"Även om du inte har några tidigare dagliga avstämningar kan du fortsätta härifrån."} Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
    {frequentTrigger?<View style={{gap:6}}><Text accessibilityRole="header" style={styles.cardTitle}>En situation att förbereda sig för</Text><Text style={styles.muted}>Du har oftast angett ”{frequentTrigger[0]}” som situation vid röksug ({frequentTrigger[1]} registrerade tillfällen totalt). Det är ett mönster i dina egna uppgifter, inte en förutsägelse.</Text><Text style={styles.muted}>Fundera på ett enkelt alternativ inför nästa gång situationen uppstår, till exempel en kort paus eller att öppna SOS.</Text></View>:null}
    <Text accessibilityRole="header" style={styles.cardTitle}>Välj ett nästa steg</Text>
    <Text style={styles.muted}>• Ta en kort paus och använd SOS om röksuget känns starkt.\n• Fortsätt registrera som vanligt, även om dagen blev annorlunda än planerat.\n• Se över planen om du behöver en lugnare takt.</Text>
