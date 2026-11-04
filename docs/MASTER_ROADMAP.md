@@ -35,7 +35,7 @@
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
 | 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
-| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – första gränssnittsinventering klar | #156 |
+| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – bilddelning tekniskt inventerad | #156 |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
@@ -256,3 +256,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Undvik överdrivna hälsopåståenden. Anpassa positiv text till faktiska framsteg; även en svårare dag ska få ett respektfullt, icke-skuldbeläggande budskap.
 - Utred lämplig befintlig bildgenerering/delning i Expo och om ett native-beroende eller Android-rebuild krävs innan implementation. Lägg till tester för valda fält och frivilligt samtycke. Androids systemdelning och bildformat testas manuellt i fas 17.
 - Denna ändring ersätter den tidigare planen om enbart neutral textdelning; tidigare fas 15 förblir avslutad, och vidareutvecklingen sker i fas 16.0.
+
+### Fas 16.0 – teknisk inventering av delningsbild
+
+- Befintliga beroenden inkluderar `react-native-svg` men **inte** `react-native-view-shot`, `expo-sharing` eller `expo-file-system` i `package.json`. `Share.share` i React Native delar text/URL, inte en renderad vy som PNG på Android.
+- För en verklig delbar bild bör ett separat, dataavgränsat React Native-kort renderas och fångas till PNG via `react-native-view-shot`; delning av bildfilen bör ske via `expo-sharing` med ett temporärt URI. Kontrollera versioner som stöds av installerad Expo SDK 58 före tillägg och låt CI avgöra TypeScript/Metro-kompatibilitet.
+- Nya native-moduler kräver **ny Android development build** efter installation. Den befintliga `Share.share`-funktionen får ligga kvar tills bilddelning fungerar, så att ingen trasig knapp släpps.
+- Delningskortets datamodell ska vara explicit begränsad till dagens antal och dagens mål, med kort neutral/positiv text baserad på dessa värden. Användaren ska kunna förhandsgranska, godkänna och avbryta. Ingen skärmbild av hela skärmen och inga namn, e-postadresser eller historik.
+- Testa rena formatteringsfunktioner med gränsfall (0, över målet, ogiltiga mål), avbrytande, samt att endast godkända fält används i bildkortet. Verifiera bildexport och Android-delning manuellt i fas 17.
