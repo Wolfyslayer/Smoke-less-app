@@ -37,7 +37,7 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const todayStart=periodStart(clock,1);
  const effectiveStart=firstDay===null?null:period===0?firstDay:Math.max(firstDay,periodStart(clock,period));
  const observedDays=effectiveStart===null||effectiveStart>todayStart?0:calendarDaysInclusive(new Date(effectiveStart),new Date(todayStart));
- const entriesDuringPlan=effectiveStart===null?[]:periodEntries.filter(e=>new Date(e.at).getTime()>=effectiveStart);
+ const entriesDuringPlan=effectiveStart===null||startDate===null?[]:periodEntries.filter(e=>new Date(e.at).getTime()>=Math.max(effectiveStart,startDate.getTime()));
  const averagePerDay=observedDays>0?entriesDuringPlan.length/observedDays:0;
  const baseline=data.profile?.baseline??0;
  const reductionPercent=baseline>0&&observedDays>0?Math.round((1-averagePerDay/baseline)*100):null;
