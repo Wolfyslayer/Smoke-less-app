@@ -34,7 +34,7 @@
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
-| 15.0 | Frivilligt socialt stöd | Aktiv – integritetsanalys först | #155 |
+| 15.0 | Frivilligt socialt stöd | Aktiv – konton och delningsrisker inventerade | #155 |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
@@ -222,3 +222,12 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - `src/screens/PlanScreen.tsx`: stöd för att ändra takt, fortsätta eller starta om en nedtrappning utan att förlora historik.
 - `src/screens/BenefitsScreen.tsx`: allmän kunskap och svenska stödresurser, inte personliga behandlingsråd.
 - Nästa steg: samla begränsad, transparent lokal coachlogik som kan använda tidigare självrapporterade röksug och hjälpsamma strategier utan att göra medicinska förutsägelser. Behåll generiska råd när data saknas och undvik att upprepa känslig information i notiser.
+
+### Fas 15.0 – inventering och integritetsgränser
+
+- `src/screens/ProfileScreen.tsx` visar kontostatus och lokal resa; inga offentliga profiler eller sociala flöden finns i den granskade skärmen.
+- `src/screens/SettingsScreen.tsx` hanterar lokala påminnelser och planinställningar, inte social delning.
+- Befintlig molnsynk och konto är för personlig data, inte ett socialt nätverk. Ny delning får aldrig utgå från att inloggning innebär samtycke till publicering.
+- Välj en kontofri, frivillig funktion först: användaren kan själv skapa en neutral stödtext och uttryckligen dela den via telefonens delningsfunktion, utan automatiskt infogade rökregistreringar, mål, datum, kontoidentifierare eller historik.
+- Undvik serverlagring, kontakter, nya molnregler, sociala flöden och pushmeddelanden till tredje part i denna fas. Granska text, avbrytbarhet, tillgänglighet och regressionstester innan merge.
+- En äldre profilgenväg nämner fortfarande JSON-kopia; detta är en separat konsekvens av tidigare beslut att inte använda JSON-backup och bör rättas i lämpligt UI-steg.
