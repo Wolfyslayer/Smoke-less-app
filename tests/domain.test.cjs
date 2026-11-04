@@ -788,6 +788,6 @@ test('statistics savings exclude future entries and do not go negative', () => {
     {id: 'today', at: '2026-10-01T13:00:00.000Z'},
     {id: 'future', at: '2026-10-02T12:00:00.000Z'},
   ], cravings: [], checkins: []};
-  assert.equal(savings(data, date('2026-10-01')), 5, 'future entry must not count yet');
+  assert.equal(savings(data, date('2026-10-01')), 5, 'entries later on the same day must not count yet');
   assert.equal(savings(data, date('2026-10-02')), 0, 'savings are floored at zero');
 });
