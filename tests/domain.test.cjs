@@ -766,3 +766,28 @@ test('resume gradual reduction leaves a plan without custom date unchanged',()=>
  const p=profile();
  assert.equal(resumeGradualReduction(p,date('2026-10-09')),p);
 });
+
+
+test('statistics keep the original history anchor after a plan restart', () => {
+  const original = profile({baseline: 10, packPrice: 100, packSize: 20});
+  const entries = [
+    {id: 'before', at: '2026-09-30T12:00:00.000Z'},
+    {id: 'first', at: '2026-10-02T12:00:00.000Z'},
+    {id: 'second', at: '2026-10-09T12:00:00.000Z'},
+  ];
+  const changed = restartReductionPlan(original, date('2026-10-08'));
+  const data = {profile: changed, entries, cravings: [], checkins: []};
+  assert.equal(changed.originalStartAt, original.startAt);
+  assert.equal(data.entries.length, 3, 'old records are never removed');
+  assert.equal(savings(data, date('2026-10-09')), 440, 'pre-plan records do not reduce estimated savings');
+});
+
+test('statistics savings exclude future entries and do not go negative', () => {
+  const p = profile({baseline: 1, packPrice: 100, packSize: 20});
+  const data = {profile: p, entries: [
+    {id: 'today', at: '2026-10-01T13:00:00.000Z'},
+    {id: 'future', at: '2026-10-02T12:00:00.000Z'},
+  ], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-01')), 5, 'future entry must not count yet');
+  assert.equal(savings(data, date('2026-10-02')), 0, 'savings are floored at zero');
+});
