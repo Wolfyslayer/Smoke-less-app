@@ -31,8 +31,8 @@
 | 9.0 | SOS och röksug 2.0 | Mergad; bred manuell QA i fas 17 | #149 |
 | 10.0 | Statistik och beteendeinsikter | Mergad; bred manuell QA i fas 17 | #150 |
 | 11.0 | Motivation, milstolpar, ekonomi och hälsa | Mergad; bred manuell QA i fas 17 | #151 |
-| 12.0 | Återfallsprevention och långsiktigt stöd | Aktiv | Fas-PR |
-| 13.0 | Kunskapsbank och svenskt stöd | Planerad | — |
+| 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
+| 13.0 | Kunskapsbank och svenskt stöd | Aktiv | Fas-PR |
 | 14.0 | Smart coach | Planerad | — |
 | 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
