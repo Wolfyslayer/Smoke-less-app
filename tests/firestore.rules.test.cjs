@@ -87,3 +87,16 @@ test('deletion lock persists through interrupted and completed states', async ()
   await assertFails(getDoc(doc(db('intruder'), lockPath)));
   await assertFails(setDoc(doc(db('intruder'), lockPath), {state: 'completed'}));
 });
+
+test('SOS cravings accept optional strategy outcomes and reject invalid fields', async () => {
+  const uid='sos-outcomes';
+  const cravingPath=id=>`users/${uid}/cravings/${id}`;
+  const base=id=>({...valid(id),intensity:3,trigger:'Stress'});
+  await assertSucceeds(setDoc(doc(db(uid),cravingPath('legacy')),base('legacy')));
+  await assertSucceeds(setDoc(doc(db(uid),cravingPath('helped')),{...base('helped'),startIntensity:5,strategy:'Drick ett glas vatten',helpful:true}));
+  await assertSucceeds(setDoc(doc(db(uid),cravingPath('not-helped')),{...base('not-helped'),startIntensity:4,strategy:'Byt miljö',helpful:false}));
+  await assertFails(setDoc(doc(db(uid),cravingPath('bad-intensity')),{...base('bad-intensity'),startIntensity:6}));
+  await assertFails(setDoc(doc(db(uid),cravingPath('bad-strategy')),{...base('bad-strategy'),strategy:''}));
+  await assertFails(setDoc(doc(db(uid),cravingPath('bad-result')),{...base('bad-result'),helpful:'yes'}));
+  await assertFails(setDoc(doc(db(uid),cravingPath('unknown')),{...base('unknown'),unknown:true}));
+});
