@@ -34,8 +34,8 @@
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
-| 15.0 | Frivilligt socialt stöd | Aktiv – säker delningsmodell definierad | #155 |
-| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
+| 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
+| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – inledande inventering | #156 |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
