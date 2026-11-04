@@ -34,7 +34,9 @@ test('preview is opt-in and card does not access account data',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/showSharePreview,setShowSharePreview/);
  assert.match(profile,/showSharePreview\?<><View[^>]*><DailyProgressShareArtwork/);
- assert.match(profile,/onPress=\{\(\)=>\{setShowSharePreview\(v=>!v\);setPngStatus\('idle'\);pngDataRef\.current=null;pngPathRef\.current=null;\}\}/);
+ assert.match(profile,/setShowSharePreview\(v=>!v\)/);
+ assert.match(profile,/pngPathRef\.current=null/);
+ assert.match(profile,/setShareError\(false\)/);
  assert.match(profile,/artworkRef\.current\.toDataURL\(/);
  assert.match(profile,/onPress=\{renderPng\}/);
  assert.match(profile,/Sharing\.shareAsync\(pngPathRef\.current/);
