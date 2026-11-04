@@ -10,7 +10,7 @@ const js = ts.transpileModule(source, {
 }).outputText;
 const context = {exports: {}, Date};
 vm.runInNewContext(js, context);
-const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, resumeGradualReduction, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress} = context.exports;
+const {target, quitDate, countOn, savings, validateData, adjustReductionTarget, resumeGradualReduction, restartReductionPlan, rescheduleQuitPlan, nextReductionMilestone, parseFutureQuitDate, weeklyPlanProgress, calendarDaysInclusive} = context.exports;
 
 const profile = (patch = {}) => ({
   mode: 'reduce', baseline: 12, packSize: 20, packPrice: 80,
@@ -790,4 +790,11 @@ test('statistics savings exclude future entries and do not go negative', () => {
   ], cravings: [], checkins: []};
   assert.equal(savings(data, date('2026-10-01')), 5, 'entries later on the same day must not count yet');
   assert.equal(savings(data, date('2026-10-02')), 0, 'savings are floored at zero');
+});
+
+test('inclusive calendar-day statistics do not depend on elapsed hours across DST', () => {
+  assert.equal(calendarDaysInclusive(new Date(2026, 2, 28, 23), new Date(2026, 2, 30, 1)), 3);
+  assert.equal(calendarDaysInclusive(new Date(2026, 9, 24, 23), new Date(2026, 9, 26, 1)), 3);
+  assert.equal(calendarDaysInclusive(new Date(2026, 9, 26), new Date(2026, 9, 24)), 0);
+  assert.equal(calendarDaysInclusive(new Date('invalid'), new Date()), 0);
 });
