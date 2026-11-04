@@ -18,7 +18,7 @@ export function useSosFlow(setData:Dispatch<SetStateAction<Data>>,goHome:()=>voi
   breathScale,breathing,breathSeconds,
   onToggleBreathing:()=>{setBreathing(v=>!v);setBreathSeconds(0)},
   hapticsEnabled,onToggleHaptics:()=>setHapticsEnabled(v=>!v),
-  sosIdeas,sosTip,onNextTip:()=>setSosTip(v=>(v+1)%sosIdeas.length),onSelectTip:(index:number)=>setSosTip(index),
+  sosIdeas,sosTip,onNextTip:()=>{setSosTip(v=>(v+1)%sosIdeas.length);setHelpful(null)},onSelectTip:(index:number)=>{if(index>=0&&index<sosIdeas.length){setSosTip(index);setHelpful(null)}},
   sosTimer,sosTimerActive,
   onToggleTimer:()=>{if(sosTimerActive){setSosTimerActive(false)}else{if(sosTimer===0)setSosTimer(120);setSosTimerActive(true)}},
   onResetTimer:()=>{setSosTimerActive(false);setSosTimer(0)},
