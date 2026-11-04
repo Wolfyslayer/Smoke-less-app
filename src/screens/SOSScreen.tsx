@@ -10,7 +10,7 @@ type Props={
  sosIdeas:Idea[];sosTip:number;onNextTip:()=>void;onSelectTip:(index:number)=>void;
  sosTimer:number;sosTimerActive:boolean;onToggleTimer:()=>void;onResetTimer:()=>void;
  sosStartIntensity:number|null;intensity:number;onStartIntensity:(n:number)=>void;onIntensity:(n:number)=>void;
- trigger:string;onTrigger:(value:string)=>void;onSave:()=>void;
+ trigger:string;onTrigger:(value:string)=>void;helpful:boolean|null;onHelpful:(value:boolean)=>void;onSave:()=>void;
 };
 const triggerGuidance:Record<string,string>={
  Stress:'Prova att andas lugnt och ge dig själv en kort paus innan du bestämmer nästa steg.',
@@ -31,7 +31,7 @@ function Label({children}:{children:React.ReactNode}){return <Text style={styles
 function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
 function Button({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean}){return <Pressable accessibilityRole="button" onPress={onPress} style={[styles.button,secondary&&styles.buttonSecondary]}><Text style={[styles.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
 function Intensity({value,onChange,prefix}:{value:number|null;onChange:(n:number)=>void;prefix:string}){return <View style={styles.segment}>{[1,2,3,4,5].map(n=><Pressable key={n} accessibilityRole="button" accessibilityLabel={`${prefix} ${n} av 5`} accessibilityState={{selected:value===n}} onPress={()=>onChange(n)} style={[styles.segmentItem,value===n&&{backgroundColor:C.lime}]}><Text style={{color:value===n?C.background:C.white,fontWeight:'800'}}>{n}</Text></Pressable>)}</View>}
-export function SOSScreen({breathScale,breathing,breathSeconds,onToggleBreathing,hapticsEnabled,onToggleHaptics,sosIdeas,sosTip,onNextTip,onSelectTip,sosTimer,sosTimerActive,onToggleTimer,onResetTimer,sosStartIntensity,intensity,onStartIntensity,onIntensity,trigger,onTrigger,onSave}:Props){
+export function SOSScreen({breathScale,breathing,breathSeconds,onToggleBreathing,hapticsEnabled,onToggleHaptics,sosIdeas,sosTip,onNextTip,onSelectTip,sosTimer,sosTimerActive,onToggleTimer,onResetTimer,sosStartIntensity,intensity,onStartIntensity,onIntensity,trigger,onTrigger,helpful,onHelpful,onSave}:Props){
  return <View style={styles.screen}>
   <Card style={{alignItems:'center',gap:15,paddingVertical:22,backgroundColor:'#171D10',borderColor:'#425C29'}}>
    <Label>TA ETT ANDETAG I TAGET</Label>
@@ -48,7 +48,7 @@ export function SOSScreen({breathScale,breathing,breathSeconds,onToggleBreathing
   <Heading>Vad utlöste det?</Heading>
   <View style={{gap:9}}>{['Stress','Efter mat','Socialt','Vana','Annat'].map(x=><Pressable accessibilityRole="button" accessibilityLabel={`Utlösare: ${x}`} accessibilityState={{selected:trigger===x}} key={x} onPress={()=>onTrigger(x)} style={[styles.choice,trigger===x&&styles.selected]}><Text style={styles.cardTitle}>{x}</Text></Pressable>)}</View>
   <Card style={{gap:9}}><Label>ETT TIPS FÖR DIN SITUATION</Label><Text style={styles.muted}>{triggerGuidance[trigger]??triggerGuidance.Annat}</Text></Card>
-  <Button title="Spara röksug" onPress={onSave}/>
+  <Card style={{gap:10}}><Label>HJÄLPTE STRATEGIN?</Label><Text style={styles.muted}>Du provade: {sosIdeas[sosTip].title}. Du kan hoppa över frågan.</Text><View style={styles.segment}>{([["Ja",true],["Nej",false]] as const).map(([title,value])=><Pressable key={title} accessibilityRole="button" accessibilityState={{selected:helpful===value}} onPress={()=>onHelpful(value)} style={[styles.segmentItem,helpful===value&&{backgroundColor:C.lime}]}><Text style={{color:helpful===value?C.background:C.white,fontWeight:"800"}}>{title}</Text></Pressable>)}</View></Card><Button title="Spara röksug" onPress={onSave}/>
  </View>;
 }
 const styles=StyleSheet.create({
