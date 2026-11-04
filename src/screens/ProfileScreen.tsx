@@ -25,7 +25,7 @@ export function ProfileScreen({profile,accountEmail,onNavigate}:Props){
    <View style={styles.inline}><Share2 size={21} color={C.lime}/><Text accessibilityRole="header" style={styles.cardTitle}>Dela ett stödmeddelande</Text></View>
    <Text style={styles.muted}>Du kan skicka en uppmuntran till någon du väljer. Texten innehåller inga uppgifter om ditt konto, din plan eller dina registreringar.</Text>
    <Text style={styles.muted}>Ingenting delas automatiskt. Du kan avbryta i telefonens delningsdialog, och du väljer själv mottagare. Den app du väljer kan ha egna integritetsvillkor.</Text>
-   <Pressable accessibilityRole="button" accessibilityLabel="Dela ett stödmeddelande" accessibilityHint="Öppnar telefonens delningsdialog. Inga personliga registreringar följer med." onPress={()=>void shareSupport()} style={styles.row}><View style={styles.actionIcon}><Share2 size={21} color={C.lime}/></View><View style={{flex:1}}><Text style={styles.cardTitle}>Dela en uppmuntran</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="Dela ett stödmeddelande" accessibilityHint="Öppnar telefonens delningsdialog där du själv väljer mottagare eller avbryter. Inga personliga registreringar följer med." onPress={()=>void shareSupport()} style={[styles.row,{minHeight:56}]}><View style={styles.actionIcon}><Share2 size={21} color={C.lime}/></View><View style={{flex:1}}><Text style={styles.cardTitle}>Dela en uppmuntran</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>
   </Card>
  </View>;
 }
