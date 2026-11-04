@@ -19,6 +19,15 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   if(craving.helpful)result.yes++;else result.no++;
   strategyOutcomes.set(craving.strategy,result);
  }
+ const triggerOutcomes=new Map<string,{total:number;helped:number}>();
+ for(const craving of data.cravings){
+  const at=new Date(craving.at).getTime();
+  if(!craving.trigger||!Number.isFinite(at)||at>clock||typeof craving.helpful!=='boolean')continue;
+  const counts=triggerOutcomes.get(craving.trigger)??{total:0,helped:0};
+  counts.total++;if(craving.helpful)counts.helped++;
+  triggerOutcomes.set(craving.trigger,counts);
+ }
+ const triggerInsights=[...triggerOutcomes.entries()].sort((a,b)=>b[1].total-a[1].total||a[0].localeCompare(b[0])).slice(0,3);
  const effectiveStrategies=[...strategyOutcomes.entries()].filter(([,counts])=>counts.yes>0).sort((a,b)=>b[1].yes-a[1].yes||a[0].localeCompare(b[0])).slice(0,3);
  const todayKey=dayKey(new Date(clock));
  const startKey=period===0?null:dayKey(new Date(periodStart(clock,period)));
@@ -58,6 +67,10 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <Heading>Strategier som hjälpt dig</Heading>
   <Card style={{gap:12}}><Text style={styles.muted}>Bygger enbart på dina egna svar när du markerat att en strategi hjälpte. Det är ingen garanti för att den fungerar varje gång.</Text>
    {effectiveStrategies.length===0?<Text style={styles.muted}>När du provar en strategi under SOS kan du ange om den hjälpte. Dina egna favoriter visas här.</Text>:effectiveStrategies.map(([name,counts])=><View key={name} style={styles.sectionRow}><Text style={[styles.cardTitle,{flex:1}]}>{name}</Text><Text style={styles.muted}>{counts.yes} hjälpte{counts.no>0?` · ${counts.no} hjälpte inte`:''}</Text></View>)}
+  </Card>
+  <Heading>Vad hjälper vid olika röksug?</Heading>
+  <Card style={{gap:12}}><Text style={styles.muted}>Visar situationer där du har svarat om SOS-strategin hjälpte. Antalet svar är inte samma sak som alla registrerade röksug.</Text>
+   {triggerInsights.length===0?<Text style={styles.muted}>När du anger om en SOS-strategi hjälpte kan du se mönster för olika situationer här.</Text>:triggerInsights.map(([name,counts])=><View key={name} style={styles.sectionRow}><Text style={[styles.cardTitle,{flex:1}]}>{name}</Text><Text style={styles.muted}>{counts.helped} av {counts.total} hjälpte</Text></View>)}
   </Card>
   <Heading>Förstå dina vanor</Heading>
   <Card style={{gap:14}}><Label>RÖKSUG · SENASTE 30 DAGARNA</Label><Text style={styles.statValue}>{recentCravingsCount} <Text style={{fontSize:14,color:C.muted}}>registrerade tillfällen</Text></Text>
