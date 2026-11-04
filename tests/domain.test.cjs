@@ -824,3 +824,30 @@ test('savings are zero before the plan starts and when there is no profile', () 
   assert.equal(savings(data, date('2026-09-30')), 0);
   assert.equal(savings({...data, profile: null}, date('2026-10-03')), 0);
 });
+
+test('restarting reduction preserves original anchor across multiple restarts', () => {
+  const initial = profile({baseline: 12});
+  const first = restartReductionPlan(initial, date('2026-10-05'));
+  const second = restartReductionPlan(first, date('2026-10-09'));
+  assert.equal(first.originalStartAt, initial.startAt);
+  assert.equal(second.originalStartAt, initial.startAt);
+  assert.equal(second.startAt, date('2026-10-09').toISOString());
+  assert.equal(second.dailyTargetOverride, null);
+});
+
+test('restarting a quit-now plan leaves it unchanged', () => {
+  const initial = profile({mode: 'quit'});
+  assert.equal(restartReductionPlan(initial, date('2026-10-05')), initial);
+});
+
+test('restarting reduction clears a scheduled quit date without erasing records', () => {
+  const initial = profile({plannedQuitAt: '2026-10-20T12:00:00.000Z', dailyTargetOverride: 4});
+  const entries = [{id: 'before', at: '2026-10-02T12:00:00.000Z'}];
+  const checkins = [{date: '2026-10-02', complete: true, smokeFree: false}];
+  const changed = restartReductionPlan(initial, date('2026-10-06'));
+  const data = {profile: changed, entries, cravings: [], checkins};
+  assert.equal(changed.plannedQuitAt, undefined);
+  assert.equal(changed.dailyTargetOverride, null);
+  assert.deepEqual(data.entries, entries);
+  assert.deepEqual(data.checkins, checkins);
+});

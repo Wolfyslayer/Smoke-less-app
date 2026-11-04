@@ -30,8 +30,8 @@
 | 8.0 | Personal Quit Plan 2.0 | Mergad; bred manuell regression flyttad till slutfas | #140 |
 | 9.0 | SOS och röksug 2.0 | Mergad; bred manuell QA i fas 17 | #149 |
 | 10.0 | Statistik och beteendeinsikter | Mergad; bred manuell QA i fas 17 | #150 |
-| 11.0 | Motivation, milstolpar, ekonomi och hälsa | Aktiv | Fas-PR |
-| 12.0 | Återfallsprevention och långsiktigt stöd | Planerad | — |
+| 11.0 | Motivation, milstolpar, ekonomi och hälsa | Mergad; bred manuell QA i fas 17 | #151 |
+| 12.0 | Återfallsprevention och långsiktigt stöd | Aktiv | Fas-PR |
 | 13.0 | Kunskapsbank och svenskt stöd | Planerad | — |
 | 14.0 | Smart coach | Planerad | — |
 | 15.0 | Frivilligt socialt stöd | Planerad, villkorad | — |
