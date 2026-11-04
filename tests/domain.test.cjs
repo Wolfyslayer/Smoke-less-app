@@ -798,3 +798,29 @@ test('inclusive calendar-day statistics do not depend on elapsed hours across DS
   assert.equal(calendarDaysInclusive(new Date(2026, 9, 26), new Date(2026, 9, 24)), 0);
   assert.equal(calendarDaysInclusive(new Date('invalid'), new Date()), 0);
 });
+
+test('estimated savings use configured pack size and price, not a fixed cigarette price', () => {
+  const p = profile({baseline: 10, packSize: 25, packPrice: 125});
+  const data = {profile: p, entries: [
+    {id: 'first', at: '2026-10-01T14:00:00.000Z'},
+    {id: 'second', at: '2026-10-01T15:00:00.000Z'},
+  ], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-01')), 50);
+  assert.equal(savings({...data, profile: {...p, packPrice: 0}}, date('2026-10-01')), 0);
+});
+
+test('estimated savings keep original plan baseline and anchor after a restart', () => {
+  const p = profile({baseline: 10, packSize: 20, packPrice: 100});
+  const changed = restartReductionPlan(p, date('2026-10-03'));
+  const data = {profile: changed, entries: [
+    {id: 'before', at: '2026-09-30T12:00:00.000Z'},
+    {id: 'during', at: '2026-10-02T12:00:00.000Z'},
+  ], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-10-03')), 145);
+});
+
+test('savings are zero before the plan starts and when there is no profile', () => {
+  const data = {profile: profile(), entries: [], cravings: [], checkins: []};
+  assert.equal(savings(data, date('2026-09-30')), 0);
+  assert.equal(savings({...data, profile: null}, date('2026-10-03')), 0);
+});
