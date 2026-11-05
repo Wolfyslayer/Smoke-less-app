@@ -20,3 +20,18 @@ test('widget plugin declares provider, launcher action and neutral privacy-safe 
  assert.match(plugin,/!valid ->/);
  assert.doesNotMatch(plugin,/accountEmail|Firebase|authToken|userUid/);
 });
+
+test('widget launcher deep link matches Expo scheme and routes to the app home',()=>{
+ const app=JSON.parse(fs.readFileSync('app.json','utf8'));
+ const plugin=fs.readFileSync('plugins/withSmokeLessWidget.js','utf8');
+ const index=fs.readFileSync('app/index.tsx','utf8');
+ const layout=fs.readFileSync('app/_layout.tsx','utf8');
+ assert.equal(app.expo.scheme,'smokeless');
+ assert.ok(plugin.includes('Uri.parse("smokeless://")'));
+ assert.ok(plugin.includes('Intent.ACTION_VIEW'));
+ assert.ok(plugin.includes('setPackage(context.packageName)'));
+ assert.ok(plugin.includes('PendingIntent.FLAG_IMMUTABLE'));
+ assert.ok(index.includes('SmokeLess'));
+ assert.ok(layout.includes('<Stack'));
+ assert.ok(!plugin.includes('registerCigarette'),'widget tap must never register a cigarette');
+});
