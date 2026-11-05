@@ -6,6 +6,7 @@ import * as account from '../authService';
 import {previewCloudImport,inspectCloudDeletion} from '../cloudRead';
 import {backupBeforeCloudImport} from '../storage';
 import {setLoginOrigin,type LoginOrigin} from '../loginOrigin';
+import {googleSignInFailure} from '../auth/googleSignInSafety.cjs';
 
 type Props={
  sessionUser:account.AccountUser|null;
@@ -34,7 +35,8 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
    setAccountPassword('');
   }catch(error){
    setLoginOrigin(null);
-   showMessage('Kunde inte logga in med Google',error instanceof Error?error.message:'Försök igen eller använd e-postinloggning.');
+   const failure=googleSignInFailure(error);
+   if(failure.kind!=='cancelled')showMessage('Kunde inte logga in med Google',failure.message);
   }finally{setAccountBusy(false)}
  };
  const inspectCloudData=()=>{if(!accountUser||cloudPreviewBusy)return;const uid=accountUser.uid;setCloudPreviewBusy(true);void (async()=>{try{const result=await inspectCloudDeletion(uid);if(accountUidRef.current!==uid)throw Error('Kontot ändrades.');showMessage('Molnhistorik – endast kontroll',`Plan: ${result.plan?'Ja':'Nej'} · Cigaretter: ${result.entries} · Röksug: ${result.cravings} · Avstämningar: ${result.checkins}.${result.hasTombstones?' Raderingsmarkeringar finns i molnet.':''} Ingen data har raderats.`)}catch(error){showMessage('Kunde inte kontrollera molndata',error instanceof Error?error.message:'Försök igen senare.')}finally{setCloudPreviewBusy(false)}})()};
