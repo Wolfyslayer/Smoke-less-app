@@ -4,18 +4,37 @@ import {Platform,Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import {C} from '../theme';
 import {AppCard,AppButton} from '../components/ui';
-import type {Profile} from '../domain';
+import type {Profile,Data} from '../domain';
+import {setWidgetOptIn,widgetOptedIn,refreshWidgetSnapshot} from '../widgets/widgetPreferences';
 import {SettingsPlanSection} from './SettingsPlanSection';
 
 type Props={
- profile:Profile;goal:number;
+ profile:Profile;goal:number;data:Data;
  onChangeMode:(mode:'reduce'|'quit')=>void;onChangeDailyTarget:(value:number|null)=>void;
 };
 export function validReminderTime(hourText:string,minuteText:string){return /^[0-9]{1,2}$/.test(hourText)&&/^[0-9]{1,2}$/.test(minuteText)&&Number(hourText)<=23&&Number(minuteText)<=59}
 export function reminderStatusMessage(optedIn:boolean,permissionGranted:boolean,hasSavedId:boolean,hasScheduledId:boolean){if(!optedIn)return 'Påminnelser är avstängda.';if(!permissionGranted)return 'Notisbehörighet saknas. Tillåt notiser i telefonens inställningar och aktivera sedan påminnelsen igen.';return hasSavedId&&hasScheduledId?'Daglig påminnelse är schemalagd och notiser är tillåtna.':'Ingen aktiv påminnelse hittades. Tryck Aktivera påminnelse för att schemalägga.'}
 const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="surface" style={style}>{children}</AppCard>;
 const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="elevated"/>;
-export function SettingsScreen({profile,goal,onChangeMode,onChangeDailyTarget}:Props){
+export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarget}:Props){
+ const [widgetEnabled,setWidgetEnabled]=useState(false);
+ const [widgetBusy,setWidgetBusy]=useState(true);
+ const [widgetMessage,setWidgetMessage]=useState('');
+ useEffect(()=>{let active=true;void widgetOptedIn().then(enabled=>{if(active)setWidgetEnabled(enabled)}).catch(()=>{if(active)setWidgetMessage('Kunde inte läsa widgetinställningen.')}).finally(()=>{if(active)setWidgetBusy(false)});return()=>{active=false}},[]);
+ const toggleWidget=async()=>{
+  if(widgetBusy)return;
+  setWidgetBusy(true);setWidgetMessage('');
+  const next=!widgetEnabled;
+  try{
+   await setWidgetOptIn(next);
+   if(next)await refreshWidgetSnapshot(data);
+   setWidgetEnabled(next);
+   setWidgetMessage(next?'Dagens uppgifter är godkända för widgeten. Android-widgeten blir tillgänglig efter att den nativa delen installerats.':'Widgetens sparade uppgifter har rensats.');
+  }catch{
+   if(next)await setWidgetOptIn(false).catch(()=>{});
+   setWidgetMessage('Kunde inte ändra widgetinställningen. Försök igen.');
+  }finally{setWidgetBusy(false)}
+ };
  const [reminderPreference,setReminderPreference]=useState(false);
  const [reminderReady,setReminderReady]=useState(false);
  const [reminderHour,setReminderHour]=useState('19');
@@ -32,6 +51,14 @@ export function SettingsScreen({profile,goal,onChangeMode,onChangeDailyTarget}:P
 
  return <View style={styles.screen}>
   <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
+  <View style={styles.inlineHeading}><Text accessibilityRole="header" style={styles.heading}>Android-widget</Text></View>
+  <Card style={{gap:10,padding:18}}>
+   <Text style={styles.muted}>Du väljer själv om dagens antal och mål får visas på hemskärmen. Funktionen är under utveckling och kräver en kommande Android-build.</Text>
+   <Pressable accessibilityRole="switch" accessibilityLabel="Tillåt dagsframsteg i Android-widget" accessibilityState={{checked:widgetEnabled,disabled:widgetBusy}} disabled={widgetBusy} onPress={toggleWidget} style={[styles.inline,{justifyContent:'space-between',minHeight:48,paddingVertical:10}]}>
+    <Text style={[styles.cardTitle,{flexShrink:1}]}>{widgetEnabled?'Tillåtet':'Inte tillåtet'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{widgetEnabled?'PÅ':'AV'}</Text>
+   </Pressable>
+   {widgetMessage?<Text accessibilityLiveRegion="polite" style={styles.muted}>{widgetMessage}</Text>:null}
+  </Card>
   <View style={styles.inlineHeading}><Text accessibilityRole="header" style={styles.heading}>Påminnelser och motivation</Text></View>
   <Card style={{gap:10,padding:18}}>
    <Text accessibilityRole="header" style={styles.cardTitle}>Önskemål om dagliga påminnelser</Text>
