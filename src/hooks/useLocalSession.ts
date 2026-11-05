@@ -46,6 +46,9 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
     loadedDataRef.current=snapshot.data;
     setData(snapshot.data);
     setReady(true);
+    // Restore today's launcher widget after app restart, even without a new entry.
+    // The serialized native queue ensures a later account switch clears this data.
+    void refreshWidgetSnapshot(snapshot.data).catch(()=>{});
    }catch(error){
     if(active && generation===switchGeneration.current)
      setLoadError(error instanceof Error?error.message:'Kunde inte läsa lokal historik eller rensa widgetdata.');
