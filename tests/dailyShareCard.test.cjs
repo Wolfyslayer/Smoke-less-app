@@ -212,3 +212,9 @@ test('reminder settings explain disabled and web-only states on initial load',()
  assert.match(settings,/if\(v!=='true'\)setReminderStatus\('Påminnelser är avstängda\.'\)/);
  assert.match(settings,/else if\(Platform\.OS==='web'\)setReminderStatus\('Schemalagda påminnelser stöds bara i mobilappen\.'\)/);
 });
+
+test('quit mode disables daily target adjustment controls rather than offering an ineffective action',()=>{
+ const settings=fs.readFileSync('src/screens/SettingsPlanSection.tsx','utf8');
+ assert.match(settings,/accessibilityLabel="Minska dagligt mål"[\s\S]*?disabled=\{p\.mode==='quit'\|\|goal<=0\}/);
+ assert.match(settings,/accessibilityLabel="Öka dagligt mål"[\s\S]*?accessibilityState=\{\{disabled:p\.mode==='quit'\}\} disabled=\{p\.mode==='quit'\}/);
+});
