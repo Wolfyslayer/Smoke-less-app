@@ -194,3 +194,9 @@ test('closing the preview prevents delayed sharing failures from showing an obso
  assert.match(profile,/catch\{if\(previewOpenRef\.current\)setShareError\(true\);\}finally\{setSharingPng\(false\);\}/);
  assert.match(profile,/accessibilityHint="Öppnar telefonens delningsdialog för den förhandsgranskade bilden"/);
 });
+
+test('stale image sharing and empty exports cannot report errors on a new preview',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/catch\{if\(previewOpenRef\.current&&exportGenerationRef\.current===approvedGeneration\)setShareError\(true\);\}/);
+ assert.match(profile,/if\(!base64\)\{if\(generation===exportGenerationRef\.current&&previewOpenRef\.current\)setPngStatus\('error'\);return;\}/);
+});

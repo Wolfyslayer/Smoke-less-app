@@ -45,7 +45,7 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
    if(!await Sharing.isAvailableAsync())throw new Error('Sharing unavailable');
    if(!previewOpenRef.current||exportGenerationRef.current!==approvedGeneration||!approvedPath||pngPathRef.current!==approvedPath||exportCountsRef.current!==approvedCounts||latestCountsRef.current.todayCount!==approvedCounts?.todayCount||latestCountsRef.current.dailyGoal!==approvedCounts?.dailyGoal)return;
    await Sharing.shareAsync(approvedPath,{mimeType:'image/png',dialogTitle:'Dela dagens framsteg',UTI:'public.png'});
-  }catch{if(previewOpenRef.current)setShareError(true);}finally{setSharingPng(false);}
+  }catch{if(previewOpenRef.current&&exportGenerationRef.current===approvedGeneration)setShareError(true);}finally{setSharingPng(false);}
  };
  const renderPng=()=>{
   const generation=++exportGenerationRef.current;
@@ -58,7 +58,7 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
    artworkRef.current.toDataURL((base64)=>{
     void (async()=>{
     if(generation!==exportGenerationRef.current||latestCountsRef.current.todayCount!==todayCount||latestCountsRef.current.dailyGoal!==dailyGoal){if(generation===exportGenerationRef.current)setPngStatus('idle');return;}
-    if(!base64){setPngStatus('error');return;}
+    if(!base64){if(generation===exportGenerationRef.current&&previewOpenRef.current)setPngStatus('error');return;}
     try{
      const directory=FileSystem.cacheDirectory;
      if(!directory)throw new Error('Cache unavailable');
