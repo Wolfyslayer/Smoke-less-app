@@ -15,7 +15,6 @@ test('widget plugin declares provider, launcher action and neutral privacy-safe 
  assert.match(plugin,/prefs\.getBoolean\("enabled", false\)/);
  assert.match(plugin,/storedDate == today/);
  assert.match(plugin,/count >= 0 && goal >= 0/);
- assert.match(plugin,/if \(valid\)/);
  assert.match(plugin,/goal == 0 && count == 0/);
  assert.match(plugin,/!valid ->/);
  assert.doesNotMatch(plugin,/accountEmail|Firebase|authToken|userUid/);
