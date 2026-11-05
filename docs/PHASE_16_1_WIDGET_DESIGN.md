@@ -75,6 +75,19 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 - Automatiska tester: snapshot-sanitization, nollmål, datumbyte, stale snapshot, konto-/gästisolering, uppdateringssignaler och deep-link-validering. Riktade native-tester vid implementation; bred fysisk enhets-QA enligt roadmapens fas 25.
 - Kvarvarande blockerare för att godkänna fasen: Android-native-kompilering, faktisk widgetinstallation, navigering och integritetstester i riktig Android-miljö.
 
+## Reproducerbar native-buildkontroll (punkt 7.4)
+
+Denna kontroll är **inte utförd ännu**. Kör från projektroten på en dator med Android SDK/JDK och projektets riktiga, lokala `google-services.json` (lägg inte Firebase-filen eller nycklar i Git):
+
+```bash
+npm ci
+npx expo prebuild --platform android --clean --no-install
+cd android
+./gradlew :app:assembleDebug --no-daemon
+```
+
+På Windows PowerShell ersätt sista raden med `./gradlew.bat :app:assembleDebug --no-daemon`. Kontrollera att genererade `SmokeLessWidgetProvider.kt`, `SmokeLessWidgetModule.kt`, `SmokeLessWidgetPackage.kt`, widgetens resurser och manifest kompileras utan fel. Spara utdata från Gradle och verifiera att `android/app/build/outputs/apk/debug/app-debug.apk` skapats. En grön TypeScript-/Firestore-CI räcker **inte** för att markera 7.4 som färdig. Fysisk widget-QA (installation, launcher och integritet) görs i fas 25.
+
 ## Säkerhetsgräns
 Hemsidan på Android är synlig även för andra som kan se telefonen. Därför är opt-in, neutral standardvy och omedelbar rensning vid utloggning obligatoriskt. Ingen widget får registrera en cigarett eller skicka data till molnet utan en bekräftad handling i appen.
 
