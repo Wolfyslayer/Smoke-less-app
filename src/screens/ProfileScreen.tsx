@@ -39,6 +39,7 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const renderPng=()=>{
   const generation=++exportGenerationRef.current;
   setPngStatus('rendering');
+  setShareError(false);
   pngPathRef.current=null;
   exportCountsRef.current=null;
   try{
@@ -59,7 +60,7 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
     }catch{if(generation===exportGenerationRef.current)setPngStatus('error');}
     })();
    },{width:680,height:840});
-  }catch{setPngStatus('error');}
+  }catch{if(generation===exportGenerationRef.current)setPngStatus('error');}
  };
  const loggedIn=accountEmail!==null;
  const shareSupport=async()=>{try{await Share.share({message:'Ett litet steg i taget kan göra skillnad. Jag hejar på dig! 💚'});}catch{/* Delningsappen kan avbrytas eller saknas. Ingen personlig data skickas av appen. */}};

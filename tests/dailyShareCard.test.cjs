@@ -92,3 +92,9 @@ test('artwork is memoized to avoid SVG redraws when share status changes',()=>{
  assert.match(artwork,/import React,\{forwardRef,memo\} from 'react'/);
  assert.match(artwork,/DailyProgressShareArtwork=memo\(forwardRef/);
 });
+
+test('starting a new image clears an earlier sharing error and guards synchronous render errors',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/setPngStatus\('rendering'\);\s*setShareError\(false\);/);
+ assert.match(profile,/catch\{if\(generation===exportGenerationRef\.current\)setPngStatus\('error'\);\}/);
+});
