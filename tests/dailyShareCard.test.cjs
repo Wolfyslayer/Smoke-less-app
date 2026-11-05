@@ -232,3 +232,11 @@ test('plan settings preserve goal labels and headings at large font scales',()=>
  assert.match(settings,/inline:\{flexDirection:'row',alignItems:'center',gap:11,flexWrap:'wrap'\}/);
  assert.match(settings,/Nuvarande mål<\/Text><Text style=\{\{color:C\.lime,fontSize:14,fontWeight:'800',flexShrink:1\}\}/);
 });
+
+test('shared buttons and plan descriptions remain readable at large system text sizes',()=>{
+ const ui=fs.readFileSync('src/components/ui.tsx','utf8');
+ const plan=fs.readFileSync('src/screens/SettingsPlanSection.tsx','utf8');
+ assert.match(ui,/buttonText:\{color:C\.background,fontWeight:'900',fontSize:15,textAlign:'center',flexShrink:1\}/);
+ assert.match(plan,/<View style=\{\{flex:1,minWidth:0,gap:4\}\}>/);
+ assert.match(plan,/<View style=\{\{flex:1,minWidth:0,gap:3\}\}>/);
+});

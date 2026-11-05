@@ -15,7 +15,7 @@ function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;
 export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTarget}:Props){
  return <>
   <Card style={{gap:13,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
-   <View style={styles.inline}><View style={styles.heroIcon}><Target size={24} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text accessibilityRole="header" style={styles.cardTitle}>Din personliga plan</Text><Text style={styles.muted}>Anpassa din resa, ett steg i taget.</Text></View></View>
+   <View style={styles.inline}><View style={styles.heroIcon}><Target size={24} color={C.lime}/></View><View style={{flex:1,minWidth:0,gap:4}}><Text accessibilityRole="header" style={styles.cardTitle}>Din personliga plan</Text><Text style={styles.muted}>Anpassa din resa, ett steg i taget.</Text></View></View>
    <View style={{height:1,backgroundColor:'#425C29'}}/><View style={styles.sectionRow}><Text style={[styles.muted,{flexShrink:1}]}>Nuvarande mål</Text><Text style={{color:C.lime,fontSize:14,fontWeight:'800',flexShrink:1}}>{p.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text></View>
   </Card>
   <View style={{gap:9}}><View style={styles.inline}><Target size={19} color={C.lime}/><Text accessibilityRole="header" style={styles.heading}>Rökmål</Text></View><Text style={styles.muted}>Välj hur du vill arbeta mot ett rökfritt liv.</Text>
@@ -23,7 +23,7 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
    <Choice title="Sluta helt" subtitle="Sätt målet till noll cigaretter" selected={p.mode==='quit'} onPress={()=>{if(p.mode!=='quit')onChangeMode('quit')}}/>
   </View>
   <Card style={{gap:15,padding:18}}>
-   <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,gap:3}}><Text accessibilityRole="header" style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Ändra dagens antal om dina vanor förändras. Din framtida nedtrappning räknas om, men historiken behålls.</Text></View></View>
+   <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,minWidth:0,gap:3}}><Text accessibilityRole="header" style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Ändra dagens antal om dina vanor förändras. Din framtida nedtrappning räknas om, men historiken behålls.</Text></View></View>
    <View style={styles.sectionRow}>
     <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" accessibilityHint="Minskar riktvärdet med en cigarett" accessibilityState={{disabled:p.mode==='quit'||goal<=0}} disabled={p.mode==='quit'||goal<=0} style={[styles.stepper,(p.mode==='quit'||goal<=0)&&styles.disabled]} onPress={()=>onChangeDailyTarget(Math.max(0,(p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
     <View style={{alignItems:'center',gap:2,flexShrink:1,minWidth:90}}><Text accessibilityLabel={`Dagligt riktvärde: ${goal} cigaretter`} adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} style={styles.goal}>{goal}</Text><Text style={[styles.muted,{textAlign:'center'}]}>cigaretter per dag</Text></View>
