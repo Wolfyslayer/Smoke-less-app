@@ -44,7 +44,7 @@ test('preview is opt-in and card does not access account data',()=>{
  assert.match(profile,/setShareError\(false\)/);
  assert.match(profile,/artworkRef\.current\.toDataURL\(/);
  assert.match(profile,/onPress=\{renderPng\}/);
- assert.match(profile,/Sharing\.shareAsync\(pngPathRef\.current/);
+ assert.match(profile,/Sharing\.shareAsync\(approvedPath/);
  assert.match(profile,/pngStatus!=='ready'/);
  assert.match(profile,/Sharing\.isAvailableAsync\(\)/);
  assert.match(profile,/pngPathRef\.current!==approvedPath/);
