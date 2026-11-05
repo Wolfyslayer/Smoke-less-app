@@ -264,3 +264,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Nya native-moduler kräver **ny Android development build** efter installation. Den befintliga `Share.share`-funktionen får ligga kvar tills bilddelning fungerar, så att ingen trasig knapp släpps.
 - Delningskortets datamodell ska vara explicit begränsad till dagens antal och dagens mål, med kort neutral/positiv text baserad på dessa värden. Användaren ska kunna förhandsgranska, godkänna och avbryta. Ingen skärmbild av hela skärmen och inga namn, e-postadresser eller historik.
 - Testa rena formatteringsfunktioner med gränsfall (0, över målet, ogiltiga mål), avbrytande, samt att endast godkända fält används i bildkortet. Verifiera bildexport och Android-delning manuellt i fas 17.
+
+### Fas 16.0 – verifieringsläge inför slutgranskning
+
+- CI för `406d620` är grön i båda obligatoriska arbetsflödena (`Validate Smoke Less 6` och `Firestore rules emulator`). Detta verifierar automatiska tester och byggets kontroller, **inte** Androids faktiska bilddelning.
+- Profilens synkgenväg beskriver nu kontosynk utan JSON-backup. Delningskortet har svenska instruktioner, anpassad layout, skärmläsaretikett, felstatus och memoiserad SVG-rendering.
+- Bildexporten har skydd mot ändrade dagsvärden, gammal export och förhandsgranskning som stängts eller öppnats igen under ett väntande asynkront anrop. Tillhörande regressionstester finns i `tests/dailyShareCard.test.cjs`.
+- **Kvar:** Kontrollera faktisk PNG-export och systemdelning på Android med en ny native-build eftersom `expo-sharing` tillkommit. Bred manuell TalkBack-/stor-text-/enhetsregression är fortsatt öppen i fas 17.0 enligt teststrategin.
+- Fas 16.0 markeras inte mergad i statusöversikten förrän PR #156 är avslutad och dess sista commit har grön CI.
