@@ -179,9 +179,9 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
   if(!fs.existsSync(application))throw Error('Missing MainApplication.kt for widget bridge registration');
   let main=fs.readFileSync(application,'utf8');
   if(!main.includes('SmokeLessWidgetPackage()')){
-   const pattern=/PackageList\\(this\\)\\.packages\\.apply\\s*\\{/;
+   const pattern=/PackageList\(this\)\.packages\.apply\s*\{/;
    if(!pattern.test(main))throw Error('Unsupported MainApplication package registration layout');
-   main=main.replace(pattern,match=>match+'\\n              add(SmokeLessWidgetPackage())');
+   main=main.replace(pattern,match=>match+'\n              add(SmokeLessWidgetPackage())');
    fs.writeFileSync(application,main,'utf8');
   }
 
