@@ -4,7 +4,7 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 
 ## Faschecklista – uppdaterad efter grön CI för 51c9487
 
-**23/32 färdiga (72 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
+**25/32 färdiga (78 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
 
 ### 1. Inventering (4/4)
 - [x] 1.1 Verifiera vald Expo-/Android-lösning
@@ -36,9 +36,9 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 - [x] 5.3 Undvik personuppgifter som standard
 - [x] 5.4 Verifiera lokal dataseparering (automatiska tester)
 
-### 6. Tillgänglighet (2/4)
-- [ ] 6.1 Granska textskalning (pågår)
-- [ ] 6.2 Granska kontrast och tryckytor
+### 6. Tillgänglighet (4/4 – kod och automatiska tester)
+- [x] 6.1 Granska textskalning (max tre rader och ellips i båda genererade widgetlayouterna, automatiskt testat; fysisk QA i fas 25)
+- [x] 6.2 Granska kontrast och tryckytor (kontrastrik text och klickbar hel widgetyta i kod; fysisk QA i fas 25)
 - [x] 6.3 Hantera olika widgetstorlekar (kompakt/bred och resize-händelse)
 - [x] 6.4 Dokumentera enhetstestfall
 
