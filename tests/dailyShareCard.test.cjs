@@ -49,6 +49,7 @@ test('preview is opt-in and card does not access account data',()=>{
  assert.match(profile,/Sharing\.isAvailableAsync\(\)/);
  assert.match(profile,/Dela framsteg eller uppmuntran/);
  assert.match(profile,/Bilden innehåller bara dagens antal och mål/);
+ assert.match(profile,/style=\{\[styles\.cardTitle,\{flexShrink:1\}\]\}/);
  assert.match(profile,/aspectRatio:340\/420/);
  assert.match(profile,/accessibilityLiveRegion="polite"/);
  assert.match(profile,/accessibilityState=\{\{disabled:sharingPng,busy:sharingPng\}\}/);
