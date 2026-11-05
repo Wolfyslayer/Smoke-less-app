@@ -188,3 +188,9 @@ test('home progress hero remains readable with large system fonts and narrow scr
  assert.match(home,/adjustsFontSizeToFit minimumFontScale=\{0\.65\} numberOfLines=\{1\} style=\{styles\.heroNumber\}/);
  assert.match(home,/style=\{\[styles\.sectionRow,\{flexWrap:'wrap'\}\]\}/);
 });
+
+test('closing the preview prevents delayed sharing failures from showing an obsolete error',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/catch\{if\(previewOpenRef\.current\)setShareError\(true\);\}finally\{setSharingPng\(false\);\}/);
+ assert.match(profile,/accessibilityHint="Öppnar telefonens delningsdialog för den förhandsgranskade bilden"/);
+});
