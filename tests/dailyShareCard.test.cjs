@@ -180,3 +180,11 @@ test('home statistics and daily check-in actions have clear labels and minimum t
  assert.match(home,/recoveryLink:\{minHeight:48/);
  assert.match(home,/sectionRow:\{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12\}/);
 });
+
+test('home progress hero remains readable with large system fonts and narrow screens',()=>{
+ const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
+ assert.match(home,/justifyContent:'space-between',flexWrap:'wrap',gap:8/);
+ assert.match(home,/flexGrow:1,flexShrink:1,minWidth:150/);
+ assert.match(home,/adjustsFontSizeToFit minimumFontScale=\{0\.65\} numberOfLines=\{1\} style=\{styles\.heroNumber\}/);
+ assert.match(home,/style=\{\[styles\.sectionRow,\{flexWrap:'wrap'\}\]\}/);
+});
