@@ -4,7 +4,7 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 
 ## Faschecklista – uppdaterad efter grön CI för c7a4b15
 
-**27/32 färdiga (84 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
+**28/32 färdiga (88 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
 
 ### 1. Inventering (4/4)
 - [x] 1.1 Verifiera vald Expo-/Android-lösning
@@ -24,8 +24,8 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 - [x] 3.3 Hantera omstart och bakgrund
 - [x] 3.4 Begränsa batteriförbrukning
 
-### 4. Snabbåtgärder (3/4)
-- [ ] 4.1 Öppna rätt vy från widget (länk finns; Android-verifiering kvar)
+### 4. Snabbåtgärder (4/4 – implementation)
+- [x] 4.1 Öppna rätt vy från widget (widgettryck öppnar appens startsida via smokeless://, verifierat i kod och automatiskt navigationstest; faktisk Android-verifiering i fas 25)
 - [x] 4.2 Skydda mot dubbelregistrering (widgeten har ingen registreringsåtgärd)
 - [x] 4.3 Hantera gästläge säkert (lokal data och kontoseparering)
 - [x] 4.4 Verifiera navigationsvägar (automatiskt test av widgetens deep link, appens schema och indexrutt; faktisk Android-öppning i fas 25)
