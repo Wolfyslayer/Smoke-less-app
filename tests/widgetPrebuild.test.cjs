@@ -69,6 +69,9 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
    const xml=fs.readFileSync(path.join(root,'app/src/main/res/layout',layout),'utf8');
    assert.ok(xml.includes('android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."'));
    assert.ok(xml.includes('android:id="@+id/smoke_less_widget_root"'));
+   assert.ok(xml.includes('android:maxLines="3"'),'summary should support larger font sizes');
+   assert.ok(xml.includes('android:ellipsize="end"'),'summary should truncate instead of overflowing');
+   assert.ok(xml.includes('android:textColor="#FFFFFF"'),'summary must keep high-contrast text');
   }
  }finally{fs.rmSync(root,{recursive:true,force:true})}
 });
