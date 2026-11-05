@@ -31,6 +31,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   const receiver=manifest.modResults.manifest.application[0].receiver[0];
   const actions=receiver['intent-filter'][0].action.map(item=>item.$['android:name']);
   assert.ok(actions.includes('android.intent.action.DATE_CHANGED'));
+  assert.ok(actions.includes('android.intent.action.TIME_CHANGED'));
   assert.ok(actions.includes('android.intent.action.TIMEZONE_CHANGED'));
   assert.ok(actions.includes('android.appwidget.action.APPWIDGET_UPDATE'));
   await dangerousMod({modRequest:{platformProjectRoot:root}});
@@ -44,6 +45,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   const bridge=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetModule.kt'),'utf8');
   assert.match(provider,/storedDate == today/);
   assert.ok(provider.includes('Intent.ACTION_DATE_CHANGED'));
+  assert.ok(provider.includes('Intent.ACTION_TIME_CHANGED'));
   assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));
   assert.ok(provider.includes('onUpdate(context, manager, ids)'));
   assert.match(provider,/!valid -> "Öppna appen för dagens framsteg"/);
