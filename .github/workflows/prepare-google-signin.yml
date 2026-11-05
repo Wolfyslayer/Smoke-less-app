@@ -1,5 +1,10 @@
 name: Prepare Google Sign-In native dependency
 on:
+  push:
+    branches:
+      - feat/phase-16-2-google-sign-in
+    paths:
+      - .github/workflows/prepare-google-signin.yml
   workflow_dispatch:
 permissions:
   contents: write
