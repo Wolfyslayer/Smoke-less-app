@@ -242,15 +242,15 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - [ ] 7.3 Testa offline och felkonfiguration
 - [ ] 7.4 Verifiera CI och Android-build
 
-**8. Avslut (0/4)**
-- [ ] 8.1 Dokumentera Firebase-inställningar utan hemligheter
-- [ ] 8.2 Samla enhets-QA till fas 25
+**8. Avslut (2/4)**
+- [x] 8.1 Dokumentera Firebase-inställningar utan hemligheter
+- [x] 8.2 Samla enhets-QA till fas 25
 - [ ] 8.3 Verifiera slutlig grön CI
 - [ ] 8.4 Merga fas-PR
 
-**Verifierade delpunkter: 3/32 (9,4 %). Huvudpunkter: 0/8 (0 %).**
+**Verifierade delpunkter: 5/32 (15,6 %). Huvudpunkter: 0/8 (0 %).**
 
-1.1, 1.3 och 1.4 avser verifierad repository-inventering. 1.2 är öppen tills verkliga SHA-certifikat har kontrollerats i Firebase. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
+1.1, 1.3 och 1.4 avser verifierad repository-inventering. 1.2 är öppen tills verkliga SHA-certifikat har kontrollerats i Firebase. 8.1 är dokumenterad i docs/PHASE_16_2_GOOGLE_SIGN_IN_AUDIT.md utan hemligheter; 8.2 är dokumenterad där med hänvisning till fas 25. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
 
 ## Fas 16.4 – Helhetsgranskning av UI, Safe Area och Android-enheter
 **Mål:** Hela appen ska vara användbar och visuellt sammanhållen på olika Android-telefoner, oavsett skärmstorlek, systemfält, tangentbord och tillgänglighetsinställningar.
