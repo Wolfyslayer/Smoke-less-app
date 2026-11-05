@@ -218,3 +218,10 @@ test('quit mode disables daily target adjustment controls rather than offering a
  assert.match(settings,/accessibilityLabel="Minska dagligt mål"[\s\S]*?disabled=\{p\.mode==='quit'\|\|goal<=0\}/);
  assert.match(settings,/accessibilityLabel="Öka dagligt mål"[\s\S]*?accessibilityState=\{\{disabled:p\.mode==='quit'\}\} disabled=\{p\.mode==='quit'\}/);
 });
+
+test('home progress visuals announce their meaning and weekly values to screen readers',()=>{
+ const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
+ assert.match(home,/accessibilityLabel=\{\x60Dagens förbrukning: \$\{Math\.round\(p\)\} procent av dagsmålet\x60\}/);
+ assert.match(home,/accessibilityLabel=\{\x60Registrerade cigaretter under veckan:/);
+ assert.match(home,/måndag','tisdag','onsdag','torsdag','fredag','lördag','söndag/);
+});
