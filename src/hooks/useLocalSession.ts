@@ -1,4 +1,5 @@
 import {useEffect,useRef} from 'react';
+import {AppState} from 'react-native';
 import type {Dispatch,SetStateAction} from 'react';
 import type {Data} from '../domain';
 import {LocalSessionStorage,type LocalSession} from '../localSessionStorage';
@@ -56,6 +57,18 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
   })();
   return()=>{active=false;};
  },[requestedKey]);
+
+ // On returning from the background, refresh today's widget even when no new entry was saved.
+ // The native provider separately handles midnight and timezone broadcasts.
+ useEffect(()=>{
+  if(!sessionReady)return;
+  const subscription=AppState.addEventListener('change',state=>{
+   if(state==='active' && sessionKey(sessionRef.current)===requestedKey){
+    void refreshWidgetSnapshot(data).catch(()=>{});
+   }
+  });
+  return()=>subscription.remove();
+ },[sessionReady,requestedKey,data]);
 
  useEffect(()=>{
   if(!sessionReady || data===loadedDataRef.current)return;
