@@ -55,3 +55,17 @@ Status: **påbörjad, inventering pågår**. Fast 8×4-checklista finns i `docs/
 - Planera ny fristående Android-build när native beroenden eller config plugins ändras. Inga manuella Android-testresultat finns ännu.
 
 **Beslut:** Nästa kodcommit ska först ge en isolerad, testbar credential-/felhanteringsgräns och säker koppling till befintlig kontomodell. Slå inte på Google-inloggning i UI förrän konfigurations- och säkerhetskraven kan uppfyllas.
+
+
+## Praktisk Firebase- och Android-konfiguration (utan hemligheter)
+**Denna guide är instruktioner, inte en bekräftelse på att Firebase Console är konfigurerad.** Inga SHA-fingeravtryck eller OAuth-ID har verifierats i denna PR.
+
+1. Öppna Firebase Console för rätt projekt → Authentication → Sign-in method → Google → Enable. Kontrollera support-e-post och spara. Google-provider kan endast aktiveras av projektets behöriga administratör.
+2. Öppna Project settings → Your apps → Android-appen med package name `com.smokeless.app`. Kontrollera att paketnamnet är exakt lika med `expo.android.package` i `app.json`.
+3. Registrera **SHA-1 och SHA-256** för varje relevant signeringscertifikat. För lokal debug-build kan du använda `cd android && ./gradlew signingReport` (Windows PowerShell: `cd android; .\gradlew.bat signingReport`). Om `android/` genereras med Expo prebuild, gör detta efter en kontrollerad prebuild. För GitHub Actions/EAS/Google Play måste fingeravtrycken komma från respektive **faktiska** signeringsnyckel; debug-fingeravtrycket täcker inte release.
+4. Ladda ned den uppdaterade `google-services.json` för **samma Firebase-projekt och Android-app** efter ändringarna. Kontrollera att den konfigurerade lokala filen motsvarar rätt app; lägg inte filinnehåll, tokens eller privata nycklar i PR-text eller testloggar.
+5. Kontrollera OAuth-klienterna i Google Cloud/Firebase och att eventuell web client ID som används för ID-token till Firebase verkligen hör till samma projekt. Android-klienten ska vara kopplad till korrekt package ID och SHA-1. **Gissa aldrig klient-ID eller SHA-värden.**
+6. Innan native Google Sign-In aktiveras: välj och versionslås kompatibelt bibliotek för Expo SDK 58/RN 0.88.1, verifiera dess config plugin/prebuild, och kontrollera att Firebase tar emot en verifierad Google ID-token genom `GoogleAuthProvider.credential`/Firebase Auth. Undvik egna tokens i appens lagring.
+7. Efter ändringar i native bibliotek/config: bygg en ny fristående Android-app. Testa först på riktig enhet med Play-tjänster och rätt SHA-konfiguration; verifiera även avbrott, offline, kontokonflikt och att UID/historik förblir korrekt. Dokumentera manuella resultat först när de faktiskt utförts.
+
+**Säkerhetsgrind:** Inloggningsknappen ska inte aktiveras i produktion innan steg 1–6 är verifierade och riskerna kring befintliga e-postkonton och gästdata är testade. För blockerande kontosäkerhet krävs riktade tester under fas 16.2, även om bred manuell Android-regression görs i fas 25.
