@@ -147,3 +147,11 @@ test('changed daily values invalidate an in-flight PNG export before share',()=>
  assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
  assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal\]\)/);
 });
+
+test('reminder settings support larger text and announce status changes without intrusive alerts',()=>{
+ const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');
+ assert.match(settings,/reminderStatus\?<Text accessibilityLiveRegion="polite"/);
+ assert.match(settings,/fontWeight:'800',flexShrink:1/);
+ assert.match(settings,/accessibilityHint="Ange timmar mellan 0 och 23"/);
+ assert.match(settings,/accessibilityHint="Ange minuter mellan 0 och 59"/);
+});
