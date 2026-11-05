@@ -200,3 +200,9 @@ test('stale image sharing and empty exports cannot report errors on a new previe
  assert.match(profile,/catch\{if\(previewOpenRef\.current&&exportGenerationRef\.current===approvedGeneration\)setShareError\(true\);\}/);
  assert.match(profile,/if\(!base64\)\{if\(generation===exportGenerationRef\.current&&previewOpenRef\.current\)setPngStatus\('error'\);return;\}/);
 });
+
+test('approved share generation remains visible to error handler',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/const approvedGeneration=exportGenerationRef\.current;\s*try\{/);
+ assert.doesNotMatch(profile,/try\{\s*const approvedPath=pngPathRef\.current;\s*const approvedCounts=exportCountsRef\.current;\s*const approvedGeneration=/);
+});

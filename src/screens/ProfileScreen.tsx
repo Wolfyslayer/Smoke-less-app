@@ -38,10 +38,10 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
   if(pngStatus!=='ready'||!pngPathRef.current||sharingPng||exportCountsRef.current?.todayCount!==todayCount||exportCountsRef.current?.dailyGoal!==dailyGoal)return;
   setSharingPng(true);
   setShareError(false);
+  const approvedGeneration=exportGenerationRef.current;
   try{
    const approvedPath=pngPathRef.current;
    const approvedCounts=exportCountsRef.current;
-   const approvedGeneration=exportGenerationRef.current;
    if(!await Sharing.isAvailableAsync())throw new Error('Sharing unavailable');
    if(!previewOpenRef.current||exportGenerationRef.current!==approvedGeneration||!approvedPath||pngPathRef.current!==approvedPath||exportCountsRef.current!==approvedCounts||latestCountsRef.current.todayCount!==approvedCounts?.todayCount||latestCountsRef.current.dailyGoal!==approvedCounts?.dailyGoal)return;
    await Sharing.shareAsync(approvedPath,{mimeType:'image/png',dialogTitle:'Dela dagens framsteg',UTI:'public.png'});
