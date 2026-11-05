@@ -9,7 +9,7 @@ module.exports=function withSmokeLessWidget(config){
   if(!app)throw Error('Missing Android application manifest');
   app.receiver??=[];
   if(!app.receiver.some(r=>r.$?.['android:name']===providerName)){
-   app.receiver.push({$:{'android:name':providerName,'android:exported':'true','android:label':'Smoke Less'},'intent-filter':[{'action':[{$:{'android:name':'android.appwidget.action.APPWIDGET_UPDATE'}}]}],'meta-data':[{$:{'android:name':'android.appwidget.provider','android:resource':'@xml/smoke_less_widget_info'}}]});
+   app.receiver.push({$:{'android:name':providerName,'android:exported':'true','android:label':'Smoke Less'},'intent-filter':[{'action':[{$:{'android:name':'android.appwidget.action.APPWIDGET_UPDATE'}},{$:{'android:name':'android.intent.action.DATE_CHANGED'}},{$:{'android:name':'android.intent.action.TIMEZONE_CHANGED'}}]}],'meta-data':[{$:{'android:name':'android.appwidget.provider','android:resource':'@xml/smoke_less_widget_info'}}]});
   }
   return c;
  });
@@ -24,6 +24,7 @@ module.exports=function withSmokeLessWidget(config){
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -35,6 +36,14 @@ import java.util.Locale
 
 /** Neutral by default: personal statistics are never rendered without an explicit native bridge. */
 class SmokeLessWidgetProvider : AppWidgetProvider() {
+ override fun onReceive(context: Context, intent: Intent) {
+  super.onReceive(context, intent)
+  if (intent.action == Intent.ACTION_DATE_CHANGED || intent.action == Intent.ACTION_TIMEZONE_CHANGED) {
+   val manager = AppWidgetManager.getInstance(context)
+   val ids = manager.getAppWidgetIds(ComponentName(context, SmokeLessWidgetProvider::class.java))
+   onUpdate(context, manager, ids)
+  }
+ }
  override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
   for (id in ids) {
    render(context, manager, id)
