@@ -212,10 +212,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - [ ] 2.3 Skydda konfigurationsvärden
 - [ ] 2.4 Verifiera native-beroenden
 
-**3. Inloggningsflöde (0/4)**
+**3. Inloggningsflöde (1/4)**
 - [ ] 3.1 Lägg till Google-val
 - [ ] 3.2 Hantera avbruten inloggning
-- [ ] 3.3 Visa begripliga svenska fel
+- [x] 3.3 Visa begripliga svenska fel
 - [ ] 3.4 Hantera saknade Play-tjänster
 
 **4. Kontolänkning (0/4)**
@@ -248,9 +248,9 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - [ ] 8.3 Verifiera slutlig grön CI
 - [ ] 8.4 Merga fas-PR
 
-**Verifierade delpunkter: 6/32 (18,8 %). Huvudpunkter: 0/8 (0 %).**
+**Verifierade delpunkter: 7/32 (21,9 %). Huvudpunkter: 0/8 (0 %).**
 
-1.1, 1.3 och 1.4 avser verifierad repository-inventering. Användaren har bekräftat att SHA-1 har lagts till i Firebase. 1.2 är fortfarande öppen tills SHA-256 och relevanta signeringscertifikat (debug/release) samt kopplingen till rätt Android package ID har verifierats. 8.1 är dokumenterad i docs/PHASE_16_2_GOOGLE_SIGN_IN_AUDIT.md utan hemligheter; 8.2 är dokumenterad där med hänvisning till fas 25. 6.4 är avbockad eftersom befintliga e-postfunktioner och kontoåtgärder är kvar oförändrade i authService och useAccountFlow, och CI för 60dd628 är grön; enhetstest av båda inloggningssätten återstår. Google-ID-token kan nu skickas via useAccountFlow till Firebase, men Android-kontoväljaren och UI saknas ännu. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
+1.1, 1.3 och 1.4 avser verifierad repository-inventering. Användaren har bekräftat att både SHA-1 och SHA-256 har lagts till i Firebase. 1.2 är fortfarande öppen tills SHA-256 och relevanta signeringscertifikat (debug/release) samt kopplingen till rätt Android package ID har verifierats. 8.1 är dokumenterad i docs/PHASE_16_2_GOOGLE_SIGN_IN_AUDIT.md utan hemligheter; 8.2 är dokumenterad där med hänvisning till fas 25. 3.3 är avbockad eftersom svenska felmeddelanden för avbrott, kontokonflikt, nätverk, Play-tjänster och konfigurationsfel nu är kopplade till useAccountFlow och båda CI-kontrollerna för 011821c är gröna. Det återstår att verifiera felvisningen på riktig Android i fas 25. 6.4 är avbockad eftersom befintliga e-postfunktioner och kontoåtgärder är kvar oförändrade i authService och useAccountFlow, och CI för 60dd628 är grön; enhetstest av båda inloggningssätten återstår. Google-ID-token kan nu skickas via useAccountFlow till Firebase, men Android-kontoväljaren och UI saknas ännu. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
 
 ## Fas 16.4 – Helhetsgranskning av UI, Safe Area och Android-enheter
 **Mål:** Hela appen ska vara användbar och visuellt sammanhållen på olika Android-telefoner, oavsett skärmstorlek, systemfält, tangentbord och tillgänglighetsinställningar.
