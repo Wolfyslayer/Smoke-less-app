@@ -119,3 +119,9 @@ test('profile account status and quick navigation accommodate large text and scr
  assert.match(profile,/style=\{\[styles\.cardTitle,\{flexShrink:1\}\]\}>\{item\.label\}/);
  assert.match(profile,/sectionRow:\{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12\}/);
 });
+
+test('plan summary is one accessible full-width navigation target',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/accessibilityLabel="Öppna min plan" accessibilityHint="Visar dina mål och din plan" onPress=\{\(\)=>onNavigate\('plan'\)\} style=\{\[styles\.row,\{minHeight:72\}\]\}/);
+ assert.doesNotMatch(profile,/style=\{styles\.planAction\}/);
+});
