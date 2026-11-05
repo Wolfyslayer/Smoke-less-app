@@ -14,7 +14,7 @@ export function makeWidgetSnapshot(input:WidgetSnapshotInput):WidgetSnapshot|nul
 export function readWidgetSnapshot(snapshot:unknown,today:string):WidgetSnapshot|null{
  if(!snapshot||typeof snapshot!=='object'||!validDate(today))return null;
  const value=snapshot as Partial<WidgetSnapshot>;
- if(value.version!==1||value.date!==today||!validDate(value.date)||!Number.isSafeInteger(value.todayCount)||!Number.isSafeInteger(value.dailyGoal)||value.todayCount!<0||value.dailyGoal!<0)return null;
+ if(value.version!==1||value.date!==today||!validDate(value.date)||!Number.isSafeInteger(value.todayCount)||!Number.isSafeInteger(value.dailyGoal)||value.todayCount!<0||value.dailyGoal!<0||value.todayCount!>2147483647||value.dailyGoal!>2147483647)return null;
  const clean=makeWidgetSnapshot({enabled:true,date:today,todayCount:value.todayCount!,dailyGoal:value.dailyGoal!});
  if(!clean||Object.keys(value).sort().join(',')!==Object.keys(clean).sort().join(','))return null;
  if(value.remaining!==clean.remaining||value.progressPercent!==clean.progressPercent)return null;
