@@ -53,5 +53,10 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   assert.match(bridge,/MODE_PRIVATE/);
   assert.ok(bridge.includes('prefs.edit().clear().commit()'));
   assert.ok(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml')));
+  for(const layout of ['smoke_less_widget.xml','smoke_less_widget_wide.xml']){
+   const xml=fs.readFileSync(path.join(root,'app/src/main/res/layout',layout),'utf8');
+   assert.ok(xml.includes('android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."'));
+   assert.ok(xml.includes('android:id="@+id/smoke_less_widget_root"'));
+  }
  }finally{fs.rmSync(root,{recursive:true,force:true})}
 });
