@@ -63,10 +63,14 @@ test('pending native publish cannot overwrite a subsequent privacy clear',async(
  map.clear();native.published.length=0;
  await setWidgetOptIn(true);
  let release;
+ let launcherSnapshot=null;
  const original=native.publishNativeWidget;
+ const originalClear=native.clearNativeWidget;
+ native.clearNativeWidget=async()=>{launcherSnapshot=null;await originalClear()};
  native.publishNativeWidget=async snapshot=>{
   await new Promise(resolve=>{release=resolve});
   native.published.push(snapshot);
+  launcherSnapshot=snapshot;
  };
  try{
   const refresh=refreshWidgetSnapshot(data,now);
@@ -78,5 +82,6 @@ test('pending native publish cannot overwrite a subsequent privacy clear',async(
   await Promise.all([refresh,clear]);
   assert.equal(map.size,0);
   assert.ok(native.clears>0);
- }finally{native.publishNativeWidget=original}
+  assert.equal(launcherSnapshot,null,'privacy clear must be the final native operation');
+ }finally{native.publishNativeWidget=original;native.clearNativeWidget=originalClear}
 });
