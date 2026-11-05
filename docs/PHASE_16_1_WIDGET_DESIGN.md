@@ -4,7 +4,7 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 
 ## Faschecklista – uppdaterad efter grön CI för 51c9487
 
-**25/32 färdiga (78 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
+**26/32 färdiga (81 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
 
 ### 1. Inventering (4/4)
 - [x] 1.1 Verifiera vald Expo-/Android-lösning
@@ -12,11 +12,11 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 - [x] 1.3 Fastställ privacy-by-default
 - [x] 1.4 Dokumentera native-build och testmatris
 
-### 2. Widgetvyer (3/4)
+### 2. Widgetvyer (4/4 – implementation)
 - [x] 2.1 Skapa kompakt widget
 - [x] 2.2 Skapa större widgetvariant
 - [x] 2.3 Hantera tomma värden och nollmål
-- [ ] 2.4 Anpassa storlekar och tema (pågår; Android-QA kvar)
+- [x] 2.4 Anpassa storlekar och tema (kompakt/bred layout, responsiv minbredd, rutnätsstorlek och mörkt tema implementerat; fysisk Android-QA i fas 25)
 
 ### 3. Datauppdatering (4/4, implementerad)
 - [x] 3.1 Uppdatera efter registrering
