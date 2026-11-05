@@ -11,5 +11,10 @@ test('widget plugin declares provider, launcher action and neutral privacy-safe 
  assert.match(plugin,/PendingIntent\.FLAG_IMMUTABLE/);
  assert.match(plugin,/smokeless:\/\//);
  assert.match(plugin,/android:updatePeriodMillis="0"/);
- assert.doesNotMatch(plugin,/todayCount|dailyGoal|accountEmail|Firebase|SharedPreferences/);
+ assert.match(plugin,/getSharedPreferences\("smokeless_widget_v1", Context\.MODE_PRIVATE\)/);
+ assert.match(plugin,/prefs\.getBoolean\("enabled", false\)/);
+ assert.match(plugin,/storedDate == today/);
+ assert.match(plugin,/count >= 0 && goal >= 0/);
+ assert.match(plugin,/if \(valid\)/);
+ assert.doesNotMatch(plugin,/accountEmail|Firebase|authToken|userUid/);
 });
