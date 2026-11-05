@@ -35,11 +35,19 @@
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
 | 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
-| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – bilddelning tekniskt inventerad | #156 |
-| 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
+| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Mergad; Android-verifiering återstår i fas 17 | #156 |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
-| 17.0 | Säkerhet, integritet och Google Play-lansering | Planerad | — |
+| 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
+| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Planerad | — |
+| 16.5 | Personlig dashboard och anpassningsbar startsida | Planerad | — |
+| 16.6 | Flexiblare planering och långsiktig målanpassning | Planerad | — |
+| 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
+| 17.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
+| 18.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
+
+
+**Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 17.
 
 Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övriga dokument. Fas 7.0 var **intern beta**, inte offentlig Play Store-lansering.
 
@@ -181,6 +189,42 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Testa på riktig Android-enhet, inklusive ny användare, återkommande användare, avbrutet flöde, saknade Google Play-tjänster, offline och felaktig konfiguration.
 **Acceptans:** Google-inloggning fungerar på Android utan dubbla konton eller dataförlust, och övriga inloggningssätt fortsätter fungera.
 
+## Fas 16.4 – Helhetsgranskning av UI, Safe Area och Android-enheter
+**Mål:** Hela appen ska vara användbar och visuellt sammanhållen på olika Android-telefoner, oavsett skärmstorlek, systemfält, tangentbord och tillgänglighetsinställningar.
+- Inventera **samtliga skärmar, flikar, onboardingsteg, modaler, formulär, dialogs, bottennavigering, diagram och delningsförhandsvisningar** i en fast testmatris innan kodändringar.
+- Använd konsekvent Safe Area-hantering (t.ex. `react-native-safe-area-context`) för statusfält, kamerahål/notch, skärmkanter, Androids gestfält och treknappsnavigering. Undvik dubbel padding och innehåll bakom systemfält.
+- Verifiera tangentbordets öppning/stängning, fokus, scroll till aktiva fält, datumväljare och modaler utan att primära knappar döljs.
+- Säkerställ att små och smala skärmar, större telefoner, olika bildförhållanden, rotering där appen stöder det, maximal systemtext och display scaling inte klipper text, siffror, knappar eller kort.
+- Granska minst 48 dp tryckytor, kontrast, TalkBack-ordning/etiketter, felmeddelanden, laddningslägen och konsekventa tomlägen. Undvik oavsiktlig horisontell scroll och onödig vertikal scroll.
+- Samordna med fas 16.3: Androids Tillbaka-gest, systemnavigering och stängning av modaler ska fungera ihop med Safe Area utan dubbla hanterare.
+- Lägg till riktade automatiska tester där möjligt. Dokumentera skärmmatris och kvarstående enhetstester; utför slutlig fysisk Android-/BrowserStack-verifiering i fas 17.
+**Avgränsning:** Detta är en **samlad granskning med tydlig slutpunkt**, inte en öppen serie kosmetiska småändringar. Endast blockerande problem eller avvikelser från den fastställda matrisen får utöka omfattningen. En PR för fasen, samlade ändringar och tester.
+**Acceptans:** Alla inventerade vyer har granskats och kända Safe Area-/tangentbords-/klippningsproblem åtgärdats eller dokumenterats för slutlig Android-QA. Inga genomförda manuella tester påstås utan faktiskt resultat.
+
+## Fas 16.5 – Personlig dashboard och anpassningsbar startsida
+**Mål:** Visa relevant framsteg utan överbelastning.
+- Låt användaren välja och ordna ett begränsat antal startsideskort, t.ex. dagens mål, röksug, rökfri tid, besparingar och kommande delmål.
+- Erbjud användbara standardval, återställning till standard och enkel hantering av saknade värden.
+- Spara val lokalt och synka bara om det passar befintlig profilmodell och integritetspolicy; undvik nya externa tjänster.
+- Behåll tillgänglighet, god prestanda och minimal scroll även med maximal textstorlek.
+**Acceptans:** Kort kan väljas och ordnas, sparas korrekt, och återställas utan att påverka historik eller plan.
+
+## Fas 16.6 – Flexiblare planering och långsiktig målanpassning
+**Mål:** Ge fler tydliga sätt att justera en plan utan att tidigare framsteg försvinner.
+- Granska befintliga lägen för gradvis minskning, direktstopp och eget datum; undvik att duplicera redan färdiga funktioner.
+- Förbättra förhandsvisning av måländringar och förklara hur takt, slutdatum och dagens riktvärde påverkas.
+- Ge användaren val att behålla ett eget slutdatum eller låta planen räkna om datumet vid ändrade förutsättningar.
+- Bevara registreringar, historik och säkra synk-/konfliktregler vid varje ändring.
+**Acceptans:** Ändringar är begripliga, reversibla där möjligt och testade mot historik, datumgränser och synk.
+
+## Fas 16.7 – Fördjupad statistik och personliga trender
+**Mål:** Ge mer långsiktig överblick utan missvisande jämförelser.
+- Utöka med jämförelser vecka mot vecka och månad mot månad, personliga rekord och relevanta trender för konsumtion, röksug och mål.
+- Skilj på dagar utan registrering, uppskattade värden och verifierade registreringar; visa inga falska rökfria sviter.
+- Anpassa diagram till små skärmar, stora texter, TalkBack och användarens valda dashboardkort.
+- Håll beräkningarna lokala och effektiva, med automatiska regressionstester för planändringar och datumgränser.
+**Acceptans:** Trender är begripliga och korrekta även vid saknade data och ändrade planer.
+
 ## Fas 17.0 – Slutlig QA, säkerhet, integritet och Google Play-lansering
 - Genomför uppskjutna manuella tester från tidigare faser, inklusive `docs/PHASE_8_ANDROID_ACCEPTANCE.md` (7.4, 8.1, 8.1a, 8.2), på riktiga Android-enheter och BrowserStack. Dokumentera PASS/FAIL, enhet, Android-version och testad commit.
 - Verifiera full regression: onboarding, planer, SOS, historik, offline, gästläge, kontobyten, tvåenhetssynk och konflikter, notiser, tillgänglighet, TalkBack, stor text och små skärmar.
@@ -191,6 +235,12 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Bygg och testa signerad release; verifiera riktiga Android-enheter, notifieringar och inloggning.
 - Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
+
+## Fas 18.0 – Uppföljning och förbättringar efter lansering
+- Etablera kostnadsmedveten hantering av buggrapporter, krascher och supportärenden utan onödig insamling av personuppgifter.
+- Prioritera korrigeringar efter faktisk användarfeedback och Android-/Play-policyändringar; håll regressionstester och beroenden uppdaterade.
+- Utvärdera frivilliga förbättringar av widgets, statistik, dashboard och språkstöd först efter stabil lansering.
+- Varje ny större funktion får en avgränsad fas, fast checklista och egen PR enligt `AI_WORKFLOW.md`.
 
 ## Hur AI ska använda denna fil
 1. Läs `AI_WORKFLOW.md` och denna masterplan, kontrollera aktiv PR, senaste commit och CI.
