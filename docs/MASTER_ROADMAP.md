@@ -265,6 +265,23 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Delningskortets datamodell ska vara explicit begränsad till dagens antal och dagens mål, med kort neutral/positiv text baserad på dessa värden. Användaren ska kunna förhandsgranska, godkänna och avbryta. Ingen skärmbild av hela skärmen och inga namn, e-postadresser eller historik.
 - Testa rena formatteringsfunktioner med gränsfall (0, över målet, ogiltiga mål), avbrytande, samt att endast godkända fält används i bildkortet. Verifiera bildexport och Android-delning manuellt i fas 17.
 
+### Fas 16.0 – huvudchecklista och kvarstående acceptans (PR #156)
+
+Fasens **åtta fasta huvudpunkter** återges här utan att ändra nämnaren eller hitta på retroaktiva delpunkter. En numrerad underchecklista fastställdes inte när fasen startade; detta är en avvikelse från `AI_WORKFLOW.md` och delpunktsprocent redovisas därför inte som verifierad. PR-beskrivningen ska ha samma status.
+
+1. [x] Aktivera fas 16 efter fas 15.
+2. [x] Inventera gränssnitt och prestandarisker.
+3. [ ] Slutgranska navigering och användartexter. Profilens synkgenväg och tryckyta till planen har förbättrats, men helhetsgranskningen är inte dokumenterat klar.
+4. [ ] Slutgranska skärmläsare, stora textstorlekar och tryckytor. Profil och PNG-flöde har förbättrats; manuell Android-verifiering flyttas till fas 17.
+5. [ ] Slutgranska onödiga omrenderingar och responsivitet. SVG-kortet är memoiserat och profilens snabbgenvägar är stabila; granskning av övriga skärmar återstår.
+6. [ ] Slutgranska språk och felmeddelanden. Svenska delnings- och synktexter är justerade; övriga skärmar återstår.
+7. [x] Automatiska regressionstester för PNG-delning och integritet.
+8. [ ] Slutlig CI-verifiering och merge.
+
+**Verifierat:** 3/8 huvudpunkter (37,5 %). **Delpunkter:** inte mätbara utan tidigare fastställd underchecklista; skapa inte en ny nämnare utan uttryckligt beslut. Senaste verifierade gröna commit före denna dokumentationsuppdatering: `34c1e5e` (båda CI-workflows).
+
+**Fas 17, manuellt på Android:** PNG-export och systemdelning efter ny native-build med `expo-sharing`, TalkBack, maximal systemtextstorlek, olika skärmstorlekar och fullständig regressionskontroll. Inga manuella tester är markerade godkända. Säkerhetskritiska blockerare får inte skjutas upp.
+
 ### Fas 16.0 – verifieringsläge inför slutgranskning
 
 - CI för `406d620` är grön i båda obligatoriska arbetsflödena (`Validate Smoke Less 6` och `Firestore rules emulator`). Detta verifierar automatiska tester och byggets kontroller, **inte** Androids faktiska bilddelning.
