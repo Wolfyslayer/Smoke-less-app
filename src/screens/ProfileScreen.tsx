@@ -21,9 +21,14 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const [pngStatus,setPngStatus]=useState<'idle'|'rendering'|'ready'|'error'>('idle');
  const exportGenerationRef=useRef(0);
  const latestCountsRef=useRef({todayCount,dailyGoal});
- latestCountsRef.current={todayCount,dailyGoal};
  const exportCountsRef=useRef<{todayCount:number;dailyGoal:number}|null>(null);
  const pngPathRef=useRef<string|null>(null);
+ if(latestCountsRef.current.todayCount!==todayCount||latestCountsRef.current.dailyGoal!==dailyGoal){
+  ++exportGenerationRef.current;
+  pngPathRef.current=null;
+  exportCountsRef.current=null;
+ }
+ latestCountsRef.current={todayCount,dailyGoal};
  const [sharingPng,setSharingPng]=useState(false);
  const [shareError,setShareError]=useState(false);
  const sharePng=async()=>{

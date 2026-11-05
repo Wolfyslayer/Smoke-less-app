@@ -140,3 +140,9 @@ test('PNG preparation and stale-value status are announced to screen readers',()
  assert.match(profile,/Bilden förbereds\. Vänta tills den är klar innan du delar\./);
  assert.match(profile,/pngStatus==='ready'\?<Text accessibilityLiveRegion="polite" style=\{styles\.muted\}>Dagens värden har ändrats/);
 });
+
+test('changed daily values invalidate an in-flight PNG export before share',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/if\(latestCountsRef\.current\.todayCount!==todayCount\|\|latestCountsRef\.current\.dailyGoal!==dailyGoal\)\{/);
+ assert.match(profile,/\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
+});
