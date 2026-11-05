@@ -19,6 +19,59 @@ module.exports=function withSmokeLessWidget(config){
   const res=path.join(root,'app/src/main/res');
   for(const d of [javaDir,path.join(res,'layout'),path.join(res,'xml'),path.join(res,'drawable')])fs.mkdirSync(d,{recursive:true});
   const files={
+   [path.join(javaDir,'SmokeLessWidgetModule.kt')]:`package com.smokeless.app
+
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.Promise
+
+/** Writes only approved daily aggregates; never accepts identity or history. */
+class SmokeLessWidgetModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+ override fun getName() = "SmokeLessWidget"
+ @ReactMethod fun publish(date: String, todayCount: Int, dailyGoal: Int, promise: Promise) {
+  try {
+   val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+   require(date == today && todayCount >= 0 && dailyGoal >= 0) { "Invalid widget snapshot" }
+   val prefs = reactContext.getSharedPreferences("smokeless_widget_v1", Context.MODE_PRIVATE)
+   check(prefs.edit().putString("date", date).putInt("todayCount", todayCount)
+    .putInt("dailyGoal", dailyGoal).putBoolean("enabled", true).commit()) { "Widget storage failed" }
+   updateWidgets()
+   promise.resolve(null)
+  } catch (e: Exception) { promise.reject("WIDGET_PUBLISH_FAILED", e) }
+ }
+ @ReactMethod fun clear(promise: Promise) {
+  try {
+   val prefs = reactContext.getSharedPreferences("smokeless_widget_v1", Context.MODE_PRIVATE)
+   check(prefs.edit().clear().commit()) { "Widget clear failed" }
+   updateWidgets()
+   promise.resolve(null)
+  } catch (e: Exception) { promise.reject("WIDGET_CLEAR_FAILED", e) }
+ }
+ private fun updateWidgets() {
+  val manager = AppWidgetManager.getInstance(reactContext)
+  val ids = manager.getAppWidgetIds(ComponentName(reactContext, SmokeLessWidgetProvider::class.java))
+  SmokeLessWidgetProvider().onUpdate(reactContext, manager, ids)
+ }
+}
+`,
+   [path.join(javaDir,'SmokeLessWidgetPackage.kt')]:`package com.smokeless.app
+
+import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.uimanager.ViewManager
+
+class SmokeLessWidgetPackage : ReactPackage {
+ override fun createNativeModules(context: ReactApplicationContext): List<NativeModule> =
+  listOf(SmokeLessWidgetModule(context))
+ override fun createViewManagers(context: ReactApplicationContext): List<ViewManager<*, *>> = emptyList()
+}
+`,
+
    [path.join(javaDir,'SmokeLessWidgetProvider.kt')]:`package com.smokeless.app
 
 import android.app.PendingIntent
@@ -121,6 +174,17 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
 `
   };
   for(const [file,content] of Object.entries(files))fs.writeFileSync(file,content,'utf8');
+  // Register the local React Native module after Expo prebuild regenerates MainApplication.
+  const application=path.join(javaDir,'MainApplication.kt');
+  if(!fs.existsSync(application))throw Error('Missing MainApplication.kt for widget bridge registration');
+  let main=fs.readFileSync(application,'utf8');
+  if(!main.includes('SmokeLessWidgetPackage()')){
+   const pattern=/PackageList\\(this\\)\\.packages\\.apply\\s*\\{/;
+   if(!pattern.test(main))throw Error('Unsupported MainApplication package registration layout');
+   main=main.replace(pattern,match=>match+'\\n              add(SmokeLessWidgetPackage())');
+   fs.writeFileSync(application,main,'utf8');
+  }
+
   return c;
  }]);
 };
