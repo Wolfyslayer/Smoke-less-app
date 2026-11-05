@@ -1,10 +1,10 @@
 # Fas 16.1 – Android-widget: teknisk inventering och beslutspunkter
 
-Status: **implementation pågår i PR #158; native-build och fysisk Android-verifiering återstår**. Den fasta checklistan i `docs/MASTER_ROADMAP.md` gäller utan nya delpunkter.
+Status: **implementation pågår i PR #158; native-build grön i GitHub Actions, fysisk Android-verifiering återstår i fas 25**. Den fasta checklistan i `docs/MASTER_ROADMAP.md` gäller utan nya delpunkter.
 
 ## Faschecklista – uppdaterad efter grön CI för c7a4b15
 
-**28/32 färdiga (88 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
+**29/32 färdiga (91 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build är verifierad i GitHub Actions; fysisk Android-enhets-QA återstår till fas 25.
 
 ### 1. Inventering (4/4)
 - [x] 1.1 Verifiera vald Expo-/Android-lösning
@@ -42,11 +42,11 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 - [x] 6.3 Hantera olika widgetstorlekar (kompakt/bred och resize-händelse)
 - [x] 6.4 Dokumentera enhetstestfall
 
-### 7. Tester (2/4)
+### 7. Tester (3/4)
 - [x] 7.1 Testa målberäkning
 - [x] 7.2 Testa uppdateringssignaler
 - [ ] 7.3 Testa offline och kontobyte på Android (pågår)
-- [ ] 7.4 Verifiera native-build och CI
+- [x] 7.4 Verifiera native-build och CI (GitHub Actions Verify Android widget native build grön på e7e15dd; Expo prebuild, Kotlin-kompilering och debug-APK verifierade)
 
 ### 8. Avslut (2/4)
 - [x] 8.1 Dokumentera implementation
@@ -77,7 +77,7 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 
 ## Reproducerbar native-buildkontroll (punkt 7.4)
 
-Denna kontroll är **inte utförd ännu**. Kör från projektroten på en dator med Android SDK/JDK och projektets riktiga, lokala `google-services.json` (lägg inte Firebase-filen eller nycklar i Git):
+Kontrollen är **genomförd i GitHub Actions** på commit `e7e15dd` (grön workflow `Verify Android widget native build`). Följande kommandon kan också användas för lokal reproduktion. Kör från projektroten på en dator med Android SDK/JDK och projektets riktiga, lokala `google-services.json` (lägg inte Firebase-filen eller nycklar i Git):
 
 ```bash
 npm ci
