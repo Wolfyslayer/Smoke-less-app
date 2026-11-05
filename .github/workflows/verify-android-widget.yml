@@ -1,0 +1,51 @@
+name: Verify Android widget native build
+
+# Run only when explicitly requested; native builds are too expensive for every PR update.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-widget-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate non-production Firebase config for compilation only
+        run: |
+          cat > google-services.json <<'JSON'
+          {
+            "project_info": {
+              "project_number": "123456789012",
+              "project_id": "smokeless-widget-ci-only",
+              "storage_bucket": "smokeless-widget-ci-only.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:123456789012:android:0123456789abcdef012345",
+                "android_client_info": {"package_name": "com.smokeless.app"}
+              },
+              "api_key": [{"current_key": "ci-only-not-a-real-api-key"}]
+            }],
+            "configuration_version": "1"
+          }
+          JSON
+      - name: Generate Android native project
+        run: npx expo prebuild --platform android --clean --no-install --non-interactive
+      - name: Compile debug APK and widget Kotlin code
+        working-directory: android
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+      - name: Confirm APK exists
+        run: test -s android/app/build/outputs/apk/debug/app-debug.apk

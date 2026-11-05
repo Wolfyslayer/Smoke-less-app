@@ -1,0 +1,77 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const os=require('node:os');
+const path=require('node:path');
+const vm=require('node:vm');
+
+test('Expo widget prebuild generates native provider, bridge, resources and registers package exactly once',async()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'smokeless-widget-'));
+ try{
+  const javaDir=path.join(root,'app/src/main/java/com/smokeless/app');
+  fs.mkdirSync(javaDir,{recursive:true});
+  const mainPath=path.join(javaDir,'MainApplication.kt');
+  fs.writeFileSync(mainPath,'package com.smokeless.app\\nclass MainApplication { val packages = PackageList(this).packages.apply {\\n } }'.replaceAll('\\n','\n'));
+  const source=fs.readFileSync('plugins/withSmokeLessWidget.js','utf8');
+  let manifestMod,dangerousMod;
+  const context={module:{exports:{}},exports:{},require:id=>{
+   if(id==='expo/config-plugins')return {
+    withAndroidManifest:(c,fn)=>{manifestMod=fn;return c},
+    withDangerousMod:(c,[platform,fn])=>{assert.equal(platform,'android');dangerousMod=fn;return c}
+   };
+   if(id==='node:fs')return fs;
+   if(id==='node:path')return path;
+   throw Error(id);
+  }};
+  vm.runInNewContext(source,context,{filename:'withSmokeLessWidget.js'});
+  context.module.exports({});
+  const manifest={modResults:{manifest:{application:[{receiver:[]}]}}};
+  manifestMod(manifest);
+  // Expo prebuild may rerun config plugins: never duplicate receivers or permissions.
+  manifestMod(manifest);
+  assert.equal(manifest.modResults.manifest.application[0].receiver.length,1);
+  assert.equal(manifest.modResults.manifest['uses-permission'].filter(p=>p.$['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED').length,1);
+  const receiver=manifest.modResults.manifest.application[0].receiver[0];
+  const actions=receiver['intent-filter'][0].action.map(item=>item.$['android:name']);
+  assert.ok(actions.includes('android.intent.action.BOOT_COMPLETED'));
+  assert.ok(manifest.modResults.manifest['uses-permission'].some(p=>p.$['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED'));
+  assert.ok(actions.includes('android.intent.action.DATE_CHANGED'));
+  assert.ok(actions.includes('android.intent.action.TIME_CHANGED'));
+  assert.ok(actions.includes('android.intent.action.TIMEZONE_CHANGED'));
+  assert.ok(actions.includes('android.appwidget.action.APPWIDGET_UPDATE'));
+  await dangerousMod({modRequest:{platformProjectRoot:root}});
+  await dangerousMod({modRequest:{platformProjectRoot:root}});
+  const main=fs.readFileSync(mainPath,'utf8');
+  assert.equal(main.split('add(SmokeLessWidgetPackage())').length-1,1);
+  for(const name of ['SmokeLessWidgetModule.kt','SmokeLessWidgetPackage.kt','SmokeLessWidgetProvider.kt']){
+   assert.ok(fs.existsSync(path.join(javaDir,name)),name);
+  }
+  const provider=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetProvider.kt'),'utf8');
+  const bridge=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetModule.kt'),'utf8');
+  assert.match(provider,/storedDate == today/);
+  assert.ok(provider.includes('Intent.ACTION_BOOT_COMPLETED'));
+  assert.ok(provider.includes('Intent.ACTION_DATE_CHANGED'));
+  assert.ok(provider.includes('Intent.ACTION_TIME_CHANGED'));
+  assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));
+  assert.ok(provider.includes('onUpdate(context, manager, ids)'));
+  assert.match(provider,/!valid -> "Öppna appen för dagens framsteg"/);
+  assert.ok(provider.includes('val summary = when {\n    !valid ->'), 'Kotlin when branches must use real newlines');
+  assert.ok(!provider.includes('\\n'), 'generated Kotlin must not contain literal escaped newlines');
+
+  assert.match(bridge,/MODE_PRIVATE/);
+  assert.ok(bridge.includes('prefs.edit().clear().commit()'));
+  assert.ok(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml')));
+  const info=fs.readFileSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml'),'utf8');
+  assert.ok(info.includes('android:updatePeriodMillis="0"'),'widget must not poll periodically');
+  assert.ok(!provider.includes('AlarmManager'),'widget provider must not schedule alarms');
+  assert.ok(!provider.includes('WorkManager'),'widget provider must not schedule background work');
+  for(const layout of ['smoke_less_widget.xml','smoke_less_widget_wide.xml']){
+   const xml=fs.readFileSync(path.join(root,'app/src/main/res/layout',layout),'utf8');
+   assert.ok(xml.includes('android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."'));
+   assert.ok(xml.includes('android:id="@+id/smoke_less_widget_root"'));
+   assert.ok(xml.includes('android:maxLines="3"'),'summary should support larger font sizes');
+   assert.ok(xml.includes('android:ellipsize="end"'),'summary should truncate instead of overflowing');
+   assert.ok(xml.includes('android:textColor="#FFFFFF"'),'summary must keep high-contrast text');
+  }
+ }finally{fs.rmSync(root,{recursive:true,force:true})}
+});
