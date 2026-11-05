@@ -197,6 +197,61 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Testa på riktig Android-enhet, inklusive ny användare, återkommande användare, avbrutet flöde, saknade Google Play-tjänster, offline och felaktig konfiguration.
 **Acceptans:** Google-inloggning fungerar på Android utan dubbla konton eller dataförlust, och övriga inloggningssätt fortsätter fungera.
 
+
+### Fast checklista för fas 16.2 (8 × 4)
+
+**1. Inventering (3/4)**
+- [x] 1.1 Kartlägg Firebase Authentication
+- [ ] 1.2 Kontrollera package ID och SHA-certifikat
+- [x] 1.3 Dokumentera OAuth-beroenden
+- [x] 1.4 Identifiera risker för befintliga konton
+
+**2. Konfiguration (0/4)**
+- [ ] 2.1 Aktivera Google-provider
+- [ ] 2.2 Konfigurera Android-inloggning
+- [ ] 2.3 Skydda konfigurationsvärden
+- [ ] 2.4 Verifiera native-beroenden
+
+**3. Inloggningsflöde (0/4)**
+- [ ] 3.1 Lägg till Google-val
+- [ ] 3.2 Hantera avbruten inloggning
+- [ ] 3.3 Visa begripliga svenska fel
+- [ ] 3.4 Hantera saknade Play-tjänster
+
+**4. Kontolänkning (0/4)**
+- [ ] 4.1 Identifiera befintligt e-postkonto
+- [ ] 4.2 Kräv säker identitetsverifiering
+- [ ] 4.3 Undvik dubbla användaridentiteter
+- [ ] 4.4 Bevara befintlig historik
+
+**5. Datasäkerhet (0/4)**
+- [ ] 5.1 Återanvänd säker Firestore-synk
+- [ ] 5.2 Verifiera utloggning och kontobyte
+- [ ] 5.3 Verifiera kontoradering
+- [ ] 5.4 Behåll gästläge oförändrat
+
+**6. UX och tillgänglighet (0/4)**
+- [ ] 6.1 Granska onboarding och profil
+- [ ] 6.2 Granska laddning och felstatus
+- [ ] 6.3 Granska TalkBack och tryckytor
+- [ ] 6.4 Behåll e-postinloggning som alternativ
+
+**7. Tester (0/4)**
+- [ ] 7.1 Testa nya och återkommande konton
+- [ ] 7.2 Testa avbrutna flöden
+- [ ] 7.3 Testa offline och felkonfiguration
+- [ ] 7.4 Verifiera CI och Android-build
+
+**8. Avslut (0/4)**
+- [ ] 8.1 Dokumentera Firebase-inställningar utan hemligheter
+- [ ] 8.2 Samla enhets-QA till fas 25
+- [ ] 8.3 Verifiera slutlig grön CI
+- [ ] 8.4 Merga fas-PR
+
+**Verifierade delpunkter: 3/32 (9,4 %). Huvudpunkter: 0/8 (0 %).**
+
+1.1, 1.3 och 1.4 avser verifierad repository-inventering. 1.2 är öppen tills verkliga SHA-certifikat har kontrollerats i Firebase. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
+
 ## Fas 16.4 – Helhetsgranskning av UI, Safe Area och Android-enheter
 **Mål:** Hela appen ska vara användbar och visuellt sammanhållen på olika Android-telefoner, oavsett skärmstorlek, systemfält, tangentbord och tillgänglighetsinställningar.
 - Inventera **samtliga skärmar, flikar, onboardingsteg, modaler, formulär, dialogs, bottennavigering, diagram och delningsförhandsvisningar** i en fast testmatris innan kodändringar.
