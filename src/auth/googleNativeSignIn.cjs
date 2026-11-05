@@ -19,6 +19,11 @@ async function requestGoogleIdToken(webClientId) {
   GoogleSignin.configure({webClientId});
   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});
   const result = await GoogleSignin.signIn();
+  if (result?.type === 'cancelled') {
+    const cancelled = new Error('Google-inloggningen avbröts.');
+    cancelled.code = 'SIGN_IN_CANCELLED';
+    throw cancelled;
+  }
   const idToken = result?.data?.idToken ?? result?.idToken;
   if (typeof idToken !== 'string' || !idToken.trim()) {
     const error = new Error('Google returnerade ingen ID-token.');
