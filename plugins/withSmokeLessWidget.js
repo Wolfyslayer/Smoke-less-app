@@ -145,7 +145,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  android:minWidth="180dp" android:minHeight="90dp"
  android:minResizeWidth="120dp" android:minResizeHeight="70dp"
  android:initialLayout="@layout/smoke_less_widget"
- android:resizeMode="horizontal|vertical"
+ android:resizeMode="horizontal|vertical" android:targetCellWidth="2" android:targetCellHeight="1"
  android:widgetCategory="home_screen"
  android:updatePeriodMillis="0"
  android:description="@string/app_name" />
