@@ -20,7 +20,7 @@ const styles=StyleSheet.create({
  disabled:{opacity:.5},
  secondaryElevated:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
  secondarySoft:{backgroundColor:C.soft},
- buttonText:{color:C.background,fontWeight:'900',fontSize:15},
+ buttonText:{color:C.background,fontWeight:'900',fontSize:15,textAlign:'center',flexShrink:1},
  secondaryText:{color:C.white},
  compactText:{fontSize:14,fontWeight:'800'},
 });

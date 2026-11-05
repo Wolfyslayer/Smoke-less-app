@@ -34,8 +34,8 @@
 | 12.0 | Återfallsprevention och långsiktigt stöd | Mergad; bred manuell QA i fas 17 | #152 |
 | 13.0 | Kunskapsbank och svenskt stöd | Mergad; bred manuell QA i fas 17 | #153 |
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
-| 15.0 | Frivilligt socialt stöd | Aktiv – säker delningsmodell definierad | #155 |
-| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Planerad | — |
+| 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
+| 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Aktiv – bilddelning tekniskt inventerad | #156 |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
@@ -240,3 +240,60 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 4. **Ingen spårning.** Inga analytics-händelser, delningsloggar, nya push-notiser eller externa AI-tjänster. Appen ska inte kunna se vem som tar emot meddelandet.
 5. **Tydlig avsändare och gräns.** Gränssnittet ska förklara att användaren väljer mottagare och att meddelandet lämnar appen först efter användarens eget val. Delningsappen kan ha egna integritetsvillkor.
 6. **Testkrav.** Automatiska tester ska säkerställa att den förvalda texten är statisk, att den inte interpolerar användardata och att funktionen inte kräver konto. Androids delningsdialog testas manuellt i fas 17.
+
+### Fas 16.0 – första gränssnittsinventering
+
+- `src/screens/ProfileScreen.tsx`: profilens snabbåtkomst visar fortfarande `Säkerhetskopiering`, `Molnstatus och JSON-kopia` och `Exportera och skydda din historik`, trots beslutet att inte använda JSON-export som säkerhetskopia. Detta ska rättas så att genvägen beskriver kontosynk, inte export.
+- `src/screens/ProfileScreen.tsx`: den nya frivilliga delningsfunktionen har explicit tryckhändelse, skärmläsaretikett och informativ text; kontrollera layout med stor text i fas 17.
+- `src/screens/SettingsScreen.tsx`: påminnelseinställningar hanterar sparad tid, behörighet och schemalagd notis. Vid polering ska asynkrona statusuppdateringar och feltexter kontrolleras utan att ändra schemaläggningens logik.
+- `src/screens/HomeScreen.tsx`: hemvyn innehåller dagsprogression och personliga coachråd. Kontrollera beräkningskostnad/omrendering innan optimering; undvik prestandaändringar utan belägg.
+- Nästa konkreta åtgärd: rätta den föråldrade profilgenvägen, därefter skärmläsar-/textstorleksgranskning och riktade tester.
+
+### Fas 16.0 – uppdaterat delningsmål (användarönskemål)
+
+- Ersätt den generiska uppmuntringsdelningen med **frivillig delning av dagens framsteg som en snygg bild, liknande en skärmbild**, med kort positiv text om att det går bra. Bilden ska vara ett separat utformat delningskort, inte en skärmbild av hela appen.
+- Visa en **förhandsgranskning** och låt användaren välja att dela eller avbryta. Dela endast dagens framsteg som användaren uttryckligen godkänner; inga namn, e-postadresser, historik, kontouppgifter eller andra skärmelement ska följa med.
+- Undvik överdrivna hälsopåståenden. Anpassa positiv text till faktiska framsteg; även en svårare dag ska få ett respektfullt, icke-skuldbeläggande budskap.
+- Utred lämplig befintlig bildgenerering/delning i Expo och om ett native-beroende eller Android-rebuild krävs innan implementation. Lägg till tester för valda fält och frivilligt samtycke. Androids systemdelning och bildformat testas manuellt i fas 17.
+- Denna ändring ersätter den tidigare planen om enbart neutral textdelning; tidigare fas 15 förblir avslutad, och vidareutvecklingen sker i fas 16.0.
+
+### Fas 16.0 – teknisk inventering av delningsbild
+
+- Befintliga beroenden inkluderar `react-native-svg` men **inte** `react-native-view-shot`, `expo-sharing` eller `expo-file-system` i `package.json`. `Share.share` i React Native delar text/URL, inte en renderad vy som PNG på Android.
+- För en verklig delbar bild bör ett separat, dataavgränsat React Native-kort renderas och fångas till PNG via `react-native-view-shot`; delning av bildfilen bör ske via `expo-sharing` med ett temporärt URI. Kontrollera versioner som stöds av installerad Expo SDK 58 före tillägg och låt CI avgöra TypeScript/Metro-kompatibilitet.
+- Nya native-moduler kräver **ny Android development build** efter installation. Den befintliga `Share.share`-funktionen får ligga kvar tills bilddelning fungerar, så att ingen trasig knapp släpps.
+- Delningskortets datamodell ska vara explicit begränsad till dagens antal och dagens mål, med kort neutral/positiv text baserad på dessa värden. Användaren ska kunna förhandsgranska, godkänna och avbryta. Ingen skärmbild av hela skärmen och inga namn, e-postadresser eller historik.
+- Testa rena formatteringsfunktioner med gränsfall (0, över målet, ogiltiga mål), avbrytande, samt att endast godkända fält används i bildkortet. Verifiera bildexport och Android-delning manuellt i fas 17.
+
+### Fas 16.0 – huvudchecklista och kvarstående acceptans (PR #156)
+
+Fasens **åtta fasta huvudpunkter** återges här utan att ändra nämnaren eller hitta på retroaktiva delpunkter. En numrerad underchecklista fastställdes inte när fasen startade; detta är en avvikelse från `AI_WORKFLOW.md` och delpunktsprocent redovisas därför inte som verifierad. PR-beskrivningen ska ha samma status.
+
+1. [x] Aktivera fas 16 efter fas 15.
+2. [x] Inventera gränssnitt och prestandarisker.
+3. [ ] Slutgranska navigering och användartexter. Profilens synkgenväg och tryckyta till planen har förbättrats, men helhetsgranskningen är inte dokumenterat klar.
+4. [ ] Slutgranska skärmläsare, stora textstorlekar och tryckytor. Profil och PNG-flöde har förbättrats; manuell Android-verifiering flyttas till fas 17.
+5. [ ] Slutgranska onödiga omrenderingar och responsivitet. SVG-kortet är memoiserat och profilens snabbgenvägar är stabila; granskning av övriga skärmar återstår.
+6. [ ] Slutgranska språk och felmeddelanden. Svenska delnings- och synktexter är justerade; övriga skärmar återstår.
+7. [x] Automatiska regressionstester för PNG-delning och integritet.
+8. [ ] Slutlig CI-verifiering och merge.
+
+**Verifierat:** 3/8 huvudpunkter (37,5 %). **Delpunkter:** inte mätbara utan tidigare fastställd underchecklista; skapa inte en ny nämnare utan uttryckligt beslut. Senaste verifierade gröna commit före denna dokumentationsuppdatering: `34c1e5e` (båda CI-workflows).
+
+**Fas 17, manuellt på Android:** PNG-export och systemdelning efter ny native-build med `expo-sharing`, TalkBack, maximal systemtextstorlek, olika skärmstorlekar och fullständig regressionskontroll. Inga manuella tester är markerade godkända. Säkerhetskritiska blockerare får inte skjutas upp.
+
+### Fas 16.0 – verifieringsläge inför slutgranskning
+
+- CI för `406d620` är grön i båda obligatoriska arbetsflödena (`Validate Smoke Less 6` och `Firestore rules emulator`). Detta verifierar automatiska tester och byggets kontroller, **inte** Androids faktiska bilddelning.
+- Profilens synkgenväg beskriver nu kontosynk utan JSON-backup. Delningskortet har svenska instruktioner, anpassad layout, skärmläsaretikett, felstatus och memoiserad SVG-rendering.
+- Bildexporten har skydd mot ändrade dagsvärden, gammal export och förhandsgranskning som stängts eller öppnats igen under ett väntande asynkront anrop. Tillhörande regressionstester finns i `tests/dailyShareCard.test.cjs`.
+- **Kvar:** Kontrollera faktisk PNG-export och systemdelning på Android med en ny native-build eftersom `expo-sharing` tillkommit. Bred manuell TalkBack-/stor-text-/enhetsregression är fortsatt öppen i fas 17.0 enligt teststrategin.
+- Fas 16.0 markeras inte mergad i statusöversikten förrän PR #156 är avslutad och dess sista commit har grön CI.
+
+### Fas 16.0 – samlad teknisk slutgranskning efter commit 23a4234
+
+- **Navigering och texter (punkt 3, öppen):** Profilens planrad och snabbgenvägar har fulla tryckytor och korrekta synktexter. Hemvyns snabbknappar, statistikgenväg och dagliga avstämning har tydliga tillgänglighetsetiketter. Kvar är en sammanhållen kontroll av andra skärmars navigering och användartexter.
+- **Tillgänglighet (punkt 4, öppen):** TalkBack-etiketter och status för PNG-export, påminnelser och hemvyn är förbättrade; hemvyns statistikgenväg har minst 48 dp tryckyta. Layouten för dagens framsteg och rubrik kan brytas vid smala skärmar. Faktisk TalkBack- och maximal textstorleks-QA på Android görs i fas 17, inte som ett påstått genomfört test här.
+- **Prestanda och responsivitet (punkt 5, öppen):** Hemvyn sammanställer röksugshistoriken i en enda genomgång, och PNG-kortet är memoiserat. Renderfasens ref-mutationer i profilens PNG-flöde är borttagna. Kvar är slutlig genomgång av övriga skärmars renderbeteende och layout.
+- **Språk och felmeddelanden (punkt 6, öppen):** Svenska fel- och statusmeddelanden för PNG-delning och påminnelser har förbättrats; ett sent delningsfel visas inte efter att förhandsgranskningen stängts. Kvar är granskning av andra skärmars meddelanden.
+- **Verifieringsgräns:** Gröna GitHub-kontroller på `23a4234` verifierar automatiska kontroller, inte native-delning på Android. Native-build och manuell enhetstestning följer efter merge i fas 17. Inga öppna huvudpunkter markeras klara utan återstående kodgranskning.
