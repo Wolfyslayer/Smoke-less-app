@@ -21,3 +21,21 @@ Status: **påbörjad, inventering pågår**. Fast 8×4-checklista finns i `docs/
 - Implementera först efter att dataförlust- och dubbelkonto-risker har täckts av tester.
 
 **Checklista vid fasstart: 0/32 verifierade.** Detta dokument är en påbörjad inventering, inte ett påstående om färdig delpunkt.
+
+
+## Spårad sessions- och synkarkitektur (inventeringscommit 2)
+- `src/hooks/useSmokeLessSessionModel.ts` sammanför `useAccountFlow`, `useLocalSession` och `useCloudSync`; en Google-åtgärd ska därför kopplas in via den befintliga kontomodellen, inte genom en parallell auth-state eller separat lagringsväg.
+- `src/hooks/useAccountFlow.ts` hanterar e-postinloggning, registrering, återställning, utloggning, gästhistoriköverföring och manuell molnimport. Vid e-postinloggning sätts `setLoginOrigin(origin)` och återställs vid fel. Ett nytt Google-flöde måste bevara samma ursprungskontrakt och återställa det vid avbrott.
+- `src/hooks/useLocalSession.ts` använder lagringsnyckeln `account:<uid>` respektive `guest`; vid identitetsbyte blockeras sparning/synk tills korrekt session laddats och widgetens integritetsdata rensats. Google-länkning får inte byta UID eller kringgå denna spärr.
+- `src/hooks/useCloudSync.ts` kontrollerar `verifyCurrentUid()` före/efter asynkrona anrop och tar lokal backup före sammanslagning. Denna UID-gräns måste bibehållas för Google-inloggning och kontobyte.
+- `src/screens/AccountScreen.tsx` visar i dag endast e-post/lösenord och gästalternativ. Google-knappen behöver vara tydligt frivillig, inaktiverad medan auth pågår och kopplad till kontomodellens felhantering.
+- `src/authService.ts` är en icke-native fallback som avsiktligt kastar för kontoåtgärder. Den verkliga Android-implementationen måste identifieras och ändras utan att web-/Expo Go-fallback bryts.
+
+## Säker implementationsordning
+1. Identifiera Android-auth-implementation och onboardingens login-origin innan ändringar i autentiseringsflödet.
+2. Inför testbar Google-credential-hantering och felklassificering: avbrott och konfigurationsfel lämnar aktiv UID orörd.
+3. För befintlig e-postanvändare: använd uttrycklig länkning mot samma Firebase UID med säker återautentisering; aldrig tyst `signInWithCredential` som byter identitet.
+4. För gästläge: bevara gästdata lokalt tills användaren uttryckligen godkänner befintligt migreringsflöde.
+5. Kräv gröna tester för kontobyte, avbruten dialog, credential-konflikt och synkisolering före merge.
+
+**Inventeringsresultat:** Kopplingspunkterna ovan är verifierade i källkod. Google-provider, SHA-certifikat och faktisk native-körning är fortfarande overifierade. Detta är inte en färdig Google-inloggning.
