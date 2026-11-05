@@ -6,6 +6,7 @@ const ts=require('typescript');
 const source=fs.readFileSync('src/widgets/widgetPreferences.ts','utf8');
 const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
 const map=new Map();
+const native={published:[],clears:0,publishNativeWidget:async snapshot=>{native.published.push(snapshot)},clearNativeWidget:async()=>{native.clears++}};
 const storage={getItem:async key=>map.has(key)?map.get(key):null,setItem:async(k,v)=>{map.set(k,v)},removeItem:async key=>{map.delete(key)}};
 const makeWidgetSnapshot=({enabled,date,todayCount,dailyGoal})=>enabled?{version:1,date,todayCount,dailyGoal,remaining:Math.max(0,dailyGoal-todayCount),progressPercent:dailyGoal?Math.min(100,Math.round(todayCount/dailyGoal*100)):todayCount?100:0}:null;
 const readWidgetSnapshot=(x,date)=>x?.date===date?x:null;
@@ -13,6 +14,7 @@ const dayKey=d=>d.toISOString().slice(0,10);
 const target=p=>p.baseline;
 const context={exports:{},Date,JSON,Number,Promise,require:name=>{
  if(name==='@react-native-async-storage/async-storage')return storage;
+ if(name==='./nativeWidgetBridge')return native;
  if(name==='../domain')return {dayKey,target};
  if(name==='../domain/widgetSnapshot')return {makeWidgetSnapshot,readWidgetSnapshot};
  throw Error(name);
@@ -44,4 +46,15 @@ test('without a profile the widget must not misrepresent missing data as a smoke
  map.clear();await setWidgetOptIn(true);
  assert.equal(await refreshWidgetSnapshot({profile:null,entries:[]},now),null);
  assert.equal(await loadWidgetSnapshot(now),null);
+});
+
+test('native widget publishes approved aggregates and clears before opt-out',async()=>{
+ map.clear();native.published.length=0;native.clears=0;
+ await setWidgetOptIn(true);
+ await refreshWidgetSnapshot(data,now);
+ assert.equal(native.published.length,1);
+ assert.equal(native.published[0].todayCount,1);
+ await setWidgetOptIn(false);
+ assert.ok(native.clears>=1);
+ assert.equal(map.size,0);
 });
