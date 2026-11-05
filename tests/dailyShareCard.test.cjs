@@ -110,3 +110,12 @@ test('sharing rejects an approval invalidated by closing and reopening the previ
  assert.match(profile,/const approvedGeneration=exportGenerationRef\.current/);
  assert.match(profile,/exportGenerationRef\.current!==approvedGeneration/);
 });
+
+test('profile account status and quick navigation accommodate large text and screen readers',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/accessibilityRole="header" style=\{\{color:C\.white,fontWeight:'900',fontSize:20,flexShrink:1\}\}/);
+ assert.match(profile,/selectable style=\{\[styles\.muted,\{flexShrink:1\}\]\}/);
+ assert.match(profile,/fontSize:13,flexShrink:1,textAlign:'right'/);
+ assert.match(profile,/style=\{\[styles\.cardTitle,\{flexShrink:1\}\]\}>\{item\.label\}/);
+ assert.match(profile,/sectionRow:\{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12\}/);
+});
