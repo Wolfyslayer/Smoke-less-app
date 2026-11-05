@@ -125,3 +125,11 @@ test('plan summary is one accessible full-width navigation target',()=>{
  assert.match(profile,/accessibilityLabel="Öppna min plan" accessibilityHint="Visar dina mål och din plan" onPress=\{\(\)=>onNavigate\('plan'\)\} style=\{\[styles\.row,\{minHeight:72\}\]\}/);
  assert.doesNotMatch(profile,/style=\{styles\.planAction\}/);
 });
+
+test('quick links have stable configuration and context-sensitive account hints',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/const quickLinks=\[/);
+ assert.match(profile,/quickLinks\.map\(item=>/);
+ assert.match(profile,/item\.to==='account'\?\(loggedIn\?/);
+ assert.match(profile,/item\.to==='backup'\?\(loggedIn\?/);
+});
