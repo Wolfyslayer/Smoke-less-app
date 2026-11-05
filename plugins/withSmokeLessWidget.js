@@ -161,7 +161,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  android:text="Smoke Less" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
  android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="6dp" android:text="Öppna appen för dagens framsteg"
- android:textColor="#FFFFFF" android:textSize="13sp" />
+ android:textColor="#FFFFFF" android:textSize="13sp" android:maxLines="3" android:ellipsize="end" />
 </LinearLayout>
 `,
    [path.join(res,'layout/smoke_less_widget_wide.xml')]:`<?xml version="1.0" encoding="utf-8"?>
@@ -175,7 +175,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  android:text="Smoke Less · Dagens framsteg" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
  android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="8dp" android:text="Öppna appen för att se din dag"
- android:textColor="#FFFFFF" android:textSize="15sp" />
+ android:textColor="#FFFFFF" android:textSize="15sp" android:maxLines="3" android:ellipsize="end" />
 </LinearLayout>
 `,
    [path.join(res,'drawable/smoke_less_widget_background.xml')]:`<?xml version="1.0" encoding="utf-8"?>
