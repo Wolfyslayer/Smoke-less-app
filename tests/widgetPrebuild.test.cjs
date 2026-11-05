@@ -30,6 +30,8 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   assert.equal(manifest.modResults.manifest.application[0].receiver.length,1);
   const receiver=manifest.modResults.manifest.application[0].receiver[0];
   const actions=receiver['intent-filter'][0].action.map(item=>item.$['android:name']);
+  assert.ok(actions.includes('android.intent.action.BOOT_COMPLETED'));
+  assert.ok(manifest.modResults.manifest['uses-permission'].some(p=>p.$['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED'));
   assert.ok(actions.includes('android.intent.action.DATE_CHANGED'));
   assert.ok(actions.includes('android.intent.action.TIME_CHANGED'));
   assert.ok(actions.includes('android.intent.action.TIMEZONE_CHANGED'));
@@ -44,6 +46,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   const provider=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetProvider.kt'),'utf8');
   const bridge=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetModule.kt'),'utf8');
   assert.match(provider,/storedDate == today/);
+  assert.ok(provider.includes('Intent.ACTION_BOOT_COMPLETED'));
   assert.ok(provider.includes('Intent.ACTION_DATE_CHANGED'));
   assert.ok(provider.includes('Intent.ACTION_TIME_CHANGED'));
   assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));

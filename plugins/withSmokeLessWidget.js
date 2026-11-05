@@ -8,8 +8,12 @@ module.exports=function withSmokeLessWidget(config){
   const app=c.modResults.manifest.application?.[0];
   if(!app)throw Error('Missing Android application manifest');
   app.receiver??=[];
+  c.modResults.manifest['uses-permission']??=[];
+  if(!c.modResults.manifest['uses-permission'].some(p=>p.$?.['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED')){
+   c.modResults.manifest['uses-permission'].push({$:{'android:name':'android.permission.RECEIVE_BOOT_COMPLETED'}});
+  }
   if(!app.receiver.some(r=>r.$?.['android:name']===providerName)){
-   app.receiver.push({$:{'android:name':providerName,'android:exported':'true','android:label':'Smoke Less'},'intent-filter':[{'action':[{$:{'android:name':'android.appwidget.action.APPWIDGET_UPDATE'}},{$:{'android:name':'android.intent.action.DATE_CHANGED'}},{$:{'android:name':'android.intent.action.TIME_CHANGED'}},{$:{'android:name':'android.intent.action.TIMEZONE_CHANGED'}}]}],'meta-data':[{$:{'android:name':'android.appwidget.provider','android:resource':'@xml/smoke_less_widget_info'}}]});
+   app.receiver.push({$:{'android:name':providerName,'android:exported':'true','android:label':'Smoke Less'},'intent-filter':[{'action':[{$:{'android:name':'android.appwidget.action.APPWIDGET_UPDATE'}},{$:{'android:name':'android.intent.action.BOOT_COMPLETED'}},{$:{'android:name':'android.intent.action.DATE_CHANGED'}},{$:{'android:name':'android.intent.action.TIME_CHANGED'}},{$:{'android:name':'android.intent.action.TIMEZONE_CHANGED'}}]}],'meta-data':[{$:{'android:name':'android.appwidget.provider','android:resource':'@xml/smoke_less_widget_info'}}]});
   }
   return c;
  });
@@ -91,7 +95,7 @@ import java.util.Locale
 class SmokeLessWidgetProvider : AppWidgetProvider() {
  override fun onReceive(context: Context, intent: Intent) {
   super.onReceive(context, intent)
-  if (intent.action == Intent.ACTION_DATE_CHANGED || intent.action == Intent.ACTION_TIME_CHANGED || intent.action == Intent.ACTION_TIMEZONE_CHANGED) {
+  if (intent.action == Intent.ACTION_BOOT_COMPLETED || intent.action == Intent.ACTION_DATE_CHANGED || intent.action == Intent.ACTION_TIME_CHANGED || intent.action == Intent.ACTION_TIMEZONE_CHANGED) {
    val manager = AppWidgetManager.getInstance(context)
    val ids = manager.getAppWidgetIds(ComponentName(context, SmokeLessWidgetProvider::class.java))
    onUpdate(context, manager, ids)
