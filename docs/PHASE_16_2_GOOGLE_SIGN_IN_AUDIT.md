@@ -39,3 +39,19 @@ Status: **påbörjad, inventering pågår**. Fast 8×4-checklista finns i `docs/
 5. Kräv gröna tester för kontobyte, avbruten dialog, credential-konflikt och synkisolering före merge.
 
 **Inventeringsresultat:** Kopplingspunkterna ovan är verifierade i källkod. Google-provider, SHA-certifikat och faktisk native-körning är fortfarande overifierade. Detta är inte en färdig Google-inloggning.
+
+
+## Native Firebase Auth och onboarding-origin – verifierat i källkod
+- Android använder `src/authService.native.ts` (plattformsspecifik React Native-resolver). Där finns `getAuth`, `onAuthStateChanged`, `createUserWithEmailAndPassword`, `signInWithEmailAndPassword`, `signOut`, lösenordsåterställning och verifieringsmejl. `src/authService.ts` är avsiktligt fallback för miljöer utan native auth.
+- `observeUser` publicerar `uid`, `email` och `emailVerified` till sessionsmodellen; ingen provider-specifik identitet får ersätta Firebase UID som datanyckel.
+- `src/loginOrigin.ts` håller `profile | onboarding` tillfälligt mellan inloggning och sessionsbyte, med `setLoginOrigin`/`consumeLoginOrigin`. Google-flödet ska återanvända detta och rensa pending origin vid avbrott/fel.
+- `src/hooks/useAccountFlow.ts` äger `accountBusy` och befintliga kontofelmeddelanden. Lägg inte en parallell Google-knapp som kringgår busy-låset, kontosessionen eller UID-gränserna.
+
+### Konfigurationsgrind före native Google-inloggning
+- Firebase Console: kontrollera att Google är aktiverad under Authentication > Sign-in method.
+- Kontrollera Android-appen `com.smokeless.app` i Firebase-projektet och registrera SHA-1/SHA-256 för de signeringsnycklar som faktiskt används (debug och senare release).
+- Verifiera aktuell `google-services.json` och tillhörande OAuth-klienter lokalt; exponera inga privata nycklar i Git eller PR-loggar. Filen ska inte kopieras in i dokumentationen.
+- Välj en Google Sign-In-lösning som är kompatibel med Expo SDK 58 / React Native 0.88.1 och dess config-plugin/prebuild. Google OAuth-klientens web client ID kan behövas för Firebase ID-token; härled den från korrekt projektkonfiguration, inte ett påhittat värde.
+- Planera ny fristående Android-build när native beroenden eller config plugins ändras. Inga manuella Android-testresultat finns ännu.
+
+**Beslut:** Nästa kodcommit ska först ge en isolerad, testbar credential-/felhanteringsgräns och säker koppling till befintlig kontomodell. Slå inte på Google-inloggning i UI förrän konfigurations- och säkerhetskraven kan uppfyllas.
