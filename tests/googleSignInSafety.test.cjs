@@ -72,3 +72,26 @@ test('Android Google account picker rejects missing OAuth config before loading 
  const {requestGoogleIdToken}=require('../src/auth/googleNativeSignIn.cjs');
  await assert.rejects(requestGoogleIdToken(''),error=>error.code==='DEVELOPER_ERROR');
 });
+
+test('Android picker stops before account selection if Play services fail',async()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/auth/googleNativeSignIn.cjs'),'utf8');
+ let selected=false;
+ const module={exports:{}};
+ vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
+  configure(){},
+  async hasPlayServices(){throw Object.assign(new Error('unavailable'),{code:'PLAY_SERVICES_NOT_AVAILABLE'})},
+  async signIn(){selected=true;return {data:{idToken:'unexpected'}}}
+ }})});
+ await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='PLAY_SERVICES_NOT_AVAILABLE');
+ assert.equal(selected,false);
+});
+test('Android picker refuses successful response without an ID token',async()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/auth/googleNativeSignIn.cjs'),'utf8');
+ const module={exports:{}};
+ vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
+  configure(){},async hasPlayServices(){},async signIn(){return {data:{idToken:null}}}
+ }})});
+ await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='auth/invalid-credential');
+});
