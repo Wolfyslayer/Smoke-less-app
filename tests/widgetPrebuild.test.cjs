@@ -52,6 +52,8 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));
   assert.ok(provider.includes('onUpdate(context, manager, ids)'));
   assert.match(provider,/!valid -> "Öppna appen för dagens framsteg"/);
+  assert.ok(provider.includes('val summary = when {\n    !valid ->'), 'Kotlin when branches must use real newlines');
+  assert.ok(!provider.includes('\\n'), 'generated Kotlin must not contain literal escaped newlines');
 
   assert.match(bridge,/MODE_PRIVATE/);
   assert.ok(bridge.includes('prefs.edit().clear().commit()'));
