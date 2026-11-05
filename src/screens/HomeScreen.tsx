@@ -69,9 +69,9 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
   </Card>:null}
   <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
   <Card><View style={styles.inline}><Clock color={C.lime} size={22}/><View style={{flex:1,gap:5}}><Label>TID SEDAN SENASTE CIGARETTEN</Label><Text style={styles.statValue}>{duration}</Text></View></View></Card>
-  <View style={styles.sectionRow}><Text accessibilityRole="header" style={[styles.heading,{flexShrink:1}]}>Din utveckling</Text><Pressable accessibilityRole="button" accessibilityLabel="Visa mer statistik om din utveckling" onPress={onStats}><Text style={styles.link}>Visa mer</Text></Pressable></View><Card><Bars values={weekly}/></Card>
+  <View style={styles.sectionRow}><Text accessibilityRole="header" style={[styles.heading,{flexShrink:1}]}>Din utveckling</Text><Pressable accessibilityRole="button" accessibilityLabel="Visa mer statistik om din utveckling" onPress={onStats} style={styles.recoveryLink}><Text style={styles.link}>Visa mer</Text></Pressable></View><Card><Bars values={weekly}/></Card>
   <View style={styles.grid}><Stat label="DIN BESPARING" value={fmt(savings(data))+' kr'}/><Stat label="DAGENS MÅL" value={String(goal)} detail="Högsta riktvärde"/></View>
-  <Card><Label>DAGLIG AVSTÄMNING</Label><Text style={styles.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Pressable accessibilityRole="button" onPress={onConfirmToday} style={styles.button}><Text style={styles.buttonText}>Bekräfta dagens registreringar</Text></Pressable>:<Text style={styles.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>
+  <Card><Label>DAGLIG AVSTÄMNING</Label><Text style={styles.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Pressable accessibilityRole="button" accessibilityLabel="Bekräfta dagens registreringar" accessibilityHint="Markerar dagens registreringar som avstämda" onPress={onConfirmToday} style={styles.button}><Text style={styles.buttonText}>Bekräfta dagens registreringar</Text></Pressable>:<Text style={styles.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>
  </View>;
 }
 const styles=StyleSheet.create({
@@ -79,8 +79,8 @@ const styles=StyleSheet.create({
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heroNumber:{fontSize:48,fontWeight:'900',color:C.white},
  muted:{fontSize:13,lineHeight:19,color:C.dim},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  heading:{fontSize:19,fontWeight:'800',color:C.white},link:{color:C.lime,fontSize:13,fontWeight:'700'},
- grid:{flexDirection:'row',flexWrap:'wrap',gap:10},inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
- tile:{width:'46%',flexGrow:1,minHeight:105,borderRadius:18,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:15,gap:12},
+ grid:{flexDirection:'row',flexWrap:'wrap',gap:10},inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
+ tile:{width:'46%',flexGrow:1,minWidth:0,minHeight:105,borderRadius:18,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:15,gap:12},
  tileIcon:{width:39,height:39,borderRadius:12,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},tileText:{color:C.white,fontWeight:'800',fontSize:14},
  bars:{height:120,flexDirection:'row',alignItems:'flex-end',gap:8},ringText:{color:C.white,fontSize:19,fontWeight:'800'},
  recoveryLink:{minHeight:48,justifyContent:"center",paddingVertical:10},

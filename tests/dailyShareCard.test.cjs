@@ -172,3 +172,11 @@ test('home coach aggregates craving history in a single pass with trigger-specif
  assert.match(section,/if\(!Number\.isFinite\(date\.getTime\(\)\)\|\|dayKey\(date\)>today\)continue/);
  assert.match(section,/const matchingStrategy=frequentTrigger\?topEntry\(helpfulByTrigger\.get\(frequentTrigger\[0\]\)/);
 });
+
+test('home statistics and daily check-in actions have clear labels and minimum touch targets',()=>{
+ const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
+ assert.match(home,/accessibilityLabel="Visa mer statistik om din utveckling" onPress=\{onStats\} style=\{styles\.recoveryLink\}/);
+ assert.match(home,/accessibilityLabel="Bekräfta dagens registreringar" accessibilityHint="Markerar dagens registreringar som avstämda"/);
+ assert.match(home,/recoveryLink:\{minHeight:48/);
+ assert.match(home,/sectionRow:\{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12\}/);
+});
