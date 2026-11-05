@@ -1,4 +1,4 @@
-import React,{useRef,useState} from 'react';
+import React,{useLayoutEffect,useRef,useState} from 'react';
 import type Svg from 'react-native-svg';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -23,14 +23,17 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const latestCountsRef=useRef({todayCount,dailyGoal});
  const exportCountsRef=useRef<{todayCount:number;dailyGoal:number}|null>(null);
  const pngPathRef=useRef<string|null>(null);
- if(latestCountsRef.current.todayCount!==todayCount||latestCountsRef.current.dailyGoal!==dailyGoal){
+ const [sharingPng,setSharingPng]=useState(false);
+ const [shareError,setShareError]=useState(false);
+ useLayoutEffect(()=>{
+  if(latestCountsRef.current.todayCount===todayCount&&latestCountsRef.current.dailyGoal===dailyGoal)return;
+  latestCountsRef.current={todayCount,dailyGoal};
   ++exportGenerationRef.current;
   pngPathRef.current=null;
   exportCountsRef.current=null;
- }
- latestCountsRef.current={todayCount,dailyGoal};
- const [sharingPng,setSharingPng]=useState(false);
- const [shareError,setShareError]=useState(false);
+  setPngStatus('idle');
+  setShareError(false);
+ },[todayCount,dailyGoal]);
  const sharePng=async()=>{
   if(pngStatus!=='ready'||!pngPathRef.current||sharingPng||exportCountsRef.current?.todayCount!==todayCount||exportCountsRef.current?.dailyGoal!==dailyGoal)return;
   setSharingPng(true);

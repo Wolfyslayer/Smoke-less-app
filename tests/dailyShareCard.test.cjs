@@ -143,6 +143,7 @@ test('PNG preparation and stale-value status are announced to screen readers',()
 
 test('changed daily values invalidate an in-flight PNG export before share',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
- assert.match(profile,/if\(latestCountsRef\.current\.todayCount!==todayCount\|\|latestCountsRef\.current\.dailyGoal!==dailyGoal\)\{/);
- assert.match(profile,/\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
+ assert.match(profile,/useLayoutEffect\(\(\)=>\{/);
+ assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
+ assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal\]\)/);
 });
