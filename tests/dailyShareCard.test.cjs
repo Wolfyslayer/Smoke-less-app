@@ -191,7 +191,7 @@ test('home progress hero remains readable with large system fonts and narrow scr
 
 test('closing the preview prevents delayed sharing failures from showing an obsolete error',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
- assert.match(profile,/catch\{if\(previewOpenRef\.current\)setShareError\(true\);\}finally\{setSharingPng\(false\);\}/);
+ assert.match(profile,/catch\{if\(previewOpenRef\.current&&exportGenerationRef\.current===approvedGeneration\)setShareError\(true\);\}finally\{setSharingPng\(false\);\}/);
  assert.match(profile,/accessibilityHint="Öppnar telefonens delningsdialog för den förhandsgranskade bilden"/);
 });
 
