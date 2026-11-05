@@ -1067,6 +1067,37 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
+## UX- och kvalitetskrav som gäller samtliga kommande faser
+**Syfte:** En komplett app ska upplevas enkel, inte innehålla flest möjliga funktioner. Detta är tvärgående acceptanskrav inom befintliga faser, inte nya öppna checklistpunkter eller extra PR:er.
+
+### Första minuten och tydlig återkoppling (faser 23–24)
+- En ny användare ska förstå vad appen hjälper till med, hur dagens mål fungerar och var registrering/SOS finns utan att läsa långa instruktioner.
+- Visa en tydlig och omedelbar bekräftelse efter registrering, ångring och sparad planändring; undvik dubbla tryck och osäkerhet om något sparats.
+- Använd korta, konsekventa ord för **registrerat idag**, **kvar av dagsmålet**, **rökfri tid** och **uppskattade besparingar**. Förklara siffror vid behov utan att överbelasta startsidan.
+- Ha begripliga tomlägen när användaren ännu inte har data. Visa inte diagram eller coachinsikter som antyder att saknade registreringar betyder noll cigaretter.
+- Visa bara en tydlig primär åtgärd per vy; sekundära alternativ får vara tillgängliga men visuellt underordnade.
+
+### Förtroende, kontroll och tillförlitlighet (faser 16.4, 18–22 och 25)
+- Allt användaren registrerar ska få begriplig sparstatus; fel vid lokal lagring eller molnsynk får inte döljas bakom ett skenbart lyckat resultat.
+- Bekräfta destruktiva handlingar och erbjud ångra där det är säkert. Inga oavsiktliga dubbla registreringar, förlorade formulärvärden eller tysta överskrivningar.
+- Förklara skillnaden mellan **lokalt sparat** och **synkat till konto** utan att kräva konto för kärnfunktionerna.
+- Behåll appens viktigaste funktioner offline. När nätverk saknas ska användaren förstå vad som fungerar och vad som väntar på synk.
+- Alla påminnelser, tips och anpassningar ska vara frivilliga, gå att stänga av och respektera användarens val. Undvik notisstress och skuldskapande streaks.
+- Före lansering: kontrollera tillgängliga stödvägar, källor, medicinska begränsningar och tydliga integritetsval. Appen får inte utlova garanterat rökstopp.
+
+### Tillgänglig enkelhet (faser 16.4, 23–25)
+- Minimera antal tryck för vanliga uppgifter: registrera, ångra, öppna SOS och se dagens mål.
+- Samma ikon, knapptext och interaktionsmönster ska betyda samma sak i hela appen.
+- Stöd Androids tillbaka-gest, Safe Area, tangentbord, små skärmar, stora textstorlekar och TalkBack utan att gömma kritiska knappar.
+- Testa både ny användare, användare som trappar ned och användare som redan är rökfri. Låt stödet ändra fokus utan att tvinga fram ny onboarding.
+- Följ upp kvalitetsmålet med tydliga scenariotester i fas 25: första registrering, akut röksug, planändring, offline, återfall och återgång efter längre uppehåll.
+
+### Prioriteringsregel för nya idéer
+- **P0:** säkerhet, dataintegritet, trasiga kärnflöden och vilseledande information – åtgärdas före merge.
+- **P1:** användbarhet som direkt påverkar rökstoppsresan, tillgänglighet eller begriplighet – planeras i befintlig relevant fas.
+- **P2:** extra visualiseringar, animationer, avancerade inställningar och kosmetik – först när kärnupplevelsen är stabil.
+- Lägg inte till nya faser eller utöka fasta 8×4-checklistor för små förbättringar. Registrera nya idéer i backlog och avgör om de verkligen motiverar en separat fas.
+
 ## Princip för kommande faser
 - Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering).
 - En fas = en PR med **fast åttapunktschecklista och fyra fasta delpunkter per huvudpunkt** (32 totalt). Räkna bara verifierat klart efter relevanta tester och CI.
