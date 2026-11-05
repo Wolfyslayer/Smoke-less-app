@@ -10,7 +10,7 @@ export async function sendVerificationEmail(){const user=client().currentUser;if
 export async function refreshEmailVerification(){const user=client().currentUser;if(!user)throw Error('Logga in först.');await reload(user);return !!client().currentUser?.emailVerified}
 
 export async function signInWithGoogleCredential(idToken:string){
- if(!idToken.trim())throw Error('Google-inloggning saknar ID-token.');
- if(client().currentUser)throw Error('Logga ut innan du byter konto.');
+ if(typeof idToken!=='string'||!idToken.trim())throw Error('Google-inloggningen saknar en giltig ID-token.');
+ if(client().currentUser)throw Error('Du är redan inloggad. Logga ut innan du byter konto.');
  await signInWithCredential(client(),GoogleAuthProvider.credential(idToken));
 }
