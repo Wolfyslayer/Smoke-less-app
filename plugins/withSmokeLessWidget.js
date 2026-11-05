@@ -27,13 +27,24 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.widget.RemoteViews
 
 /** Neutral by default: personal statistics are never rendered without an explicit native bridge. */
 class SmokeLessWidgetProvider : AppWidgetProvider() {
  override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
   for (id in ids) {
-   val views = RemoteViews(context.packageName, R.layout.smoke_less_widget)
+   render(context, manager, id)
+  }
+ }
+ override fun onAppWidgetOptionsChanged(context: Context, manager: AppWidgetManager, appWidgetId: Int, newOptions: Bundle) {
+  super.onAppWidgetOptionsChanged(context, manager, appWidgetId, newOptions)
+  render(context, manager, appWidgetId)
+ }
+ private fun render(context: Context, manager: AppWidgetManager, id: Int) {
+   val width = manager.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 180)
+   val layout = if (width >= 250) R.layout.smoke_less_widget_wide else R.layout.smoke_less_widget
+   val views = RemoteViews(context.packageName, layout)
    val launch = Intent(Intent.ACTION_VIEW, Uri.parse("smokeless://")).apply {
     setPackage(context.packageName)
     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -41,7 +52,6 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
    val pending = PendingIntent.getActivity(context, id, launch, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
    views.setOnClickPendingIntent(R.id.smoke_less_widget_root, pending)
    manager.updateAppWidget(id, views)
-  }
  }
 }
 `,
@@ -66,6 +76,19 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
  android:layout_marginTop="6dp" android:text="Öppna appen för dagens framsteg"
  android:textColor="#FFFFFF" android:textSize="13sp" />
+</LinearLayout>
+`,
+   [path.join(res,'layout/smoke_less_widget_wide.xml')]:`<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:id="@+id/smoke_less_widget_root"
+ android:layout_width="match_parent" android:layout_height="match_parent"
+ android:orientation="vertical" android:gravity="center_vertical"
+ android:padding="20dp" android:background="@drawable/smoke_less_widget_background">
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:text="Smoke Less · Dagens framsteg" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:layout_marginTop="8dp" android:text="Öppna appen för att se din dag"
+ android:textColor="#FFFFFF" android:textSize="15sp" />
 </LinearLayout>
 `,
    [path.join(res,'drawable/smoke_less_widget_background.xml')]:`<?xml version="1.0" encoding="utf-8"?>
