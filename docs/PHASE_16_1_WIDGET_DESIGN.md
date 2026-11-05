@@ -4,7 +4,7 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 
 ## Faschecklista – uppdaterad efter grön CI för 51c9487
 
-**22/32 färdiga (69 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
+**23/32 färdiga (72 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
 
 ### 1. Inventering (4/4)
 - [x] 1.1 Verifiera vald Expo-/Android-lösning
@@ -48,9 +48,9 @@ Status: **implementation pågår i PR #158; native-build och fysisk Android-veri
 - [ ] 7.3 Testa offline och kontobyte på Android (pågår)
 - [ ] 7.4 Verifiera native-build och CI
 
-### 8. Avslut (1/4)
+### 8. Avslut (2/4)
 - [x] 8.1 Dokumentera implementation
-- [ ] 8.2 Samla kvarvarande enhets-QA till fas 25
+- [x] 8.2 Samla kvarvarande enhets-QA till fas 25 (testmatris och överlämningskrav nedan)
 - [ ] 8.3 Verifiera slutlig grön CI
 - [ ] 8.4 Merga fas-PR
 
@@ -89,3 +89,16 @@ Hemsidan på Android är synlig även för andra som kan se telefonen. Därför 
 - [ ] Android 12–16 där tillgängligt: liten/bred storlek, stor systemtext, TalkBack, kontrast, mörkt läge och tryckytor.
 
 Testerna ovan är **inte** markerade som genomförda bara för att TypeScript-CI och statiska plugin-tester är gröna. Fysisk enhets-QA kan samlas i fas 25 enligt roadmapen, men native-kompilering måste verifieras innan widgetimplementationen anses byggbar.
+
+## Överlämning till fas 25 – fysisk Android-QA
+
+Följande verifieras på riktig Android-enhet i fas 25 och får **inte** räknas som godkänt enbart för att automatiska tester är gröna:
+
+1. Installera en **fristående** APK med genererad widget-provider. Lägg till både liten och bred widget via launchern; testa ändrad storlek och mörkt tema.
+2. Kontrollera neutral vy före opt-in, dagens värden efter opt-in, nollmål, överskridet mål och att widgettryck öppnar startsidan utan registrering.
+3. Registrera/ångra en cigarett, ändra plan och återvänd från bakgrund; verifiera att launcher-vyn uppdateras först efter lokal sparning.
+4. Byt datum/tidszon, starta om telefonen, tvångsstäng appen och kör offline. Gammal dagsstatistik får inte visas som dagens.
+5. Växla mellan gäst och konto, logga ut och radera lokal historik; widgeten ska rensas och får aldrig visa föregående identitets statistik.
+6. Testa stor systemtext, TalkBack, kontrast, tryckytor och navigering med gester respektive tre knappar.
+
+**Fas 16.1 måste fortfarande verifiera att Kotlin-koden kompilerar och att APK:n kan byggas innan merge.** Ovanstående skjuter endast upp fysisk enhets-QA, inte build-verifieringen.
