@@ -27,36 +27,40 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
   let active=true;
   const generation=++switchGeneration.current;
   const target:LocalSession=sessionUser?{kind:'account',uid:sessionUser.uid}:{kind:'guest'};
-  // Never carry a previous account's widget permission or aggregates into another session.
-  if(previousRequestedKey.current!==requestedKey){
-   previousRequestedKey.current=requestedKey;
-   void clearWidgetPrivacy().catch(()=>{});
-  }
   // Block saves and cloud synchronization until the target session is loaded.
   setReady(false);
   setLoadError(null);
   loadedDataRef.current=null;
-  // Do not publish the new session identity before its storage load succeeds.
-  storageRef.current.switchTo(target).then(snapshot=>{
-   if(!active || generation!==switchGeneration.current)return;
-   sessionRef.current=snapshot.session;
-   loadedDataRef.current=snapshot.data;
-   setData(snapshot.data);
-   setReady(true);
-  }).catch(error=>{
-   if(active && generation===switchGeneration.current){
-    setLoadError(error instanceof Error?error.message:'Kunde inte läsa lokal historik.');
+  // Clearing privacy is a prerequisite to loading the next identity.
+  // Never allow a failed clear to silently carry the previous account's opt-in.
+  void (async()=>{
+   try{
+    if(previousRequestedKey.current!==requestedKey){
+     await clearWidgetPrivacy();
+     if(!active || generation!==switchGeneration.current)return;
+     previousRequestedKey.current=requestedKey;
+    }
+    const snapshot=await storageRef.current.switchTo(target);
+    if(!active || generation!==switchGeneration.current)return;
+    sessionRef.current=snapshot.session;
+    loadedDataRef.current=snapshot.data;
+    setData(snapshot.data);
+    setReady(true);
+   }catch(error){
+    if(active && generation===switchGeneration.current)
+     setLoadError(error instanceof Error?error.message:'Kunde inte läsa lokal historik eller rensa widgetdata.');
    }
-  });
+  })();
   return()=>{active=false;};
  },[requestedKey]);
 
  useEffect(()=>{
   if(!sessionReady || data===loadedDataRef.current)return;
   const target=sessionRef.current;
+  const generation=switchGeneration.current;
   storageRef.current.save(target,data).then(()=>{
    // Publish only after a successful local save and only for the same active session.
-   if(sessionKey(sessionRef.current)!==sessionKey(target))return;
+   if(generation!==switchGeneration.current || sessionKey(sessionRef.current)!==sessionKey(target))return;
    return refreshWidgetSnapshot(data).catch(()=>{});
   }).catch(error=>{
    // Never display stale save failures after switching accounts.
