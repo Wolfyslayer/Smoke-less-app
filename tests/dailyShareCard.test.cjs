@@ -133,3 +133,10 @@ test('quick links have stable configuration and context-sensitive account hints'
  assert.match(profile,/item\.to==='account'\?\(loggedIn\?/);
  assert.match(profile,/item\.to==='backup'\?\(loggedIn\?/);
 });
+
+test('PNG preparation and stale-value status are announced to screen readers',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/pngStatus==='rendering'\?<Text accessibilityLiveRegion="polite" accessibilityRole="text"/);
+ assert.match(profile,/Bilden förbereds\. Vänta tills den är klar innan du delar\./);
+ assert.match(profile,/pngStatus==='ready'\?<Text accessibilityLiveRegion="polite" style=\{styles\.muted\}>Dagens värden har ändrats/);
+});
