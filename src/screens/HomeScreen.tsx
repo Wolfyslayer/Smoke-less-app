@@ -18,30 +18,25 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
  const setback=todayCount>goal||(goal===0&&todayCount>0);
  const previousDays=new Set(data.checkins.filter(x=>x.date<today&&x.complete).map(x=>x.date)).size;
  const triggerCounts=new Map<string,number>();
- for(const craving of data.cravings){
-  const date=new Date(craving.at);
-  if(!craving.trigger||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
-  triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
- }
- const frequentTrigger=[...triggerCounts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
  const helpfulStrategies=new Map<string,number>();
+ const helpfulByTrigger=new Map<string,Map<string,number>>();
  for(const craving of data.cravings){
   const date=new Date(craving.at);
-  if(craving.helpful!==true||!craving.strategy?.trim()||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+  if(!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+  if(craving.trigger)triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
+  if(craving.helpful!==true||!craving.strategy?.trim())continue;
   const strategy=craving.strategy.trim();
   helpfulStrategies.set(strategy,(helpfulStrategies.get(strategy)??0)+1);
- }
- const bestStrategy=[...helpfulStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
- const triggerStrategies=new Map<string,number>();
- if(frequentTrigger){
-  for(const craving of data.cravings){
-   const date=new Date(craving.at);
-   if(craving.trigger!==frequentTrigger[0]||craving.helpful!==true||!craving.strategy?.trim()||!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
-   const strategy=craving.strategy.trim();
-   triggerStrategies.set(strategy,(triggerStrategies.get(strategy)??0)+1);
+  if(craving.trigger){
+   let strategies=helpfulByTrigger.get(craving.trigger);
+   if(!strategies){strategies=new Map<string,number>();helpfulByTrigger.set(craving.trigger,strategies);}
+   strategies.set(strategy,(strategies.get(strategy)??0)+1);
   }
  }
- const matchingStrategy=[...triggerStrategies.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const topEntry=(counts:Map<string,number>)=>[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+ const frequentTrigger=topEntry(triggerCounts);
+ const bestStrategy=topEntry(helpfulStrategies);
+ const matchingStrategy=frequentTrigger?topEntry(helpfulByTrigger.get(frequentTrigger[0])??new Map<string,number>()):undefined;
  const encouragement=checkin?.complete&&checkin.smokeFree&&todayCount===0
   ?'Du har bekräftat en rökfri dag. Bra jobbat med din avstämning!'
   :todayCount>goal

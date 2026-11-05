@@ -163,3 +163,12 @@ test('home quick actions expose accessible labels and adapt to larger text',()=>
  assert.match(home,/accessibilityRole="header" style=\{\[styles\.heading,\{flexShrink:1\}\]\}>Din utveckling/);
  assert.match(home,/accessibilityLabel="Visa mer statistik om din utveckling"/);
 });
+
+test('home coach aggregates craving history in a single pass with trigger-specific strategies',()=>{
+ const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
+ const section=home.slice(home.indexOf(' const triggerCounts=new Map<string,number>();'),home.indexOf(' const encouragement='));
+ assert.equal((section.match(/for\(const craving of data\.cravings\)/g)||[]).length,1);
+ assert.match(section,/const helpfulByTrigger=new Map<string,Map<string,number>>\(\)/);
+ assert.match(section,/if\(!Number\.isFinite\(date\.getTime\(\)\)\|\|dayKey\(date\)>today\)continue/);
+ assert.match(section,/const matchingStrategy=frequentTrigger\?topEntry\(helpfulByTrigger\.get\(frequentTrigger\[0\]\)/);
+});
