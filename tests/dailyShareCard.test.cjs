@@ -225,3 +225,10 @@ test('home progress visuals announce their meaning and weekly values to screen r
  assert.match(home,/accessibilityLabel=\{\x60Registrerade cigaretter under veckan:/);
  assert.match(home,/måndag','tisdag','onsdag','torsdag','fredag','lördag','söndag/);
 });
+
+test('plan settings preserve goal labels and headings at large font scales',()=>{
+ const settings=fs.readFileSync('src/screens/SettingsPlanSection.tsx','utf8');
+ assert.match(settings,/adjustsFontSizeToFit minimumFontScale=\{0\.7\} numberOfLines=\{1\} style=\{styles\.goal\}/);
+ assert.match(settings,/inline:\{flexDirection:'row',alignItems:'center',gap:11,flexWrap:'wrap'\}/);
+ assert.match(settings,/Nuvarande mål<\/Text><Text style=\{\{color:C\.lime,fontSize:14,fontWeight:'800',flexShrink:1\}\}/);
+});
