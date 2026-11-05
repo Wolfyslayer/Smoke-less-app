@@ -29,7 +29,7 @@ export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarg
    await setWidgetOptIn(next);
    if(next)await refreshWidgetSnapshot(data);
    setWidgetEnabled(next);
-   setWidgetMessage(next?'Dagens uppgifter är godkända för widgeten. Android-widgeten blir tillgänglig efter att den nativa delen installerats.':'Widgetens sparade uppgifter har rensats.');
+   setWidgetMessage(next?'Dagens framsteg får visas i widgeten. Lägg till Smoke Less via hemskärmens widgetmeny. Om den saknas behöver du installera en ny Android-build.':'Widgetens sparade uppgifter har rensats.');
   }catch{
    if(next)await setWidgetOptIn(false).catch(()=>{});
    setWidgetMessage('Kunde inte ändra widgetinställningen. Försök igen.');
