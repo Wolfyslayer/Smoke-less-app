@@ -22,6 +22,13 @@ test('zero goal, over goal and malformed counts',()=>{
  assert.equal(over.remaining,0);assert.equal(over.progressPercent,100);assert.equal(over.todayCount,15);
  assert.equal(makeWidgetSnapshot({enabled:true,date:'2026-11-05',todayCount:-3,dailyGoal:NaN}).dailyGoal,0);
 });
+test('clamp extreme numbers to the Android bridge signed 32-bit range',()=>{
+ const card=makeWidgetSnapshot({enabled:true,date:'2026-11-05',todayCount:Number.MAX_SAFE_INTEGER,dailyGoal:Infinity});
+ assert.equal(card.todayCount,2147483647);
+ assert.equal(card.dailyGoal,0);
+ assert.equal(readWidgetSnapshot(card,'2026-11-05').todayCount,2147483647);
+ assert.equal(readWidgetSnapshot({...card,todayCount:Number.MAX_SAFE_INTEGER},'2026-11-05'),null);
+});
 test('reject stale, tampered, extra-field and invalid-date snapshots',()=>{
  const card=makeWidgetSnapshot({enabled:true,date:'2026-11-05',todayCount:1,dailyGoal:19});
  assert.equal(readWidgetSnapshot(card,'2026-11-06'),null);
