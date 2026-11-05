@@ -155,3 +155,11 @@ test('reminder settings support larger text and announce status changes without 
  assert.match(settings,/accessibilityHint="Ange timmar mellan 0 och 23"/);
  assert.match(settings,/accessibilityHint="Ange minuter mellan 0 och 59"/);
 });
+
+test('home quick actions expose accessible labels and adapt to larger text',()=>{
+ const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
+ assert.match(home,/function Tile\([\s\S]*?accessibilityRole="button" accessibilityLabel=\{title\}/);
+ assert.match(home,/style=\{\[styles\.tileText,\{flexShrink:1\}\]\}>\{title\}/);
+ assert.match(home,/accessibilityRole="header" style=\{\[styles\.heading,\{flexShrink:1\}\]\}>Din utveckling/);
+ assert.match(home,/accessibilityLabel="Visa mer statistik om din utveckling"/);
+});
