@@ -85,3 +85,31 @@ test('pending native publish cannot overwrite a subsequent privacy clear',async(
   assert.equal(launcherSnapshot,null,'privacy clear must be the final native operation');
  }finally{native.publishNativeWidget=original;native.clearNativeWidget=originalClear}
 });
+
+test('opt-out cannot be undone by a native publish already in flight',async()=>{
+ map.clear();native.published.length=0;
+ await setWidgetOptIn(true);
+ let release;
+ let launcherSnapshot=null;
+ const originalPublish=native.publishNativeWidget;
+ const originalClear=native.clearNativeWidget;
+ native.publishNativeWidget=async snapshot=>{
+  await new Promise(resolve=>{release=resolve});
+  launcherSnapshot=snapshot;
+ };
+ native.clearNativeWidget=async()=>{launcherSnapshot=null;await originalClear()};
+ try{
+  const refresh=refreshWidgetSnapshot(data,now);
+  for(let i=0;i<20&&!release;i++)await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(typeof release,'function');
+  const optOut=setWidgetOptIn(false);
+  release();
+  await Promise.all([refresh,optOut]);
+  assert.equal(launcherSnapshot,null);
+  assert.equal(await widgetOptedIn(),false);
+  assert.equal(map.size,0);
+ }finally{
+  native.publishNativeWidget=originalPublish;
+  native.clearNativeWidget=originalClear;
+ }
+});
