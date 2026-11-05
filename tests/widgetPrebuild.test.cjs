@@ -27,7 +27,10 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   context.module.exports({});
   const manifest={modResults:{manifest:{application:[{receiver:[]}]}}};
   manifestMod(manifest);
+  // Expo prebuild may rerun config plugins: never duplicate receivers or permissions.
+  manifestMod(manifest);
   assert.equal(manifest.modResults.manifest.application[0].receiver.length,1);
+  assert.equal(manifest.modResults.manifest['uses-permission'].filter(p=>p.$['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED').length,1);
   const receiver=manifest.modResults.manifest.application[0].receiver[0];
   const actions=receiver['intent-filter'][0].action.map(item=>item.$['android:name']);
   assert.ok(actions.includes('android.intent.action.BOOT_COMPLETED'));
