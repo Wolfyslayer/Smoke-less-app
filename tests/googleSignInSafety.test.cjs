@@ -50,3 +50,25 @@ test('malformed error values fail closed without throwing', () => {
   assert.match(result.message,/Ingen historik har ändrats/);
  }
 });
+
+test('Android Google account picker checks Play services and accepts current response shape', async () => {
+ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/auth/googleNativeSignIn.cjs'),'utf8');
+ const calls=[];
+ const GoogleSignin={
+  configure(options){calls.push(['configure',options.webClientId])},
+  async hasPlayServices(){calls.push(['play'])},
+  async signIn(){calls.push(['signIn']);return {data:{idToken:'example-token'}}}
+ };
+ const module={exports:{}};
+ vm.runInNewContext(source,{module,exports:module.exports,require(name){
+  assert.equal(name,'@react-native-google-signin/google-signin');
+  return {GoogleSignin};
+ }});
+ assert.equal(await module.exports.requestGoogleIdToken('oauth-web-client'), 'example-token');
+ assert.deepEqual(calls,[['configure','oauth-web-client'],['play'],['signIn']]);
+});
+test('Android Google account picker rejects missing OAuth config before loading native library',async()=>{
+ const {requestGoogleIdToken}=require('../src/auth/googleNativeSignIn.cjs');
+ await assert.rejects(requestGoogleIdToken(''),error=>error.code==='DEVELOPER_ERROR');
+});
