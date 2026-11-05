@@ -2,6 +2,58 @@
 
 Status: **implementation pågår i PR #158; native-build och fysisk Android-verifiering återstår**. Den fasta checklistan i `docs/MASTER_ROADMAP.md` gäller utan nya delpunkter.
 
+## Faschecklista – uppdaterad efter grön CI för 51c9487
+
+**22/32 färdiga (69 %).** Här betyder [x] implementerat och täckt av kodgranskning eller automatiska tester, **inte** fysiskt Android-verifierat. Native-build och enhets-QA är separata blockerare.
+
+### 1. Inventering (4/4)
+- [x] 1.1 Verifiera vald Expo-/Android-lösning
+- [x] 1.2 Kartlägg datakällor och offlinekrav
+- [x] 1.3 Fastställ privacy-by-default
+- [x] 1.4 Dokumentera native-build och testmatris
+
+### 2. Widgetvyer (3/4)
+- [x] 2.1 Skapa kompakt widget
+- [x] 2.2 Skapa större widgetvariant
+- [x] 2.3 Hantera tomma värden och nollmål
+- [ ] 2.4 Anpassa storlekar och tema (pågår; Android-QA kvar)
+
+### 3. Datauppdatering (4/4, implementerad)
+- [x] 3.1 Uppdatera efter registrering
+- [x] 3.2 Uppdatera vid datumbyte
+- [x] 3.3 Hantera omstart och bakgrund
+- [x] 3.4 Begränsa batteriförbrukning
+
+### 4. Snabbåtgärder (2/4)
+- [ ] 4.1 Öppna rätt vy från widget (länk finns; Android-verifiering kvar)
+- [x] 4.2 Skydda mot dubbelregistrering (widgeten har ingen registreringsåtgärd)
+- [x] 4.3 Hantera gästläge säkert (lokal data och kontoseparering)
+- [ ] 4.4 Verifiera navigationsvägar
+
+### 5. Integritet (4/4, implementerad)
+- [x] 5.1 Låt användaren välja synlig information (opt-in/avstängning)
+- [x] 5.2 Hantera utloggning och kontobyte
+- [x] 5.3 Undvik personuppgifter som standard
+- [x] 5.4 Verifiera lokal dataseparering (automatiska tester)
+
+### 6. Tillgänglighet (2/4)
+- [ ] 6.1 Granska textskalning (pågår)
+- [ ] 6.2 Granska kontrast och tryckytor
+- [x] 6.3 Hantera olika widgetstorlekar (kompakt/bred och resize-händelse)
+- [x] 6.4 Dokumentera enhetstestfall
+
+### 7. Tester (2/4)
+- [x] 7.1 Testa målberäkning
+- [x] 7.2 Testa uppdateringssignaler
+- [ ] 7.3 Testa offline och kontobyte på Android (pågår)
+- [ ] 7.4 Verifiera native-build och CI
+
+### 8. Avslut (1/4)
+- [x] 8.1 Dokumentera implementation
+- [ ] 8.2 Samla kvarvarande enhets-QA till fas 25
+- [ ] 8.3 Verifiera slutlig grön CI
+- [ ] 8.4 Merga fas-PR
+
 ## Befintlig app (verifierat i repository)
 - Expo SDK 58, React Native 0.88.1 och Expo Router; Android-paket `com.smokeless.app`.
 - `app.json` använder Firebase native-moduler och lokal config-plugin `plugins/withAndroidConfigChanges`; projektet har redan ett native-/prebuild-flöde.
