@@ -7,7 +7,15 @@ async function requestGoogleIdToken(webClientId) {
     error.code = 'DEVELOPER_ERROR';
     throw error;
   }
-  const {GoogleSignin} = require('@react-native-google-signin/google-signin');
+  let GoogleSignin;
+  try {
+    ({GoogleSignin} = require('@react-native-google-signin/google-signin'));
+  } catch (error) {
+    if (error?.code !== 'MODULE_NOT_FOUND') throw error;
+    const unavailable = new Error('Google-inloggning kräver en ny Android-build. Använd e-postinloggning tills den är installerad.');
+    unavailable.code = 'PLAY_SERVICES_NOT_AVAILABLE';
+    throw unavailable;
+  }
   GoogleSignin.configure({webClientId});
   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});
   const result = await GoogleSignin.signIn();
