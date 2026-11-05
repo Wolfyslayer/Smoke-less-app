@@ -240,3 +240,12 @@ test('shared buttons and plan descriptions remain readable at large system text 
  assert.match(plan,/<View style=\{\{flex:1,minWidth:0,gap:4\}\}>/);
  assert.match(plan,/<View style=\{\{flex:1,minWidth:0,gap:3\}\}>/);
 });
+
+test('registration screen exposes safe large touch targets and contextual removal labels',()=>{
+ const screen=fs.readFileSync('src/screens/RegisterScreen.tsx','utf8');
+ assert.match(screen,/accessibilityLabel=\{title\} accessibilityState=\{\{disabled\}\}/);
+ assert.match(screen,/accessibilityLabel="Visa alla registreringar" accessibilityHint="Öppnar din fullständiga historik"/);
+ assert.match(screen,/accessibilityLabel=\{\x60Ta bort registrering från \$\{new Date\(e\.at\)/);
+ assert.match(screen,/deleteAction:\{minWidth:48,minHeight:48/);
+ assert.match(screen,/historyLink:\{minHeight:48/);
+});
