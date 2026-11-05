@@ -56,6 +56,10 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   assert.match(bridge,/MODE_PRIVATE/);
   assert.ok(bridge.includes('prefs.edit().clear().commit()'));
   assert.ok(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml')));
+  const info=fs.readFileSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml'),'utf8');
+  assert.ok(info.includes('android:updatePeriodMillis="0"'),'widget must not poll periodically');
+  assert.ok(!provider.includes('AlarmManager'),'widget provider must not schedule alarms');
+  assert.ok(!provider.includes('WorkManager'),'widget provider must not schedule background work');
   for(const layout of ['smoke_less_widget.xml','smoke_less_widget_wide.xml']){
    const xml=fs.readFileSync(path.join(root,'app/src/main/res/layout',layout),'utf8');
    assert.ok(xml.includes('android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."'));
