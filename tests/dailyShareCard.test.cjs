@@ -206,3 +206,9 @@ test('approved share generation remains visible to error handler',()=>{
  assert.match(profile,/const approvedGeneration=exportGenerationRef\.current;\s*try\{/);
  assert.doesNotMatch(profile,/try\{\s*const approvedPath=pngPathRef\.current;\s*const approvedCounts=exportCountsRef\.current;\s*const approvedGeneration=/);
 });
+
+test('reminder settings explain disabled and web-only states on initial load',()=>{
+ const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');
+ assert.match(settings,/if\(v!=='true'\)setReminderStatus\('Påminnelser är avstängda\.'\)/);
+ assert.match(settings,/else if\(Platform\.OS==='web'\)setReminderStatus\('Schemalagda påminnelser stöds bara i mobilappen\.'\)/);
+});
