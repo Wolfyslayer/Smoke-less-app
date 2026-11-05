@@ -3,7 +3,7 @@
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.
 
 ## Teststrategi beslutad 2026-11-04
-- Samla omfattande manuell Android-acceptans, BrowserStack, skärmstorlekar, maximal text, TalkBack, tillgänglighet och full regression i **fas 23.0:s slutliga QA-grind före Google Play-lansering**. Tidigare ej utförda testpunkter förs dit och markeras inte som godkända.
+- Samla omfattande manuell Android-acceptans, BrowserStack, skärmstorlekar, maximal text, TalkBack, tillgänglighet och full regression i **fas 25.0:s slutliga QA-grind före Google Play-lansering**. Tidigare ej utförda testpunkter förs dit och markeras inte som godkända.
 - Under varje funktionsfas krävs fortsatt automatiska relevanta tester och gröna obligatoriska CI-kontroller på slutlig commit. Utför begränsade riktade manuella tester när en ny funktion eller datarisk motiverar det; inga påhittade testresultat.
 - Skjut aldrig upp blockerande säkerhetsbrister, dataförlust, kontoöverskrivning eller trasig kärnfunktion till slutfasen. Åtgärda sådant innan fasen mergas.
 - En fas = en PR, inklusive dokumentationsändringar för fasen. Undvik separata PR:er enbart för testpolicy.
@@ -49,11 +49,13 @@
 | 20.0 | Långsiktigt rökfri och återfallsprevention | Planerad | — |
 | 21.0 | Evidensbaserat stöd, nikotinläkemedel och vårdvägar | Planerad | — |
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Planerad | — |
-| 23.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
-| 24.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
+| 23.0 | Förenklad startsida och tydlig informationshierarki | Planerad | — |
+| 24.0 | Lättbegriplig onboarding och vägledd användning | Planerad | — |
+| 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
+| 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 
 
-**Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 23. En särskild visuell korrigering av delningskortet planeras i fas 17.
+**Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
 
 Tidigare arbete och detaljer finns i git-historiken, PR #138 och projektets övriga dokument. Fas 7.0 var **intern beta**, inte offentlig Play Store-lansering.
 
@@ -203,7 +205,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Säkerställ att små och smala skärmar, större telefoner, olika bildförhållanden, rotering där appen stöder det, maximal systemtext och display scaling inte klipper text, siffror, knappar eller kort.
 - Granska minst 48 dp tryckytor, kontrast, TalkBack-ordning/etiketter, felmeddelanden, laddningslägen och konsekventa tomlägen. Undvik oavsiktlig horisontell scroll och onödig vertikal scroll.
 - Samordna med fas 16.3: Androids Tillbaka-gest, systemnavigering och stängning av modaler ska fungera ihop med Safe Area utan dubbla hanterare.
-- Lägg till riktade automatiska tester där möjligt. Dokumentera skärmmatris och kvarstående enhetstester; utför slutlig fysisk Android-/BrowserStack-verifiering i fas 23.
+- Lägg till riktade automatiska tester där möjligt. Dokumentera skärmmatris och kvarstående enhetstester; utför slutlig fysisk Android-/BrowserStack-verifiering i fas 25.
 **Avgränsning:** Detta är en **samlad granskning med tydlig slutpunkt**, inte en öppen serie kosmetiska småändringar. Endast blockerande problem eller avvikelser från den fastställda matrisen får utöka omfattningen. En PR för fasen, samlade ändringar och tester.
 **Acceptans:** Alla inventerade vyer har granskats och kända Safe Area-/tangentbords-/klippningsproblem åtgärdats eller dokumenterats för slutlig Android-QA. Inga genomförda manuella tester påstås utan faktiskt resultat.
 
@@ -237,7 +239,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Visa antal **kvar av dagsmål** som huvudvärde, förbrukad procent i en mindre ring och samma situationsanpassade stödtext. Nollmål, övertrasserat mål och stora värden ska hanteras begripligt.
 - Exportera endast den avsedda kortytan som PNG utan appens systemfält, navigering, profilnamn, konto- eller historikuppgifter.
 - Behåll uttrycklig förhandsvisning och användarinitierad delning; inga automatiska uppladdningar. Testa avbrott, upprepade tryck och uppdaterade registreringar medan förhandsvisningen är öppen.
-- Lägg till automatiska regressionstester för gemensam presentationsmodell, känslig data, bildexport och tillståndsbyte; slutligt verkligt Android-delningstest sker i fas 23.
+- Lägg till automatiska regressionstester för gemensam presentationsmodell, känslig data, bildexport och tillståndsbyte; slutligt verkligt Android-delningstest sker i fas 25.
 **Acceptans:** Förhandsvisning och PNG har samma utseende som startsidans framstegskort, med identiska värden för samma dagsdata. Ingen privat data läcker och ingen delning sker utan godkännande.
 
 ## Fas 18.0 – Personlig rökstoppsresa och rätt stöd i rätt fas
@@ -280,7 +282,25 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Verifiera att innehåll inte skuldbelägger, misstolkar saknade registreringar eller uppmuntrar övervakning.
 **Acceptans:** Funktionen är frivillig, fungerar offline där möjligt, bevarar historik och har automatiska tester samt tillgängliga svenska texter.
 
-## Fas 23.0 – Slutlig QA, säkerhet, integritet och Google Play-lansering
+## Fas 23.0 – Förenklad startsida och tydlig informationshierarki
+**Mål:** En ny användare ska på några sekunder förstå dagens läge, kunna registrera och hitta SOS utan att överväldigas.
+- Gör dagens framsteg till den enda dominerande informationsytan på startsidan; behåll en tydlig primär registreringsåtgärd och lättåtkomlig SOS.
+- Minska duplicerade navigationskort när samma destination redan finns i bottennavigeringen. Flytta detaljerad statistik, längre coachtexter, historik och fördjupade kort till respektive vy eller valbar fördjupning.
+- Behåll personlig motivation kort, relevant och frivilligt expanderbar. Visa inte långa stödtexter eller flera konkurrerande uppmaningar samtidigt.
+- Hantera nollmål, överskridna mål, helt ny användare, tom historik och rökfri fas utan missvisande siffror eller skuldbeläggande budskap.
+- Ge startsidan en tydlig visuell hierarki, rimlig skrollängd och konsekventa knappar. Samordna med den valbara dashboarden i fas 16.5 utan att duplicera implementation.
+**Acceptans:** En ny användare kan identifiera dagens läge, registrera och öppna SOS utan instruktion; övrig information nås enkelt utan att fylla första skärmen.
+
+## Fas 24.0 – Lättbegriplig onboarding och vägledd användning
+**Mål:** Minska kognitiv belastning vid första starten och låta användaren komma igång med minsta nödvändiga information.
+- Inventera befintlig onboarding och ta bort onödiga beslut, repetitiva förklaringar och långa texter utan att förlora väsentliga samtycken eller planval.
+- Använd tydliga standardval och visa avancerade inställningar först när de behövs; förklara gradvis minskning, direktstopp och eget datum i vardagsspråk.
+- Behåll gästläge och frivillig inloggning, med tydlig men kortfattad information om synk och risk för dataförlust.
+- Lägg till diskreta, frivilliga förstagångstips för registrering, SOS, plan och statistik; de ska kunna stängas och inte återkomma störande.
+- Kontrollera framåt-/bakåtnavigering, bevarande av inmatning, stora texter, TalkBack, tangentbord och Safe Area.
+**Acceptans:** En förstagångsanvändare kan slutföra onboarding och göra sin första registrering utan att behöva förstå alla appens funktioner. Ingen kontoregistrering krävs.
+
+## Fas 25.0 – Slutlig QA, säkerhet, integritet och Google Play-lansering
 - Genomför uppskjutna manuella tester från tidigare faser, inklusive `docs/PHASE_8_ANDROID_ACCEPTANCE.md` (7.4, 8.1, 8.1a, 8.2), på riktiga Android-enheter och BrowserStack. Dokumentera PASS/FAIL, enhet, Android-version och testad commit.
 - Verifiera full regression: onboarding, planer, SOS, historik, offline, gästläge, kontobyten, tvåenhetssynk och konflikter, notiser, tillgänglighet, TalkBack, stor text och små skärmar.
 - Säkerställ gröna CI, native releasebygge och blockeringsfri slutacceptans innan publicering.
@@ -291,7 +311,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
 
-## Fas 24.0 – Uppföljning och förbättringar efter lansering
+## Fas 26.0 – Uppföljning och förbättringar efter lansering
 - Etablera kostnadsmedveten hantering av buggrapporter, krascher och supportärenden utan onödig insamling av personuppgifter.
 - Prioritera korrigeringar efter faktisk användarfeedback och Android-/Play-policyändringar; håll regressionstester och beroenden uppdaterade.
 - Utvärdera frivilliga förbättringar av widgets, statistik, dashboard och språkstöd först efter stabil lansering.
@@ -339,7 +359,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera native-build och CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera implementation.
-   - [ ] 8.2 Samla kvarvarande enhets-QA till fas 23.
+   - [ ] 8.2 Samla kvarvarande enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -383,7 +403,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI och Android-build.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera Firebase-inställningar utan hemligheter.
-   - [ ] 8.2 Samla enhets-QA till fas 23.
+   - [ ] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -427,7 +447,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera navigationsbeslut.
-   - [ ] 8.2 Samla enhets-QA till fas 23.
+   - [ ] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -471,7 +491,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Åtgärda inventerade blockerande avvikelser.
-   - [ ] 8.2 Flytta fysisk enhets-QA till fas 23.
+   - [ ] 8.2 Flytta fysisk enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR utan kosmetisk scope creep.
 
@@ -515,7 +535,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera standardval.
-   - [ ] 8.2 Samla enhets-QA till fas 23.
+   - [ ] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -559,7 +579,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera ändringskontrakt.
-   - [ ] 8.2 Samla enhets-QA till fas 23.
+   - [ ] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -603,7 +623,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera statistikdefinitioner.
-   - [ ] 8.2 Samla enhets-QA till fas 23.
+   - [ ] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -647,7 +667,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera CI.
 8. [ ] **Avslut (0/4)**
    - [ ] 8.1 Dokumentera visuell acceptans.
-   - [ ] 8.2 Samla native-delningstest till fas 23.
+   - [ ] 8.2 Samla native-delningstest till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
@@ -691,7 +711,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera obligatorisk CI.
 8. [ ] **Slutverifiering och merge (0/4)**
    - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 23.
+   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
    - [ ] 8.3 Verifiera grön CI på slutlig commit.
    - [ ] 8.4 Merga fas-PR.
 
@@ -735,7 +755,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera obligatorisk CI.
 8. [ ] **Slutverifiering och merge (0/4)**
    - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 23.
+   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
    - [ ] 8.3 Verifiera grön CI på slutlig commit.
    - [ ] 8.4 Merga fas-PR.
 
@@ -779,7 +799,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera obligatorisk CI.
 8. [ ] **Slutverifiering och merge (0/4)**
    - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 23.
+   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
    - [ ] 8.3 Verifiera grön CI på slutlig commit.
    - [ ] 8.4 Merga fas-PR.
 
@@ -823,7 +843,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera obligatorisk CI.
 8. [ ] **Slutverifiering och merge (0/4)**
    - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 23.
+   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
    - [ ] 8.3 Verifiera grön CI på slutlig commit.
    - [ ] 8.4 Merga fas-PR.
 
@@ -867,11 +887,99 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 7.4 Verifiera obligatorisk CI.
 8. [ ] **Slutverifiering och merge (0/4)**
    - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 23.
+   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
    - [ ] 8.3 Verifiera grön CI på slutlig commit.
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 23.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
+**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade.
+
+1. [ ] **Inventering och användarmål (0/4)**
+   - [ ] 1.1 Kartlägg befintliga skärmar och flöden.
+   - [ ] 1.2 Identifiera information som konkurrerar om uppmärksamhet.
+   - [ ] 1.3 Definiera tre viktigaste förstagångsuppgifter.
+   - [ ] 1.4 Fastställ acceptanskriterier och avgränsning.
+2. [ ] **Informationshierarki (0/4)**
+   - [ ] 2.1 Definiera tydligt huvudfokus.
+   - [ ] 2.2 Flytta sekundär information till rätt vy.
+   - [ ] 2.3 Ta bort duplicerade navigationsvägar.
+   - [ ] 2.4 Behåll åtkomst till fördjupning.
+3. [ ] **Primära användarflöden (0/4)**
+   - [ ] 3.1 Gör registrering tydlig.
+   - [ ] 3.2 Gör SOS lätt att hitta.
+   - [ ] 3.3 Gör planval lätt att förstå.
+   - [ ] 3.4 Visa nästa relevanta steg.
+4. [ ] **Tillstånd och innehåll (0/4)**
+   - [ ] 4.1 Hantera helt ny användare.
+   - [ ] 4.2 Hantera tom historik och nollmål.
+   - [ ] 4.3 Hantera svår dag utan skuldbeläggning.
+   - [ ] 4.4 Använd korta begripliga svenska texter.
+5. [ ] **Visuell design (0/4)**
+   - [ ] 5.1 Använd konsekvent typografi.
+   - [ ] 5.2 Behåll tydlig knapphierarki.
+   - [ ] 5.3 Begränsa skroll och visuell täthet.
+   - [ ] 5.4 Granska olika skärmstorlekar.
+6. [ ] **Tillgänglighet och kontroll (0/4)**
+   - [ ] 6.1 Granska TalkBack-ordning.
+   - [ ] 6.2 Granska stora textstorlekar.
+   - [ ] 6.3 Granska tryckytor och kontrast.
+   - [ ] 6.4 Gör hjälp och tips frivilliga.
+7. [ ] **Tester (0/4)**
+   - [ ] 7.1 Testa huvudflöden och tillstånd.
+   - [ ] 7.2 Testa databevarande och gästläge.
+   - [ ] 7.3 Testa navigering och avbrott.
+   - [ ] 7.4 Verifiera CI på aktuell commit.
+8. [ ] **Avslut (0/4)**
+   - [ ] 8.1 Dokumentera genomförd acceptans.
+   - [ ] 8.2 Flytta bred fysisk enhets-QA till fas 25.
+   - [ ] 8.3 Verifiera slutlig grön CI.
+   - [ ] 8.4 Merga fas-PR.
+
+### Fas 24.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
+**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade.
+
+1. [ ] **Inventering och användarmål (0/4)**
+   - [ ] 1.1 Kartlägg befintliga skärmar och flöden.
+   - [ ] 1.2 Identifiera information som konkurrerar om uppmärksamhet.
+   - [ ] 1.3 Definiera tre viktigaste förstagångsuppgifter.
+   - [ ] 1.4 Fastställ acceptanskriterier och avgränsning.
+2. [ ] **Informationshierarki (0/4)**
+   - [ ] 2.1 Definiera tydligt huvudfokus.
+   - [ ] 2.2 Flytta sekundär information till rätt vy.
+   - [ ] 2.3 Ta bort duplicerade navigationsvägar.
+   - [ ] 2.4 Behåll åtkomst till fördjupning.
+3. [ ] **Primära användarflöden (0/4)**
+   - [ ] 3.1 Gör registrering tydlig.
+   - [ ] 3.2 Gör SOS lätt att hitta.
+   - [ ] 3.3 Gör planval lätt att förstå.
+   - [ ] 3.4 Visa nästa relevanta steg.
+4. [ ] **Tillstånd och innehåll (0/4)**
+   - [ ] 4.1 Hantera helt ny användare.
+   - [ ] 4.2 Hantera tom historik och nollmål.
+   - [ ] 4.3 Hantera svår dag utan skuldbeläggning.
+   - [ ] 4.4 Använd korta begripliga svenska texter.
+5. [ ] **Visuell design (0/4)**
+   - [ ] 5.1 Använd konsekvent typografi.
+   - [ ] 5.2 Behåll tydlig knapphierarki.
+   - [ ] 5.3 Begränsa skroll och visuell täthet.
+   - [ ] 5.4 Granska olika skärmstorlekar.
+6. [ ] **Tillgänglighet och kontroll (0/4)**
+   - [ ] 6.1 Granska TalkBack-ordning.
+   - [ ] 6.2 Granska stora textstorlekar.
+   - [ ] 6.3 Granska tryckytor och kontrast.
+   - [ ] 6.4 Gör hjälp och tips frivilliga.
+7. [ ] **Tester (0/4)**
+   - [ ] 7.1 Testa huvudflöden och tillstånd.
+   - [ ] 7.2 Testa databevarande och gästläge.
+   - [ ] 7.3 Testa navigering och avbrott.
+   - [ ] 7.4 Verifiera CI på aktuell commit.
+8. [ ] **Avslut (0/4)**
+   - [ ] 8.1 Dokumentera genomförd acceptans.
+   - [ ] 8.2 Flytta bred fysisk enhets-QA till fas 25.
+   - [ ] 8.3 Verifiera slutlig grön CI.
+   - [ ] 8.4 Merga fas-PR.
+
+### Fas 25.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [ ] **Testplan (0/4)**
@@ -915,7 +1023,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.3 Verifiera godkända releasegrindar.
    - [ ] 8.4 Publicera först efter uttryckligt lanseringsbeslut.
 
-### Fas 24.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
+### Fas 26.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [ ] **Driftinventering (0/4)**
@@ -960,10 +1068,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR.
 
 ## Princip för kommande faser
-- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (slutlig QA/Play) → 24.0 (efter lansering).
+- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering).
 - En fas = en PR med **fast åttapunktschecklista och fyra fasta delpunkter per huvudpunkt** (32 totalt). Räkna bara verifierat klart efter relevanta tester och CI.
 - Ändra inte fasens mål eller nämnare under arbetet utan uttryckligt beslut. Nya önskemål läggs i kommande fas eller backlog. Samla relaterade förbättringar i meningsfulla commits; undvik en PR per småfix.
-- Fas 23 är den slutliga manuella Android-/BrowserStack-/TalkBack-/Safe Area- och säkerhetsgrinden. Blockerande säkerhets- och datafel får aldrig skjutas upp.
+- Fas 25 är den slutliga manuella Android-/BrowserStack-/TalkBack-/Safe Area- och säkerhetsgrinden. Blockerande säkerhets- och datafel får aldrig skjutas upp.
 - Förbered gärna faser i en samlad roadmap-PR, men påbörja inte flera parallella funktions-PR:er.
 
 ## Hur AI ska använda denna fil
@@ -987,7 +1095,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Informationen är allmän och innehåller en tydlig medicinsk begränsning; externa uppgifter och öppettider bör kontrolleras vid behov.
 - Inget konto, nya behörigheter eller nya native-paket krävs för att läsa innehållet.
 - Automatiska tester för innehåll, länkar, tillgänglighet och kontofri åtkomst finns i `tests/knowledgeContent.test.cjs`.
-- CI var grön för `e0124d7`; denna dokumentationsändring kräver ny grön CI före merge. Bred manuell Android-QA kvarstår i fas 23.
+- CI var grön för `e0124d7`; denna dokumentationsändring kräver ny grön CI före merge. Bred manuell Android-QA kvarstår i fas 25.
 
 ### Fas 14.0 – inventering av befintlig coach
 
@@ -1013,12 +1121,12 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 3. **Kontofri och frivillig.** Funktionen ska vara tillgänglig i gästläge, utan Firebase-inloggning, kontakter-behörighet eller ny backend. Avbrytande får inte ändra appens data.
 4. **Ingen spårning.** Inga analytics-händelser, delningsloggar, nya push-notiser eller externa AI-tjänster. Appen ska inte kunna se vem som tar emot meddelandet.
 5. **Tydlig avsändare och gräns.** Gränssnittet ska förklara att användaren väljer mottagare och att meddelandet lämnar appen först efter användarens eget val. Delningsappen kan ha egna integritetsvillkor.
-6. **Testkrav.** Automatiska tester ska säkerställa att den förvalda texten är statisk, att den inte interpolerar användardata och att funktionen inte kräver konto. Androids delningsdialog testas manuellt i fas 23.
+6. **Testkrav.** Automatiska tester ska säkerställa att den förvalda texten är statisk, att den inte interpolerar användardata och att funktionen inte kräver konto. Androids delningsdialog testas manuellt i fas 25.
 
 ### Fas 16.0 – första gränssnittsinventering
 
 - `src/screens/ProfileScreen.tsx`: profilens snabbåtkomst visar fortfarande `Säkerhetskopiering`, `Molnstatus och JSON-kopia` och `Exportera och skydda din historik`, trots beslutet att inte använda JSON-export som säkerhetskopia. Detta ska rättas så att genvägen beskriver kontosynk, inte export.
-- `src/screens/ProfileScreen.tsx`: den nya frivilliga delningsfunktionen har explicit tryckhändelse, skärmläsaretikett och informativ text; kontrollera layout med stor text i fas 23.
+- `src/screens/ProfileScreen.tsx`: den nya frivilliga delningsfunktionen har explicit tryckhändelse, skärmläsaretikett och informativ text; kontrollera layout med stor text i fas 25.
 - `src/screens/SettingsScreen.tsx`: påminnelseinställningar hanterar sparad tid, behörighet och schemalagd notis. Vid polering ska asynkrona statusuppdateringar och feltexter kontrolleras utan att ändra schemaläggningens logik.
 - `src/screens/HomeScreen.tsx`: hemvyn innehåller dagsprogression och personliga coachråd. Kontrollera beräkningskostnad/omrendering innan optimering; undvik prestandaändringar utan belägg.
 - Nästa konkreta åtgärd: rätta den föråldrade profilgenvägen, därefter skärmläsar-/textstorleksgranskning och riktade tester.
@@ -1028,7 +1136,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Ersätt den generiska uppmuntringsdelningen med **frivillig delning av dagens framsteg som en snygg bild, liknande en skärmbild**, med kort positiv text om att det går bra. Bilden ska vara ett separat utformat delningskort, inte en skärmbild av hela appen.
 - Visa en **förhandsgranskning** och låt användaren välja att dela eller avbryta. Dela endast dagens framsteg som användaren uttryckligen godkänner; inga namn, e-postadresser, historik, kontouppgifter eller andra skärmelement ska följa med.
 - Undvik överdrivna hälsopåståenden. Anpassa positiv text till faktiska framsteg; även en svårare dag ska få ett respektfullt, icke-skuldbeläggande budskap.
-- Utred lämplig befintlig bildgenerering/delning i Expo och om ett native-beroende eller Android-rebuild krävs innan implementation. Lägg till tester för valda fält och frivilligt samtycke. Androids systemdelning och bildformat testas manuellt i fas 23.
+- Utred lämplig befintlig bildgenerering/delning i Expo och om ett native-beroende eller Android-rebuild krävs innan implementation. Lägg till tester för valda fält och frivilligt samtycke. Androids systemdelning och bildformat testas manuellt i fas 25.
 - Denna ändring ersätter den tidigare planen om enbart neutral textdelning; tidigare fas 15 förblir avslutad, och vidareutvecklingen sker i fas 16.0.
 
 ### Fas 16.0 – teknisk inventering av delningsbild
@@ -1037,7 +1145,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - För en verklig delbar bild bör ett separat, dataavgränsat React Native-kort renderas och fångas till PNG via `react-native-view-shot`; delning av bildfilen bör ske via `expo-sharing` med ett temporärt URI. Kontrollera versioner som stöds av installerad Expo SDK 58 före tillägg och låt CI avgöra TypeScript/Metro-kompatibilitet.
 - Nya native-moduler kräver **ny Android development build** efter installation. Den befintliga `Share.share`-funktionen får ligga kvar tills bilddelning fungerar, så att ingen trasig knapp släpps.
 - Delningskortets datamodell ska vara explicit begränsad till dagens antal och dagens mål, med kort neutral/positiv text baserad på dessa värden. Användaren ska kunna förhandsgranska, godkänna och avbryta. Ingen skärmbild av hela skärmen och inga namn, e-postadresser eller historik.
-- Testa rena formatteringsfunktioner med gränsfall (0, över målet, ogiltiga mål), avbrytande, samt att endast godkända fält används i bildkortet. Verifiera bildexport och Android-delning manuellt i fas 23.
+- Testa rena formatteringsfunktioner med gränsfall (0, över målet, ogiltiga mål), avbrytande, samt att endast godkända fält används i bildkortet. Verifiera bildexport och Android-delning manuellt i fas 25.
 
 ### Fas 16.0 – huvudchecklista och kvarstående acceptans (PR #156)
 
@@ -1046,7 +1154,7 @@ Fasens **åtta fasta huvudpunkter** återges här utan att ändra nämnaren elle
 1. [x] Aktivera fas 16 efter fas 15.
 2. [x] Inventera gränssnitt och prestandarisker.
 3. [ ] Slutgranska navigering och användartexter. Profilens synkgenväg och tryckyta till planen har förbättrats, men helhetsgranskningen är inte dokumenterat klar.
-4. [ ] Slutgranska skärmläsare, stora textstorlekar och tryckytor. Profil och PNG-flöde har förbättrats; manuell Android-verifiering flyttas till fas 23.
+4. [ ] Slutgranska skärmläsare, stora textstorlekar och tryckytor. Profil och PNG-flöde har förbättrats; manuell Android-verifiering flyttas till fas 25.
 5. [ ] Slutgranska onödiga omrenderingar och responsivitet. SVG-kortet är memoiserat och profilens snabbgenvägar är stabila; granskning av övriga skärmar återstår.
 6. [ ] Slutgranska språk och felmeddelanden. Svenska delnings- och synktexter är justerade; övriga skärmar återstår.
 7. [x] Automatiska regressionstester för PNG-delning och integritet.
@@ -1061,13 +1169,13 @@ Fasens **åtta fasta huvudpunkter** återges här utan att ändra nämnaren elle
 - CI för `406d620` är grön i båda obligatoriska arbetsflödena (`Validate Smoke Less 6` och `Firestore rules emulator`). Detta verifierar automatiska tester och byggets kontroller, **inte** Androids faktiska bilddelning.
 - Profilens synkgenväg beskriver nu kontosynk utan JSON-backup. Delningskortet har svenska instruktioner, anpassad layout, skärmläsaretikett, felstatus och memoiserad SVG-rendering.
 - Bildexporten har skydd mot ändrade dagsvärden, gammal export och förhandsgranskning som stängts eller öppnats igen under ett väntande asynkront anrop. Tillhörande regressionstester finns i `tests/dailyShareCard.test.cjs`.
-- **Kvar:** Kontrollera faktisk PNG-export och systemdelning på Android med en ny native-build eftersom `expo-sharing` tillkommit. Bred manuell TalkBack-/stor-text-/enhetsregression är fortsatt öppen i fas 23.0 enligt teststrategin.
+- **Kvar:** Kontrollera faktisk PNG-export och systemdelning på Android med en ny native-build eftersom `expo-sharing` tillkommit. Bred manuell TalkBack-/stor-text-/enhetsregression är fortsatt öppen i fas 25.0 enligt teststrategin.
 - Fas 16.0 markeras inte mergad i statusöversikten förrän PR #156 är avslutad och dess sista commit har grön CI.
 
 ### Fas 16.0 – samlad teknisk slutgranskning efter commit 23a4234
 
 - **Navigering och texter (punkt 3, öppen):** Profilens planrad och snabbgenvägar har fulla tryckytor och korrekta synktexter. Hemvyns snabbknappar, statistikgenväg och dagliga avstämning har tydliga tillgänglighetsetiketter. Kvar är en sammanhållen kontroll av andra skärmars navigering och användartexter.
-- **Tillgänglighet (punkt 4, öppen):** TalkBack-etiketter och status för PNG-export, påminnelser och hemvyn är förbättrade; hemvyns statistikgenväg har minst 48 dp tryckyta. Layouten för dagens framsteg och rubrik kan brytas vid smala skärmar. Faktisk TalkBack- och maximal textstorleks-QA på Android görs i fas 23, inte som ett påstått genomfört test här.
+- **Tillgänglighet (punkt 4, öppen):** TalkBack-etiketter och status för PNG-export, påminnelser och hemvyn är förbättrade; hemvyns statistikgenväg har minst 48 dp tryckyta. Layouten för dagens framsteg och rubrik kan brytas vid smala skärmar. Faktisk TalkBack- och maximal textstorleks-QA på Android görs i fas 25, inte som ett påstått genomfört test här.
 - **Prestanda och responsivitet (punkt 5, öppen):** Hemvyn sammanställer röksugshistoriken i en enda genomgång, och PNG-kortet är memoiserat. Renderfasens ref-mutationer i profilens PNG-flöde är borttagna. Kvar är slutlig genomgång av övriga skärmars renderbeteende och layout.
 - **Språk och felmeddelanden (punkt 6, öppen):** Svenska fel- och statusmeddelanden för PNG-delning och påminnelser har förbättrats; ett sent delningsfel visas inte efter att förhandsgranskningen stängts. Kvar är granskning av andra skärmars meddelanden.
-- **Verifieringsgräns:** Gröna GitHub-kontroller på `23a4234` verifierar automatiska kontroller, inte native-delning på Android. Native-build och manuell enhetstestning följer efter merge i fas 23. Inga öppna huvudpunkter markeras klara utan återstående kodgranskning.
+- **Verifieringsgräns:** Gröna GitHub-kontroller på `23a4234` verifierar automatiska kontroller, inte native-delning på Android. Native-build och manuell enhetstestning följer efter merge i fas 25. Inga öppna huvudpunkter markeras klara utan återstående kodgranskning.
