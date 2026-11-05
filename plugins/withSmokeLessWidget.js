@@ -29,6 +29,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.RemoteViews
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /** Neutral by default: personal statistics are never rendered without an explicit native bridge. */
 class SmokeLessWidgetProvider : AppWidgetProvider() {
@@ -45,6 +48,16 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
    val width = manager.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 180)
    val layout = if (width >= 250) R.layout.smoke_less_widget_wide else R.layout.smoke_less_widget
    val views = RemoteViews(context.packageName, layout)
+   // Native preferences are private to this application. The JS bridge is added separately.
+   val prefs = context.getSharedPreferences("smokeless_widget_v1", Context.MODE_PRIVATE)
+   val today = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+   val enabled = prefs.getBoolean("enabled", false)
+   val storedDate = prefs.getString("date", null)
+   val count = prefs.getInt("todayCount", -1)
+   val goal = prefs.getInt("dailyGoal", -1)
+   val valid = enabled && storedDate == today && count >= 0 && goal >= 0
+   val summary = if (valid) "Idag: $count / $goal cigaretter" else "Öppna appen för dagens framsteg"
+   views.setTextViewText(R.id.smoke_less_widget_summary, summary)
    val launch = Intent(Intent.ACTION_VIEW, Uri.parse("smokeless://")).apply {
     setPackage(context.packageName)
     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -74,7 +87,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
  android:text="Smoke Less" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:layout_marginTop="6dp" android:text="Öppna appen för dagens framsteg"
+ android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="6dp" android:text="Öppna appen för dagens framsteg"
  android:textColor="#FFFFFF" android:textSize="13sp" />
 </LinearLayout>
 `,
@@ -87,7 +100,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
  android:text="Smoke Less · Dagens framsteg" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:layout_marginTop="8dp" android:text="Öppna appen för att se din dag"
+ android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="8dp" android:text="Öppna appen för att se din dag"
  android:textColor="#FFFFFF" android:textSize="15sp" />
 </LinearLayout>
 `,
