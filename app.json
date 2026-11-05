@@ -20,7 +20,8 @@
           }
         }
       ],
-      "./plugins/withAndroidConfigChanges"
+      "./plugins/withAndroidConfigChanges",
+      "./plugins/withSmokeLessWidget"
     ],
     "web": {
       "bundler": "metro",
