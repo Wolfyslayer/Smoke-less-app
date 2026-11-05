@@ -104,3 +104,9 @@ test('share confirmation requires preview to remain open after asynchronous avai
  assert.match(profile,/if\(!previewOpenRef\.current\|\|!approvedPath/);
  assert.match(profile,/previewOpenRef\.current=!previewOpenRef\.current/);
 });
+
+test('sharing rejects an approval invalidated by closing and reopening the preview',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/const approvedGeneration=exportGenerationRef\.current/);
+ assert.match(profile,/exportGenerationRef\.current!==approvedGeneration/);
+});
