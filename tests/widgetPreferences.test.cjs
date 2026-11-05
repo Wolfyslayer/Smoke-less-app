@@ -12,7 +12,7 @@ const readWidgetSnapshot=(x,date)=>x?.date===date?x:null;
 const dayKey=d=>d.toISOString().slice(0,10);
 const target=p=>p.baseline;
 const context={exports:{},Date,JSON,Number,Promise,require:name=>{
- if(name==='@react-native-async-storage/async-storage')return {default:storage};
+ if(name==='@react-native-async-storage/async-storage')return storage;
  if(name==='../domain')return {dayKey,target};
  if(name==='../domain/widgetSnapshot')return {makeWidgetSnapshot,readWidgetSnapshot};
  throw Error(name);
