@@ -56,3 +56,31 @@ test('preview is opt-in and card does not access account data',()=>{
  const card=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
  assert.doesNotMatch(card,/accountEmail|profile\.|entries|cravings|Share\.share/);
 });
+
+test('share card normalizes fractional and infinite counts before calculating the graphic',()=>{
+ const fractional=buildDailyShareCard({todayCount:3.9,dailyGoal:7.8});
+ assert.equal(fractional.todayCount,3);
+ assert.equal(fractional.dailyGoal,7);
+ assert.equal(fractional.progressPercent,43);
+ const infinite=buildDailyShareCard({todayCount:Infinity,dailyGoal:10});
+ assert.equal(infinite.todayCount,0);
+ assert.equal(infinite.progressPercent,0);
+ const negative=buildDailyShareCard({todayCount:-Infinity,dailyGoal:-2});
+ assert.equal(negative.todayCount,0);
+ assert.equal(negative.dailyGoal,0);
+});
+test('zero cigarette goal stays at zero fill even when a cigarette was registered',()=>{
+ const card=buildDailyShareCard({todayCount:2,dailyGoal:0});
+ assert.equal(card.todayCount,2);
+ assert.equal(card.dailyGoal,0);
+ assert.equal(card.progressPercent,0);
+ assert.match(card.message,/Fortsätt i din egen takt/);
+});
+test('daily share artwork has a descriptive accessible label and uses only normalized card values',()=>{
+ const artwork=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
+ assert.match(artwork,/const card=buildDailyShareCard\(\{todayCount,dailyGoal\}\)/);
+ assert.match(artwork,/accessibilityLabel=\{\`Dagens framsteg/);
+ assert.match(artwork,/card\.todayCount/);
+ assert.match(artwork,/card\.dailyGoal/);
+ assert.doesNotMatch(artwork,/accountEmail|userId|firebase|AsyncStorage|historyEntries/);
+});
