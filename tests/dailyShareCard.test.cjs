@@ -98,3 +98,8 @@ test('starting a new image clears an earlier sharing error and guards synchronou
  assert.match(profile,/setPngStatus\('rendering'\);\s*setShareError\(false\);/);
  assert.match(profile,/catch\{if\(generation===exportGenerationRef\.current\)setPngStatus\('error'\);\}/);
 });
+
+test('share confirmation requires preview to remain open after asynchronous availability check',()=>{
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/if\(!showSharePreview\|\|!approvedPath/);
+});
