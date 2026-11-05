@@ -1,14 +1,8 @@
 name: Verify Android widget native build
 
+# Run only when explicitly requested; native builds are too expensive for every PR update.
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'plugins/withSmokeLessWidget.js'
-      - 'app.json'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/verify-android-widget.yml'
 
 permissions:
   contents: read
