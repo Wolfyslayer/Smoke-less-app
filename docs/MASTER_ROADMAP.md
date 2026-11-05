@@ -230,11 +230,11 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - [ ] 5.3 Verifiera kontoradering
 - [ ] 5.4 Behåll gästläge oförändrat
 
-**6. UX och tillgänglighet (0/4)**
+**6. UX och tillgänglighet (1/4)**
 - [ ] 6.1 Granska onboarding och profil
 - [ ] 6.2 Granska laddning och felstatus
 - [ ] 6.3 Granska TalkBack och tryckytor
-- [ ] 6.4 Behåll e-postinloggning som alternativ
+- [x] 6.4 Behåll e-postinloggning som alternativ
 
 **7. Tester (0/4)**
 - [ ] 7.1 Testa nya och återkommande konton
@@ -248,9 +248,9 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - [ ] 8.3 Verifiera slutlig grön CI
 - [ ] 8.4 Merga fas-PR
 
-**Verifierade delpunkter: 5/32 (15,6 %). Huvudpunkter: 0/8 (0 %).**
+**Verifierade delpunkter: 6/32 (18,8 %). Huvudpunkter: 0/8 (0 %).**
 
-1.1, 1.3 och 1.4 avser verifierad repository-inventering. 1.2 är öppen tills verkliga SHA-certifikat har kontrollerats i Firebase. 8.1 är dokumenterad i docs/PHASE_16_2_GOOGLE_SIGN_IN_AUDIT.md utan hemligheter; 8.2 är dokumenterad där med hänvisning till fas 25. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
+1.1, 1.3 och 1.4 avser verifierad repository-inventering. Användaren har bekräftat att SHA-1 har lagts till i Firebase. 1.2 är fortfarande öppen tills SHA-256 och relevanta signeringscertifikat (debug/release) samt kopplingen till rätt Android package ID har verifierats. 8.1 är dokumenterad i docs/PHASE_16_2_GOOGLE_SIGN_IN_AUDIT.md utan hemligheter; 8.2 är dokumenterad där med hänvisning till fas 25. 6.4 är avbockad eftersom befintliga e-postfunktioner och kontoåtgärder är kvar oförändrade i authService och useAccountFlow, och CI för 60dd628 är grön; enhetstest av båda inloggningssätten återstår. Google-ID-token kan nu skickas via useAccountFlow till Firebase, men Android-kontoväljaren och UI saknas ännu. Felklassificeringens tester är gröna men integreras ännu inte i Google-inloggningsflödet; därför är motsvarande funktions- och testdelpunkter öppna.
 
 ## Fas 16.4 – Helhetsgranskning av UI, Safe Area och Android-enheter
 **Mål:** Hela appen ska vara användbar och visuellt sammanhållen på olika Android-telefoner, oavsett skärmstorlek, systemfält, tangentbord och tillgänglighetsinställningar.
