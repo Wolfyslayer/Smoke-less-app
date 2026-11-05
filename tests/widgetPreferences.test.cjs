@@ -58,3 +58,25 @@ test('native widget publishes approved aggregates and clears before opt-out',asy
  assert.ok(native.clears>=1);
  assert.equal(map.size,0);
 });
+
+test('pending native publish cannot overwrite a subsequent privacy clear',async()=>{
+ map.clear();native.published.length=0;
+ await setWidgetOptIn(true);
+ let release;
+ const original=native.publishNativeWidget;
+ native.publishNativeWidget=async snapshot=>{
+  await new Promise(resolve=>{release=resolve});
+  native.published.push(snapshot);
+ };
+ try{
+  const refresh=refreshWidgetSnapshot(data,now);
+  // Wait for the queued native write to begin.
+  for(let i=0;i<20&&!release;i++)await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(typeof release,'function');
+  const clear=clearWidgetPrivacy();
+  release();
+  await Promise.all([refresh,clear]);
+  assert.equal(map.size,0);
+  assert.ok(native.clears>0);
+ }finally{native.publishNativeWidget=original}
+});
