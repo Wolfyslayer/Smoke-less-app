@@ -31,7 +31,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   await dangerousMod({modRequest:{platformProjectRoot:root}});
   await dangerousMod({modRequest:{platformProjectRoot:root}});
   const main=fs.readFileSync(mainPath,'utf8');
-  assert.equal((main.match(/add\\(SmokeLessWidgetPackage\\(\\)\\)/g)||[]).length,1);
+  assert.equal(main.split('add(SmokeLessWidgetPackage())').length-1,1);
   for(const name of ['SmokeLessWidgetModule.kt','SmokeLessWidgetPackage.kt','SmokeLessWidgetProvider.kt']){
    assert.ok(fs.existsSync(path.join(javaDir,name)),name);
   }
@@ -39,7 +39,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   const bridge=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetModule.kt'),'utf8');
   assert.match(provider,/storedDate == today/);
   assert.match(bridge,/MODE_PRIVATE/);
-  assert.match(bridge,/prefs\\.edit\\(\\)\\.clear\\(\\)\\.commit\\(\\)/);
+  assert.ok(bridge.includes('prefs.edit().clear().commit()'));
   assert.ok(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml')));
  }finally{fs.rmSync(root,{recursive:true,force:true})}
 });
