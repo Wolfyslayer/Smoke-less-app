@@ -120,6 +120,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
    val valid = enabled && storedDate == today && count >= 0 && goal >= 0
    val summary = when {\n    !valid -> "Öppna appen för dagens framsteg"\n    goal == 0 && count == 0 -> "Dagens mål: 0 cigaretter"\n    goal == 0 -> "Idag: $count cigaretter · mål 0"\n    else -> "Idag: $count / $goal cigaretter"\n   }
    views.setTextViewText(R.id.smoke_less_widget_summary, summary)
+   views.setContentDescription(R.id.smoke_less_widget_root, "Smoke Less. $summary. Tryck för att öppna appen.")
    val launch = Intent(Intent.ACTION_VIEW, Uri.parse("smokeless://")).apply {
     setPackage(context.packageName)
     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP

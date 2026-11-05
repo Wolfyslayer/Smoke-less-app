@@ -16,6 +16,7 @@ test('widget plugin declares provider, launcher action and neutral privacy-safe 
  assert.match(plugin,/storedDate == today/);
  assert.match(plugin,/count >= 0 && goal >= 0/);
  assert.match(plugin,/goal == 0 && count == 0/);
+ assert.match(plugin,/setContentDescription\\(R\\.id\\.smoke_less_widget_root/);
  assert.match(plugin,/!valid ->/);
  assert.doesNotMatch(plugin,/accountEmail|Firebase|authToken|userUid/);
 });
