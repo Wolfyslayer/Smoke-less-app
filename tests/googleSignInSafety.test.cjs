@@ -95,3 +95,13 @@ test('Android picker refuses successful response without an ID token',async()=>{
  }})});
  await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='auth/invalid-credential');
 });
+
+test('Android picker treats an explicitly cancelled result as cancellation',async()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/auth/googleNativeSignIn.cjs'),'utf8');
+ const module={exports:{}};
+ vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
+  configure(){},async hasPlayServices(){},async signIn(){return {type:'cancelled',data:null}}
+ }})});
+ await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='SIGN_IN_CANCELLED');
+});
