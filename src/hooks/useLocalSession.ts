@@ -3,6 +3,7 @@ import type {Dispatch,SetStateAction} from 'react';
 import type {Data} from '../domain';
 import {LocalSessionStorage,type LocalSession} from '../localSessionStorage';
 import type {AccountUser} from '../authService';
+import {clearWidgetPrivacy,refreshWidgetSnapshot} from '../widgets/widgetPreferences';
 
 const sessionKey=(session:LocalSession)=>session.kind==='guest'?'guest':'account:'+session.uid;
 
@@ -18,6 +19,7 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
  const requestedKey=sessionKey(requestedSession);
  const sessionRef=useRef<LocalSession>(requestedSession);
  const switchGeneration=useRef(0);
+ const previousRequestedKey=useRef(requestedKey);
  // A stale account's state must never be written or synced as the new account.
  const sessionReady=ready && sessionKey(sessionRef.current)===requestedKey;
 
@@ -25,6 +27,11 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
   let active=true;
   const generation=++switchGeneration.current;
   const target:LocalSession=sessionUser?{kind:'account',uid:sessionUser.uid}:{kind:'guest'};
+  // Never carry a previous account's widget permission or aggregates into another session.
+  if(previousRequestedKey.current!==requestedKey){
+   previousRequestedKey.current=requestedKey;
+   void clearWidgetPrivacy().catch(()=>{});
+  }
   // Block saves and cloud synchronization until the target session is loaded.
   setReady(false);
   setLoadError(null);
@@ -47,7 +54,11 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
  useEffect(()=>{
   if(!sessionReady || data===loadedDataRef.current)return;
   const target=sessionRef.current;
-  storageRef.current.save(target,data).catch(error=>{
+  storageRef.current.save(target,data).then(()=>{
+   // Publish only after a successful local save and only for the same active session.
+   if(sessionKey(sessionRef.current)!==sessionKey(target))return;
+   return refreshWidgetSnapshot(data).catch(()=>{});
+  }).catch(error=>{
    // Never display stale save failures after switching accounts.
    if(sessionKey(sessionRef.current)===sessionKey(target))
     showMessage('Kunde inte spara',error instanceof Error?error.message:'Kontrollera lagringsutrymmet.');
