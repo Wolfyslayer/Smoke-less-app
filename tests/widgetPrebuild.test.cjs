@@ -43,9 +43,9 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   const provider=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetProvider.kt'),'utf8');
   const bridge=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetModule.kt'),'utf8');
   assert.match(provider,/storedDate == today/);
-  assert.match(provider,/Intent\\.ACTION_DATE_CHANGED/);
-  assert.match(provider,/Intent\\.ACTION_TIMEZONE_CHANGED/);
-  assert.match(provider,/onUpdate\\(context, manager, ids\\)/);
+  assert.ok(provider.includes('Intent.ACTION_DATE_CHANGED'));
+  assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));
+  assert.ok(provider.includes('onUpdate(context, manager, ids)'));
   assert.match(provider,/!valid -> "Öppna appen för dagens framsteg"/);
 
   assert.match(bridge,/MODE_PRIVATE/);
