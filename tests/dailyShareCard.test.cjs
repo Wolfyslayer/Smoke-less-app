@@ -86,3 +86,9 @@ test('daily share artwork has a descriptive accessible label and uses only norma
  assert.match(artwork,/card\.dailyGoal/);
  assert.doesNotMatch(artwork,/accountEmail|userId|firebase|AsyncStorage|historyEntries/);
 });
+
+test('artwork is memoized to avoid SVG redraws when share status changes',()=>{
+ const artwork=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
+ assert.match(artwork,/import React,\{forwardRef,memo\} from 'react'/);
+ assert.match(artwork,/DailyProgressShareArtwork=memo\(forwardRef/);
+});

@@ -1,4 +1,4 @@
-import React,{forwardRef} from 'react';
+import React,{forwardRef,memo} from 'react';
 import Svg,{Circle,Rect,Text as SvgText,TSpan} from 'react-native-svg';
 import {buildDailyShareCard,type DailyShareProgress} from '../domain/dailyShareCard';
 
@@ -6,7 +6,7 @@ import {buildDailyShareCard,type DailyShareProgress} from '../domain/dailyShareC
  * PNG-ready SVG artwork. The same component is previewed and exported via
  * Svg.toDataURL(), so screenshots never include account UI or private fields.
  */
-export const DailyProgressShareArtwork=forwardRef<Svg,DailyShareProgress>(function DailyProgressShareArtwork({todayCount,dailyGoal},ref){
+export const DailyProgressShareArtwork=memo(forwardRef<Svg,DailyShareProgress>(function DailyProgressShareArtwork({todayCount,dailyGoal},ref){
  const card=buildDailyShareCard({todayCount,dailyGoal});
  const circumference=2*Math.PI*74;
  const lines=card.dailyGoal===0
@@ -32,4 +32,4 @@ export const DailyProgressShareArtwork=forwardRef<Svg,DailyShareProgress>(functi
   </SvgText>
   <SvgText x="170" y="395" fill="#B8EB72" fontSize="14" fontWeight="bold" textAnchor="middle">Små steg räknas</SvgText>
  </Svg>;
-});
+}));
