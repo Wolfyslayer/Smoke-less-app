@@ -2,7 +2,7 @@
 
 /** Android account picker. Install @react-native-google-signin/google-signin before calling. */
 async function requestGoogleIdToken(webClientId) {
-  if (typeof webClientId !== 'string' || !webClientId.trim()) {
+  if (typeof webClientId !== 'string' || !/^[0-9]+-[a-z0-9-]+\.apps\.googleusercontent\.com$/.test(webClientId.trim())) {
     const error = new Error('Google OAuth-webbklient saknas i konfigurationen.');
     error.code = 'DEVELOPER_ERROR';
     throw error;
@@ -16,7 +16,7 @@ async function requestGoogleIdToken(webClientId) {
     unavailable.code = 'PLAY_SERVICES_NOT_AVAILABLE';
     throw unavailable;
   }
-  GoogleSignin.configure({webClientId});
+  GoogleSignin.configure({webClientId:webClientId.trim()});
   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});
   const result = await GoogleSignin.signIn();
   if (result?.type === 'cancelled') {
