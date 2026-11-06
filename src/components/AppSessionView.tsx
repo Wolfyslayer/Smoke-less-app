@@ -114,6 +114,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  onEmail={()=>setAuthPrompt('email')}
  googleConfigured={!!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()}
  googleBusy={model.accountBusy}
+ hasEmailDraft={!!(model.accountEmail.trim()||model.accountPassword)}
  onGoogle={()=>{void model.googleAccountAction(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'','onboarding')}}
  onLater={()=>setAuthPrompt('benefits')}
  onDecline={()=>setAuthPrompt(null)}
