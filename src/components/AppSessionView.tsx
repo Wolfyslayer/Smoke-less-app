@@ -37,7 +37,12 @@ export function AppSessionView({model}:{model:SessionModel}){
     setAuthPrompt(state.authPrompt==='email'||state.authPrompt==='benefits'?'choice':null);
     return true;
    }
-   if(state.showLogin){setShowLogin(false);return true;}
+   if(state.showLogin){
+    if(current.accountEmail.trim()||current.accountPassword){
+     current.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>setShowLogin(false),'Lämna inloggningen');
+    }else setShowLogin(false);
+    return true;
+   }
    if(!state.ready||state.loadError||!state.p)return true;
    if(current.dialog){current.setDialog(null);return true;}
    if(current.registerOpen){current.setRegisterOpen(false);return true;}
