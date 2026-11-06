@@ -102,7 +102,7 @@ test('Android picker treats an explicitly cancelled result as cancellation',asyn
  const source=fs.readFileSync(path.join(__dirname,'../src/auth/googleNativeSignIn.cjs'),'utf8');
  const module={exports:{}};
  vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
-  configure(){},async hasPlayServices(){},async signIn(){return {type:'cancelled',data:null}}
+  configure(){},async hasPlayServices(){},async signOut(){},async signIn(){return {type:'cancelled',data:null}}
  }})});
  await assert.rejects(module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'),error=>error.code==='SIGN_IN_CANCELLED');
 });
@@ -140,4 +140,24 @@ test('Android build workflows configure Google OAuth before Expo prebuild',()=>{
   assert.ok(workflow.indexOf('EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=')<workflow.indexOf('npx expo prebuild'));
   assert.doesNotMatch(workflow,/console\.log\(webClients\[0\]\)/);
  }
+});
+
+// A credential already belonging to another Firebase UID must never trigger a merge.
+test('Google credential conflict is explicit and does not expose account data',()=>{
+ for(const code of ['auth/credential-already-in-use','auth/account-exists-with-different-credential']){
+  const result=googleSignInFailure({code,uid:'private-user',idToken:'private-token'});
+  assert.equal(result.kind,'account-conflict');
+  assert.match(result.message,/befintliga konto/);
+  assert.doesNotMatch(result.message,/private-user|private-token/);
+ }
+});
+test('native account linking requires reauthentication and preserves the existing UID',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/authService.native.ts'),'utf8');
+ const fn=source.slice(source.indexOf('export async function linkGoogleToEmailAccount'));
+ assert.match(fn,/user\.uid!==expectedUid/);
+ assert.match(fn,/reauthenticateWithCredential\(user,EmailAuthProvider\.credential\(user\.email,password\)\)/);
+ assert.match(fn,/linkWithCredential\(user,GoogleAuthProvider\.credential\(idToken\)\)/);
+ assert.match(fn,/auth\.currentUser\?\.uid!==expectedUid/);
+ assert.doesNotMatch(fn,/deleteUser|updateCurrentUser|mergeGuestHistory|signInWithCredential/);
 });
