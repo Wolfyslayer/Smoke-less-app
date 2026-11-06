@@ -32,7 +32,19 @@ jobs:
             exit 1
           fi
           printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
-          node -e "const x=require('./google-services.json'); if (!x.client?.some(c=>c.client_info?.android_client_info?.package_name==='com.smokeless.app')) process.exit(1)"
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('google-services.json','utf8'));
+          const android = config.client?.find(c => c.client_info?.android_client_info?.package_name === 'com.smokeless.app');
+          if (!android) { console.error('::error::Firebase Android package com.smokeless.app saknas.'); process.exit(1); }
+          const webClients = [...new Set((android.oauth_client || []).filter(c => c.client_type === 3).map(c => c.client_id))];
+          if (webClients.length !== 1 || !/^[0-9]+-[a-z0-9-]+\\.apps\\.googleusercontent\\.com$/.test(webClients[0])) {
+            console.error('::error::Förväntade exakt ett giltigt OAuth Web client ID för com.smokeless.app. Ladda ned en uppdaterad google-services.json från Firebase.');
+            process.exit(1);
+          }
+          fs.appendFileSync(process.env.GITHUB_ENV, 'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=' + webClients[0] + '\\n');
+          console.log('Google OAuth Web client ID hittades och konfigurerades för Expo-bygget.');
+          NODE
       - name: Generate native Android project
         run: npx expo prebuild --platform android --non-interactive --clean
       - name: Build standalone release APK (includes JS bundle)
