@@ -20,6 +20,12 @@ export function useSessionNavigation(){
   setCurrentTab(next);
  },[]);
 
+ const resetToHome=useCallback(()=>{
+  historyRef.current=[];
+  currentRef.current='home';
+  setCurrentTab('home');
+ },[]);
+
  const goBack=useCallback(()=>{
   const previous=historyRef.current.pop();
   if(!previous)return false;
@@ -28,5 +34,5 @@ export function useSessionNavigation(){
   return true;
  },[]);
 
- return {tab,setTab,goBack};
+ return {tab,setTab,goBack,resetToHome};
 }
