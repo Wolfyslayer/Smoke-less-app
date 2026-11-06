@@ -127,3 +127,16 @@ test('native Google sign-in refuses an already authenticated session and never l
  assert.match(fn,/signInWithCredential\(auth,GoogleAuthProvider\.credential\(idToken\)\)/);
  assert.doesNotMatch(fn,/linkWithCredential|updateCurrentUser|deleteUser|mergeGuestHistory/);
 });
+
+test('Android build workflows configure Google OAuth before Expo prebuild',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ for(const file of ['native-android.yml','browserstack-apk.yml']){
+  const workflow=fs.readFileSync(path.join(__dirname,'../.github/workflows',file),'utf8');
+  assert.match(workflow,/GOOGLE_SERVICES_JSON_BASE64/);
+  assert.match(workflow,/android_client_info\?\.package_name === 'com\.smokeless\.app'/);
+  assert.match(workflow,/c\.client_type === 3/);
+  assert.match(workflow,/EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=/);
+  assert.ok(workflow.indexOf('EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=')<workflow.indexOf('npx expo prebuild'));
+  assert.doesNotMatch(workflow,/console\.log\(webClients\[0\]\)/);
+ }
+});
