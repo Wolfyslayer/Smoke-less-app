@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect,useState} from 'react';
 import {Modal,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppButton} from './ui';
@@ -10,6 +10,7 @@ export function CigaretteRegisterModal({visible,feeling,onFeelingChange,cigTrigg
 }){
  const insets=useSafeAreaInsets();
  const [confirmClose,setConfirmClose]=useState(false);
+ useEffect(()=>{if(!visible)setConfirmClose(false);},[visible]);
  const requestClose=()=>{
   if(!feeling&&!cigTrigger){onClose();return;}
   setConfirmClose(true);
