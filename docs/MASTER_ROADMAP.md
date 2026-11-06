@@ -419,10 +419,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 16.2 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen. Kontoväljare, avbrutet flöde, kontolänkning och gästläge är testade på Android. Kontokonflikt och kontoraderingsskydd har kodbaserade regressionstester, men inte fullständiga Firebase-integrationstester. Båda CI-kontrollerna gröna på `aa51075`.
+**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen. Kontoväljare, avbrutet flöde, kontolänkning och gästläge är testade på Android. Kontokonflikt och kontoraderingsskydd har kodbaserade regressionstester, men inte fullständiga Firebase-integrationstester. Båda CI-kontrollerna gröna på `9cc5ce8`. Offline- och OAuth-fel är täckta av simulerade regressionstester, inte fysisk offline-QA.
 
 
-**Status:** Pågår, 3/8 huvudpunkter och 24/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+**Status:** Pågår, 3/8 huvudpunkter och 25/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [x] **Inventering (4/4)**
    - [x] 1.1 Kartlägg Firebase Authentication.
@@ -454,10 +454,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [x] 6.2 Granska laddning och felstatus.
    - [ ] 6.3 Granska TalkBack och tryckytor.
    - [x] 6.4 Behåll e-postinloggning som alternativ.
-7. [ ] **Tester (2/4)**
+7. [ ] **Tester (3/4)**
    - [ ] 7.1 Testa nya och återkommande konton.
    - [x] 7.2 Testa avbrutna flöden.
-   - [ ] 7.3 Testa offline och felkonfiguration.
+   - [x] 7.3 Testa offline och felkonfiguration (simulerade felkoder; fysisk offline-QA återstår).
    - [x] 7.4 Verifiera CI och Android-build.
 8. [ ] **Avslut (1/4)**
    - [ ] 8.1 Dokumentera Firebase-inställningar utan hemligheter.
