@@ -419,6 +419,9 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 16.2 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
+**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen; båda obligatoriska CI-kontrollerna var gröna på commit `67ea7c8`.
+
+
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [ ] **Inventering (0/4)**
