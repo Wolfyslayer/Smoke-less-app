@@ -65,8 +65,8 @@ test('Android Google account picker checks Play services and accepts current res
   assert.equal(name,'@react-native-google-signin/google-signin');
   return {GoogleSignin};
  }});
- assert.equal(await module.exports.requestGoogleIdToken('oauth-web-client'), 'example-token');
- assert.deepEqual(calls,[['configure','oauth-web-client'],['play'],['signIn']]);
+ assert.equal(await module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'), 'example-token');
+ assert.deepEqual(calls,[['configure','123456789-example.apps.googleusercontent.com'],['play'],['signIn']]);
 });
 test('Android Google account picker rejects missing OAuth config before loading native library',async()=>{
  const {requestGoogleIdToken}=require('../src/auth/googleNativeSignIn.cjs');
@@ -83,7 +83,7 @@ test('Android picker stops before account selection if Play services fail',async
   async hasPlayServices(){throw Object.assign(new Error('unavailable'),{code:'PLAY_SERVICES_NOT_AVAILABLE'})},
   async signIn(){selected=true;return {data:{idToken:'unexpected'}}}
  }})});
- await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='PLAY_SERVICES_NOT_AVAILABLE');
+ await assert.rejects(module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'),error=>error.code==='PLAY_SERVICES_NOT_AVAILABLE');
  assert.equal(selected,false);
 });
 test('Android picker refuses successful response without an ID token',async()=>{
@@ -93,7 +93,7 @@ test('Android picker refuses successful response without an ID token',async()=>{
  vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
   configure(){},async hasPlayServices(){},async signIn(){return {data:{idToken:null}}}
  }})});
- await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='auth/invalid-credential');
+ await assert.rejects(module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'),error=>error.code==='auth/invalid-credential');
 });
 
 test('Android picker treats an explicitly cancelled result as cancellation',async()=>{
@@ -103,11 +103,18 @@ test('Android picker treats an explicitly cancelled result as cancellation',asyn
  vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
   configure(){},async hasPlayServices(){},async signIn(){return {type:'cancelled',data:null}}
  }})});
- await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='SIGN_IN_CANCELLED');
+ await assert.rejects(module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'),error=>error.code==='SIGN_IN_CANCELLED');
 });
 
 test('concurrent native Google request is not misclassified as a user cancellation',()=>{
  const result=googleSignInFailure({code:'IN_PROGRESS'});
  assert.equal(result.kind,'unavailable');
  assert.match(result.message,/pågår redan/);
+});
+
+test('Android picker rejects malformed OAuth client IDs before loading native module',async()=>{
+ const {requestGoogleIdToken}=require('../src/auth/googleNativeSignIn.cjs');
+ for(const invalid of ['not-a-client-id','android-client','https://example.com','123456789-example.apps.googleusercontent.com.evil.test']){
+  await assert.rejects(requestGoogleIdToken(invalid),error=>error.code==='DEVELOPER_ERROR');
+ }
 });
