@@ -105,3 +105,9 @@ test('Android picker treats an explicitly cancelled result as cancellation',asyn
  }})});
  await assert.rejects(module.exports.requestGoogleIdToken('web-client'),error=>error.code==='SIGN_IN_CANCELLED');
 });
+
+test('concurrent native Google request is not misclassified as a user cancellation',()=>{
+ const result=googleSignInFailure({code:'IN_PROGRESS'});
+ assert.equal(result.kind,'unavailable');
+ assert.match(result.message,/pågår redan/);
+});
