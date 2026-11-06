@@ -7,7 +7,7 @@ export type OnboardingAuthStep='choice'|'benefits'|'email'|null;
 export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,googleBusy,onLater,onDecline,onBack,emailForm}:{
  step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;googleConfigured:boolean;googleBusy:boolean;onLater:()=>void;onDecline:()=>void;onBack:()=>void;emailForm:React.ReactNode;
 }){
- return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(!googleBusy)(step==='benefits'?onDecline:onLater)()}}>
+ return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(googleBusy)return;if(step==='email'){onBack();return;}if(step==='benefits'){onDecline();return;}onLater();}}>
  <View style={s.overlay}><View style={s.card}>
  {step==='choice'?<>
  <Text accessibilityRole="header" style={s.title}>Spara din resa</Text>
