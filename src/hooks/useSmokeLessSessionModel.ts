@@ -16,10 +16,10 @@ import type {AccountUser} from '../authService';
 
 export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurrentUid:()=>string|null){
  const [data,setData]=useState<Data>(EMPTY),[ready,setReady]=useState(false),[loadError,setLoadError]=useState<string|null>(null);
- const {tab,setTab,goBack}=useSessionNavigation();
+ const {tab,setTab,goBack,resetToHome}=useSessionNavigation();
  const clock=useLiveClock();
  const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
- const {sosProps,startSos,stopSos}=useSosFlow(setData,()=>setTab('home'));
+ const {sosProps,startSos,stopSos}=useSosFlow(setData,resetToHome);
  const {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup}=useSettingsFlow({data,setData,ask,showMessage});
  const {onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
  const hadProfileRef=useRef(false);
