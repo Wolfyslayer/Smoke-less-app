@@ -18,6 +18,9 @@ async function requestGoogleIdToken(webClientId) {
   }
   GoogleSignin.configure({webClientId:webClientId.trim()});
   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});
+  // Clear only the native Google Sign-In selection, not the Firebase session.
+  // This lets users choose a different Google account and cancel safely.
+  await GoogleSignin.signOut();
   const result = await GoogleSignin.signIn();
   if (result?.type === 'cancelled') {
     const cancelled = new Error('Google-inloggningen avbröts.');
