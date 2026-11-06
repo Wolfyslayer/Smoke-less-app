@@ -161,3 +161,21 @@ test('native account linking requires reauthentication and preserves the existin
  assert.match(fn,/auth\.currentUser\?\.uid!==expectedUid/);
  assert.doesNotMatch(fn,/deleteUser|updateCurrentUser|mergeGuestHistory|signInWithCredential/);
 });
+
+test('Google sign-in cannot initiate account deletion or bypass the logged-in session guard',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/authService.native.ts'),'utf8');
+ const signIn=source.slice(source.indexOf('export async function signInWithGoogleCredential'),source.indexOf('export async function linkGoogleToEmailAccount'));
+ assert.match(signIn,/if\(auth\.currentUser\)throw Error/);
+ assert.doesNotMatch(signIn,/deleteUser|firebaseSignOut|linkWithCredential|reauthenticateWithCredential/);
+ const linking=source.slice(source.indexOf('export async function linkGoogleToEmailAccount'));
+ assert.match(linking,/if\(!user\|\|user\.uid!==expectedUid/);
+ assert.match(linking,/auth\.currentUser\?\.uid!==expectedUid/);
+ assert.doesNotMatch(linking,/deleteUser|firebaseSignOut|signInWithCredential/);
+});
+test('account deletion is not exposed as an enabled button in AccountScreen',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../src/screens/AccountScreen.tsx'),'utf8');
+ assert.match(source,/Säker kontoradering behöver färdigställas och testas innan funktionen kan aktiveras/);
+ assert.doesNotMatch(source,/<Btn title="Radera konto"/);
+});
