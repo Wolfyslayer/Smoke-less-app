@@ -1,4 +1,4 @@
-import {useCallback,useRef,useState} from 'react';
+import {useCallback,useRef,useState,type Dispatch,type SetStateAction} from 'react';
 
 export type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings'|'backup';
 
@@ -12,7 +12,8 @@ export function useSessionNavigation(){
  const historyRef=useRef<Tab[]>([]);
  const currentRef=useRef<Tab>('home');
 
- const setTab=useCallback((next:Tab)=>{
+ const setTab:Dispatch<SetStateAction<Tab>>=useCallback((action:SetStateAction<Tab>)=>{
+  const next=typeof action==='function'?action(currentRef.current):action;
   if(next===currentRef.current)return;
   historyRef.current.push(currentRef.current);
   currentRef.current=next;
