@@ -179,3 +179,20 @@ test('account deletion is not exposed as an enabled button in AccountScreen',()=
  assert.match(source,/Säker kontoradering behöver färdigställas och testas innan funktionen kan aktiveras/);
  assert.doesNotMatch(source,/<Btn title="Radera konto"/);
 });
+
+test('offline, missing Play services and invalid OAuth config provide safe Swedish fallback',()=>{
+ const cases=[
+  ['auth/network-request-failed','network',/online/],
+  ['NETWORK_ERROR','network',/nätverksanslutning/],
+  ['7','network',/historik finns kvar/],
+  ['PLAY_SERVICES_NOT_AVAILABLE','unavailable',/e-postinloggning/],
+  ['DEVELOPER_ERROR','configuration',/SHA-1/],
+  ['auth/operation-not-allowed','configuration',/Google-provider/],
+ ];
+ for(const [code,kind,message] of cases){
+  const result=googleSignInFailure({code,credential:'private-secret'});
+  assert.equal(result.kind,kind,code);
+  assert.match(result.message,message);
+  assert.doesNotMatch(result.message,/private-secret/);
+ }
+});
