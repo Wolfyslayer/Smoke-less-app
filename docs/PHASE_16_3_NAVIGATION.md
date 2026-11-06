@@ -4,7 +4,7 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
 
 ## Fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Pågår. 0/8 huvudpunkter helt färdiga, 9/32 delpunkter kodgranskade och CI-verifierade (28 %). Android-acceptanstest återstår.
+**Status:** Pågår. 0/8 huvudpunkter helt färdiga, 9/32 delpunkter markerade färdiga (28 %). Flera ytterligare kodändringar är CI-verifierade men väntar på Android-acceptanstest innan respektive delpunkt bockas av.
 
 1. **Inventering (2/4)**
    - [x] 1.1 Kartlägg nuvarande tabbar och navigationshistorik.
@@ -53,7 +53,10 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 
 ## Verifiering hittills
 
-- Kodgranskning och båda GitHub CI-arbetsflödena är gröna till och med `6f2ca7e`.
+- Båda GitHub CI-arbetsflödena är gröna till och med `2075b58` (Validate Smoke Less 6 och Firestore rules emulator).
 - Systemets tillbaka-händelse fångas av en central listener; inbyggda React Native-modaler hanterar `onRequestClose` separat.
-- Registreringsmodalen varnar när känsla eller utlösare har valts, men behöver testas på fysisk Android-enhet.
+- Registreringsmodalen har en inbyggd bekräftelse vid osparade val, oavsett om användaren trycker på krysset, bakgrunden eller Android Tillbaka. Detta behöver testas på fysisk Android-enhet.
+- SOS städar upp timer och andningsövning vid navigering bort från vyn; efter sparad SOS-registrering rensas navigeringshistoriken.
+- Onboardingens e-postflöde varnar vid osparad e-post eller lösenord. Den synliga tillbaka-knappen och Android Tillbaka använder samma skydd.
+- Navigeringshistoriken rensas när en slutförd SOS-registrering återgår till startsidan, och tom historik ger inte en ny historikpost.
 - Återstående inventering: datumväljare, övriga formulär och SOS-interaktioner. Ingen telefon- eller TalkBack-QA är ännu verifierad.
