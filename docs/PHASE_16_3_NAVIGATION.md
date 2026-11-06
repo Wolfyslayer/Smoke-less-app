@@ -4,27 +4,27 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
 
 ## Fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Pågår. 0/8 huvudpunkter, 0/32 delpunkter verifierade (0 %).
+**Status:** Pågår. 0/8 huvudpunkter helt färdiga, 9/32 delpunkter kodgranskade och CI-verifierade (28 %). Android-acceptanstest återstår.
 
-1. **Inventering (0/4)**
-   - [ ] 1.1 Kartlägg nuvarande tabbar och navigationshistorik.
+1. **Inventering (2/4)**
+   - [x] 1.1 Kartlägg nuvarande tabbar och navigationshistorik.
    - [ ] 1.2 Kartlägg alla modaler och deras stängningsprioritet.
    - [ ] 1.3 Kartlägg formulär med osparade ändringar.
-   - [ ] 1.4 Granska Expo Router och Android BackHandler.
-2. **Navigationsmodell (0/4)**
-   - [ ] 2.1 Inför en enda central hanterare för Android Tillbaka.
-   - [ ] 2.2 Bevara intern navigationshistorik utan dubbletter.
-   - [ ] 2.3 Navigera ett steg bakåt före avslut.
-   - [ ] 2.4 Undvik dubbla listeners och stale callbacks.
+   - [x] 1.4 Granska Expo Router och Android BackHandler.
+2. **Navigationsmodell (4/4, Android-QA återstår)**
+   - [x] 2.1 Inför en enda central hanterare för Android Tillbaka.
+   - [x] 2.2 Bevara intern navigationshistorik utan dubbletter.
+   - [x] 2.3 Navigera ett steg bakåt före avslut.
+   - [x] 2.4 Undvik dubbla listeners och stale callbacks.
 3. **Modaler (0/4)**
    - [ ] 3.1 Stäng översta modal före tabbyte.
    - [ ] 3.2 Hantera datumväljare och formulär.
    - [ ] 3.3 Hantera SOS-övningar säkert.
    - [ ] 3.4 Bevara avbryt- och bekräftelseflöden.
-4. **Avslut från startsidan (0/4)**
-   - [ ] 4.1 Visa tillgänglig avslutsdialog på startsidan.
-   - [ ] 4.2 Avbryt ska behålla appen öppen.
-   - [ ] 4.3 Avsluta endast efter bekräftelse.
+4. **Avslut från startsidan (3/4, Android-QA återstår)**
+   - [x] 4.1 Visa tillgänglig avslutsdialog på startsidan.
+   - [x] 4.2 Avbryt ska behålla appen öppen.
+   - [x] 4.3 Avsluta endast efter bekräftelse.
    - [ ] 4.4 Undvik avslut från annan intern vy.
 5. **Datasäkerhet (0/4)**
    - [ ] 5.1 Skydda osparade formulärändringar.
@@ -50,3 +50,10 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
 ## Arbetsregler
 
 En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda CI-arbetsflödena innan nästa steg. Uppdatera checklistans verkliga status och procent. Inga otestade punkter markeras som färdiga. Inga ändringar i signeringsnycklar eller `google-services.json` committas. Fysisk Android-testning krävs innan merge.
+
+## Verifiering hittills
+
+- Kodgranskning och båda GitHub CI-arbetsflödena är gröna till och med `6f2ca7e`.
+- Systemets tillbaka-händelse fångas av en central listener; inbyggda React Native-modaler hanterar `onRequestClose` separat.
+- Registreringsmodalen varnar när känsla eller utlösare har valts, men behöver testas på fysisk Android-enhet.
+- Återstående inventering: datumväljare, övriga formulär och SOS-interaktioner. Ingen telefon- eller TalkBack-QA är ännu verifierad.
