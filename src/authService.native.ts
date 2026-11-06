@@ -11,6 +11,13 @@ export async function refreshEmailVerification(){const user=client().currentUser
 
 export async function signInWithGoogleCredential(idToken:string){
  if(typeof idToken!=='string'||!idToken.trim())throw Error('Google-inloggningen saknar en giltig ID-token.');
- if(client().currentUser)throw Error('Du är redan inloggad. Logga ut innan du byter konto.');
- await signInWithCredential(client(),GoogleAuthProvider.credential(idToken));
+ const auth=client();
+ if(auth.currentUser)throw Error('Du är redan inloggad. Logga ut innan du byter konto.');
+ try{
+  await signInWithCredential(auth,GoogleAuthProvider.credential(idToken));
+ }catch(error){
+  // Do not automatically link accounts or transfer history after a credential conflict.
+  // The existing UID-scoped session and cloud sync remain the only data authority.
+  throw error;
+ }
 }
