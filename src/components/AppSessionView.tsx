@@ -46,7 +46,7 @@ export function AppSessionView({model}:{model:SessionModel}){
     if(!current.goBack())current.go('home');
     return true;
    }
-   current.ask('Avsluta Smoke Less?','Vill du avsluta appen?',()=>BackHandler.exitApp());
+   current.ask('Avsluta Smoke Less?','Vill du avsluta appen?',()=>BackHandler.exitApp(),'Avsluta appen');
    return true;
   });
   return ()=>subscription.remove();
