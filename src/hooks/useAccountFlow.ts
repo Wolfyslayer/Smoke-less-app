@@ -43,6 +43,23 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
    if(failure.kind!=='cancelled')showMessage('Kunde inte logga in med Google',failure.message);
   }finally{googleBusyRef.current=false;setAccountBusy(false)}
  };
+ const linkGoogleAction=()=>{
+  if(!accountUser||accountBusy||googleBusyRef.current)return;
+  if(!accountPassword){showMessage('Verifiera ditt konto','Ange ditt nuvarande lösenord för att koppla Google.');return;}
+  const uid=accountUser.uid;
+  const password=accountPassword;
+  ask('Koppla Google till ditt konto?','Ditt nuvarande lösenord verifieras innan Google kopplas till samma konto. Din historik behålls. Vill du fortsätta?',()=>{
+   if(googleBusyRef.current||accountBusy||accountUidRef.current!==uid)return;
+   googleBusyRef.current=true;setAccountBusy(true);
+   void (async()=>{try{
+    const token=await requestGoogleIdToken(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'');
+    if(accountUidRef.current!==uid)throw Error('Kontot ändrades. Försök igen.');
+    await account.linkGoogleToEmailAccount(token,password,uid);
+    setAccountPassword('');
+    showMessage('Google är kopplat','Du kan nu logga in med Google på ditt befintliga konto. Historiken behålls.');
+   }catch(error){const failure=googleSignInFailure(error);if(failure.kind!=='cancelled')showMessage('Kunde inte koppla Google',failure.kind==='unknown'&&error instanceof Error?error.message:failure.message);}finally{googleBusyRef.current=false;setAccountBusy(false)}})();
+  });
+ };
  const inspectCloudData=()=>{if(!accountUser||cloudPreviewBusy)return;const uid=accountUser.uid;setCloudPreviewBusy(true);void (async()=>{try{const result=await inspectCloudDeletion(uid);if(accountUidRef.current!==uid)throw Error('Kontot ändrades.');showMessage('Molnhistorik – endast kontroll',`Plan: ${result.plan?'Ja':'Nej'} · Cigaretter: ${result.entries} · Röksug: ${result.cravings} · Avstämningar: ${result.checkins}.${result.hasTombstones?' Raderingsmarkeringar finns i molnet.':''} Ingen data har raderats.`)}catch(error){showMessage('Kunde inte kontrollera molndata',error instanceof Error?error.message:'Försök igen senare.')}finally{setCloudPreviewBusy(false)}})()};
  const requestGuestReset=()=>{if(accountUser)return;ask('Radera gästhistorik?','Alla lokala gästregistreringar, röksug, dagliga avstämningar och din plan tas bort från den aktiva appen. En återställningskopia sparas först på enheten. Detta raderar INTE några molndata eller Firebase-konton. Vill du fortsätta?',()=>{void (async()=>{try{const key=await storageRef.current.resetGuestWithBackup();const snapshot=storageRef.current.getSnapshot();if(!snapshot||snapshot.session.kind!=='guest')throw Error('Gästsessionen ändrades.');loadedDataRef.current=snapshot.data;setData(snapshot.data);setTab('home');showMessage('Gästhistorik raderad','En lokal återställningskopia sparades under '+key+'. Kopian finns bara på den här enheten.')}catch(error){showMessage('Raderingen misslyckades',error instanceof Error?error.message:'Ingen ändring kunde bekräftas.')}})()})};
  const requestGuestMigration=()=>{
@@ -66,5 +83,5 @@ const sendSignedInPasswordReset=async()=>{if(accountBusy||!accountUser?.email)re
   });
  };
 
- return {accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,googleAccountAction,inspectCloudData,requestGuestReset,requestGuestMigration};
+ return {accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,googleAccountAction,linkGoogleAction,inspectCloudData,requestGuestReset,requestGuestMigration};
 }
