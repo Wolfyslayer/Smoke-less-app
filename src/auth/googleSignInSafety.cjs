@@ -3,8 +3,11 @@
 /** Classify Google sign-in failures without changing Firebase session state. */
 function googleSignInFailure(error) {
   const code = typeof error?.code === 'string' ? error.code : '';
-  if (['SIGN_IN_CANCELLED', '12501', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request', 'auth/user-cancelled', 'IN_PROGRESS'].includes(code)) {
+  if (['SIGN_IN_CANCELLED', '12501', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request', 'auth/user-cancelled'].includes(code)) {
     return {kind:'cancelled', message:'Google-inloggningen avbröts. Ingen data har ändrats.'};
+  }
+  if (code === 'IN_PROGRESS') {
+    return {kind:'unavailable', message:'En Google-inloggning pågår redan. Vänta tills den är klar innan du försöker igen.'};
   }
   if (code === 'auth/account-exists-with-different-credential' || code === 'auth/credential-already-in-use') {
     return {kind:'account-conflict', message:'E-postadressen är redan kopplad till ett annat inloggningssätt. Logga in med ditt befintliga konto och länka Google efter säker verifiering. Ingen historik har ändrats.'};
