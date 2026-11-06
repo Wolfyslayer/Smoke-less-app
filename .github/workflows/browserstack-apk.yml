@@ -38,11 +38,11 @@ jobs:
           const android = config.client?.find(c => c.client_info?.android_client_info?.package_name === 'com.smokeless.app');
           if (!android) { console.error('::error::Firebase Android package com.smokeless.app saknas.'); process.exit(1); }
           const webClients = [...new Set((android.oauth_client || []).filter(c => c.client_type === 3).map(c => c.client_id))];
-          if (webClients.length !== 1 || !/^[0-9]+-[a-z0-9-]+\\.apps\\.googleusercontent\\.com$/.test(webClients[0])) {
+          if (webClients.length !== 1 || !/^[0-9]+-[a-z0-9-]+\.apps\.googleusercontent\.com$/.test(webClients[0])) {
             console.error('::error::Förväntade exakt ett giltigt OAuth Web client ID för com.smokeless.app. Ladda ned en uppdaterad google-services.json från Firebase.');
             process.exit(1);
           }
-          fs.appendFileSync(process.env.GITHUB_ENV, 'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=' + webClients[0] + '\\n');
+          fs.appendFileSync(process.env.GITHUB_ENV, 'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=' + webClients[0] + '\n');
           console.log('Google OAuth Web client ID hittades och konfigurerades för Expo-bygget.');
           NODE
       - name: Generate native Android project
