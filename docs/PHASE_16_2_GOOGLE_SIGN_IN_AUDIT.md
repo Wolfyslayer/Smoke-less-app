@@ -69,3 +69,15 @@ Status: **påbörjad, inventering pågår**. Fast 8×4-checklista finns i `docs/
 7. Efter ändringar i native bibliotek/config: bygg en ny fristående Android-app. Testa först på riktig enhet med Play-tjänster och rätt SHA-konfiguration; verifiera även avbrott, offline, kontokonflikt och att UID/historik förblir korrekt. Dokumentera manuella resultat först när de faktiskt utförts.
 
 **Säkerhetsgrind:** Inloggningsknappen ska inte aktiveras i produktion innan steg 1–6 är verifierade och riskerna kring befintliga e-postkonton och gästdata är testade. För blockerande kontosäkerhet krävs riktade tester under fas 16.2, även om bred manuell Android-regression görs i fas 25.
+
+## OAuth-konfiguration för Android – kontroll före test
+
+1. I Firebase Console: **Authentication → Sign-in method → Google**. Aktivera leverantören och spara. Detta kan inte bekräftas enbart genom GitHub-koden.
+2. I **Project settings → Your apps → Android (`com.smokeless.app`)**: kontrollera SHA-1 och SHA-256 för certifikatet som signerar den APK som ska testas. Debug- och release-signaturer kan vara olika.
+3. Hämta den uppdaterade `google-services.json` för samma Firebase-projekt och Android-app efter ändrade SHA-uppgifter. Filen ska inte klistras in i publika felrapporter eller chattar.
+4. Identifiera **OAuth 2.0 Web client ID** (klienttyp Web application, vanligtvis `client_type: 3` i `google-services.json`). Använd **inte** Android OAuth client ID, API-nyckel eller client secret. Värdet slutar på `.apps.googleusercontent.com`.
+5. Sätt `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` till web client ID i den miljö där Metro/Expo-bygget körs. `EXPO_PUBLIC_`-variabler bäddas in i klientappen och är **inte hemligheter**; placera aldrig OAuth client secret eller service-account-nycklar där. Variabeln måste vara tillgänglig när JavaScript-bunten byggs.
+6. Kör en **ny native Android-build** efter installation av `@react-native-google-signin/google-signin`, och verifiera att Google-provider, certifikat och web client ID hör till samma Firebase-projekt. En befintlig APK får inte antas innehålla native-modulen.
+7. Testa nytt Google-konto, återkommande konto, avbrutet kontoval, offline, Play Services-fel och konflikt med befintlig e-postidentitet. Kontrollera UID och historik före/efter varje försök. Kontolänkning får inte göras automatiskt.
+
+**Status:** OAuth-klientformat och felgrind finns i kod; faktisk provider-inställning, signeringscertifikat och körning på Android är ännu inte verifierade.
