@@ -4,7 +4,7 @@ import {validateData} from '../domain';
 import {previewGuestMerge} from '../guestMerge';
 import {consumeLoginOrigin} from '../loginOrigin';
 import {CloudOff,ChevronDown,ChevronUp,ShieldCheck} from 'lucide-react-native';
-import {ActivityIndicator,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
+import {ActivityIndicator,BackHandler,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppSessionOnboarding} from './AppSessionOnboarding';
 import {OnboardingAuthModal,type OnboardingAuthStep} from './OnboardingAuthModal';
@@ -25,6 +25,33 @@ export function AppSessionView({model}:{model:SessionModel}){
  const completedOnboardingRef=useRef(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
+ const backStateRef=useRef({ready,loadError,tab,p,accountUser,showLogin,authPrompt,model});
+ backStateRef.current={ready,loadError,tab,p,accountUser,showLogin,authPrompt,model};
+ useEffect(()=>{
+  if(Platform.OS!=='android')return;
+  const subscription=BackHandler.addEventListener('hardwareBackPress',()=>{
+   const state=backStateRef.current;
+   const current=state.model;
+   // A native Modal owns its own Android back event through onRequestClose.
+   if(state.authPrompt!==null){
+    setAuthPrompt(state.authPrompt==='email'||state.authPrompt==='benefits'?'choice':null);
+    return true;
+   }
+   if(state.showLogin){setShowLogin(false);return true;}
+   if(!state.ready||state.loadError||!state.p)return true;
+   if(current.dialog){current.setDialog(null);return true;}
+   if(current.registerOpen){current.setRegisterOpen(false);return true;}
+   if(state.tab!=='home'){
+    // Return to the previous in-app view, not the Expo Router root.
+    if(!current.goBack())current.go('home');
+    return true;
+   }
+   current.ask('Avsluta Smoke Less?','Vill du avsluta appen?',()=>BackHandler.exitApp());
+   return true;
+  });
+  return ()=>subscription.remove();
+ },[]);
+
  useEffect(()=>{
   if(ready && p && !accountUser && completedOnboardingRef.current){
    completedOnboardingRef.current=false;
