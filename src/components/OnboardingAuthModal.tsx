@@ -1,13 +1,21 @@
 import React from 'react';
-import {Modal,Pressable,StyleSheet,Text,View} from 'react-native';
+import {Alert,Modal,Pressable,StyleSheet,Text,View} from 'react-native';
 import {Mail,ShieldCheck,Cloud,Smartphone,Chrome} from 'lucide-react-native';
 import {C} from '../theme';
 
 export type OnboardingAuthStep='choice'|'benefits'|'email'|null;
-export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,googleBusy,onLater,onDecline,onBack,emailForm}:{
- step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;googleConfigured:boolean;googleBusy:boolean;onLater:()=>void;onDecline:()=>void;onBack:()=>void;emailForm:React.ReactNode;
+export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,googleBusy,onLater,onDecline,onBack,hasEmailDraft,emailForm}:{
+ step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;googleConfigured:boolean;googleBusy:boolean;onLater:()=>void;onDecline:()=>void;onBack:()=>void;hasEmailDraft:boolean;emailForm:React.ReactNode;
 }){
- return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(!googleBusy)(step==='benefits'?onDecline:onLater)()}}>
+ const returnFromEmail=()=>{
+  if(googleBusy)return;
+  if(!hasEmailDraft){onBack();return;}
+  Alert.alert('Lämna inloggningen?','Uppgifterna du har skrivit in används inte om du går tillbaka.',[
+   {text:'Fortsätt skriva',style:'cancel'},
+   {text:'Gå tillbaka',onPress:onBack},
+  ]);
+ };
+ return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(googleBusy)return;if(step==='email'){returnFromEmail();return;}if(step==='benefits'){onBack();return;}/* The first choice screen has no previous modal step; require an explicit choice. */}}>
  <View style={s.overlay}><View style={s.card}>
  {step==='choice'?<>
  <Text accessibilityRole="header" style={s.title}>Spara din resa</Text>
@@ -24,7 +32,7 @@ export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,goog
  </>:step==='email'?<>
  <Text accessibilityRole="header" style={s.title}>Fortsätt med e-post</Text>
  {emailForm}
- <Pressable accessibilityRole="button" disabled={googleBusy} onPress={onBack} style={s.later}><Text style={s.laterText}>Tillbaka till alternativen</Text></Pressable>
+ <Pressable accessibilityRole="button" disabled={googleBusy} onPress={returnFromEmail} style={s.later}><Text style={s.laterText}>Tillbaka till alternativen</Text></Pressable>
  </>:null}
  </View></View></Modal>;
 }

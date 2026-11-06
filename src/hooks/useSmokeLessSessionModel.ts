@@ -16,10 +16,10 @@ import type {AccountUser} from '../authService';
 
 export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurrentUid:()=>string|null){
  const [data,setData]=useState<Data>(EMPTY),[ready,setReady]=useState(false),[loadError,setLoadError]=useState<string|null>(null);
- const {tab,setTab}=useSessionNavigation();
+ const {tab,setTab,goBack,resetToHome}=useSessionNavigation();
  const clock=useLiveClock();
  const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
- const {sosProps,startSos}=useSosFlow(setData,()=>setTab('home'));
+ const {sosProps,startSos,stopSos}=useSosFlow(setData,resetToHome);
  const {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup}=useSettingsFlow({data,setData,ask,showMessage});
  const {onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin}=useOnboardingFlow(setData,showMessage);
  const hadProfileRef=useRef(false);
@@ -36,7 +36,14 @@ export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurr
 
   const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
  
- const {remove,go,changeProfile,changeDailyTarget,period,setPeriod}=useSessionActions({setData,ask,setTab});
+ const {remove,go:goToTab,changeProfile,changeDailyTarget,period,setPeriod}=useSessionActions({setData,ask,setTab});
+ const go=(next:typeof tab)=>{if(tab==='sos'&&next!=='sos')stopSos();goToTab(next);};
+ const navigateBack=()=>{if(tab==='sos')stopSos();return goBack();};
+ const previousTabRef=useRef(tab);
+ useEffect(()=>{
+  if(previousTabRef.current==='sos'&&tab!=='sos')stopSos();
+  previousTabRef.current=tab;
+ },[tab]);
 
- return {data,setData,ready:sessionReady,loadError,tab,clock,dialog,setDialog,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,googleAccountAction,linkGoogleAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,retrySync,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,changeDailyTarget,period,setPeriod};
+ return {data,setData,ready:sessionReady,loadError,tab,goBack:navigateBack,resetToHome,clock,dialog,setDialog,ask,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,googleAccountAction,linkGoogleAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,retrySync,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,changeDailyTarget,period,setPeriod};
 }
