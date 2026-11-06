@@ -53,7 +53,7 @@ export function AppSessionView({model}:{model:SessionModel}){
    if(current.registerOpen){current.setRegisterOpen(false);return true;}
    if(state.tab!=='home'){
     // Return to the previous in-app view, not the Expo Router root.
-    if(!current.goBack())current.go('home');
+    if(!current.goBack())current.resetToHome();
     return true;
    }
    current.ask('Avsluta Smoke Less?','Vill du avsluta appen?',()=>BackHandler.exitApp(),'Avsluta appen');
