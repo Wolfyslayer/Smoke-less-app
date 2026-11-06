@@ -1,0 +1,47 @@
+name: Prepare Google Sign-In native dependency
+on:
+  push:
+    branches:
+      - feat/phase-16-2-google-sign-in
+    paths:
+      - .github/workflows/prepare-google-signin.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    if: github.ref_name == 'feat/phase-16-2-google-sign-in'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install native Google Sign-In and update lockfile
+        run: npm install --save @react-native-google-signin/google-signin
+      - name: Add Expo config plugin
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const path='app.json';
+          const config=JSON.parse(fs.readFileSync(path,'utf8'));
+          const plugins=config.expo.plugins;
+          if(!plugins.includes('@react-native-google-signin/google-signin')){
+            plugins.splice(plugins.indexOf('@react-native-firebase/auth')+1,0,'@react-native-google-signin/google-signin');
+          }
+          fs.writeFileSync(path,JSON.stringify(config,null,2)+'\n');
+          NODE
+      - name: Validate dependency lockfile
+        run: npm ci --ignore-scripts
+      - name: Commit dependency and Expo plugin
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json app.json
+          if ! git diff --cached --quiet; then
+            git commit -m "build(16.2): install Google Sign-In native dependency and Expo plugin"
+            git push origin HEAD:feat/phase-16-2-google-sign-in
+          fi

@@ -1,0 +1,38 @@
+'use strict';
+
+/** Android account picker. Install @react-native-google-signin/google-signin before calling. */
+async function requestGoogleIdToken(webClientId) {
+  if (typeof webClientId !== 'string' || !/^[0-9]+-[a-z0-9-]+\.apps\.googleusercontent\.com$/.test(webClientId.trim())) {
+    const error = new Error('Google OAuth-webbklient saknas i konfigurationen.');
+    error.code = 'DEVELOPER_ERROR';
+    throw error;
+  }
+  let GoogleSignin;
+  try {
+    ({GoogleSignin} = require('@react-native-google-signin/google-signin'));
+  } catch (error) {
+    if (error?.code !== 'MODULE_NOT_FOUND') throw error;
+    const unavailable = new Error('Google-inloggning kräver en ny Android-build. Använd e-postinloggning tills den är installerad.');
+    unavailable.code = 'PLAY_SERVICES_NOT_AVAILABLE';
+    throw unavailable;
+  }
+  GoogleSignin.configure({webClientId:webClientId.trim()});
+  await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});
+  // Clear only the native Google Sign-In selection, not the Firebase session.
+  // This lets users choose a different Google account and cancel safely.
+  await GoogleSignin.signOut();
+  const result = await GoogleSignin.signIn();
+  if (result?.type === 'cancelled') {
+    const cancelled = new Error('Google-inloggningen avbröts.');
+    cancelled.code = 'SIGN_IN_CANCELLED';
+    throw cancelled;
+  }
+  const idToken = result?.data?.idToken ?? result?.idToken;
+  if (typeof idToken !== 'string' || !idToken.trim()) {
+    const error = new Error('Google returnerade ingen ID-token.');
+    error.code = 'auth/invalid-credential';
+    throw error;
+  }
+  return idToken;
+}
+module.exports = {requestGoogleIdToken};

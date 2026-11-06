@@ -8,3 +8,8 @@ export async function signOut(){unavailable()}
 
 export async function sendVerificationEmail(){unavailable()}
 export async function refreshEmailVerification():Promise<boolean>{unavailable();return false}
+
+/** Native Google sign-in is unavailable in Expo Go and on web. */
+export async function signInWithGoogleCredential(_idToken:string):Promise<void>{unavailable()}
+
+export async function linkGoogleToEmailAccount(_idToken:string,_password:string,_expectedUid:string):Promise<void>{unavailable()}

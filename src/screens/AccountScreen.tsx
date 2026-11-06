@@ -11,12 +11,12 @@ type Props={
  onBack:()=>void;onVerification:(action:'send'|'refresh')=>void;onGuestMigration:()=>void;
  onCloudPreview:()=>void;onCloudImport:()=>void;onEmailChange:(value:string)=>void;
  onPasswordChange:(value:string)=>void;onAccountAction:(action:'login'|'signup'|'reset'|'logout')=>void;
- onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
+ googleConfigured:boolean;onGoogleSignIn:()=>void;onLinkGoogle:()=>void;onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
 };
 const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
 function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
-export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
+export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
  return <View style={{gap:20}}>
 
  <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={()=>onBack()} style={{minHeight:44,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
@@ -30,6 +30,13 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
    <Text style={{color:emailVerified?C.lime:'#E7B967',fontSize:13,fontWeight:'800'}}>{emailVerified?'✓ Verifierad e-postadress':'E-postadressen är inte verifierad'}</Text>
    {!emailVerified?<><Text style={s.muted}>Verifiera din e-postadress för att skydda åtkomsten till ditt konto. Öppna länken i mejlet och kontrollera sedan status här.</Text><Btn title={verificationBusy?'Vänta…':'Skicka verifieringsmejl'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('send')}/><Btn title={verificationBusy?'Kontrollerar…':'Kontrollera verifiering'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('refresh')}/></>:null}
   </View>
+  <View style={{gap:9,padding:13,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border}}>
+   <Text style={s.cardTitle} accessibilityRole="header">Koppla Google till kontot</Text>
+   <Text style={s.muted}>Har du skapat kontot med e-post och lösenord? Koppla Google till samma konto utan att förlora historik. Verifiera med ditt nuvarande lösenord.</Text>
+   <TextInput accessibilityLabel="Nuvarande lösenord för Google-koppling" secureTextEntry autoCapitalize="none" autoComplete="current-password" placeholder="Nuvarande lösenord" placeholderTextColor={C.dim} value={accountPassword} onChangeText={onPasswordChange} style={s.input}/>
+   <Btn title={accountBusy?'Vänta…':'Koppla Google till mitt konto'} secondary disabled={accountBusy||!googleConfigured||!accountPassword} onPress={onLinkGoogle}/>
+   {!googleConfigured?<Text style={s.muted}>Google-inloggning är inte konfigurerad i den här appversionen.</Text>:null}
+  </View>
   <Text style={s.muted} accessibilityLiveRegion="polite">{syncStatus||'Din historik synkroniseras automatiskt när appen öppnas och när du gör ändringar. Vid konflikt skyddas dina befintliga data.'}</Text>
   {cloudPreviewResult?<Text style={s.muted} accessibilityLiveRegion="polite">{cloudPreviewResult}</Text>:null}
   <Btn title={migrationBusy?'Kopierar gästhistorik…':'Kopiera gästhistorik till kontot'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onGuestMigration}/>
@@ -42,6 +49,9 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <TextInput accessibilityLabel="Lösenord" secureTextEntry autoCapitalize="none" autoComplete={accountMode==='signup'?'new-password':'current-password'} placeholder="Lösenord" placeholderTextColor={C.dim} value={accountPassword} onChangeText={onPasswordChange} style={s.input}/>
   {accountMode==='signup'&&accountPassword.length>0&&accountPassword.length<6?<Text accessibilityRole="alert" style={s.muted}>Lösenordet måste innehålla minst 6 tecken.</Text>:null}
   <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!validEmail(accountEmail)||!accountPassword||(accountMode==='signup'&&accountPassword.length<6)} onPress={()=>onAccountAction(accountMode)}/>
+  <Text style={[s.muted,{textAlign:'center'}]}>eller</Text>
+  <Btn title={accountBusy?'Vänta…':'Fortsätt med Google'} secondary disabled={accountBusy||!googleConfigured} onPress={onGoogleSignIn}/>
+  {!googleConfigured?<Text style={s.muted} accessibilityLiveRegion="polite">Google-inloggning är inte konfigurerad i den här appversionen. Använd e-post och lösenord tills en uppdaterad Android-build finns.</Text>:null}
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
   <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" accessibilityState={{disabled:accountBusy||!validEmail(accountEmail)}} style={{minHeight:44,justifyContent:"center",paddingVertical:5,alignSelf:'center',opacity:accountBusy||!validEmail(accountEmail)?0.5:1}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}

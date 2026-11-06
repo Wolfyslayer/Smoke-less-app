@@ -19,6 +19,7 @@
     "@react-native-firebase/app": "^23.0.0",
     "@react-native-firebase/auth": "^23.0.0",
     "@react-native-firebase/firestore": "^23.0.0",
+    "@react-native-google-signin/google-signin": "^17.0.0",
     "expo": "~58.0.23",
     "expo-constants": "~58.0.14",
     "expo-dev-client": "~58.0.0",

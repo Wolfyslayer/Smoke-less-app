@@ -75,7 +75,9 @@ export function AppSessionView({model}:{model:SessionModel}){
  }
  const authModal=<OnboardingAuthModal step={authPrompt}
  onEmail={()=>setAuthPrompt('email')}
- onGoogle={()=>{}}
+ googleConfigured={!!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()}
+ googleBusy={model.accountBusy}
+ onGoogle={()=>{void model.googleAccountAction(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'','onboarding')}}
  onLater={()=>setAuthPrompt('benefits')}
  onDecline={()=>setAuthPrompt(null)}
  onBack={()=>setAuthPrompt('choice')}
@@ -94,6 +96,8 @@ export function AppSessionView({model}:{model:SessionModel}){
  <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
  <TextInput accessibilityLabel="Lösenord" autoCapitalize="none" autoComplete="current-password" secureTextEntry placeholder="Lösenord" placeholderTextColor={C.dim} value={model.accountPassword} onChangeText={model.setAccountPassword} style={s.input}/>
  <Pressable accessibilityRole="button" accessibilityState={{disabled:model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword}} disabled={model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword} onPress={()=>model.accountAction('login','onboarding')} style={[s.loginButton,{opacity:model.accountBusy||!model.accountEmail.includes('@')||!model.accountPassword?0.5:1}]}><Text style={{fontWeight:'900',color:C.background}}>{model.accountBusy?'Loggar in…':'Logga in'}</Text></Pressable>
+ <Pressable accessibilityRole="button" accessibilityLabel="Fortsätt med Google" accessibilityState={{disabled:model.accountBusy||!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()}} disabled={model.accountBusy||!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()} onPress={()=>{void model.googleAccountAction(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'','onboarding')}} style={[s.loginButton,{backgroundColor:C.surface,borderWidth:1,borderColor:C.border,opacity:!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()?.5:1}]}><Text style={{fontWeight:'800',color:C.white}}>{model.accountBusy?'Vänta…':'Fortsätt med Google'}</Text></Pressable>
+ {!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()?<Text style={{color:C.muted}}>Google-inloggning är inte konfigurerad i den här appversionen. Använd e-post tills vidare.</Text>:null}
  </ScrollView>:
  <View style={{flex:1}}><AppSessionOnboarding model={model} onCompleted={()=>{completedOnboardingRef.current=true;}}/>{!accountUser?<Pressable accessibilityRole="button" onPress={()=>setShowLogin(true)} style={{padding:16,alignItems:'center',backgroundColor:C.background}}><Text style={{color:C.lime,fontWeight:'800'}}>Har du redan ett konto? Logga in</Text></Pressable>:null}</View>}
  <AppSessionOverlays model={model}/></View>;
