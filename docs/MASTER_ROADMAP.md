@@ -419,18 +419,18 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 16.2 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen. Kontoväljare, avbrutet flöde, kontolänkning och gästläge är testade på Android. Kontokonflikt och kontoraderingsskydd har kodbaserade regressionstester, men inte fullständiga Firebase-integrationstester. Båda CI-kontrollerna gröna på `9cc5ce8`. Offline- och OAuth-fel är täckta av simulerade regressionstester, inte fysisk offline-QA.
+**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen. Kontoväljare, avbrutet flöde, kontolänkning och gästläge är testade på Android. Kontokonflikt och kontoraderingsskydd har kodbaserade regressionstester, men inte fullständiga Firebase-integrationstester. Båda CI-kontrollerna gröna på `23cb60e`. Offline- och OAuth-fel är täckta av simulerade regressionstester, inte fysisk offline-QA.
 
 
-**Status:** Pågår, 3/8 huvudpunkter och 26/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+**Status:** Pågår, 4/8 huvudpunkter och 27/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [x] **Inventering (4/4)**
    - [x] 1.1 Kartlägg Firebase Authentication.
    - [x] 1.2 Kontrollera package ID och SHA-certifikat.
    - [x] 1.3 Dokumentera OAuth-beroenden.
    - [x] 1.4 Identifiera risker för befintliga konton.
-2. [ ] **Konfiguration (3/4)**
-   - [ ] 2.1 Aktivera Google-provider.
+2. [x] **Konfiguration (4/4)**
+   - [x] 2.1 Aktivera Google-provider (bekräftat genom fungerande Google/Firebase-inloggning på Android).
    - [x] 2.2 Konfigurera Android-inloggning.
    - [x] 2.3 Skydda konfigurationsvärden.
    - [x] 2.4 Verifiera native-beroenden.
@@ -447,23 +447,23 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 5. [ ] **Datasäkerhet (3/4)**
    - [x] 5.1 Återanvänd säker Firestore-synk.
    - [x] 5.2 Verifiera utloggning och kontobyte.
-   - [ ] 5.3 Verifiera kontoradering.
+   - [ ] 5.3 Verifiera kontoradering (ej aktiverad; kräver separat säker implementering och Firebase-integrationstest, flyttas till senare säkerhets-/enhets-QA).
    - [x] 5.4 Behåll gästläge oförändrat.
 6. [ ] **UX och tillgänglighet (3/4)**
    - [x] 6.1 Granska onboarding och profil.
    - [x] 6.2 Granska laddning och felstatus.
-   - [ ] 6.3 Granska TalkBack och tryckytor.
+   - [ ] 6.3 Granska TalkBack och tryckytor (fysisk tillgänglighets-QA kvar till fas 25).
    - [x] 6.4 Behåll e-postinloggning som alternativ.
 7. [ ] **Tester (3/4)**
-   - [ ] 7.1 Testa nya och återkommande konton.
+   - [ ] 7.1 Testa nya och återkommande konton (återkommande konto verifierat; nyregistrering återstår i fas 25).
    - [x] 7.2 Testa avbrutna flöden.
    - [x] 7.3 Testa offline och felkonfiguration (simulerade felkoder; fysisk offline-QA återstår).
    - [x] 7.4 Verifiera CI och Android-build.
 8. [ ] **Avslut (2/4)**
    - [x] 8.1 Dokumentera Firebase-inställningar utan hemligheter (`docs/PHASE_16_2_GOOGLE_AUTH_SETUP.md`).
    - [x] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [ ] 8.3 Verifiera slutlig grön CI (kräver gröna kontroller på sista committen).
+   - [ ] 8.4 Merga fas-PR (efter grön CI; öppna QA-punkter ska förbli synliga).
 
 ### Fas 16.3 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
