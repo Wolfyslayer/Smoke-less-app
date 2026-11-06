@@ -58,6 +58,7 @@ test('Android Google account picker checks Play services and accepts current res
  const GoogleSignin={
   configure(options){calls.push(['configure',options.webClientId])},
   async hasPlayServices(){calls.push(['play'])},
+  async signOut(){calls.push(['signOut'])},
   async signIn(){calls.push(['signIn']);return {data:{idToken:'example-token'}}}
  };
  const module={exports:{}};
@@ -66,7 +67,7 @@ test('Android Google account picker checks Play services and accepts current res
   return {GoogleSignin};
  }});
  assert.equal(await module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'), 'example-token');
- assert.deepEqual(calls,[['configure','123456789-example.apps.googleusercontent.com'],['play'],['signIn']]);
+ assert.deepEqual(calls,[['configure','123456789-example.apps.googleusercontent.com'],['play'],['signOut'],['signIn']]);
 });
 test('Android Google account picker rejects missing OAuth config before loading native library',async()=>{
  const {requestGoogleIdToken}=require('../src/auth/googleNativeSignIn.cjs');
@@ -79,7 +80,7 @@ test('Android picker stops before account selection if Play services fail',async
  let selected=false;
  const module={exports:{}};
  vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
-  configure(){},
+  configure(){},async signOut(){},
   async hasPlayServices(){throw Object.assign(new Error('unavailable'),{code:'PLAY_SERVICES_NOT_AVAILABLE'})},
   async signIn(){selected=true;return {data:{idToken:'unexpected'}}}
  }})});
@@ -91,7 +92,7 @@ test('Android picker refuses successful response without an ID token',async()=>{
  const source=fs.readFileSync(path.join(__dirname,'../src/auth/googleNativeSignIn.cjs'),'utf8');
  const module={exports:{}};
  vm.runInNewContext(source,{module,exports:module.exports,require:()=>({GoogleSignin:{
-  configure(){},async hasPlayServices(){},async signIn(){return {data:{idToken:null}}}
+  configure(){},async hasPlayServices(){},async signOut(){},async signIn(){return {data:{idToken:null}}}
  }})});
  await assert.rejects(module.exports.requestGoogleIdToken('123456789-example.apps.googleusercontent.com'),error=>error.code==='auth/invalid-credential');
 });
