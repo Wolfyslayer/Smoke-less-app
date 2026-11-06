@@ -4,8 +4,8 @@ import {Mail,ShieldCheck,Cloud,Smartphone,Chrome} from 'lucide-react-native';
 import {C} from '../theme';
 
 export type OnboardingAuthStep='choice'|'benefits'|'email'|null;
-export function OnboardingAuthModal({step,onEmail,onGoogle,onLater,onDecline,onBack,emailForm}:{
- step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;onLater:()=>void;onDecline:()=>void;onBack:()=>void;emailForm:React.ReactNode;
+export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,googleBusy,onLater,onDecline,onBack,emailForm}:{
+ step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;googleConfigured:boolean;googleBusy:boolean;onLater:()=>void;onDecline:()=>void;onBack:()=>void;emailForm:React.ReactNode;
 }){
  return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={step==='benefits'?onDecline:onLater}>
  <View style={s.overlay}><View style={s.card}>
@@ -13,7 +13,7 @@ export function OnboardingAuthModal({step,onEmail,onGoogle,onLater,onDecline,onB
  <Text accessibilityRole="header" style={s.title}>Spara din resa</Text>
  <Text style={s.description}>Vill du logga in eller skapa ett konto för att skydda din plan och historik?</Text>
  <Pressable accessibilityRole="button" onPress={onEmail} style={s.option}><Mail size={23} color={C.lime}/><Text style={s.optionText}>Fortsätt med e-post</Text></Pressable>
- <Pressable accessibilityRole="button" accessibilityState={{disabled:true}} disabled onPress={onGoogle} style={[s.option,{opacity:.5}]}><Chrome size={23} color={C.muted}/><View style={{flex:1}}><Text style={s.optionText}>Fortsätt med Google</Text><Text style={s.description}>Kommer i en senare uppdatering</Text></View></Pressable>
+ <Pressable accessibilityRole="button" accessibilityLabel="Fortsätt med Google" accessibilityState={{disabled:!googleConfigured||googleBusy,busy:googleBusy}} disabled={!googleConfigured||googleBusy} onPress={onGoogle} style={[s.option,{opacity:!googleConfigured||googleBusy?.5:1}]}><Chrome size={23} color={googleConfigured?C.lime:C.muted}/><View style={{flex:1}}><Text style={s.optionText}>{googleBusy?"Vänta…":"Fortsätt med Google"}</Text>{!googleConfigured?<Text style={s.description}>Google-inloggning kräver en konfigurerad Android-build. Använd e-post tills vidare.</Text>:null}</View></Pressable>
  <Pressable accessibilityRole="button" onPress={onLater} style={s.later}><Text style={s.laterText}>Inte nu</Text></Pressable>
  </>:step==='benefits'?<>
  <ShieldCheck size={38} color={C.lime}/>
