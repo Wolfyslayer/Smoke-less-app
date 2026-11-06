@@ -419,49 +419,49 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 16.2 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen; båda obligatoriska CI-kontrollerna var gröna på commit `67ea7c8`.
+**Android-acceptans 2026-11-06:** Användaren har bekräftat att korrekt debug-keystore löste Google OAuth-problemet. Samma befintliga konto fungerar med både e-post/lösenord och Google efter länkning, och historik, plan och statistik finns kvar efter utloggning och inloggning med båda metoderna. Detta verifierar den positiva kontolänkningsvägen på en fysisk Android-enhet; avbrutna flöden, felkonfiguration, kontokonflikter och kontoradering återstår att slutverifiera. PR #159 är fortfarande öppen. Kontoväljare, avbrutet flöde, kontolänkning och gästläge är testade på Android. Kontokonflikt och kontoraderingsskydd har kodbaserade regressionstester, men inte fullständiga Firebase-integrationstester. Båda CI-kontrollerna gröna på `aa51075`.
 
 
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+**Status:** Pågår, 3/8 huvudpunkter och 24/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
-1. [ ] **Inventering (0/4)**
-   - [ ] 1.1 Kartlägg Firebase Authentication.
-   - [ ] 1.2 Kontrollera package ID och SHA-certifikat.
-   - [ ] 1.3 Dokumentera OAuth-beroenden.
-   - [ ] 1.4 Identifiera risker för befintliga konton.
-2. [ ] **Konfiguration (0/4)**
+1. [x] **Inventering (4/4)**
+   - [x] 1.1 Kartlägg Firebase Authentication.
+   - [x] 1.2 Kontrollera package ID och SHA-certifikat.
+   - [x] 1.3 Dokumentera OAuth-beroenden.
+   - [x] 1.4 Identifiera risker för befintliga konton.
+2. [ ] **Konfiguration (3/4)**
    - [ ] 2.1 Aktivera Google-provider.
-   - [ ] 2.2 Konfigurera Android-inloggning.
-   - [ ] 2.3 Skydda konfigurationsvärden.
-   - [ ] 2.4 Verifiera native-beroenden.
-3. [ ] **Inloggningsflöde (0/4)**
-   - [ ] 3.1 Lägg till Google-val.
-   - [ ] 3.2 Hantera avbruten inloggning.
-   - [ ] 3.3 Visa begripliga svenska fel.
-   - [ ] 3.4 Hantera saknade Play-tjänster.
-4. [ ] **Kontolänkning (0/4)**
-   - [ ] 4.1 Identifiera befintligt e-postkonto.
-   - [ ] 4.2 Kräv säker identitetsverifiering.
-   - [ ] 4.3 Undvik dubbla användaridentiteter.
-   - [ ] 4.4 Bevara befintlig historik.
-5. [ ] **Datasäkerhet (0/4)**
-   - [ ] 5.1 Återanvänd säker Firestore-synk.
-   - [ ] 5.2 Verifiera utloggning och kontobyte.
+   - [x] 2.2 Konfigurera Android-inloggning.
+   - [x] 2.3 Skydda konfigurationsvärden.
+   - [x] 2.4 Verifiera native-beroenden.
+3. [x] **Inloggningsflöde (4/4)**
+   - [x] 3.1 Lägg till Google-val.
+   - [x] 3.2 Hantera avbruten inloggning.
+   - [x] 3.3 Visa begripliga svenska fel.
+   - [x] 3.4 Hantera saknade Play-tjänster.
+4. [x] **Kontolänkning (4/4)**
+   - [x] 4.1 Identifiera befintligt e-postkonto.
+   - [x] 4.2 Kräv säker identitetsverifiering.
+   - [x] 4.3 Undvik dubbla användaridentiteter.
+   - [x] 4.4 Bevara befintlig historik.
+5. [ ] **Datasäkerhet (3/4)**
+   - [x] 5.1 Återanvänd säker Firestore-synk.
+   - [x] 5.2 Verifiera utloggning och kontobyte.
    - [ ] 5.3 Verifiera kontoradering.
-   - [ ] 5.4 Behåll gästläge oförändrat.
-6. [ ] **UX och tillgänglighet (0/4)**
-   - [ ] 6.1 Granska onboarding och profil.
-   - [ ] 6.2 Granska laddning och felstatus.
+   - [x] 5.4 Behåll gästläge oförändrat.
+6. [ ] **UX och tillgänglighet (3/4)**
+   - [x] 6.1 Granska onboarding och profil.
+   - [x] 6.2 Granska laddning och felstatus.
    - [ ] 6.3 Granska TalkBack och tryckytor.
-   - [ ] 6.4 Behåll e-postinloggning som alternativ.
-7. [ ] **Tester (0/4)**
+   - [x] 6.4 Behåll e-postinloggning som alternativ.
+7. [ ] **Tester (2/4)**
    - [ ] 7.1 Testa nya och återkommande konton.
-   - [ ] 7.2 Testa avbrutna flöden.
+   - [x] 7.2 Testa avbrutna flöden.
    - [ ] 7.3 Testa offline och felkonfiguration.
-   - [ ] 7.4 Verifiera CI och Android-build.
-8. [ ] **Avslut (0/4)**
+   - [x] 7.4 Verifiera CI och Android-build.
+8. [ ] **Avslut (1/4)**
    - [ ] 8.1 Dokumentera Firebase-inställningar utan hemligheter.
-   - [ ] 8.2 Samla enhets-QA till fas 25.
+   - [x] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
