@@ -15,7 +15,7 @@ export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,goog
    {text:'Gå tillbaka',onPress:onBack},
   ]);
  };
- return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(googleBusy)return;if(step==='email'){returnFromEmail();return;}if(step==='benefits'){onBack();return;}onLater();}}>
+ return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(googleBusy)return;if(step==='email'){returnFromEmail();return;}if(step==='benefits'){onBack();return;}/* The first choice screen has no previous modal step; require an explicit choice. */}}>
  <View style={s.overlay}><View style={s.card}>
  {step==='choice'?<>
  <Text accessibilityRole="header" style={s.title}>Spara din resa</Text>
