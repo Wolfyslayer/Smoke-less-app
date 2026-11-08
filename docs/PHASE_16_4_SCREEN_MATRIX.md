@@ -7,8 +7,8 @@ Detta är en **källkodsbaserad** första inventering, inte genomförd fysisk An
 | Sessionsrot och login före onboarding | `src/components/AppSessionView.tsx` | Använder `useSafeAreaInsets` och `ScrollView` med `keyboardShouldPersistTaps` | Kontrollera systemfält, stor text, tangentbord och tillbaka-gest |
 | Onboarding | `src/screens/OnboardingScreen.tsx` | Använder `useSafeAreaInsets`, `ScrollView` och `CompactDateModal` | Kontrollera samtliga steg, datumfält, scroll och max textstorlek |
 | Plan | `src/screens/PlanScreen.tsx` | Egen `Modal`, datumkomponent och `useWindowDimensions` | Kontrollera modalens insets, smal skärm och knappar vid stor text |
-| Datumväljare | `src/components/CompactDateModal.tsx` | React Native `Modal` och `useWindowDimensions`, ingen egen Safe Area-hook | Kontrollera placering nära gestfält och små skärmar |
-| Bekräftelsedialog | `src/components/ConfirmationDialog.tsx` | React Native `Modal`, utan egen Safe Area-hook | Kontrollera knappåtkomst vid systemnavigering och maximal text |
+| Datumväljare | `src/components/CompactDateModal.tsx` | React Native `Modal`, `useWindowDimensions`, `useSafeAreaInsets` och scroll; kalendercellen är tryckyta (minhöjd 48 dp) | Kontrollera placering nära gestfält och små skärmar |
+| Bekräftelsedialog | `src/components/ConfirmationDialog.tsx` | React Native `Modal` med `useSafeAreaInsets` och scroll | Kontrollera knappåtkomst vid systemnavigering och maximal text |
 | Registrera cigarett | `src/components/CigaretteRegisterModal.tsx` | Använder `useSafeAreaInsets` och `ScrollView` | Kontrollera underkant, val och avbrytbekräftelse |
 | Samlade överlägg | `src/components/AppSessionOverlays.tsx` | Kopplar registreringsmodal och bekräftelsedialog | Kontrollera prioritet och Android Tillbaka |
 | Gemensamma UI-knappar | `src/components/ui.tsx` | Återanvändbar `AppButton` | Granska faktisk minsta tryckyta och textskalning |
@@ -25,7 +25,7 @@ Detta är en **källkodsbaserad** första inventering, inte genomförd fysisk An
 | Konto | `src/screens/AccountScreen.tsx` | Separat skärm, ingen egen Safe Area-hook | Kontrollera e-postfält, tangentbord och feltexter |
 | Inställningar | `src/screens/SettingsScreen.tsx` | Separat skärm, ingen egen Safe Area-hook | Kontrollera val, formulär och skärmstorlek |
 | Backup / molnsäkerhet | `src/screens/BackupScreen.tsx` | Separat skärm, ingen egen Safe Area-hook | Kontrollera dialoger, status och scroll |
-| Onboarding-inloggningsmodal | `src/components/OnboardingAuthModal.tsx` | React Native `Modal`, ingen egen Safe Area-hook | Kontrollera tangentbord, underkant och Android Tillbaka |
+| Onboarding-inloggningsmodal | `src/components/OnboardingAuthModal.tsx` | React Native `Modal` med `useSafeAreaInsets` och scroll; även avbrytbekräftelsen kan scrollas | Kontrollera tangentbord, underkant och Android Tillbaka |
 | Delningskort | `src/components/DailyProgressShareCard.tsx` | Delningskomponent utan egen Safe Area-hook | Kontrollera förhandsvisningens skalning |
 | Skärmrouter | `src/components/ProgressScreenRoutes.tsx`, `src/components/AccountSettingsRoutes.tsx`, `src/components/AppScreenRouter.tsx` | Skärmarna väljs via separata routingkomponenter | Kontrollera att samma insets och scrollregler gäller alla |
 | Widget | `src/widgets/` och `plugins/withSmokeLessWidget.js` | Native hemskärmswidget, inte en appskärm | Separat native-verifiering enligt widgetplanen |
@@ -43,3 +43,22 @@ Efter att PR #161 skapades uppdaterades `main` med en extra `./plugins/withCusto
 - Källkodsinventering betyder inte att en fysisk telefon, BrowserStack eller TalkBack har testats.
 - Prioritera påvisade klippnings-/fokusfel och blockerande tillgänglighetsproblem.
 - Bred enhets- och TalkBack-QA förs vidare till fas 25 enligt masterplanen.
+
+## Ansvar och prioriterad verifieringsmatris
+
+**Ansvarig för statisk granskning och automatiska tester:** utvecklingsflödet i PR #161. **Ansvarig för fysisk acceptans:** appägaren på Android-enhet; bred enhets- och TalkBack-verifiering samlas i fas 25. Inget nedan innebär att fysisk QA redan är utförd.
+
+| Riskklass | Vyer | Kontroller som återstår | Ägare / acceptans |
+| --- | --- | --- | --- |
+| Hög – inmatning och tangentbord | Onboarding, onboarding-inloggning, Konto, Inställningar, login före onboarding | Öppna tangentbord, fokusera sista fältet, stäng tangentbord, max textstorlek, Android Tillbaka; inga dolda primärknappar | Utveckling: källkod + CI; appägare: Android-test |
+| Hög – modal och systemkanter | Datumväljare, bekräftelsedialog, cigarettregistrering, avbrytbekräftelser, Plan | Gestnavigering och treknappsnavigering, statusfält/kamerahål, små skärmar, stor text; bekräfta att alla knappar nås | Utveckling: källkod + CI; appägare: Android-test |
+| Hög – navigation | Sessionsrot, bottennavigering, överlägg, SOS | Android Tillbaka stänger överlägg före navigation; navigationsfält täcker inte knappar; SOS-timer fortsätter inte efter avslut | Utveckling: regressionstest; appägare: Android-test |
+| Medel – datatäta vyer | Statistik, Historik, Plan, delningskort | Inga kapade diagram/etiketter, ingen oavsiktlig horisontell scroll, delningsbildens innehåll får plats | Utveckling: källkodsgranskning; appägare: Android-test |
+| Medel – övriga vyer | Hem, Registrera, Fördelar, Profil, Backup/molnsäkerhet | Smal och bred skärm, max textstorlek, tom-/fel-/laddningsläge, tryckytor | Utveckling: källkodsgranskning; appägare: Android-test |
+| Separat native-spår | Android-widget | Widgetstorlekar och launcher-specifika beteenden enligt widgetplan | Appägare: native Android-test |
+
+### Kvarstående verifieringsbegränsningar
+
+- CI:s layouttester kontrollerar **källkodsmönster**, inte faktisk renderad geometri, tangentbord eller TalkBack.
+- På skärmar där kalendercellens bredd understiger 48 dp uppnås inte 48 dp i båda riktningar. Detta måste bedömas på enhet; inga falska tillgänglighetsgodkännanden.
+- main har debug-keystore-plugin som saknas i denna äldre fasbranch. Bevara main-ändringarna vid merge; ingen hemlig keystore ska läggas i Git.
