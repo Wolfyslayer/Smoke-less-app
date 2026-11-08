@@ -4,7 +4,7 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 
 ## Fast checklista (8 × 4 = 32)
 
-**Status:** Pågående. 0/8 huvudpunkter, 5/32 verifierade delpunkter (15,6 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
+**Status:** Pågående. 0/8 huvudpunkter, 8/32 verifierade delpunkter (25 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
 
 1. **Skärmmatris och inventering (3/4)**
    - [x] 1.1 Inventera alla tabbar och underskärmar.
@@ -36,10 +36,10 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
    - [ ] 6.2 Granska modaler och överlägg tillsammans med Safe Area.
    - [ ] 6.3 Granska diagram, statistik och delningsförhandsvisning.
    - [ ] 6.4 Åtgärda verifierade navigations- eller layoutregressioner.
-7. **Automatiska kontroller (0/4)**
-   - [ ] 7.1 Lägg till riktade testfall för identifierade risker.
-   - [ ] 7.2 Kontrollera TypeScript och ordinarie testsvit.
-   - [ ] 7.3 Kontrollera Firestore-regel-CI utan onödiga regeländringar.
+7. **Automatiska kontroller (3/4)**
+   - [x] 7.1 Lägg till riktade testfall för identifierade risker.
+   - [x] 7.2 Kontrollera TypeScript och ordinarie testsvit.
+   - [x] 7.3 Kontrollera Firestore-regel-CI utan onödiga regeländringar.
    - [ ] 7.4 Dokumentera testtäckning och kvarstående begränsningar.
 8. **Acceptans och avslut (0/4)**
    - [ ] 8.1 Stäm av alla skärmar mot inventeringsmatrisen.
@@ -57,4 +57,5 @@ En PR för fasen, sammanhängande commits och grön CI innan nästa commit. Efte
 - **2.1 (källkod):** `app/_layout.tsx` omsluter appen med `SafeAreaProvider`; `AppSessionView.tsx` läser `useSafeAreaInsets()`. Korrekt beteende på olika enheter omfattas fortfarande av 2.2–2.4.
 - **5.4 (dokumentation):** Bred fysisk TalkBack-verifiering är uttryckligen uppskjuten till fas 25. Statisk etikett-/rollgranskning enligt 5.2 återstår.
 - **Öppet problem:** Kalenderdagarnas bredd kan bli mindre än 48 dp på smala skärmar. Punkt 5.1 och responsivitetskontrollerna förblir öppna tills detta har åtgärdats och verifierats.
-- **CI:** Båda kontrollerna var gröna för `a6c75ae`. CI för den här dokumentationscommiten måste verifieras separat innan ytterligare kodändringar.
+- **7.1–7.3 (automatiska tester):** Tre riktade källkodsbaserade regressionstester lades till i `tests/sessionNavigation.test.cjs` för modalernas Safe Area/scroll, kalendertryckytor och bottennavigering/gemensamma knappar. `Validate Smoke Less 6` kör enligt `.github/workflows/ci.yml` både `npm run typecheck`, `npm run test`, `npm run test:storage` och `npm run test:migration`. Både denna workflow och `Firestore rules emulator` rapporterade `success` på commit `0e3fd27`. Inga Firestore-regler ändrades i fasen. Detta bekräftar inte visuellt beteende på Android.
+- **CI-gate:** Varje efterföljande commit måste få egna gröna kontroller innan nästa ändring.
