@@ -35,7 +35,7 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
    - [x] 6.1 Enhetliga tillbaka- och avbrytknappar.
    - [ ] 6.2 Tryckytor och skärmläsaretiketter.
    - [x] 6.3 Safe area och små skärmar.
-   - [ ] 6.4 Stor text och TalkBack-QA.
+   - [ ] 6.4 Stor text verifierad på Android. TalkBack flyttas till samlad tillgänglighets-QA i senare fas och är inte godkänt ännu.
 7. **Automatiska tester (0/4)**
    - [ ] 7.1 Testa navigationshistorik.
    - [ ] 7.2 Testa modalprioritet.
@@ -61,4 +61,5 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 - Navigeringshistoriken rensas när en slutförd SOS-registrering återgår till startsidan, och tom historik ger inte en ny historikpost.
 - Android-telefon: navigering Statistik → Historik → tillbaka, avslutsdialog, registrering, SOS-återställning, konto- och onboarding-inloggning verifierade. Onboardingens inloggning använder appens egen bekräftelse och rensar uppgifter vid bekräftat avbrott.
 - Ny Android-testrapport: datumväljare, planändringar, övriga modaler, bakgrund/återupptagning, historik/registreringar, kontosynkronisering, stor text och skärmstorlek fungerar (8/9 godkända). TalkBack ej testat.
-- Återstår: TalkBack och skärmläsaretiketter, verifiering av lokal Android/Google-konfiguration, automatiska regressionstester, native-buildbedömning och slutgranskning före merge.
+- TalkBack skjuts enligt beslut upp till samlad tillgänglighets-QA i senare fas; markeras inte som testat eller godkänt och blockerar inte ensam fas 16.3.
+- Återstår i fas 16.3: verifiering av lokal Android/Google-konfiguration, automatiska regressionstester, native-buildbedömning och slutgranskning före merge.
