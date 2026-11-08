@@ -51,6 +51,10 @@ export function AppSessionView({model}:{model:SessionModel}){
    if(!state.ready||state.loadError||!state.p)return true;
    if(current.dialog){current.setDialog(null);return true;}
    if(current.registerOpen){current.setRegisterOpen(false);return true;}
+   if(state.tab==='account' && !state.accountUser && (current.accountEmail.trim()||current.accountPassword)){
+    current.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>{if(!current.goBack())current.resetToHome();},'Lämna inloggningen');
+    return true;
+   }
    if(state.tab!=='home'){
     // Return to the previous in-app view, not the Expo Router root.
     if(!current.goBack())current.resetToHome();
