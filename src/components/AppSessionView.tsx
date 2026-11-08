@@ -4,7 +4,7 @@ import {validateData} from '../domain';
 import {previewGuestMerge} from '../guestMerge';
 import {consumeLoginOrigin} from '../loginOrigin';
 import {CloudOff,ChevronDown,ChevronUp,ShieldCheck} from 'lucide-react-native';
-import {ActivityIndicator,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
+import {ActivityIndicator,BackHandler,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppSessionOnboarding} from './AppSessionOnboarding';
 import {OnboardingAuthModal,type OnboardingAuthStep} from './OnboardingAuthModal';
@@ -25,6 +25,47 @@ export function AppSessionView({model}:{model:SessionModel}){
  const completedOnboardingRef=useRef(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
+ const leaveLogin=()=>{
+  if(model.accountEmail.trim()||model.accountPassword){
+   model.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>setShowLogin(false),'Lämna inloggningen');
+  }else setShowLogin(false);
+ };
+ const backStateRef=useRef({ready,loadError,tab,p,accountUser,showLogin,authPrompt,model});
+ backStateRef.current={ready,loadError,tab,p,accountUser,showLogin,authPrompt,model};
+ useEffect(()=>{
+  if(Platform.OS!=='android')return;
+  const subscription=BackHandler.addEventListener('hardwareBackPress',()=>{
+   const state=backStateRef.current;
+   const current=state.model;
+   // A native Modal owns its own Android back event through onRequestClose.
+   if(state.authPrompt!==null){
+    setAuthPrompt(state.authPrompt==='email'||state.authPrompt==='benefits'?'choice':null);
+    return true;
+   }
+   if(state.showLogin){
+    if(current.accountEmail.trim()||current.accountPassword){
+     current.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>setShowLogin(false),'Lämna inloggningen');
+    }else setShowLogin(false);
+    return true;
+   }
+   if(!state.ready||state.loadError||!state.p)return true;
+   if(current.dialog){current.setDialog(null);return true;}
+   if(current.registerOpen){current.setRegisterOpen(false);return true;}
+   if(state.tab==='account' && !state.accountUser && (current.accountEmail.trim()||current.accountPassword)){
+    current.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>{current.setAccountEmail('');current.setAccountPassword('');if(!current.goBack())current.resetToHome();},'Lämna inloggningen');
+    return true;
+   }
+   if(state.tab!=='home'){
+    // Return to the previous in-app view, not the Expo Router root.
+    if(!current.goBack())current.resetToHome();
+    return true;
+   }
+   current.ask('Avsluta Smoke Less?','Vill du avsluta appen?',()=>BackHandler.exitApp(),'Avsluta appen');
+   return true;
+  });
+  return ()=>subscription.remove();
+ },[]);
+
  useEffect(()=>{
   if(ready && p && !accountUser && completedOnboardingRef.current){
    completedOnboardingRef.current=false;
@@ -77,10 +118,11 @@ export function AppSessionView({model}:{model:SessionModel}){
  onEmail={()=>setAuthPrompt('email')}
  googleConfigured={!!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()}
  googleBusy={model.accountBusy}
+ hasEmailDraft={!!(model.accountEmail.trim()||model.accountPassword)}
  onGoogle={()=>{void model.googleAccountAction(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'','onboarding')}}
  onLater={()=>setAuthPrompt('benefits')}
  onDecline={()=>setAuthPrompt(null)}
- onBack={()=>setAuthPrompt('choice')}
+ onBack={()=>{if(authPrompt==='email'){model.setAccountEmail('');model.setAccountPassword('');}setAuthPrompt('choice');}}
  emailForm={<View style={{gap:12}}>
   <Text style={{color:C.muted}}>Har du redan ett konto? När du loggar in hämtas kontots sparade plan och historik. Den nya onboarding-planen ersätter aldrig ditt befintliga konto. Gästregistreringar kan läggas till separat efter ditt godkännande.</Text>
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
@@ -90,7 +132,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  </View>}/>;
  if(!p)return <View style={s.root}>{showLogin && !accountUser?
  <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal:24,paddingTop:Math.max(insets.top,30)+36,paddingBottom:40,gap:18}}>
- <Pressable accessibilityRole="button" onPress={()=>setShowLogin(false)}><Text style={{color:C.lime,fontWeight:'800'}}>‹ Tillbaka till onboarding</Text></Pressable>
+ <Pressable accessibilityRole="button" onPress={leaveLogin}><Text style={{color:C.lime,fontWeight:'800'}}>‹ Tillbaka till onboarding</Text></Pressable>
  <Text style={{fontSize:32,fontWeight:'900',color:C.white}}>Välkommen tillbaka</Text>
  <Text style={{color:C.muted,lineHeight:22}}>Logga in för att hämta din sparade plan och historik utan att göra om onboarding.</Text>
  <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>

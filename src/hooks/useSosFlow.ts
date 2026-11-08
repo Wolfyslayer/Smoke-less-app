@@ -13,6 +13,7 @@ export function useSosFlow(setData:Dispatch<SetStateAction<Data>>,goHome:()=>voi
  const [trigger,setTrigger]=useState('Stress');
  const [helpful,setHelpful]=useState<boolean|null>(null);
  const {sosTimer,setSosTimer,sosTimerActive,setSosTimerActive}=useSosTimer();
+ const stopSos=()=>{setBreathing(false);setSosTimerActive(false);setSosTimer(0);setBreathSeconds(0);};
  const startSos=()=>{setBreathSeconds(0);setBreathing(true);setSosStartIntensity(null);setIntensity(3);setTrigger('Stress');setSosTip(0);setHelpful(null);setSosTimerActive(false);setSosTimer(0);};
  const sosProps={
   breathScale,breathing,breathSeconds,
@@ -26,5 +27,5 @@ export function useSosFlow(setData:Dispatch<SetStateAction<Data>>,goHome:()=>voi
   trigger,onTrigger:setTrigger,helpful,onHelpful:setHelpful,
   onSave:()=>{setData(v=>addCravingEntry(v,intensity,trigger,{...(sosStartIntensity!==null?{startIntensity:sosStartIntensity}:{}),strategy:sosIdeas[sosTip].title,...(helpful!==null?{helpful}:{})}));setBreathing(false);setSosTimerActive(false);setSosTimer(0);setSosStartIntensity(null);setIntensity(3);setTrigger('Stress');setHelpful(null);goHome()}
  };
- return {sosProps,startSos};
+ return {sosProps,startSos,stopSos};
 }

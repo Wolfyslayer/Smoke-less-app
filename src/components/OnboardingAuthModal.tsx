@@ -1,13 +1,20 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import {Modal,Pressable,StyleSheet,Text,View} from 'react-native';
 import {Mail,ShieldCheck,Cloud,Smartphone,Chrome} from 'lucide-react-native';
 import {C} from '../theme';
 
 export type OnboardingAuthStep='choice'|'benefits'|'email'|null;
-export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,googleBusy,onLater,onDecline,onBack,emailForm}:{
- step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;googleConfigured:boolean;googleBusy:boolean;onLater:()=>void;onDecline:()=>void;onBack:()=>void;emailForm:React.ReactNode;
+export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,googleBusy,onLater,onDecline,onBack,hasEmailDraft,emailForm}:{
+ step:OnboardingAuthStep;onEmail:()=>void;onGoogle:()=>void;googleConfigured:boolean;googleBusy:boolean;onLater:()=>void;onDecline:()=>void;onBack:()=>void;hasEmailDraft:boolean;emailForm:React.ReactNode;
 }){
- return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(!googleBusy)(step==='benefits'?onDecline:onLater)()}}>
+ const [confirmLeave,setConfirmLeave]=useState(false);
+ useEffect(()=>{if(step!=='email')setConfirmLeave(false);},[step]);
+ const returnFromEmail=()=>{
+  if(googleBusy)return;
+  if(!hasEmailDraft){onBack();return;}
+  setConfirmLeave(true);
+ };
+ return <Modal visible={step!==null} transparent animationType="fade" onRequestClose={()=>{if(googleBusy)return;if(confirmLeave){setConfirmLeave(false);return;}if(step==='email'){returnFromEmail();return;}if(step==='benefits'){onBack();return;}/* The first choice screen has no previous modal step; require an explicit choice. */}}>
  <View style={s.overlay}><View style={s.card}>
  {step==='choice'?<>
  <Text accessibilityRole="header" style={s.title}>Spara din resa</Text>
@@ -24,11 +31,13 @@ export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,goog
  </>:step==='email'?<>
  <Text accessibilityRole="header" style={s.title}>Fortsätt med e-post</Text>
  {emailForm}
- <Pressable accessibilityRole="button" disabled={googleBusy} onPress={onBack} style={s.later}><Text style={s.laterText}>Tillbaka till alternativen</Text></Pressable>
+ <Pressable accessibilityRole="button" disabled={googleBusy} onPress={returnFromEmail} style={s.later}><Text style={s.laterText}>Tillbaka till alternativen</Text></Pressable>
  </>:null}
- </View></View></Modal>;
+ </View>{confirmLeave?<View style={s.confirmOverlay}><View style={s.confirmCard} accessibilityViewIsModal><Text accessibilityRole="header" style={s.title}>Lämna inloggningen?</Text><Text style={s.description}>Uppgifterna du har skrivit in används inte om du går tillbaka.</Text><Pressable accessibilityRole="button" style={s.primary} onPress={()=>setConfirmLeave(false)}><Text style={s.primaryText}>Fortsätt skriva</Text></Pressable><Pressable accessibilityRole="button" style={s.later} onPress={()=>{setConfirmLeave(false);onBack();}}><Text style={s.laterText}>Gå tillbaka</Text></Pressable></View></View>:null}</View></Modal>;
 }
 const s=StyleSheet.create({
+ confirmOverlay:{position:'absolute',top:0,right:0,bottom:0,left:0,backgroundColor:'rgba(0,0,0,.85)',justifyContent:'center',padding:20},
+ confirmCard:{backgroundColor:C.surface,borderRadius:26,borderWidth:1,borderColor:C.border,padding:22,gap:16},
  overlay:{flex:1,justifyContent:'center',padding:20,backgroundColor:'rgba(0,0,0,.75)'},
  card:{backgroundColor:C.surface,borderRadius:26,borderWidth:1,borderColor:C.border,padding:22,gap:16},
  title:{fontSize:23,fontWeight:'900',color:C.white},
