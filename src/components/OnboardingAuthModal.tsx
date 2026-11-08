@@ -36,10 +36,11 @@ export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,goog
  {emailForm}
  <Pressable accessibilityRole="button" disabled={googleBusy} onPress={returnFromEmail} style={s.later}><Text style={s.laterText}>Tillbaka till alternativen</Text></Pressable>
  </>:null}
- </View></ScrollView>{confirmLeave?<View style={s.confirmOverlay}><View style={s.confirmCard} accessibilityViewIsModal><Text accessibilityRole="header" style={s.title}>Lämna inloggningen?</Text><Text style={s.description}>Uppgifterna du har skrivit in används inte om du går tillbaka.</Text><Pressable accessibilityRole="button" style={s.primary} onPress={()=>setConfirmLeave(false)}><Text style={s.primaryText}>Fortsätt skriva</Text></Pressable><Pressable accessibilityRole="button" style={s.later} onPress={()=>{setConfirmLeave(false);onBack();}}><Text style={s.laterText}>Gå tillbaka</Text></Pressable></View></View>:null}</KeyboardAvoidingView></Modal>;
+ </View></ScrollView>{confirmLeave?<View style={s.confirmOverlay}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[s.confirmScroll,{paddingTop:Math.max(insets.top,20),paddingBottom:Math.max(insets.bottom,20)}]}><View style={s.confirmCard} accessibilityViewIsModal><Text accessibilityRole="header" style={s.title}>Lämna inloggningen?</Text><Text style={s.description}>Uppgifterna du har skrivit in används inte om du går tillbaka.</Text><Pressable accessibilityRole="button" style={s.primary} onPress={()=>setConfirmLeave(false)}><Text style={s.primaryText}>Fortsätt skriva</Text></Pressable><Pressable accessibilityRole="button" style={s.later} onPress={()=>{setConfirmLeave(false);onBack();}}><Text style={s.laterText}>Gå tillbaka</Text></Pressable></View></ScrollView></View>:null}</KeyboardAvoidingView></Modal>;
 }
 const s=StyleSheet.create({
- confirmOverlay:{position:'absolute',top:0,right:0,bottom:0,left:0,backgroundColor:'rgba(0,0,0,.85)',justifyContent:'center',padding:20},
+ confirmOverlay:{position:'absolute',top:0,right:0,bottom:0,left:0,backgroundColor:'rgba(0,0,0,.85)'},
+ confirmScroll:{flexGrow:1,justifyContent:'center',paddingHorizontal:20},
  confirmCard:{backgroundColor:C.surface,borderRadius:26,borderWidth:1,borderColor:C.border,padding:22,gap:16},
  overlay:{flex:1,backgroundColor:'rgba(0,0,0,.75)'},
  scrollContent:{flexGrow:1,justifyContent:'center',paddingHorizontal:20},
