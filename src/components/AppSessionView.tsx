@@ -122,7 +122,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  onGoogle={()=>{void model.googleAccountAction(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'','onboarding')}}
  onLater={()=>setAuthPrompt('benefits')}
  onDecline={()=>setAuthPrompt(null)}
- onBack={()=>setAuthPrompt('choice')}
+ onBack={()=>{if(authPrompt==='email'){model.setAccountEmail('');model.setAccountPassword('');}setAuthPrompt('choice');}}
  emailForm={<View style={{gap:12}}>
   <Text style={{color:C.muted}}>Har du redan ett konto? När du loggar in hämtas kontots sparade plan och historik. Den nya onboarding-planen ersätter aldrig ditt befintliga konto. Gästregistreringar kan läggas till separat efter ditt godkännande.</Text>
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
