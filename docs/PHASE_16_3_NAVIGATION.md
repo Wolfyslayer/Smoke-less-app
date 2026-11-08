@@ -4,7 +4,7 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
 
 ## Fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Pågår. 3/8 huvudpunkter helt färdiga, 21/32 delpunkter markerade färdiga (66 % avrundat). Ytterligare 8 av 9 manuella Android-testfall godkända; TalkBack ej testat. Automatiska regressionstester och slutgranskning återstår.
+**Status:** Slutgranskning. 4/8 huvudpunkter helt färdiga, 26/32 delpunkter markerade färdiga (81 % avrundat). 8 av 9 extra Android-testfall godkända; TalkBack uppskjutet till gemensam tillgänglighets-QA. Regressionstesterna är källkodskontroller (inte fullständiga interaktionstester).
 
 1. **Inventering (2/4)**
    - [x] 1.1 Kartlägg nuvarande tabbar och navigationshistorik.
@@ -26,25 +26,25 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
    - [x] 4.2 Avbryt ska behålla appen öppen.
    - [x] 4.3 Avsluta endast efter bekräftelse.
    - [x] 4.4 Undvik avslut från annan intern vy.
-5. **Datasäkerhet (3/4)**
+5. **Datasäkerhet (4/4)**
    - [x] 5.1 Skydda osparade formulärändringar.
    - [x] 5.2 Behåll registreringar och historik.
    - [x] 5.3 Behåll konto- och synkflöden.
-   - [ ] 5.4 Bevara lokal Android/Google-konfiguration.
+   - [x] 5.4 Bevara lokal Android/Google-konfiguration.
 6. **UI och tillgänglighet (2/4)**
    - [x] 6.1 Enhetliga tillbaka- och avbrytknappar.
    - [ ] 6.2 Tryckytor och skärmläsaretiketter.
    - [x] 6.3 Safe area och små skärmar.
    - [ ] 6.4 Stor text verifierad på Android. TalkBack flyttas till samlad tillgänglighets-QA i senare fas och är inte godkänt ännu.
-7. **Automatiska tester (0/4)**
-   - [ ] 7.1 Testa navigationshistorik.
-   - [ ] 7.2 Testa modalprioritet.
-   - [ ] 7.3 Testa avslutsbekräftelse.
-   - [ ] 7.4 Testa regressionsskydd och CI.
-8. **Android-acceptans och avslut (2/4)**
+7. **Automatiska tester (3/4)**
+   - [x] 7.1 Kontrollera navigationshistorikens källkodsinvarianter.
+   - [x] 7.2 Kontrollera modalprioritetens källkodsordning.
+   - [x] 7.3 Kontrollera avslutsbekräftelsens källkodsflöde.
+   - [ ] 7.4 Fullständiga beteendebaserade regressionstester återstår; källkodstesterna är inkopplade i npm test och CI grönt.
+8. **Android-acceptans och avslut (3/4)**
    - [x] 8.1 Testa hårdvaru-/systemknapp och gest på telefon.
    - [x] 8.2 Testa bakgrund/återupptagning och osparade ändringar.
-   - [ ] 8.3 Kontrollera båda CI och behov av native-build.
+   - [x] 8.3 Kontrollera båda CI och behov av native-build.
    - [ ] 8.4 Merga fas-PR efter verifiering.
 
 ## Arbetsregler
@@ -53,7 +53,7 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 
 ## Verifiering hittills
 
-- Båda GitHub CI-arbetsflödena är gröna till och med `7c0e0ca` (Validate Smoke Less 6 och Firestore rules emulator).
+- Båda GitHub CI-arbetsflödena är gröna till och med `032b5ac` (Validate Smoke Less 6 och Firestore rules emulator).
 - Systemets tillbaka-händelse fångas av en central listener; inbyggda React Native-modaler hanterar `onRequestClose` separat.
 - Registreringsmodalens bekräftelse och återställning är verifierade på fysisk Android-enhet med tillbaka-gest och kryss.
 - SOS städar upp timer och andningsövning vid navigering bort från vyn; efter sparad SOS-registrering rensas navigeringshistoriken.
@@ -62,4 +62,6 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 - Android-telefon: navigering Statistik → Historik → tillbaka, avslutsdialog, registrering, SOS-återställning, konto- och onboarding-inloggning verifierade. Onboardingens inloggning använder appens egen bekräftelse och rensar uppgifter vid bekräftat avbrott.
 - Ny Android-testrapport: datumväljare, planändringar, övriga modaler, bakgrund/återupptagning, historik/registreringar, kontosynkronisering, stor text och skärmstorlek fungerar (8/9 godkända). TalkBack ej testat.
 - TalkBack skjuts enligt beslut upp till samlad tillgänglighets-QA i senare fas; markeras inte som testat eller godkänt och blockerar inte ensam fas 16.3.
-- Återstår i fas 16.3: verifiering av lokal Android/Google-konfiguration, automatiska regressionstester, native-buildbedömning och slutgranskning före merge.
+- Lokal Android/Google-konfiguration i app.json är oförändrad i denna fas; inga nya native-beroenden eller config-plugin-ändringar kräver en särskild rebuild för navigationsfixarna.
+- Källkodstester i tests/sessionNavigation.test.cjs är inkopplade i npm test och verifierade via gröna CI-kontroller. De fångar strukturella regressioner men simulerar inte faktisk Android BackHandler.
+- Återstår: kompletterande beteendetester, kvarvarande inventering/tillgänglighetskontroll och slutligt mergebeslut. TalkBack följs upp i senare fas.
