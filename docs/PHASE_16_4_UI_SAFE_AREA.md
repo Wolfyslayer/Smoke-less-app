@@ -4,15 +4,15 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 
 ## Fast checklista (8 × 4 = 32)
 
-**Status:** Startad. 0/8 huvudpunkter, 0/32 verifierade delpunkter (0 %).
+**Status:** Pågående. 0/8 huvudpunkter, 5/32 verifierade delpunkter (15,6 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
 
-1. **Skärmmatris och inventering (0/4)**
-   - [ ] 1.1 Inventera alla tabbar och underskärmar.
-   - [ ] 1.2 Inventera onboarding och kontoflöden.
-   - [ ] 1.3 Inventera modaler, datumväljare, dialoger och formulär.
+1. **Skärmmatris och inventering (3/4)**
+   - [x] 1.1 Inventera alla tabbar och underskärmar.
+   - [x] 1.2 Inventera onboarding och kontoflöden.
+   - [x] 1.3 Inventera modaler, datumväljare, dialoger och formulär.
    - [ ] 1.4 Dokumentera testmatris med risker och ägare per vy.
-2. **Safe Area och systemfält (0/4)**
-   - [ ] 2.1 Granska rotlayout och SafeAreaProvider.
+2. **Safe Area och systemfält (1/4)**
+   - [x] 2.1 Granska rotlayout och SafeAreaProvider.
    - [ ] 2.2 Granska statusfält, skärmkanter och kamerahål.
    - [ ] 2.3 Granska bottennavigering och gestfält/treknappsnavigering.
    - [ ] 2.4 Åtgärda verifierade överlapp och dubbel padding.
@@ -26,11 +26,11 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
    - [ ] 4.2 Granska större skärmar och bildförhållanden.
    - [ ] 4.3 Granska maximal textstorlek och visningsskalning.
    - [ ] 4.4 Åtgärda verifierad horisontell scroll eller avklippt innehåll.
-5. **Tillgänglighet och konsekvens (0/4)**
+5. **Tillgänglighet och konsekvens (1/4)**
    - [ ] 5.1 Granska tryckytor (mål minst 48 dp).
    - [ ] 5.2 Granska etiketter, roller och läsordning statiskt.
    - [ ] 5.3 Granska kontrast, fel-, laddnings- och tomlägen.
-   - [ ] 5.4 Dokumentera TalkBack som uppskjuten fysisk QA i fas 25.
+   - [x] 5.4 Dokumentera TalkBack som uppskjuten fysisk QA i fas 25.
 6. **Navigering och delningsvyer (0/4)**
    - [ ] 6.1 Granska kompatibilitet med Android Tillbaka från fas 16.3.
    - [ ] 6.2 Granska modaler och överlägg tillsammans med Safe Area.
@@ -50,3 +50,11 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 ## Arbetsregler
 
 En PR för fasen, sammanhängande commits och grön CI innan nästa commit. Efter varje commit rapporteras 8 huvudpunkter och 32 delpunkter samt Android-build JA/NEJ. Ändra inte Firebase-regler eller hemligheter. Utöka inte omfattningen med orelaterad kosmetik.
+
+## Verifieringsnoteringar
+
+- **1.1–1.3 (källkod):** `docs/PHASE_16_4_SCREEN_MATRIX.md` inventerar huvudtabbar, underskärmar, onboarding, konto, modaler, datumväljare och formulär. Inventeringen är inte ett genomfört skärmtest.
+- **2.1 (källkod):** `app/_layout.tsx` omsluter appen med `SafeAreaProvider`; `AppSessionView.tsx` läser `useSafeAreaInsets()`. Korrekt beteende på olika enheter omfattas fortfarande av 2.2–2.4.
+- **5.4 (dokumentation):** Bred fysisk TalkBack-verifiering är uttryckligen uppskjuten till fas 25. Statisk etikett-/rollgranskning enligt 5.2 återstår.
+- **Öppet problem:** Kalenderdagarnas bredd kan bli mindre än 48 dp på smala skärmar. Punkt 5.1 och responsivitetskontrollerna förblir öppna tills detta har åtgärdats och verifierats.
+- **CI:** Båda kontrollerna var gröna för `a6c75ae`. CI för den här dokumentationscommiten måste verifieras separat innan ytterligare kodändringar.
