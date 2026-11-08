@@ -52,7 +52,7 @@ export function AppSessionView({model}:{model:SessionModel}){
    if(current.dialog){current.setDialog(null);return true;}
    if(current.registerOpen){current.setRegisterOpen(false);return true;}
    if(state.tab==='account' && !state.accountUser && (current.accountEmail.trim()||current.accountPassword)){
-    current.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>{if(!current.goBack())current.resetToHome();},'Lämna inloggningen');
+    current.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>{current.setAccountEmail('');current.setAccountPassword('');if(!current.goBack())current.resetToHome();},'Lämna inloggningen');
     return true;
    }
    if(state.tab!=='home'){
