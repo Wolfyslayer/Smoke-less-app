@@ -4,7 +4,7 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
 
 ## Fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Pågår. 2/8 huvudpunkter helt färdiga, 16/32 delpunkter markerade färdiga (50 %). Navigering, registrering, SOS och onboardingens inloggningsbekräftelse är testade på Android; återstående QA och automatiska tester återstår.
+**Status:** Pågår. 3/8 huvudpunkter helt färdiga, 21/32 delpunkter markerade färdiga (66 % avrundat). Ytterligare 8 av 9 manuella Android-testfall godkända; TalkBack ej testat. Automatiska regressionstester och slutgranskning återstår.
 
 1. **Inventering (2/4)**
    - [x] 1.1 Kartlägg nuvarande tabbar och navigationshistorik.
@@ -16,9 +16,9 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
    - [x] 2.2 Bevara intern navigationshistorik utan dubbletter.
    - [x] 2.3 Navigera ett steg bakåt före avslut.
    - [x] 2.4 Undvik dubbla listeners och stale callbacks.
-3. **Modaler (3/4)**
+3. **Modaler (4/4)**
    - [x] 3.1 Stäng översta modal före tabbyte.
-   - [ ] 3.2 Hantera datumväljare och formulär.
+   - [x] 3.2 Hantera datumväljare och formulär.
    - [x] 3.3 Hantera SOS-övningar säkert.
    - [x] 3.4 Bevara avbryt- och bekräftelseflöden.
 4. **Avslut från startsidan (4/4, Android-QA genomförd)**
@@ -26,24 +26,24 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
    - [x] 4.2 Avbryt ska behålla appen öppen.
    - [x] 4.3 Avsluta endast efter bekräftelse.
    - [x] 4.4 Undvik avslut från annan intern vy.
-5. **Datasäkerhet (1/4)**
+5. **Datasäkerhet (3/4)**
    - [x] 5.1 Skydda osparade formulärändringar.
-   - [ ] 5.2 Behåll registreringar och historik.
-   - [ ] 5.3 Behåll konto- och synkflöden.
+   - [x] 5.2 Behåll registreringar och historik.
+   - [x] 5.3 Behåll konto- och synkflöden.
    - [ ] 5.4 Bevara lokal Android/Google-konfiguration.
-6. **UI och tillgänglighet (1/4)**
+6. **UI och tillgänglighet (2/4)**
    - [x] 6.1 Enhetliga tillbaka- och avbrytknappar.
    - [ ] 6.2 Tryckytor och skärmläsaretiketter.
-   - [ ] 6.3 Safe area och små skärmar.
+   - [x] 6.3 Safe area och små skärmar.
    - [ ] 6.4 Stor text och TalkBack-QA.
 7. **Automatiska tester (0/4)**
    - [ ] 7.1 Testa navigationshistorik.
    - [ ] 7.2 Testa modalprioritet.
    - [ ] 7.3 Testa avslutsbekräftelse.
    - [ ] 7.4 Testa regressionsskydd och CI.
-8. **Android-acceptans och avslut (1/4)**
+8. **Android-acceptans och avslut (2/4)**
    - [x] 8.1 Testa hårdvaru-/systemknapp och gest på telefon.
-   - [ ] 8.2 Testa bakgrund/återupptagning och osparade ändringar.
+   - [x] 8.2 Testa bakgrund/återupptagning och osparade ändringar.
    - [ ] 8.3 Kontrollera båda CI och behov av native-build.
    - [ ] 8.4 Merga fas-PR efter verifiering.
 
@@ -53,11 +53,12 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 
 ## Verifiering hittills
 
-- Båda GitHub CI-arbetsflödena är gröna till och med `898f796` (Validate Smoke Less 6 och Firestore rules emulator).
+- Båda GitHub CI-arbetsflödena är gröna till och med `7c0e0ca` (Validate Smoke Less 6 och Firestore rules emulator).
 - Systemets tillbaka-händelse fångas av en central listener; inbyggda React Native-modaler hanterar `onRequestClose` separat.
 - Registreringsmodalens bekräftelse och återställning är verifierade på fysisk Android-enhet med tillbaka-gest och kryss.
 - SOS städar upp timer och andningsövning vid navigering bort från vyn; efter sparad SOS-registrering rensas navigeringshistoriken.
 - Onboardingens e-postflöde varnar vid osparad e-post eller lösenord. Den synliga tillbaka-knappen och Android Tillbaka använder samma skydd.
 - Navigeringshistoriken rensas när en slutförd SOS-registrering återgår till startsidan, och tom historik ger inte en ny historikpost.
 - Android-telefon: navigering Statistik → Historik → tillbaka, avslutsdialog, registrering, SOS-återställning, konto- och onboarding-inloggning verifierade. Onboardingens inloggning använder appens egen bekräftelse och rensar uppgifter vid bekräftat avbrott.
-- Återstår: datumväljare/övriga formulär, bakgrund/återupptagning, stor text/TalkBack och automatiska regressionstester. Ingen TalkBack-QA är ännu verifierad.
+- Ny Android-testrapport: datumväljare, planändringar, övriga modaler, bakgrund/återupptagning, historik/registreringar, kontosynkronisering, stor text och skärmstorlek fungerar (8/9 godkända). TalkBack ej testat.
+- Återstår: TalkBack och skärmläsaretiketter, verifiering av lokal Android/Google-konfiguration, automatiska regressionstester, native-buildbedömning och slutgranskning före merge.
