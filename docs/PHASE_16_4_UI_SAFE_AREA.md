@@ -4,13 +4,13 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 
 ## Fast checklista (8 × 4 = 32)
 
-**Status:** Pågående. 0/8 huvudpunkter, 8/32 verifierade delpunkter (25 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
+**Status:** Pågående. 2/8 huvudpunkter, 10/32 verifierade delpunkter (31,25 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
 
-1. **Skärmmatris och inventering (3/4)**
+1. **Skärmmatris och inventering (4/4)**
    - [x] 1.1 Inventera alla tabbar och underskärmar.
    - [x] 1.2 Inventera onboarding och kontoflöden.
    - [x] 1.3 Inventera modaler, datumväljare, dialoger och formulär.
-   - [ ] 1.4 Dokumentera testmatris med risker och ägare per vy.
+   - [x] 1.4 Dokumentera testmatris med risker och ägare per vy.
 2. **Safe Area och systemfält (1/4)**
    - [x] 2.1 Granska rotlayout och SafeAreaProvider.
    - [ ] 2.2 Granska statusfält, skärmkanter och kamerahål.
@@ -36,11 +36,11 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
    - [ ] 6.2 Granska modaler och överlägg tillsammans med Safe Area.
    - [ ] 6.3 Granska diagram, statistik och delningsförhandsvisning.
    - [ ] 6.4 Åtgärda verifierade navigations- eller layoutregressioner.
-7. **Automatiska kontroller (3/4)**
+7. **Automatiska kontroller (4/4)**
    - [x] 7.1 Lägg till riktade testfall för identifierade risker.
    - [x] 7.2 Kontrollera TypeScript och ordinarie testsvit.
    - [x] 7.3 Kontrollera Firestore-regel-CI utan onödiga regeländringar.
-   - [ ] 7.4 Dokumentera testtäckning och kvarstående begränsningar.
+   - [x] 7.4 Dokumentera testtäckning och kvarstående begränsningar.
 8. **Acceptans och avslut (0/4)**
    - [ ] 8.1 Stäm av alla skärmar mot inventeringsmatrisen.
    - [ ] 8.2 Dokumentera uppskjutna enhetstester i fas 25.
@@ -59,3 +59,6 @@ En PR för fasen, sammanhängande commits och grön CI innan nästa commit. Efte
 - **Öppet problem:** Kalenderdagarnas bredd kan bli mindre än 48 dp på smala skärmar. Punkt 5.1 och responsivitetskontrollerna förblir öppna tills detta har åtgärdats och verifierats.
 - **7.1–7.3 (automatiska tester):** Tre riktade källkodsbaserade regressionstester lades till i `tests/sessionNavigation.test.cjs` för modalernas Safe Area/scroll, kalendertryckytor och bottennavigering/gemensamma knappar. `Validate Smoke Less 6` kör enligt `.github/workflows/ci.yml` både `npm run typecheck`, `npm run test`, `npm run test:storage` och `npm run test:migration`. Både denna workflow och `Firestore rules emulator` rapporterade `success` på commit `0e3fd27`. Inga Firestore-regler ändrades i fasen. Detta bekräftar inte visuellt beteende på Android.
 - **CI-gate:** Varje efterföljande commit måste få egna gröna kontroller innan nästa ändring.
+
+- **1.4 (dokumentation):** `docs/PHASE_16_4_SCREEN_MATRIX.md` anger riskklass, berörda vyer, återstående kontroll och ansvarig för källkod respektive fysisk acceptans. Alla identifierade huvudvyer är grupperade; fysisk testning är inte markerad som genomförd.
+- **7.4 (dokumentation):** Samma matris beskriver explicit vad CI:s källkodstester täcker och inte täcker (renderad geometri, tangentbord, TalkBack, smala skärmar). Båda CI-kontrollerna var gröna för dokumentationscommit `f16e820`.
