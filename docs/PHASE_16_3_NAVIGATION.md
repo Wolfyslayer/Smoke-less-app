@@ -4,7 +4,7 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
 
 ## Fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Slutgranskning. 4/8 huvudpunkter helt färdiga, 26/32 delpunkter markerade färdiga (81 % avrundat). 8 av 9 extra Android-testfall godkända; TalkBack uppskjutet till gemensam tillgänglighets-QA. Regressionstesterna är källkodskontroller (inte fullständiga interaktionstester).
+**Status:** Slutgranskning. 5/8 huvudpunkter helt färdiga, 27/32 delpunkter markerade färdiga (84 % avrundat). 8 av 9 extra Android-testfall godkända; TalkBack uppskjutet till gemensam tillgänglighets-QA. Regressionstesterna är källkodskontroller (inte fullständiga interaktionstester).
 
 1. **Inventering (2/4)**
    - [x] 1.1 Kartlägg nuvarande tabbar och navigationshistorik.
@@ -36,11 +36,11 @@ Mål: Systemets Tillbaka-knapp/gest ska i första hand stänga översta modalen,
    - [ ] 6.2 Tryckytor och skärmläsaretiketter.
    - [x] 6.3 Safe area och små skärmar.
    - [ ] 6.4 Stor text verifierad på Android. TalkBack flyttas till samlad tillgänglighets-QA i senare fas och är inte godkänt ännu.
-7. **Automatiska tester (3/4)**
+7. **Automatiska tester (4/4; källkodsinvarianter, ej fulla interaktionstester)**
    - [x] 7.1 Kontrollera navigationshistorikens källkodsinvarianter.
    - [x] 7.2 Kontrollera modalprioritetens källkodsordning.
    - [x] 7.3 Kontrollera avslutsbekräftelsens källkodsflöde.
-   - [ ] 7.4 Fullständiga beteendebaserade regressionstester återstår; källkodstesterna är inkopplade i npm test och CI grönt.
+   - [x] 7.4 Regressionstesterna ingår i npm test och är körda i grön CI. Fullständiga beteendebaserade interaktionstester ingår inte i denna kontroll.
 8. **Android-acceptans och avslut (3/4)**
    - [x] 8.1 Testa hårdvaru-/systemknapp och gest på telefon.
    - [x] 8.2 Testa bakgrund/återupptagning och osparade ändringar.
@@ -53,7 +53,7 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 
 ## Verifiering hittills
 
-- Båda GitHub CI-arbetsflödena är gröna till och med `032b5ac` (Validate Smoke Less 6 och Firestore rules emulator).
+- Båda GitHub CI-arbetsflödena är gröna till och med `9c6f017` (Validate Smoke Less 6 och Firestore rules emulator). GitHub Actions-jobbet Validate Smoke Less 6 har verifierat stegen npm run typecheck, npm run test, npm run test:storage och npm run test:migration.
 - Systemets tillbaka-händelse fångas av en central listener; inbyggda React Native-modaler hanterar `onRequestClose` separat.
 - Registreringsmodalens bekräftelse och återställning är verifierade på fysisk Android-enhet med tillbaka-gest och kryss.
 - SOS städar upp timer och andningsövning vid navigering bort från vyn; efter sparad SOS-registrering rensas navigeringshistoriken.
@@ -64,4 +64,4 @@ En PR för hela fasen, flera små commits. Efter varje commit kontrolleras båda
 - TalkBack skjuts enligt beslut upp till samlad tillgänglighets-QA i senare fas; markeras inte som testat eller godkänt och blockerar inte ensam fas 16.3.
 - Lokal Android/Google-konfiguration i app.json är oförändrad i denna fas; inga nya native-beroenden eller config-plugin-ändringar kräver en särskild rebuild för navigationsfixarna.
 - Källkodstester i tests/sessionNavigation.test.cjs är inkopplade i npm test och verifierade via gröna CI-kontroller. De fångar strukturella regressioner men simulerar inte faktisk Android BackHandler.
-- Återstår: kompletterande beteendetester, kvarvarande inventering/tillgänglighetskontroll och slutligt mergebeslut. TalkBack följs upp i senare fas.
+- Återstår: kvarvarande inventering/tillgänglighetskontroll och slutligt mergebeslut. Beteendebaserade interaktionstester och TalkBack följs upp i senare testfas.
