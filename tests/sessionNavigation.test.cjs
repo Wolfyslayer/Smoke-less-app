@@ -49,3 +49,33 @@ test('registration and SOS retain guarded exit and timer cleanup',()=>{
  assert.match(session,/if\(current\.registerOpen\)/);
  assert.match(navigation,/const resetToHome=useCallback/);
 });
+
+// Source-level regression checks complement, but do not replace, device QA.
+test('modal content remains scrollable and respects system insets',()=>{
+ for(const path of ['src/components/CompactDateModal.tsx','src/components/ConfirmationDialog.tsx','src/components/OnboardingAuthModal.tsx']){
+  const source=read(path);
+  assert.match(source,/useSafeAreaInsets/);
+  assert.match(source,/<ScrollView/);
+  assert.match(source,/insets\.top/);
+  assert.match(source,/insets\.bottom/);
+ }
+ const register=read('src/components/CigaretteRegisterModal.tsx');
+ assert.match(register,/confirmScroll/);
+ assert.match(register,/paddingBottom:Math\.max\(insets\.bottom,20\)/);
+});
+
+test('calendar dates use their whole cell without overlapping adjacent dates',()=>{
+ const source=read('src/components/CompactDateModal.tsx');
+ assert.match(source,/cell:\{width:'14\.285714%',minHeight:48/);
+ assert.match(source,/day:\{width:'100%',minHeight:48/);
+ assert.match(source,/accessibilityLabel=\{pretty\(date\)\}/);
+ assert.match(source,/accessibilityState=\{\{selected,disabled\}\}/);
+});
+
+test('bottom tabs and shared buttons preserve accessible touch targets',()=>{
+ const nav=read('src/components/BottomNavigation.tsx');
+ const ui=read('src/components/ui.tsx');
+ assert.match(nav,/navItem:\{[^}]*minHeight:48/);
+ assert.match(nav,/accessibilityRole="tab" accessibilityLabel=\{item\.label\}/);
+ assert.match(ui,/button:\{[^}]*minHeight:48/);
+});
