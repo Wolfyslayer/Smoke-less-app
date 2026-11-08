@@ -17,7 +17,7 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
  const today=new Date();today.setHours(0,0,0,0);
  const move=(delta:number)=>{const next=new Date(year,month+delta,1);setYear(next.getFullYear());setMonth(next.getMonth());};
  const size=Math.min(Math.max(width-32,0),400);
- const daySize=Math.min(48,Math.max(0,(size-32)/7));
+ // The entire calendar cell is tappable; never overlap adjacent dates on narrow screens.
  return <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} accessibilityViewIsModal>
   <View style={s.backdrop}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[s.scrollContent,{paddingTop:Math.max(insets.top,16),paddingBottom:Math.max(insets.bottom,16)}]}><View style={[s.panel,{width:size}]}>
    <Text accessibilityRole="header" style={s.title}>{title}</Text>
@@ -29,7 +29,7 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
    <View style={s.grid}>
     {['M','T','O','T','F','L','S'].map((label,i)=><View key={'week'+i} style={s.cell}><Text style={s.weekday}>{label}</Text></View>)}
     {Array.from({length:first},(_,i)=><View key={'empty'+i} style={s.cell}/>)}
-    {Array.from({length:days},(_,i)=>{const day=i+1;const date=new Date(year,month,day,12);const disabled=date.getTime()<=today.getTime();const selected=chosen?.getFullYear()===year&&chosen?.getMonth()===month&&chosen?.getDate()===day;return <View key={day} style={s.cell}><Pressable accessibilityRole="button" accessibilityLabel={pretty(date)} accessibilityState={{selected,disabled}} disabled={disabled} onPress={()=>setChosen(date)} style={[s.day,{width:daySize,height:daySize,borderRadius:daySize/2},selected&&s.selected]}><Text style={[s.dayText,disabled&&s.disabled,selected&&s.selectedText]}>{day}</Text></Pressable></View>})}
+    {Array.from({length:days},(_,i)=>{const day=i+1;const date=new Date(year,month,day,12);const disabled=date.getTime()<=today.getTime();const selected=chosen?.getFullYear()===year&&chosen?.getMonth()===month&&chosen?.getDate()===day;return <View key={day} style={s.cell}><Pressable accessibilityRole="button" accessibilityLabel={pretty(date)} accessibilityState={{selected,disabled}} disabled={disabled} onPress={()=>setChosen(date)} style={[s.day,selected&&s.selected]}><Text style={[s.dayText,disabled&&s.disabled,selected&&s.selectedText]}>{day}</Text></Pressable></View>})}
    </View>
    <Text style={s.summary}>{chosen?'Valt: '+pretty(chosen):'Välj ett framtida datum'}</Text>
    <View style={s.actions}>
@@ -51,7 +51,7 @@ const s=StyleSheet.create({
  grid:{flexDirection:'row',flexWrap:'wrap'},
  cell:{width:'14.285714%',minHeight:48,alignItems:'center',justifyContent:'center'},
  weekday:{fontSize:12,color:C.muted,fontWeight:'800'},
- day:{alignItems:'center',justifyContent:'center'},
+ day:{width:'100%',minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:12},
  dayText:{fontSize:14,color:C.white},
  disabled:{color:C.dim,opacity:.45},
  selected:{backgroundColor:C.lime},
