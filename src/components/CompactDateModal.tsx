@@ -1,11 +1,13 @@
 import React,{useEffect,useState} from 'react';
-import {Modal,Pressable,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
+import {Modal,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {C} from '../theme';
 
 type Props={visible:boolean;value:Date|null;onCancel:()=>void;onConfirm:(date:Date)=>void;title?:string};
 const pretty=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj stoppdatum'}:Props){
  const {width}=useWindowDimensions();
+ const insets=useSafeAreaInsets();
  const [chosen,setChosen]=useState<Date|null>(value);
  const [month,setMonth]=useState(new Date().getMonth());
  const [year,setYear]=useState(new Date().getFullYear());
@@ -14,9 +16,10 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
  const days=new Date(year,month+1,0).getDate();
  const today=new Date();today.setHours(0,0,0,0);
  const move=(delta:number)=>{const next=new Date(year,month+delta,1);setYear(next.getFullYear());setMonth(next.getMonth());};
- const size=Math.min(width-48,360);
+ const size=Math.min(Math.max(width-32,0),400);
+ // The entire calendar cell is tappable; never overlap adjacent dates on narrow screens.
  return <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} accessibilityViewIsModal>
-  <View style={s.backdrop}><View style={[s.panel,{width:size}]}>
+  <View style={s.backdrop}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[s.scrollContent,{paddingTop:Math.max(insets.top,16),paddingBottom:Math.max(insets.bottom,16)}]}><View style={[s.panel,{width:size}]}>
    <Text accessibilityRole="header" style={s.title}>{title}</Text>
    <View style={s.nav}>
     <Pressable accessibilityRole="button" accessibilityLabel="Föregående månad" style={s.navButton} onPress={()=>move(-1)}><Text style={s.arrow}>‹</Text></Pressable>
@@ -33,29 +36,30 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
     <Pressable accessibilityRole="button" onPress={onCancel} style={s.secondary}><Text style={s.secondaryText}>Avbryt</Text></Pressable>
     <Pressable accessibilityRole="button" accessibilityState={{disabled:!chosen}} disabled={!chosen} onPress={()=>{if(chosen)onConfirm(chosen);}} style={[s.primary,!chosen&&{opacity:.45}]}><Text style={s.primaryText}>Välj datum</Text></Pressable>
    </View>
-  </View></View>
+  </View></ScrollView></View>
  </Modal>;
 }
 const s=StyleSheet.create({
- backdrop:{flex:1,backgroundColor:'rgba(0,0,0,0.72)',alignItems:'center',justifyContent:'center',padding:16},
+ backdrop:{flex:1,backgroundColor:'rgba(0,0,0,0.72)'},
+ scrollContent:{flexGrow:1,alignItems:'center',justifyContent:'center',paddingHorizontal:16},
  panel:{backgroundColor:C.surface,borderColor:C.border,borderWidth:1,borderRadius:22,padding:16,gap:12},
  title:{fontSize:19,fontWeight:'900',color:C.white,textAlign:'center'},
  nav:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
- navButton:{width:40,height:40,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},
+ navButton:{width:48,height:48,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},
  arrow:{fontSize:27,color:C.white,lineHeight:32},
  month:{color:C.white,fontWeight:'800',fontSize:15,textTransform:'capitalize'},
  grid:{flexDirection:'row',flexWrap:'wrap'},
- cell:{width:'14.285714%',height:38,alignItems:'center',justifyContent:'center'},
+ cell:{width:'14.285714%',minHeight:48,alignItems:'center',justifyContent:'center'},
  weekday:{fontSize:12,color:C.muted,fontWeight:'800'},
- day:{width:34,height:34,borderRadius:17,alignItems:'center',justifyContent:'center'},
+ day:{width:'100%',minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:12},
  dayText:{fontSize:14,color:C.white},
  disabled:{color:C.dim,opacity:.45},
  selected:{backgroundColor:C.lime},
  selectedText:{color:C.background,fontWeight:'900'},
  summary:{fontSize:13,color:C.muted,textAlign:'center'},
  actions:{flexDirection:'row',gap:10},
- secondary:{flex:1,minHeight:44,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},
+ secondary:{flex:1,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},
  secondaryText:{color:C.white,fontWeight:'800'},
- primary:{flex:1,minHeight:44,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.lime},
+ primary:{flex:1,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.lime},
  primaryText:{color:C.background,fontWeight:'900'}
 });
