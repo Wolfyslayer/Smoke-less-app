@@ -62,3 +62,14 @@ Efter att PR #161 skapades uppdaterades `main` med en extra `./plugins/withCusto
 - CI:s layouttester kontrollerar **källkodsmönster**, inte faktisk renderad geometri, tangentbord eller TalkBack.
 - På skärmar där kalendercellens bredd understiger 48 dp uppnås inte 48 dp i båda riktningar. Detta måste bedömas på enhet; inga falska tillgänglighetsgodkännanden.
 - main har debug-keystore-plugin som saknas i denna äldre fasbranch. Bevara main-ändringarna vid merge; ingen hemlig keystore ska läggas i Git.
+
+## Safe Area – statisk genomgång av systemfält (16.4, punkt 2.2)
+
+**Granskade källor:** `app/_layout.tsx`, `src/components/AppSessionView.tsx`, `src/components/BottomNavigation.tsx`. Detta är en statisk granskning, inte en fysisk verifiering av kamerahål eller Androids navigeringslägen.
+
+- Rotlayouten omsluter `Stack` och intro-overlay med `SafeAreaProvider`. `StatusBar` har ljus ikonstil och döljs under den två sekunder långa introduktionen; appens vanliga innehåll ligger i en `flex:1`-rot.
+- Sessionsvyns huvudflikar använder `paddingTop:Math.max(insets.top,18)+12` i sin `ScrollView`. Inloggningen före onboarding använder `Math.max(insets.top,30)+36`. Dessa vägar har uttrycklig toppmarginal för statusfältet, men marginalerna skiljer sig åt avsiktligt och måste kontrolleras visuellt.
+- `BottomNavigation` använder `paddingBottom:Math.max(insets.bottom,10)` och en separat 48 dp hög tryckyta för varje flik. Huvudflikarnas `ScrollView` är ett syskon ovanför bottennavigeringen, inte ett absolut positionerat lager. Därför syns ingen direkt dubbel bottom-padding i denna kodväg.
+- Splash-overlay är helskärmstäckande och statusfältet dolt medan den visas. Det är avsiktligt; efter introduktionen återgår statusfältet.
+- **Kvarstår:** fysisk granskning med kamerahål, statusfält, gestnavigering, treknappsnavigering, kant-till-kant-läge och maximal text-/skärmskalning. Rotens `StatusBar`-stil bekräftar inte i sig att Android 15+/17 hanterar alla systemfält korrekt.
+- **Risk att följa upp:** huvudflikarnas toppmarginal `Math.max(insets.top,18)+12` kan ge extra luft på enheter med stora toppinsets. Den ska inte ändras utan visuellt underlag. Kalenderns smala tryckytor är fortsatt öppet tillgänglighetsproblem.
