@@ -1,7 +1,7 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const vm=require('node:vm');const ts=require('typescript');const React=require('react');const {renderToStaticMarkup:render}=require('react-dom/server');
-let width=360,fontScale=1;
+let width=360,fontScale=1,capturedActions=null,capturedViews=null;
 const flat=style=>Object.assign({},...[typeof style==='function'?style({pressed:false}):style].flat(Infinity).filter(Boolean));
-const element=tag=>function Element({children,style,accessibilityRole,accessibilityLabel,accessibilityState,accessible,...props}){return React.createElement(tag,{style:flat(style),role:accessibilityRole,'aria-label':accessibilityLabel,...(tag==='button'?{disabled:props.disabled}:{}),...(props.fill?{fill:props.fill}:{}),...(props.stroke?{stroke:props.stroke}:{})},children);};
+const element=tag=>function Element({children,style,accessibilityRole,accessibilityLabel,accessibilityState,accessible,...props}){if(capturedActions&&tag==='button')capturedActions.push({label:accessibilityLabel,children,onPress:props.onPress,disabled:props.disabled,state:accessibilityState});if(capturedViews&&props.testID)capturedViews.push({id:props.testID,style:flat(style)});return React.createElement(tag,{style:flat(style),role:accessibilityRole,'aria-label':accessibilityLabel,...(tag==='button'?{disabled:props.disabled}:{}),...(props.fill?{fill:props.fill}:{}),...(props.stroke?{stroke:props.stroke}:{})},children);};
 const rn={View:element('div'),Text:element('span'),Pressable:element('button'),ScrollView:element('section'),Modal:({visible,children})=>visible?children:null,StyleSheet:{create:s=>s},useWindowDimensions:()=>({width,height:900,fontScale}),ActivityIndicator:element('span')};
 const svg={__esModule:true,default:element('svg'),Circle:element('circle'),Rect:element('rect'),Text:element('text'),TSpan:element('tspan')};
 const cache=new Map();
@@ -13,6 +13,7 @@ function load(file){
   if(id==='lucide-react-native')return new Proxy({},{get:()=>element('span')});
   if(id==='react-native-safe-area-context')return {useSafeAreaInsets:()=>({top:24,bottom:24,left:0,right:0})};
   if(id==='@react-native-async-storage/async-storage')return {getItem:async()=>null,setItem:async()=>assert.fail('Render must not save'),getAllKeys:async()=>[]};
+  if(id==='expo-constants')return {expoConfig:{version:'QA'}};
   if(['expo-notifications','expo-sharing','expo-file-system/legacy'].includes(id))return {};
   if(id.endsWith('.png'))return 1;
   if(id.endsWith('useReducedMotion'))return {useReducedMotion:()=>true};
@@ -33,7 +34,7 @@ function themed(name,child,extra={}){return render(React.createElement(ThemeCont
 test('shared controls, navigation, dialogs and SVG render with the chosen palette',()=>{
  for(const name of ['light','dark'])for(const size of [320,768])for(const scale of [1,2]){width=size;fontScale=scale;
   const ui=themed(name,React.createElement(AppCard,null,React.createElement(AppButton,{title:'Registrera',onPress:()=>assert.fail()})));assert(ui.includes(palettes[name].surface));assert(ui.includes(palettes[name].onAccent));
-  const nav=themed(name,React.createElement(BottomNavigation,{tab:'home',onNavigate:()=>assert.fail()}));assert(nav.includes('Hem'));assert(nav.includes(palettes[name].accentSubtle));
+  const nav=themed(name,React.createElement(BottomNavigation,{tab:'home',onNavigate:()=>assert.fail()}));assert(nav.includes('Hem'));assert(nav.includes(palettes[name].accent));
   const dialog=themed(name,React.createElement(ConfirmationDialog,{dialog:{title:'Bekräfta',message:'Kontrollerat test',confirm:()=>assert.fail()},onClose:()=>{}}));assert(dialog.includes(palettes[name].surface));assert(dialog.includes('Kontrollerat test'));
   const date=themed(name,React.createElement(CompactDateModal,{visible:true,value:null,onCancel:()=>{},onConfirm:()=>assert.fail()}));assert(date.includes('Välj stoppdatum'));
   for(const [todayCount,dailyGoal] of [[0,0],[2,10],[15,10]]){const art=themed(name,React.createElement(DailyProgressShareArtwork,{todayCount,dailyGoal}));assert(art.includes(palettes[name].surface));assert(art.includes(palettes[name].accent));assert(art.includes('Dagens framsteg'));}
@@ -57,6 +58,8 @@ test('plan, history, stats, settings, profile, benefits and onboarding render bo
   ['StatsScreen',{data,period:7,onPeriodChange:noop,clock,weekly:[0,0,0,0,0,0,0],todayCount:0,recentCravingsCount:0,cravingTriggers:[],cigaretteTriggers:[]}],
   ['SettingsScreen',{profile,goal:10,data,onChangeMode:noop,onChangeDailyTarget:noop}],
   ['ProfileScreen',{profile,accountEmail:null,todayCount:0,dailyGoal:10,onNavigate:noop}],
+  ['JourneyScreen',{profile,accountEmail:null,todayCount:0,dailyGoal:10,onNavigate:noop}],
+  ['AboutScreen',{onNavigate:noop}],
   ['BenefitsScreen',{data}],
   ['AccountScreen',{accountUser:null,accountMode:'login',accountEmail:'',accountPassword:'',syncStatus:'Test',onBack:noop,googleConfigured:false}],
   ...[0,1,2,3].map(onStep=>['OnboardingScreen',{onStep,mode:'reduce',speed:'gentle',scheduled:false,quitDay:'',baseline:'12',packSize:'20',packPrice:'0',setOnStep:noop,setMode:noop,setSpeed:noop,setScheduled:noop,setQuitDay:noop,setBaseline:noop,setPackSize:noop,setPackPrice:noop,begin:noop}]),
@@ -68,4 +71,28 @@ test('plan, history, stats, settings, profile, benefits and onboarding render bo
 test('UI modules no longer import a fixed palette or use hardcoded surface colors',()=>{
  function files(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(d=>d.isDirectory()?files(path.join(dir,d.name)):[path.join(dir,d.name)]);}
  for(const file of files('src').filter(f=>f.endsWith('.tsx'))){const s=fs.readFileSync(file,'utf8');assert.doesNotMatch(s,/import\s*\{C\}\s*from/,file);assert.doesNotMatch(s,/#[0-9a-f]{3,8}\b/i,file);}
+});
+
+test('profile category buttons navigate to five distinct destinations and keep sharing outside the overview',()=>{
+ const {profileCategories}=load('src/profileCategories.ts');const {ProfileOverview}=load('src/components/ProfileOverview.tsx');
+ assert.equal(profileCategories.length,5);assert.equal(new Set(profileCategories.map(c=>c.destination)).size,5);
+ for(const accountEmail of [null,'qa@example.invalid']){const events=[];capturedActions=[];const html=themed('light',React.createElement(ProfileOverview,{accountEmail,onNavigate:tab=>events.push(tab)}));assert.deepEqual(events,[]);for(const category of profileCategories){const action=capturedActions.find(a=>a.label===category.title);assert(action);action.onPress();assert.equal(events.at(-1),category.destination);}assert.equal(html.includes('Gästläge'),accountEmail===null);assert.equal(html.includes('qa@example.invalid'),accountEmail!==null);assert(!html.includes('Förbered bild för delning'));capturedActions=null;}
+});
+
+test('data category forwards existing guarded actions and separates guest reset from account imports',()=>{
+ const {AccountSettingsRoutes}=load('src/components/AccountSettingsRoutes.tsx');
+ const p={mode:'reduce',baseline:12,packSize:20,packPrice:0,speed:'gentle',startAt:'2026-11-01T12:00:00Z'};
+ for(const signedIn of [false,true]){const events=[];const action=name=>()=>events.push(name);const model={p,data:{profile:p,entries:[],cravings:[],checkins:[]},tab:'backup',accountUser:signedIn?{uid:'qa',email:'qa@example.invalid'}:null,syncStatus:'Test',go:action('navigate'),goBack:()=>{events.push('back');return true},accountEmail:'',accountPassword:'',deletion:{enabled:false,request:action('delete')},retrySync:action('retry'),requestGuestReset:action('guest-reset'),requestGuestMigration:action('migrate'),previewCloud:action('preview'),requestCloudImport:action('import'),inspectCloudData:action('inspect')};
+  capturedActions=[];themed('dark',React.createElement(AccountSettingsRoutes,{model}));assert.deepEqual(events,[]);
+  const reset=capturedActions.find(a=>a.label==='Radera gästhistorik (med bekräftelse)');const importAction=capturedActions.find(a=>a.label==='Importera molnhistorik (med bekräftelse)');assert.equal(!!reset,!signedIn);assert.equal(!!importAction,signedIn);if(signedIn){importAction.onPress();assert.deepEqual(events,['import']);}else{reset.onPress();assert.deepEqual(events,['guest-reset']);}capturedActions=null;
+ }
+});
+
+test('cloud data controls stay disabled while another account operation is active',()=>{
+ const {AccountCloudActions}=load('src/components/AccountCloudActions.tsx');
+ for(const state of [{busy:true},{migrationBusy:true},{cloudBusy:true}]){capturedActions=[];themed('light',React.createElement(AccountCloudActions,{busy:false,migrationBusy:false,cloudBusy:false,...state,result:null,onMigrate:()=>assert.fail(),onPreview:()=>assert.fail(),onImport:()=>assert.fail(),onInspect:()=>assert.fail()}));assert.equal(capturedActions.length,4);assert(capturedActions.every(action=>action.disabled));capturedActions=null;}
+});
+
+test('selected bottom tabs use a round indicator without a filled selection rectangle',()=>{
+ for(const name of ['light','dark'])for(const tab of ['home','plan','register','stats','profile']){capturedViews=[];capturedActions=[];themed(name,React.createElement(BottomNavigation,{tab,onNavigate:()=>{}}));const selected=capturedActions.filter(action=>action.state?.selected);assert.equal(selected.length,1);const dots=capturedViews.filter(v=>v.id.startsWith('bottom-nav-indicator-'));assert.equal(dots.filter(v=>v.style.backgroundColor===palettes[name].accent).length,1);assert(dots.every(v=>v.style.borderRadius>=v.style.width/2&&v.style.width===v.style.height));for(const icon of capturedViews.filter(v=>v.id.startsWith('bottom-nav-icon-'))){assert(icon.style.borderRadius>=Math.min(icon.style.width,icon.style.height)/2);if(!icon.id.endsWith('register'))assert.equal(icon.style.backgroundColor,undefined);}capturedViews=null;capturedActions=null;}
 });

@@ -2,6 +2,14 @@
 
 ## Aktiv fas
 
+- Senaste styrning: rätta fyrkantig navmarkering, använd egna bekräftelsemodaler och fortsätt sedan självständigt genom de nya faserna på main. UI-fix i fas 28: rund indikator/klippt tryckyta, sista Alert.alert ersatt med ConfirmationDialog, tester för avbryt/dubbeltryck och alla flikval. 325 ordinarie tester lokalt PASS. Main har nu faser 29–32; läs deras fulla krav före fasstart och bevara öppna native-/publiceringsgrindar. Inga Android-byggen startas enligt tidigare beslut.
+
+- **Nytt användarbeslut:** Designen i fas 27 ser bättre ut och utvecklingen går vidare till fas 28. Branch `feat/phase-28-profile-settings`, separat PR ovanpå fas 27. Main:s PR #176 (`b205507`) är inläst; tidigare säkerhetsarbete och design är bevarade. Fas 25/27 har fortsatt öppna enhetsgrindar och är inte mergade som slutgodkända.
+- Läs `PHASE_28_PROFILE_SETTINGS.md` och `PHASE_28_CHECKLIST.md`. Profilen har fem kategorier; planval ligger under Plan; tema/widget/påminnelser är separata avsnitt; synk/import/gästkopiering och äldre kopior finns under Data. Delning finns i JourneyScreen; About läser faktisk Expo-version. Befintliga handlers, flaggor och lagringsnycklar bevaras.
+- Lokalt TypeScript, 322 ordinarie tester, 10 storage, 6 migration och webbexport PASS. Kategori-/backkedjor samt vidarekoppling till befintliga datahandlers provas. Status 6/8 och 29/32 efter grön senaste CI. Fysisk 7.3/7.4 och PR-avslut 8.4 är öppna. Ingen Android-build startas; fas 28 kräver ingen ny native-konfiguration, tidigare buildbehov från fas 27 kvarstår.
+
+## Föregående fas 27 (historik)
+
 - **Nytt beslut 2026-11-15:** Fas 27 prioriteras nu enligt användarens uttryckliga önskemål. Branch `feat/phase-27-premium-ui-themes`, separat staplad PR med bas fas 25:s branch. Main:s PR #174 (`dc7f93a`) är inläst; befintligt säkerhetsarbete bevaras. Fas 25 är vilande med öppna QA/releasepunkter, inte godkänd eller mergad. Fas 26 väntar på lansering.
 - Läs `PHASE_27_DESIGN.md`, `PHASE_27_CHECKLIST.md` och `PHASE_27_QA.md`. Aktiv PR #175 mot fas 25:s branch. Full reaktiv temamigrering, enhetslokal preferens, statusfält, dialoger, SVG och reducerad rörelse är implementerade. 317 ordinarie test, 10 storage, 6 migration, TypeScript och webbexport passerar. 3/8 huvudpunkter och 24/32 efter grön senaste CI. Fysisk/visuell acceptans (2.4, 3.4, 6.1–6.4, 7.4) och 8.4 är öppna. Ingen ansluten webbläsare fanns för visuell QA. Android-build krävs för userInterfaceStyle automatic men ska inte startas; användaren bygger senare. Merga inte ofärdig fas 25 eller fas 27 som slutgodkänd.
 

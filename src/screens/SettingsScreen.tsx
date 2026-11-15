@@ -1,23 +1,19 @@
-import {LegacyRecoveryCleanup} from '../components/LegacyRecoveryCleanup';
+import {SettingsSection} from '../components/SettingsSection';
 import {AppearanceSettings} from '../components/AppearanceSettings';
 import React,{useEffect,useState} from 'react';
 import {ReminderSettings} from '../components/ReminderSettings';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import {AppCard,AppButton} from '../components/ui';
-import type {Profile,Data} from '../domain';
+import type {Data} from '../domain';
 import {setWidgetOptIn,widgetOptedIn,refreshWidgetSnapshot} from '../widgets/widgetPreferences';
-import {SettingsPlanSection} from './SettingsPlanSection';
 
-type Props={
- profile:Profile;goal:number;data:Data;
- onChangeMode:(mode:'reduce'|'quit')=>void;onChangeDailyTarget:React.ComponentProps<typeof SettingsPlanSection>['onChangeDailyTarget'];
-};
+type Props={data:Data};
 export function validReminderTime(hourText:string,minuteText:string){return /^[0-9]{1,2}$/.test(hourText)&&/^[0-9]{1,2}$/.test(minuteText)&&Number(hourText)<=23&&Number(minuteText)<=59}
 export function reminderStatusMessage(optedIn:boolean,permissionGranted:boolean,hasSavedId:boolean,hasScheduledId:boolean){if(!optedIn)return 'Påminnelser är avstängda.';if(!permissionGranted)return 'Notisbehörighet saknas. Tillåt notiser i telefonens inställningar och aktivera sedan påminnelsen igen.';return hasSavedId&&hasScheduledId?'Påminnelse är schemalagd och notiser är tillåtna.':'Ingen aktiv påminnelse hittades. Tryck Aktivera påminnelse för att schemalägga.'}
 const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="surface" style={style}>{children}</AppCard>;
 const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="elevated"/>;
-export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarget}:Props){
+export function SettingsScreen({data}:Props){
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 
  const [widgetEnabled,setWidgetEnabled]=useState(false);
@@ -40,9 +36,9 @@ export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarg
  };
 
  return <View style={styles.screen}>
-  <AppearanceSettings/>
-  <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
-  <View style={styles.inlineHeading}><Text accessibilityRole="header" style={styles.heading}>Android-widget</Text></View>
+  <SettingsSection title="Utseende" description="Ljust, mörkt eller systemtema"><AppearanceSettings/></SettingsSection>
+
+  <SettingsSection title="Android-widget" description="Välj vad som visas på hemskärmen">
   <Card style={{gap:10,padding:18}}>
    <Text style={styles.muted}>Du väljer själv om dagens antal och mål får visas på hemskärmen. Funktionen är under utveckling och kräver en kommande Android-build.</Text>
    <Pressable accessibilityRole="switch" accessibilityLabel="Tillåt dagsframsteg i Android-widget" accessibilityState={{checked:widgetEnabled,disabled:widgetBusy}} disabled={widgetBusy} onPress={toggleWidget} style={[styles.inline,{justifyContent:'space-between',minHeight:48,paddingVertical:10}]}>
@@ -50,8 +46,9 @@ export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarg
    </Pressable>
    {widgetMessage?<Text accessibilityLiveRegion="polite" style={styles.muted}>{widgetMessage}</Text>:null}
   </Card>
-  <ReminderSettings/>
-  <LegacyRecoveryCleanup/>
+  </SettingsSection>
+  <SettingsSection title="Påminnelser" description="Tider, tysta perioder och frivilliga notiser"><ReminderSettings/></SettingsSection>
+
   <Text style={[styles.muted,{textAlign:'center',paddingHorizontal:12,paddingVertical:9}]}>Smoke Less hjälper dig att följa din utveckling och ersätter inte medicinsk rådgivning.</Text>
  </View>;
 }

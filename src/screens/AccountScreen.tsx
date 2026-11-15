@@ -7,12 +7,12 @@ type AccountUser={email?:string|null};
 type Props={
  deletionEnabled:boolean;onDeleteAccount:()=>void;
  accountUser:AccountUser|null;emailVerified:boolean;verificationBusy:boolean;accountBusy:boolean;
- syncStatus:string;cloudPreviewResult:string|null;cloudPreviewBusy:boolean;migrationBusy:boolean;
+ cloudPreviewBusy:boolean;migrationBusy:boolean;
  accountMode:'login'|'signup';accountEmail:string;accountPassword:string;
- onBack:()=>void;onVerification:(action:'send'|'refresh')=>void;onGuestMigration:()=>void;
- onCloudPreview:()=>void;onCloudImport:()=>void;onEmailChange:(value:string)=>void;
+ onBack:()=>void;onVerification:(action:'send'|'refresh')=>void;
+ onEmailChange:(value:string)=>void;
  onPasswordChange:(value:string)=>void;onAccountAction:(action:'login'|'signup'|'reset'|'logout')=>void;
- googleConfigured:boolean;onGoogleSignIn:()=>void;onLinkGoogle:()=>void;onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
+ googleConfigured:boolean;onGoogleSignIn:()=>void;onLinkGoogle:()=>void;onToggleAccountMode:()=>void;onPasswordReset:()=>void;onOpenData:()=>void;
 };
 const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 function Card({children,style}:{children:React.ReactNode;style?:any}){
@@ -21,17 +21,17 @@ return <View style={[s.card,style]}>{children}</View>}
 function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){
  const C=useThemeColors(); const s=useThemeStyles(createS);
 return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
-export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
+export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,emailVerified,verificationBusy,accountBusy,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onOpenData}:Props){
  const C=useThemeColors(); const s=useThemeStyles(createS);
 
  return <View style={{gap:20}}>
 
- <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={()=>onBack()} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
+ <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka" accessibilityHint="Återgår till föregående vy" onPress={()=>onBack()} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka</Text></Pressable>
  <Card style={{gap:12,padding:19,backgroundColor:C.accentSubtle,borderColor:C.border}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:13}}><View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={25} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountUser?'Ditt Smoke Less-konto':'Skydda din resa'}</Text><Text style={s.muted}>{accountUser?.email||'Logga in eller skapa ett konto för molnsäkerhetskopiering.'}</Text></View></View>
+  <View style={{flexDirection:'row',alignItems:'center',gap:13}}><View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={25} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountUser?'Ditt Smoke Less-konto':'Skydda din resa'}</Text><Text style={s.muted}>{accountUser?.email||'Logga in eller skapa ett konto för kontosynk.'}</Text></View></View>
  </Card>
   {accountUser?<Card style={{gap:13,padding:18}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Molnsäkerhetskopia</Text><Text style={s.muted}>Automatisk Firestore-synkronisering</Text></View></View>
+  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Kontouppgifter</Text><Text style={s.muted}>E-post och inloggningssätt</Text></View></View>
   <View style={{gap:9,padding:13,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border}}>
    <Text style={s.cardTitle} accessibilityRole="header">E-postverifiering</Text>
    <Text style={{color:emailVerified?C.lime:C.warning,fontSize:15,fontWeight:'800'}}>{emailVerified?'✓ Verifierad e-postadress':'E-postadressen är inte verifierad'}</Text>
@@ -44,11 +44,6 @@ export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,email
    <Btn title={accountBusy?'Vänta…':'Koppla Google till mitt konto'} secondary disabled={accountBusy||!googleConfigured||!accountPassword} onPress={onLinkGoogle}/>
    {!googleConfigured?<Text style={s.muted}>Google-inloggning är inte konfigurerad i den här appversionen.</Text>:null}
   </View>
-  <Text style={s.muted} accessibilityLiveRegion="polite">{syncStatus||'Din historik synkroniseras automatiskt när appen öppnas och när du gör ändringar. Vid konflikt skyddas dina befintliga data.'}</Text>
-  {cloudPreviewResult?<Text style={s.muted} accessibilityLiveRegion="polite">{cloudPreviewResult}</Text>:null}
-  <Btn title={migrationBusy?'Kopierar gästhistorik…':'Kopiera gästhistorik till kontot'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onGuestMigration}/>
-  <Btn title={cloudPreviewBusy?'Läser molndata…':'Förhandsgranska molndata'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onCloudPreview}/>
-  <Btn title={cloudPreviewBusy?'Vänta…':'Importera molnhistorik (med bekräftelse)'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onCloudImport}/>
  </Card>:<Card style={{gap:14,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountMode==='login'?'Välkommen tillbaka':'Skapa ditt konto'}</Text><Text style={s.muted}>Spara din resa tryggt med molnsäkerhetskopiering.</Text></View></View>
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" keyboardType="email-address" autoComplete="email" placeholder="E-postadress" placeholderTextColor={C.dim} value={accountEmail} onChangeText={onEmailChange} style={s.input}/>
@@ -68,9 +63,8 @@ export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,email
   <Btn title={accountBusy?'Skickar…':'Skicka länk för lösenordsbyte'} secondary disabled={accountBusy||!accountUser.email} onPress={onPasswordReset}/>
   <View style={{height:1,backgroundColor:C.border}}/>
   <Text style={s.cardTitle} accessibilityRole="header">Radera data och konto</Text>
-  <Btn title={cloudPreviewBusy?'Kontrollerar…':'Kontrollera vad som finns i molnet'} secondary disabled={cloudPreviewBusy||migrationBusy||accountBusy} onPress={onInspectCloud}/>
   {deletionEnabled?<><Text style={s.muted}>Radera ditt konto och tillhörande kontohistorik permanent. Gästhistorik och andra kontons aktiva historik behålls. Logga in på nytt först; läs bekräftelsen innan du fortsätter.</Text><Btn title="Radera konto och kontohistorik" secondary disabled={accountBusy||migrationBusy||cloudPreviewBusy} onPress={onDeleteAccount}/></>:<Text style={s.muted}>Kontoradering är inte tillgänglig i den här förhandsversionen. Din kontohistorik synkroniseras via Firebase; gästhistorik finns bara på enheten.</Text>}
-  <Btn title="Visa historik och synkronisering" secondary onPress={()=>onOpenSettings()}/>
+  <Btn title="Visa historik och synkronisering" secondary onPress={()=>onOpenData()}/>
  </Card>:null}
  {!accountUser?<Card style={{gap:10,padding:17,borderColor:C.warning,backgroundColor:C.surface}}>
   <Text style={[s.cardTitle,{color:C.warning}]}>⚠️ Skydda din historik</Text>

@@ -31,7 +31,7 @@ test('share card model does not leak unrelated fields',()=>{
  assert.doesNotMatch(JSON.stringify(card),/private@example.com|secret/);
 });
 test('preview is opt-in and card does not access account data',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/showSharePreview,setShowSharePreview/);
  assert.match(profile,/showSharePreview\?<><View[^>]*><DailyProgressShareArtwork/);
  assert.match(profile,/setShowSharePreview\(previewOpenRef\.current\)/);
@@ -102,7 +102,7 @@ test('shared card geometry grows for large text and keeps the message below the 
   assert.ok(layout.height>layout.messageY+layout.lines.length*13*layout.scale);
   assert.equal(layout.lines.join(' '),card.message);
  }
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/latestFontScaleRef\.current===fontScale/);
  assert.match(profile,/\[todayCount,dailyGoal,fontScale,themeName\]/);
 });
@@ -120,55 +120,54 @@ test('centered hero keeps its number inside the ring and stacks statistics befor
 });
 
 test('starting a new image clears an earlier sharing error and guards synchronous render errors',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/setPngStatus\('rendering'\);\s*setShareError\(false\);/);
  assert.match(profile,/catch\{if\(generation===exportGenerationRef\.current\)setPngStatus\('error'\);\}/);
 });
 
 test('share confirmation requires preview to remain open after asynchronous availability check',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/if\(!previewOpenRef\.current\|\|exportGenerationRef\.current!==approvedGeneration\|\|!approvedPath/);
  assert.match(profile,/previewOpenRef\.current=!previewOpenRef\.current/);
 });
 
 test('sharing rejects an approval invalidated by closing and reopening the preview',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/const approvedGeneration=exportGenerationRef\.current/);
  assert.match(profile,/exportGenerationRef\.current!==approvedGeneration/);
 });
 
-test('profile account status and quick navigation accommodate large text and screen readers',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
- assert.match(profile,/accessibilityRole="header" style=\{\{color:C\.white,fontWeight:'900',fontSize:20,flexShrink:1\}\}/);
- assert.match(profile,/selectable style=\{\[styles\.muted,\{flexShrink:1\}\]\}/);
- assert.match(profile,/fontSize:15,flexShrink:1,textAlign:'right'/);
- assert.match(profile,/style=\{\[styles\.cardTitle,\{flexShrink:1\}\]\}>\{item\.label\}/);
- assert.match(profile,/sectionRow:\{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12\}/);
+test('profile overview keeps account text selectable and category rows accessible',()=>{
+ const profile=fs.readFileSync('src/components/ProfileOverview.tsx','utf8');
+ assert.match(profile,/selectable style=\{s.description\}/);
+ assert.match(profile,/accessibilityRole="button" accessibilityLabel=\{category.title\}/);
+ assert.match(profile,/row:\{minHeight:88/);
+ assert.match(profile,/rowTitle:\{[^}]*flexShrink:1/);
 });
 
 test('plan summary is one accessible full-width navigation target',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/accessibilityLabel="Öppna min plan" accessibilityHint="Visar dina mål och din plan" onPress=\{\(\)=>onNavigate\('plan'\)\} style=\{\[styles\.row,\{minHeight:72\}\]\}/);
  assert.doesNotMatch(profile,/style=\{styles\.planAction\}/);
 });
 
-test('quick links have stable configuration and context-sensitive account hints',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
- assert.match(profile,/const quickLinks=\[/);
- assert.match(profile,/quickLinks\.map\(item=>/);
- assert.match(profile,/item\.to==='account'\?\(loggedIn\?/);
- assert.match(profile,/item\.to==='backup'\?\(loggedIn\?/);
+test('journey links remain stable while account categories live in the profile overview',()=>{
+ const journey=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
+ assert.match(journey,/const quickLinks=\[/);assert.match(journey,/quickLinks\.map\(item=>/);
+ assert.doesNotMatch(journey,/item.to==='account'/);
+ const categories=fs.readFileSync('src/profileCategories.ts','utf8');
+ assert.match(categories,/title:'Mitt konto'/);assert.match(categories,/destination:'journey'/);
 });
 
 test('PNG preparation and stale-value status are announced to screen readers',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/pngStatus==='rendering'\?<Text accessibilityLiveRegion="polite" accessibilityRole="text"/);
  assert.match(profile,/Bilden förbereds\. Vänta tills den är klar innan du delar\./);
  assert.match(profile,/pngStatus==='ready'\?<Text accessibilityLiveRegion="polite" style=\{styles\.muted\}>Dagens värden har ändrats/);
 });
 
 test('changed daily values invalidate an in-flight PNG export before share',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/useLayoutEffect\(\(\)=>\{/);
  assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*latestFontScaleRef\.current=fontScale;\s*latestThemeRef\.current=themeName;\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
  assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal,fontScale,themeName\]\)/);
@@ -216,19 +215,19 @@ test('home progress hero remains readable with large system fonts and narrow scr
 });
 
 test('closing the preview prevents delayed sharing failures from showing an obsolete error',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/catch\{if\(previewOpenRef\.current&&exportGenerationRef\.current===approvedGeneration\)setShareError\(true\);\}finally\{setSharingPng\(false\);\}/);
  assert.match(profile,/accessibilityHint="Öppnar telefonens delningsdialog för den förhandsgranskade bilden"/);
 });
 
 test('stale image sharing and empty exports cannot report errors on a new preview',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/catch\{if\(previewOpenRef\.current&&exportGenerationRef\.current===approvedGeneration\)setShareError\(true\);\}/);
  assert.match(profile,/if\(!base64\)\{if\(generation===exportGenerationRef\.current&&previewOpenRef\.current\)setPngStatus\('error'\);return;\}/);
 });
 
 test('approved share generation remains visible to error handler',()=>{
- const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
  assert.match(profile,/const approvedGeneration=exportGenerationRef\.current;\s*try\{/);
  assert.doesNotMatch(profile,/try\{\s*const approvedPath=pngPathRef\.current;\s*const approvedCounts=exportCountsRef\.current;\s*const approvedGeneration=/);
 });
