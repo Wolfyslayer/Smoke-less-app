@@ -1113,12 +1113,16 @@ Ordinarie enhetssvit upptäcks automatiskt: 265 tester inklusive serverns 21 sä
 Manuella Android-CI-byggen saknade miljö för main:s obligatoriska keystore-plugin. De förbereds nu med en disponibel QA-testnyckel, utan hemlighetsändringar eller borttagen plugin. Detta är inte Play-signering och får inte ersätta befintlig installation med annan signatur. Ny native QA-build ska köras efter push; signerad produktionsrelease är fortfarande öppen.
 
 Officiella Play-källor kontrollerade 2026-11-15 i `PLAY_DATA_SAFETY_REVIEW.md`. Utkast till policy/listning uppdaterade mot faktisk datahantering. Ansvarig, kontakt, URL, retention och färdig kontoradering återstår. Inget har publicerats eller driftsatts.
-**Status:** Pågår. 0/8 huvudpunkter (0 %) och 7/32 delpunkter (21,875 %) verifierade. Fysisk slutacceptans, radering och release är inte klara.
 
-1. [ ] **Testplan (3/4)**
+Efter grön validate/rules på `3f3d63e`: gästlagring skyddas mot tyst tom återställning vid fel/skadad data, och Inställningar har bekräftad engångsstädning av exakta äldre omärkta backupnycklar. Inget har raderats på telefonen. 272 ordinarie tester + 10 storage + 6 migration + 9 emulatorfall = 297 verifierade automatiska fall; ny slutlig CI inväntas. Enhetsproven är nu kopplade till faktisk commit i QA-protokollet.
+
+**Användarbeslut:** Bygg inte mer nu; användaren ordnar bygge senare. QA-körning 43740485924 är cancelled. Ingen ny APK/release är verifierad. Fortsätt övrig utveckling och tester; beslutet pausar inte fasens övriga arbete.
+**Status:** Pågår. 1/8 huvudpunkter (12,5 %) och 8/32 delpunkter (25 %) verifierade. Fysisk slutacceptans, radering och release är inte klara.
+
+1. [x] **Testplan (4/4)**
    - [x] 1.1 Samla uppskjutna testfall från faser 8–17.
    - [x] 1.2 Fastställ enhetsmatris.
-   - [ ] 1.3 Dokumentera PASS/FAIL och testad commit.
+   - [x] 1.3 Dokumentera PASS/FAIL och testad commit.
    - [x] 1.4 Prioritera blockerande fel.
 2. [ ] **Android-regression (0/4)**
    - [ ] 2.1 Testa onboarding och planer.

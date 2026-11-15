@@ -19,6 +19,8 @@ Gemensam SVG/dagsmodell används på Hem, förhandsvisning och PNG. Lokal prefer
 - SOS-planinställningar flyttade bakom utfällning, dubbla introytor bort från Hem/SOS och situationsbyte rensar tidigare hjälpsamhetssvar. Nya backupnycklar skiljer gäst/konto; äldre omärkta kopior är fortfarande en blockerare för fullständig radering.
 - Testupptäckt ersätter fast fillista: 265 enhetstester inklusive 21 servermockar, 10 storage, 6 migration samt 9 Firestore-emulatortester passerar lokalt. TypeScript passerar. Emulatorn använder endast `smokeless-rules-test`.
 - Manuella CI-byggen får disponibel testkeystore för main:s befintliga plugin. Ingen privat nyckel/hemlighet ändrad. **Det är inte produktionssignering.** Starta fristående QA-build på fasens commit efter gröna obligatoriska CI och inspektera resultat. Befintlig fysisk installation har annan certifikatgrund; avinstallera den inte för att prova CI-APK.
+- **Senaste styrning från användaren: bygg inte nu, användaren fixar det senare.** Workflow 43740485924 är cancelled. Starta inga fler byggen. Fortsätt kod/test/underlag; byggets uppskjutande är inte en paus av utvecklingen.
+- `3f3d63e` har grön validate/rules. Därefter tillagt: gästlagring kastar fel vid läs-/JSON-/valideringsfel i stället för att återgå tomt, och frivillig bekräftad städning av äldre omärkta kopior i Inställningar. Inte körd på användarens riktiga kopior. Lokalt 272 ordinarie + 10 storage + 6 migration + 9 emulatorfall = 297 tester, TypeScript grön. Nästa kodområde är färdig klient/server-kontoradering och återuppladdningsskydd; deploya eller radera inte verkliga konton.
 
 ## Verkliga releaseblockerare
 

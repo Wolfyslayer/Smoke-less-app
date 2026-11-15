@@ -1,3 +1,4 @@
+import {LegacyRecoveryCleanup} from '../components/LegacyRecoveryCleanup';
 import React,{useEffect,useState} from 'react';
 import {ReminderSettings} from '../components/ReminderSettings';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
@@ -46,6 +47,7 @@ export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarg
    {widgetMessage?<Text accessibilityLiveRegion="polite" style={styles.muted}>{widgetMessage}</Text>:null}
   </Card>
   <ReminderSettings/>
+  <LegacyRecoveryCleanup/>
   <Text style={[styles.muted,{textAlign:'center',paddingHorizontal:12,paddingVertical:9}]}>Smoke Less hjälper dig att följa din utveckling och ersätter inte medicinsk rådgivning.</Text>
  </View>;
 }

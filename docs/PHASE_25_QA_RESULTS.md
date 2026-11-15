@@ -1,6 +1,6 @@
 # Fas 25 – QA-protokoll
 
-Datum: 2026-11-15. Källbas: `873c5df` plus fasens lokala korrigeringar, som ska få commit-SHA och omtest efter push. **Detta är inte slutacceptans.**
+Datum: 2026-11-15. Källbas för enhetsproven: `3f3d63e` (samma JS-korrigeringar som provades lokalt inför commit). Obligatoriska CI är gröna på denna commit. Senare städ-/gästlagringsändringar har automatiska tester men har inte körts destruktivt på telefonen. **Detta är inte slutacceptans.**
 
 ## Enhetsmatris
 
@@ -24,9 +24,10 @@ Datum: 2026-11-15. Källbas: `873c5df` plus fasens lokala korrigeringar, som ska
 | DEVICE-06 | PASS | Androids systemdelningsdialog öppnas för PNG och avbryts med Tillbaka. Ingen mottagare vald, inget skickat. |
 | DEVICE-07 | BEGRÄNSAT PASS | Textskala 1,8 efter full omstart: dagskortet växer och ringen staplas utan observerad klippning. Live-konfigurationsbyte, maximal text och andra vyer återstår. |
 | DEVICE-08 | PASS | Android Tillbaka från Hem visar avslutsbekräftelse; Avbryt återgår till appen. System-/tredjepartsöverlägg tog initialt fokus, så provet gjordes om med Smoke Less bekräftat i förgrunden. |
-| AUTO-01 | PASS | TypeScript och utökad automatisk svit. Exakta slutliga antal/commit förs in efter slutkörning. |
+| AUTO-01 | PASS | `3f3d63e`: TypeScript och 265 ordinarie tester, 10 storage, 6 migration samt 9 emulatorfall (290 totalt). Efter ytterligare skydd för äldre kopior/gästlagring: 272 ordinarie tester; total 297 med samma separata sviter. Nya slutliga CI krävs efter push. |
 | AUTO-02 | PASS | Nio Firestore-regeltester mot lokal emulator, projekt `smokeless-rules-test`. Anonym/annan användare, otillåtna fält, revisioner, hårdradering och raderingslås provas. Ingen produktionsdata används. |
 | AUTO-03 | PASS | 21 mockade server-/återhämtningstester: ordning, delvisa fel, färsk auth, okänd data, lease och återförsök. Inte en driftsatt klient/server-integration. |
+| BUILD-01 | AVBRUTET | Fristående QA-workflow 43740485924 är cancelled. Användaren har beslutat att själv ordna bygge senare. Starta inga ytterligare byggen nu; inget nytt APK-resultat har godkänts. |
 
 ## Kvarvarande obligatoriska prov
 
