@@ -34,5 +34,6 @@ test('release presentation has no technical build instructions or raw errors in 
  const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');assert.match(settings,/appVariant==='preview'/);
  const client=fs.readFileSync('src/updates/previewUpdateClient.native.ts','utf8');assert.match(client,/appVariant!=='preview'/);
  const hook=fs.readFileSync('src/hooks/useCloudSync.ts','utf8'),view=fs.readFileSync('src/components/AppSessionView.tsx','utf8');
- assert.match(hook,/Historiken är synkroniserad/);assert.equal((view.match(/syncStatus!=='Historiken är synkroniserad'/g)||[]).length,2);
+ assert.match(hook,/Historiken är synkroniserad/);assert.equal((view.match(/syncPhase!=='synced'/g)||[]).length,2);
+ assert.doesNotMatch(view,/syncStatus\s*[!=]==/);
 });

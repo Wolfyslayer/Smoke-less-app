@@ -2,6 +2,8 @@
 
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.
 
+**Aktuell ordning:** Fas 29–32 har kodarbete enligt användarens fortsättningsbeslut. Fas 25:s fysiska QA och respektive native-/releasegrind är öppna. Statusöversikten och fasta checklistor gäller; äldre hänvisningar till slut-QA i fas 17 nedan är bevarad historik.
+
 ## Teststrategi beslutad 2026-11-04
 - Samla omfattande manuell Android-acceptans, BrowserStack, skärmstorlekar, maximal text, TalkBack, tillgänglighet och full regression i **fas 25.0:s slutliga QA-grind före Google Play-lansering**. Tidigare ej utförda testpunkter förs dit och markeras inte som godkända.
 - Under varje funktionsfas krävs fortsatt automatiska relevanta tester och gröna obligatoriska CI-kontroller på slutlig commit. Utför begränsade riktade manuella tester när en ny funktion eller datarisk motiverar det; inga påhittade testresultat.
@@ -55,10 +57,10 @@
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 | 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Startad enligt nytt användarbeslut; QA/release kvar i fas 25 | docs/PHASE_27_DESIGN.md |
 | 28.0 | Profil, kontohantering och organiserade inställningar | Startad enligt användarbeslut | — |
-| 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Planerad; efter fas 31 | — |
-| 31.0 | Automatiserade Android-flödestester och regressionsskydd | Kodunderlag 2/8 och 19/32; verklig E2E ej körd | docs/PHASE_31_ANDROID_REGRESSION.md |
-| 30.0 | Release Polish och Production Readiness | Kodmilstolpe 2/8 och 20/32; CI grön, fysisk acceptans kvar | docs/PHASE_30_RELEASE_POLISH.md |
 | 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Kodmilstolpe: 5/8 och 25/32; CI grön, native-acceptans kvar | docs/PHASE_29_PREVIEW_OTA.md |
+| 30.0 | Release Polish och Production Readiness | Kodmilstolpe 2/8 och 20/32; CI grön, fysisk acceptans kvar | docs/PHASE_30_RELEASE_POLISH.md |
+| 31.0 | Automatiserade Android-flödestester och regressionsskydd | Kodunderlag 2/8 och 20/32; CI grön, verklig E2E ej körd | docs/PHASE_31_ANDROID_REGRESSION.md |
+| 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Kodmilstolpe 6/8 och 27/32; CI och slutacceptans kvar | docs/PHASE_32_MAINTENANCE.md |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -509,7 +511,7 @@ Evidens och kvarstående grindar: PHASE_30_RELEASE_POLISH.md. TypeScript, 342 te
 
 ### Fas 31.0 – fast checklista (8 × 4 = 32)
 
-**Status:** Förberedelser och snabba regressioner: 2/8 huvudpunkter (25 %), 19/32 delpunkter (59,375 %). Senaste CI väntar; inget Android E2E-flöde kördes.
+**Status:** Förberedelser och snabba regressioner: 2/8 huvudpunkter (25 %), 20/32 delpunkter (62,5 %). Senaste 5712b4b har grön validate/rules; inget Android E2E-flöde kördes.
 
 1. **Teststrategi och riskprioritering (4/4)**
    - [x] 1.1 Inventera testsviter, manuella fall och CI.
@@ -546,17 +548,17 @@ Evidens och kvarstående grindar: PHASE_30_RELEASE_POLISH.md. TypeScript, 342 te
    - [ ] 7.2 Kör Android E2E vid releasekandidat eller manuellt val.
    - [ ] 7.3 Publicera anonymiserade testresultat och felrapporter.
    - [ ] 7.4 Säkerställ att röda releasekritiska tester blockerar release.
-8. **Verifiering och leverans (1/4)**
+8. **Verifiering och leverans (2/4)**
    - [ ] 8.1 Verifiera testernas stabilitet och felsökningsbarhet.
    - [x] 8.2 Verifiera dataseparation och hemlighetsskydd.
-   - [ ] 8.3 Kontrollera båda obligatoriska CI och Android-buildbehov.
+   - [x] 8.3 Kontrollera båda obligatoriska CI och Android-buildbehov.
    - [ ] 8.4 Slutför PR med dokumenterad täckning och kvarstående manuella fall.
 
 Evidens: PHASE_31_ANDROID_REGRESSION.md. TypeScript, 344 ordinarie + 10 storage + 6 migration PASS lokalt. 4.x/5.x/6.x verifieras av isolerade befintliga kodtester där markerat; ingen Google-/konto-/tema-/widget-/OTA-acceptans på Android påstås. Windows-köraren avvisade fysisk serial före alla ADB-anrop. Maestro och egen runner är inte verifierade.
 
 ---
 
-## Fas 32.0 – Arkitektur, kodhälsa och långsiktigt underhåll (PLANERAD)
+## Fas 32.0 – Arkitektur, kodhälsa och långsiktigt underhåll (PÅGÅR)
 
 **Underlag från granskning 2026-11-15:** `src/components/AppSessionView.tsx` är fortfarande en stor sessions-/navigationsvy på `main`, medan `useSmokeLessSessionModel.ts` samordnar många hooks och `AccountSettingsRoutes.tsx` kopplar samman flera kontovyer. PR #173 ändrar 71 filer och PR #175 ändrar 65 filer. Detta motiverar en riktad ansvarsfördelnings- och underhållsgranskning, men bevisar inte prestandafel eller att en stor omskrivning behövs. **Syfte:** minska framtida regressionsrisk och förenkla fortsatt utveckling utan att ändra användardata, funktioner eller gränssnitt i onödan. Inga abstraktioner utan konkret nytta.
 
@@ -564,48 +566,50 @@ Evidens: PHASE_31_ANDROID_REGRESSION.md. TypeScript, 344 ordinarie + 10 storage 
 
 ### Fas 32.0 – fast checklista (8 × 4 = 32)
 
-**Status:** Planerad, ej påbörjad. 0/8 huvudpunkter, 0/32 delpunkter (0 %).
+**Status:** Kodmilstolpe: 6/8 huvudpunkter (75 %), 27/32 delpunkter (84,375 %). Senaste CI väntar. Prestandaprofilering och slutacceptans är öppna.
 
-1. **Arkitektur- och beroendeinventering (0/4)**
-   - [ ] 1.1 Kartlägg komponenter, hooks, domän och lagringslager.
-   - [ ] 1.2 Identifiera överlappande ansvar och svårtestad kod.
-   - [ ] 1.3 Granska native/Expo-konfiguration och versionspolicy.
-   - [ ] 1.4 Prioritera endast belagda underhållsproblem.
-2. **Sessions- och navigationsansvar (0/4)**
-   - [ ] 2.1 Separera ren presentationslogik från sessionsbeslut där lämpligt.
-   - [ ] 2.2 Minska onödig prop-drilling med tydliga gränssnitt.
-   - [ ] 2.3 Behåll Android Tillbaka och navigationens beteende.
-   - [ ] 2.4 Lägg till regressionstester före refaktorering.
-3. **Datamodell och lagring (0/4)**
-   - [ ] 3.1 Dokumentera källa till sanning för gäst/konto/moln.
-   - [ ] 3.2 Verifiera migrerings- och konfliktregler.
-   - [ ] 3.3 Håll raderings- och retentionlogik tydligt avgränsad.
-   - [ ] 3.4 Säkra bakåtkompatibilitet och befintlig historik.
-4. **Gemensamma komponenter och teman (0/4)**
-   - [ ] 4.1 Återanvänd UI-komponenter utan dubbel implementation.
-   - [ ] 4.2 Granska tema- och tillgänglighetstokens.
-   - [ ] 4.3 Standardisera fel-/laddningsstatus och meddelanden.
-   - [ ] 4.4 Undvik nya kopplingar mellan UI och Firebase.
-5. **Testbarhet och prestanda (0/4)**
+1. **Arkitektur- och beroendeinventering (4/4)**
+   - [x] 1.1 Kartlägg komponenter, hooks, domän och lagringslager.
+   - [x] 1.2 Identifiera överlappande ansvar och svårtestad kod.
+   - [x] 1.3 Granska native/Expo-konfiguration och versionspolicy.
+   - [x] 1.4 Prioritera endast belagda underhållsproblem.
+2. **Sessions- och navigationsansvar (4/4)**
+   - [x] 2.1 Separera ren presentationslogik från sessionsbeslut där lämpligt.
+   - [x] 2.2 Minska onödig prop-drilling med tydliga gränssnitt.
+   - [x] 2.3 Behåll Android Tillbaka och navigationens beteende.
+   - [x] 2.4 Lägg till regressionstester före refaktorering.
+3. **Datamodell och lagring (4/4)**
+   - [x] 3.1 Dokumentera källa till sanning för gäst/konto/moln.
+   - [x] 3.2 Verifiera migrerings- och konfliktregler.
+   - [x] 3.3 Håll raderings- och retentionlogik tydligt avgränsad.
+   - [x] 3.4 Säkra bakåtkompatibilitet och befintlig historik.
+4. **Gemensamma komponenter och teman (4/4)**
+   - [x] 4.1 Återanvänd UI-komponenter utan dubbel implementation.
+   - [x] 4.2 Granska tema- och tillgänglighetstokens.
+   - [x] 4.3 Standardisera fel-/laddningsstatus och meddelanden.
+   - [x] 4.4 Undvik nya kopplingar mellan UI och Firebase.
+5. **Testbarhet och prestanda (2/4)**
    - [ ] 5.1 Profilera endast mätbara flaskhalsar.
    - [ ] 5.2 Minska onödiga omrenderingar där de verifierats.
-   - [ ] 5.3 Stärk tester för kritiska gränssnitt.
-   - [ ] 5.4 Undvik nya beroenden utan motiverad nytta.
-6. **Bygg- och versionshygien (0/4)**
-   - [ ] 6.1 Granska låsfil, versionspinning och Expo-kompatibilitet.
-   - [ ] 6.2 Separera dev/preview/production i config.
-   - [ ] 6.3 Dokumentera native-ändring kontra OTA-kompatibilitet.
-   - [ ] 6.4 Minimera långsamma och duplicerade CI-jobb.
-7. **Dokumentation och överlämning (0/4)**
-   - [ ] 7.1 Synkronisera AI_WORKFLOW med faktisk fasordning.
-   - [ ] 7.2 Rensa motsägande gamla QA-fashänvisningar utan att tappa historik.
-   - [ ] 7.3 Dokumentera ansvar, drift och felsökningsvägar.
-   - [ ] 7.4 Gör nästa AI-session reproducerbar utan gissningar.
-8. **Verifiering och leverans (0/4)**
-   - [ ] 8.1 Kör typkontroll och samtliga relevanta regressioner.
+   - [x] 5.3 Stärk tester för kritiska gränssnitt.
+   - [x] 5.4 Undvik nya beroenden utan motiverad nytta.
+6. **Bygg- och versionshygien (4/4)**
+   - [x] 6.1 Granska låsfil, versionspinning och Expo-kompatibilitet.
+   - [x] 6.2 Separera dev/preview/production i config.
+   - [x] 6.3 Dokumentera native-ändring kontra OTA-kompatibilitet.
+   - [x] 6.4 Minimera långsamma och duplicerade CI-jobb.
+7. **Dokumentation och överlämning (4/4)**
+   - [x] 7.1 Synkronisera AI_WORKFLOW med faktisk fasordning.
+   - [x] 7.2 Rensa motsägande gamla QA-fashänvisningar utan att tappa historik.
+   - [x] 7.3 Dokumentera ansvar, drift och felsökningsvägar.
+   - [x] 7.4 Gör nästa AI-session reproducerbar utan gissningar.
+8. **Verifiering och leverans (1/4)**
+   - [x] 8.1 Kör typkontroll och samtliga relevanta regressioner.
    - [ ] 8.2 Verifiera konto/synk/radering med isolerade testdata.
    - [ ] 8.3 Verifiera båda obligatoriska CI och Android-buildbehov.
    - [ ] 8.4 Slutför PR endast med oförändrat beteende eller dokumenterad förbättring.
+
+Evidens: PHASE_32_MAINTENANCE.md. Regressionstest rött före och grönt efter UID-/synkfasändringen. TypeScript, 348 ordinarie tester, 10 storage och 6 migration, webbexport och Expo-kompatibilitet kontrolleras före push. 8.2/8.3 inväntar senaste säkerhets-CI; inga riktiga konto-/Android-testresultat påstås. Native-build JA; användaren bygger senare.
 
 ---
 

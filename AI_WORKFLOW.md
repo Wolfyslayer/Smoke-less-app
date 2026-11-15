@@ -55,6 +55,10 @@ Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/r
 - Behåll användarens fokus: en fungerande, vältestad Android-app och tydlig framdrift, inte många små PR:er.
 
 ## Aktuell fas och historik
+
+- **Aktuellt användarbeslut 2026-11-15:** Fortsätt kodarbete genom dokumenterade faser 29–32 efter grön senaste CI även medan tidigare faser har öppna native-grindar. Bevara en PR per fas, stapla på föregående branch och merga inte dem som slutgodkända innan deras fasta checklistor är verifierade. Ingen roadmap markeras färdig av kodförberedelser ensamt.
+- Användaren bygger Android senare. Starta inga byggen, installationer, OTA-publiceringar eller produktionsreleaser som följd av commit/push. Preview får tillfälligt använda `smoke-less-75efa` enligt uttryckligt beslut; detta isolerar inte serverkonton. Använd syntetiska data och bevara verklig historik.
+- Bred fysisk Android-, BrowserStack- och TalkBack-acceptans ligger fortsatt i fas 25. Specifika APK/OTA-grindar i fas 29 och verkliga E2E-grindar i fas 31 är också öppna tills de faktiskt körts. Gamla hänvisningar till fas 17 nedan/längre bak i masterplanen är historik från dåvarande fasordning.
 - Aktuell fas och PR finns i `docs/MASTER_ROADMAP.md`. Verifiera alltid mot GitHub innan du arbetar.
 - Fas 7.0 avslutades i PR #138 och fas 8.0 i PR #140. Senare faser och aktiv PR verifieras mot masterplanens statusöversikt och GitHub. Bred manuell slutacceptans ligger i fas 25.0.
 - Ändra roadmap-status när en fas verkligen mergats och verifierats, inte när enstaka commits skapats.

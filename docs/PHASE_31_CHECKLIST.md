@@ -1,6 +1,6 @@
 ### Fas 31.0 – fast checklista (8 × 4 = 32)
 
-**Status:** Förberedelser och snabba regressioner: 2/8 huvudpunkter (25 %), 19/32 delpunkter (59,375 %). Senaste CI väntar; inget Android E2E-flöde kördes.
+**Status:** Förberedelser och snabba regressioner: 2/8 huvudpunkter (25 %), 20/32 delpunkter (62,5 %). Senaste 5712b4b har grön validate/rules; inget Android E2E-flöde kördes.
 
 1. **Teststrategi och riskprioritering (4/4)**
    - [x] 1.1 Inventera testsviter, manuella fall och CI.
@@ -37,10 +37,10 @@
    - [ ] 7.2 Kör Android E2E vid releasekandidat eller manuellt val.
    - [ ] 7.3 Publicera anonymiserade testresultat och felrapporter.
    - [ ] 7.4 Säkerställ att röda releasekritiska tester blockerar release.
-8. **Verifiering och leverans (1/4)**
+8. **Verifiering och leverans (2/4)**
    - [ ] 8.1 Verifiera testernas stabilitet och felsökningsbarhet.
    - [x] 8.2 Verifiera dataseparation och hemlighetsskydd.
-   - [ ] 8.3 Kontrollera båda obligatoriska CI och Android-buildbehov.
+   - [x] 8.3 Kontrollera båda obligatoriska CI och Android-buildbehov.
    - [ ] 8.4 Slutför PR med dokumenterad täckning och kvarstående manuella fall.
 
 Evidens: PHASE_31_ANDROID_REGRESSION.md. TypeScript, 344 ordinarie + 10 storage + 6 migration PASS lokalt. 4.x/5.x/6.x verifieras av isolerade befintliga kodtester där markerat; ingen Google-/konto-/tema-/widget-/OTA-acceptans på Android påstås. Windows-köraren avvisade fysisk serial före alla ADB-anrop. Maestro och egen runner är inte verifierade.

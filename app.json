@@ -9,6 +9,8 @@
     "plugins": [
       "expo-router",
       "expo-dev-client",
+      "expo-sharing",
+      "expo-status-bar",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "@react-native-google-signin/google-signin",
