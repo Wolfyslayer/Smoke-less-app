@@ -2,10 +2,10 @@
 
 ## Aktuellt
 
-- Fas **21.0 – evidensbaserat stöd**.
-- Branch `feat/phase-21-evidence-based-support`, från uppdaterad main `7cb70a4`.
+- Fas **22.0 – varsamma påminnelser**.
+- Branch `feat/phase-22-gentle-reminders`, från uppdaterad main `70a2295`.
 - En PR öppnas för denna branch; hitta den på GitHub och skapa inte dubblett.
-- Fast checklista: `docs/PHASE_21_EVIDENCE_SUPPORT.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
+- Fast checklista: `docs/PHASE_22_REMINDERS.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
 
 ## Senaste avslutade arbete
 

@@ -16,12 +16,7 @@ test('reminder frequency is backward compatible and weekly is explicitly Monday'
  assert.equal(pattern('weekly',19,0).weekday,2);assert.equal(pattern('weekly',19,0).type,'weekly');assert.equal(pattern('daily',19,0).type,'daily');
  for(const [h,m] of [[24,0],[-1,0],[12,60],[12,1.5],[NaN,0]])assert.throws(()=>pattern('weekly',h,m));
 });
-test('switching frequency cancels the old notification and leaves explicit reactivation',()=>{
- const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');
- const action=settings.slice(settings.indexOf(' const changeReminderFrequency='),settings.indexOf(' const cancelReminder='));
- assert.ok(action.indexOf('await cancelReminder()')<action.indexOf("AsyncStorage.setItem('smokeless:reminder-frequency'"));
- assert.doesNotMatch(action,/scheduleNotificationAsync/);
- assert.match(settings,/SchedulableTriggerInputTypes\.WEEKLY,weekday:WEEKLY_REMINDER_DAY/);
- assert.match(settings,/if\(!reminderPreference\|\|reminderBusy\)return/);
+test('reminder choices require explicit activation and preserve the weekly Monday pattern',()=>{
+ const ui=fs.readFileSync('src/components/ReminderSettings.tsx','utf8');assert.match(ui,/SchedulableTriggerInputTypes.WEEKLY,weekday:2/);assert.match(ui,/await service.apply\(next\)/);assert.match(ui,/if\(lock.current\)return/);assert.match(ui,/requestPermissionsAsync/);
  const routes=fs.readFileSync('src/components/ProgressScreenRoutes.tsx','utf8');assert.match(routes,/journey\.value\.phase==='maintenance'\?<MaintenanceSupport/);
 });
