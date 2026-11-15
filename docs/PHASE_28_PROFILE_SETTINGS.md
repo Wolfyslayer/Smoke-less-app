@@ -33,3 +33,9 @@ Lokalt verifierat före push: TypeScript, 322 ordinarie tester, 10 storage, 6 mi
 - Fysisk Safe Area, tangentbord, stor text, TalkBack och Android Tillbaka är inte verifierade av adaptertester. 7.3, 7.4 och 8.4 lämnas öppna. Övriga markeringar avser kod-/automatisk acceptans, inte färdig native release.
 
 **Ny Android-build: NEJ för fas 28:s JS/TS-omorganisation.** Tidigare buildbehov från fas 27:s userInterfaceStyle automatic kvarstår. Användaren ordnar build senare; starta ingen nu.
+
+## Uppföljning: valmarkering och egna bekräftelser
+
+Användaren rapporterade en fyrkant runt vald bottenflik. Fylld valbakgrund är borttagen; färg, vikt och en rund 4 dp-indikator visar aktiv flik. Ikon- och tryckyta har rundning/klippning även för Androids ripple. Alla fem val provas i ljust/mörkt tema; fysisk rendering är ännu inte verifierad.
+
+Den sista appstyrda plattformsbekräftelsen (`Alert.alert` i LegacyRecoveryCleanup) använder nu samma ConfirmationDialog som övriga appen. Varning, explicit permanent bekräftelse, avbryt och lås mot dubbeltryck behålls. Ett test nekar plattforms-alert/confirm i appkoden; ett beteendetest verifierar att öppnande/avbryt inte raderar och att dubbel bekräftelse inte raderar två gånger. 325 ordinarie tester passerar lokalt. Detta ändrar inte Androids egna behörighetsflöden eller systemdelning.

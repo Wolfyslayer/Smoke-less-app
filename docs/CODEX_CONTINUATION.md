@@ -2,6 +2,8 @@
 
 ## Aktiv fas
 
+- Senaste styrning: rätta fyrkantig navmarkering, använd egna bekräftelsemodaler och fortsätt sedan självständigt genom de nya faserna på main. UI-fix i fas 28: rund indikator/klippt tryckyta, sista Alert.alert ersatt med ConfirmationDialog, tester för avbryt/dubbeltryck och alla flikval. 325 ordinarie tester lokalt PASS. Main har nu faser 29–32; läs deras fulla krav före fasstart och bevara öppna native-/publiceringsgrindar. Inga Android-byggen startas enligt tidigare beslut.
+
 - **Nytt användarbeslut:** Designen i fas 27 ser bättre ut och utvecklingen går vidare till fas 28. Branch `feat/phase-28-profile-settings`, separat PR ovanpå fas 27. Main:s PR #176 (`b205507`) är inläst; tidigare säkerhetsarbete och design är bevarade. Fas 25/27 har fortsatt öppna enhetsgrindar och är inte mergade som slutgodkända.
 - Läs `PHASE_28_PROFILE_SETTINGS.md` och `PHASE_28_CHECKLIST.md`. Profilen har fem kategorier; planval ligger under Plan; tema/widget/påminnelser är separata avsnitt; synk/import/gästkopiering och äldre kopior finns under Data. Delning finns i JourneyScreen; About läser faktisk Expo-version. Befintliga handlers, flaggor och lagringsnycklar bevaras.
 - Lokalt TypeScript, 322 ordinarie tester, 10 storage, 6 migration och webbexport PASS. Kategori-/backkedjor samt vidarekoppling till befintliga datahandlers provas. Status 6/8 och 29/32 efter grön senaste CI. Fysisk 7.3/7.4 och PR-avslut 8.4 är öppna. Ingen Android-build startas; fas 28 kräver ingen ny native-konfiguration, tidigare buildbehov från fas 27 kvarstår.

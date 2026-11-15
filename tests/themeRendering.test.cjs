@@ -1,7 +1,7 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const vm=require('node:vm');const ts=require('typescript');const React=require('react');const {renderToStaticMarkup:render}=require('react-dom/server');
-let width=360,fontScale=1,capturedActions=null;
+let width=360,fontScale=1,capturedActions=null,capturedViews=null;
 const flat=style=>Object.assign({},...[typeof style==='function'?style({pressed:false}):style].flat(Infinity).filter(Boolean));
-const element=tag=>function Element({children,style,accessibilityRole,accessibilityLabel,accessibilityState,accessible,...props}){if(capturedActions&&tag==='button')capturedActions.push({label:accessibilityLabel,children,onPress:props.onPress,disabled:props.disabled});return React.createElement(tag,{style:flat(style),role:accessibilityRole,'aria-label':accessibilityLabel,...(tag==='button'?{disabled:props.disabled}:{}),...(props.fill?{fill:props.fill}:{}),...(props.stroke?{stroke:props.stroke}:{})},children);};
+const element=tag=>function Element({children,style,accessibilityRole,accessibilityLabel,accessibilityState,accessible,...props}){if(capturedActions&&tag==='button')capturedActions.push({label:accessibilityLabel,children,onPress:props.onPress,disabled:props.disabled,state:accessibilityState});if(capturedViews&&props.testID)capturedViews.push({id:props.testID,style:flat(style)});return React.createElement(tag,{style:flat(style),role:accessibilityRole,'aria-label':accessibilityLabel,...(tag==='button'?{disabled:props.disabled}:{}),...(props.fill?{fill:props.fill}:{}),...(props.stroke?{stroke:props.stroke}:{})},children);};
 const rn={View:element('div'),Text:element('span'),Pressable:element('button'),ScrollView:element('section'),Modal:({visible,children})=>visible?children:null,StyleSheet:{create:s=>s},useWindowDimensions:()=>({width,height:900,fontScale}),ActivityIndicator:element('span')};
 const svg={__esModule:true,default:element('svg'),Circle:element('circle'),Rect:element('rect'),Text:element('text'),TSpan:element('tspan')};
 const cache=new Map();
@@ -34,7 +34,7 @@ function themed(name,child,extra={}){return render(React.createElement(ThemeCont
 test('shared controls, navigation, dialogs and SVG render with the chosen palette',()=>{
  for(const name of ['light','dark'])for(const size of [320,768])for(const scale of [1,2]){width=size;fontScale=scale;
   const ui=themed(name,React.createElement(AppCard,null,React.createElement(AppButton,{title:'Registrera',onPress:()=>assert.fail()})));assert(ui.includes(palettes[name].surface));assert(ui.includes(palettes[name].onAccent));
-  const nav=themed(name,React.createElement(BottomNavigation,{tab:'home',onNavigate:()=>assert.fail()}));assert(nav.includes('Hem'));assert(nav.includes(palettes[name].accentSubtle));
+  const nav=themed(name,React.createElement(BottomNavigation,{tab:'home',onNavigate:()=>assert.fail()}));assert(nav.includes('Hem'));assert(nav.includes(palettes[name].accent));
   const dialog=themed(name,React.createElement(ConfirmationDialog,{dialog:{title:'Bekräfta',message:'Kontrollerat test',confirm:()=>assert.fail()},onClose:()=>{}}));assert(dialog.includes(palettes[name].surface));assert(dialog.includes('Kontrollerat test'));
   const date=themed(name,React.createElement(CompactDateModal,{visible:true,value:null,onCancel:()=>{},onConfirm:()=>assert.fail()}));assert(date.includes('Välj stoppdatum'));
   for(const [todayCount,dailyGoal] of [[0,0],[2,10],[15,10]]){const art=themed(name,React.createElement(DailyProgressShareArtwork,{todayCount,dailyGoal}));assert(art.includes(palettes[name].surface));assert(art.includes(palettes[name].accent));assert(art.includes('Dagens framsteg'));}
@@ -91,4 +91,8 @@ test('data category forwards existing guarded actions and separates guest reset 
 test('cloud data controls stay disabled while another account operation is active',()=>{
  const {AccountCloudActions}=load('src/components/AccountCloudActions.tsx');
  for(const state of [{busy:true},{migrationBusy:true},{cloudBusy:true}]){capturedActions=[];themed('light',React.createElement(AccountCloudActions,{busy:false,migrationBusy:false,cloudBusy:false,...state,result:null,onMigrate:()=>assert.fail(),onPreview:()=>assert.fail(),onImport:()=>assert.fail(),onInspect:()=>assert.fail()}));assert.equal(capturedActions.length,4);assert(capturedActions.every(action=>action.disabled));capturedActions=null;}
+});
+
+test('selected bottom tabs use a round indicator without a filled selection rectangle',()=>{
+ for(const name of ['light','dark'])for(const tab of ['home','plan','register','stats','profile']){capturedViews=[];capturedActions=[];themed(name,React.createElement(BottomNavigation,{tab,onNavigate:()=>{}}));const selected=capturedActions.filter(action=>action.state?.selected);assert.equal(selected.length,1);const dots=capturedViews.filter(v=>v.id.startsWith('bottom-nav-indicator-'));assert.equal(dots.filter(v=>v.style.backgroundColor===palettes[name].accent).length,1);assert(dots.every(v=>v.style.borderRadius>=v.style.width/2&&v.style.width===v.style.height));for(const icon of capturedViews.filter(v=>v.id.startsWith('bottom-nav-icon-'))){assert(icon.style.borderRadius>=Math.min(icon.style.width,icon.style.height)/2);if(!icon.id.endsWith('register'))assert.equal(icon.style.backgroundColor,undefined);}capturedViews=null;capturedActions=null;}
 });
