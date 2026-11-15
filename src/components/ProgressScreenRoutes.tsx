@@ -1,3 +1,5 @@
+import {PersonalActionPlan} from './PersonalActionPlan';
+import {sosIdeas} from '../data/sosIdeas';
 import {countOn} from '../domain';
 import {PersonalJourney} from './PersonalJourney';
 import React from 'react';
@@ -22,7 +24,7 @@ export function ProgressScreenRoutes({model}:{model:SessionModel}){
  {tab==='plan'?<PlanScreen profile={p} goal={goal} todayReduction={todayReduction} confirmedDays={confirmedDays} withinDays={withinDays} planWeek={planWeek} clock={clock} onChangeProfile={changeProfile}/>:null}
  {tab==='stats'?<StatsScreen data={data} period={period} onPeriodChange={setPeriod} clock={clock} weekly={weekly} todayCount={todayCount} recentCravingsCount={recentCravings.length} cravingTriggers={cravingTriggers} cigaretteTriggers={cigaretteTriggers}/>:null}
  {tab==='history'?<HistoryScreen entries={data.entries} sorted={sorted} onRemove={remove}/>:null}
- {tab==='sos'?<SOSScreen {...sosProps} journeyPanel={journeyPanel}/>:null}
+ {tab==='sos'?<SOSScreen {...sosProps} journeyPanel={<>{journeyPanel}<PersonalActionPlan store={model.actionPlans} onTrigger={sosProps.onTrigger} trigger={sosProps.trigger} strategy={sosProps.sosIdeas[sosProps.sosTip].title} onUseStep={id=>{const index=sosIdeas.findIndex(step=>step.id===id);if(index>=0)sosProps.onSelectTip(index);}}/></>}/>:null}
  {tab==='benefits'?<BenefitsScreen data={data}/>:null}
  </>;
 }

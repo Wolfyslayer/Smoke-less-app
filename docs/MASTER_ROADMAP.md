@@ -44,8 +44,8 @@
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
 | 16.7 | Fördjupad statistik och personliga trender | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #164, `1781333` |
 | 17.0 | Delningsbild som matchar dagens framsteg | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #165, `0fdd4b1` |
-| 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Pågående; 6/8 och 29/32 verifierade | #166, docs/PHASE_18_JOURNEY.md |
-| 19.0 | Röksug i stunden och personliga handlingsplaner | Planerad | — |
+| 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #166, `2857e3f` |
+| 19.0 | Röksug i stunden och personliga handlingsplaner | Pågående; 1/8 och 6/32 verifierade, implementation inväntar CI | #167, docs/PHASE_19_ACTION_PLANS.md |
 | 20.0 | Långsiktigt rökfri och återfallsprevention | Planerad | — |
 | 21.0 | Evidensbaserat stöd, nikotinläkemedel och vårdvägar | Planerad | — |
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Planerad | — |
@@ -688,92 +688,92 @@ PR #164 merged as 1781333: 8/8 and 32/32. See docs/PHASE_16_7_TRENDS.md.
    - [x] 8.4 Merga fas-PR.
 
 ### Fas 17.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+PR #165 merged as 0fdd4b1: 8/8 and 32/32. See docs/PHASE_17_SHARE_PROGRESS.md.
 
-1. [ ] **Visuell inventering (0/4)**
-   - [ ] 1.1 Jämför startsidans kort och delningskort.
-   - [ ] 1.2 Fastställ gemensam layout och färger.
-   - [ ] 1.3 Fastställ typografi och ringstorlek.
-   - [ ] 1.4 Dokumentera exempeldata.
-2. [ ] **Gemensam datamodell (0/4)**
-   - [ ] 2.1 Beräkna kvar av mål.
-   - [ ] 2.2 Beräkna använd procent.
-   - [ ] 2.3 Hantera nollmål.
-   - [ ] 2.4 Hantera överskridet mål.
-3. [ ] **Bildlayout (0/4)**
-   - [ ] 3.1 Matcha startsidans huvudvärde.
-   - [ ] 3.2 Matcha mindre ring till höger.
-   - [ ] 3.3 Matcha rubrik och stödtext.
-   - [ ] 3.4 Behåll delningsytan fristående.
-4. [ ] **Export (0/4)**
-   - [ ] 4.1 Generera PNG av kortytan.
-   - [ ] 4.2 Behåll förhandsvisning.
-   - [ ] 4.3 Dela endast på uttrycklig åtgärd.
-   - [ ] 4.4 Hantera fel och avbrott.
-5. [ ] **Integritet (0/4)**
-   - [ ] 5.1 Uteslut kontoidentifierare.
-   - [ ] 5.2 Uteslut detaljerad historik.
-   - [ ] 5.3 Undvik automatisk uppladdning.
-   - [ ] 5.4 Förhindra gammal bild efter dataändring.
-6. [ ] **Tillgänglighet (0/4)**
-   - [ ] 6.1 Tydliga svenska knapptexter.
-   - [ ] 6.2 Förhandsvisning med etiketter.
-   - [ ] 6.3 Tillräckliga tryckytor.
-   - [ ] 6.4 Hantera stora textstorlekar.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa delad beräkningslogik.
-   - [ ] 7.2 Testa nollmål och överskridande.
-   - [ ] 7.3 Testa exportens integritetsgränser.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera visuell acceptans.
-   - [ ] 8.2 Samla native-delningstest till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+1. [x] **Visuell inventering (4/4)**
+   - [x] 1.1 Jämför startsidans kort och delningskort.
+   - [x] 1.2 Fastställ gemensam layout och färger.
+   - [x] 1.3 Fastställ typografi och ringstorlek.
+   - [x] 1.4 Dokumentera exempeldata.
+2. [x] **Gemensam datamodell (4/4)**
+   - [x] 2.1 Beräkna kvar av mål.
+   - [x] 2.2 Beräkna använd procent.
+   - [x] 2.3 Hantera nollmål.
+   - [x] 2.4 Hantera överskridet mål.
+3. [x] **Bildlayout (4/4)**
+   - [x] 3.1 Matcha startsidans huvudvärde.
+   - [x] 3.2 Matcha mindre ring till höger.
+   - [x] 3.3 Matcha rubrik och stödtext.
+   - [x] 3.4 Behåll delningsytan fristående.
+4. [x] **Export (4/4)**
+   - [x] 4.1 Generera PNG av kortytan.
+   - [x] 4.2 Behåll förhandsvisning.
+   - [x] 4.3 Dela endast på uttrycklig åtgärd.
+   - [x] 4.4 Hantera fel och avbrott.
+5. [x] **Integritet (4/4)**
+   - [x] 5.1 Uteslut kontoidentifierare.
+   - [x] 5.2 Uteslut detaljerad historik.
+   - [x] 5.3 Undvik automatisk uppladdning.
+   - [x] 5.4 Förhindra gammal bild efter dataändring.
+6. [x] **Tillgänglighet (4/4)**
+   - [x] 6.1 Tydliga svenska knapptexter.
+   - [x] 6.2 Förhandsvisning med etiketter.
+   - [x] 6.3 Tillräckliga tryckytor.
+   - [x] 6.4 Hantera stora textstorlekar.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa delad beräkningslogik.
+   - [x] 7.2 Testa nollmål och överskridande.
+   - [x] 7.3 Testa exportens integritetsgränser.
+   - [x] 7.4 Verifiera CI.
+8. [x] **Avslut (4/4)**
+   - [x] 8.1 Dokumentera visuell acceptans.
+   - [x] 8.2 Samla native-delningstest till fas 25.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 18.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Anpassa detaljer före fasstart, inte genom löpande scope creep.
+PR #166 merged as 2857e3f: 8/8 and 32/32. See docs/PHASE_18_JOURNEY.md.
 
-1. [ ] **Inventering och avgränsning (0/4)**
-   - [ ] 1.1 Inventera befintliga funktioner och undvik duplicering.
-   - [ ] 1.2 Dokumentera användarbehov och begränsningar.
-   - [ ] 1.3 Fastställ acceptanskriterier.
-   - [ ] 1.4 Fastställ risker och testmatris.
-2. [ ] **Datamodell och integritet (0/4)**
-   - [ ] 2.1 Definiera minsta nödvändiga datamängd.
-   - [ ] 2.2 Skydda gäst- och kontodata.
-   - [ ] 2.3 Bevara tidigare historik.
-   - [ ] 2.4 Verifiera bakåtkompatibilitet.
-3. [ ] **Grundflöde (0/4)**
-   - [ ] 3.1 Implementera fasens huvudflöde.
-   - [ ] 3.2 Hantera tomma och felaktiga värden.
-   - [ ] 3.3 Hantera avbrott och återstart.
-   - [ ] 3.4 Säkerställ tydliga användarval.
-4. [ ] **Personalisering (0/4)**
-   - [ ] 4.1 Anpassa till användarens uttryckliga val.
-   - [ ] 4.2 Behåll säkra standardinställningar.
-   - [ ] 4.3 Undvik skuldbeläggande formuleringar.
-   - [ ] 4.4 Gör anpassning frivillig och reversibel.
-5. [ ] **Offline och synk (0/4)**
-   - [ ] 5.1 Fungera utan nätverk när möjligt.
-   - [ ] 5.2 Hantera inloggning och utloggning.
-   - [ ] 5.3 Undvik synkkonflikter och dataförlust.
-   - [ ] 5.4 Undvik nya kostsamma beroenden.
-6. [ ] **Tillgänglighet och svenska texter (0/4)**
-   - [ ] 6.1 Använd tydlig svenska.
-   - [ ] 6.2 Granska TalkBack och fokus.
-   - [ ] 6.3 Granska små skärmar och stor text.
-   - [ ] 6.4 Granska tryckytor och kontrast.
-7. [ ] **Automatiska tester och CI (0/4)**
-   - [ ] 7.1 Testa centrala domänfall.
-   - [ ] 7.2 Testa fel- och avbrottsfall.
-   - [ ] 7.3 Testa integritet och dataseparering.
-   - [ ] 7.4 Verifiera obligatorisk CI.
-8. [ ] **Slutverifiering och merge (0/4)**
-   - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
-   - [ ] 8.3 Verifiera grön CI på slutlig commit.
-   - [ ] 8.4 Merga fas-PR.
+1. [x] **Inventering och avgränsning (4/4)**
+   - [x] 1.1 Inventera befintliga funktioner och undvik duplicering.
+   - [x] 1.2 Dokumentera användarbehov och begränsningar.
+   - [x] 1.3 Fastställ acceptanskriterier.
+   - [x] 1.4 Fastställ risker och testmatris.
+2. [x] **Datamodell och integritet (4/4)**
+   - [x] 2.1 Definiera minsta nödvändiga datamängd.
+   - [x] 2.2 Skydda gäst- och kontodata.
+   - [x] 2.3 Bevara tidigare historik.
+   - [x] 2.4 Verifiera bakåtkompatibilitet.
+3. [x] **Grundflöde (4/4)**
+   - [x] 3.1 Implementera fasens huvudflöde.
+   - [x] 3.2 Hantera tomma och felaktiga värden.
+   - [x] 3.3 Hantera avbrott och återstart.
+   - [x] 3.4 Säkerställ tydliga användarval.
+4. [x] **Personalisering (4/4)**
+   - [x] 4.1 Anpassa till användarens uttryckliga val.
+   - [x] 4.2 Behåll säkra standardinställningar.
+   - [x] 4.3 Undvik skuldbeläggande formuleringar.
+   - [x] 4.4 Gör anpassning frivillig och reversibel.
+5. [x] **Offline och synk (4/4)**
+   - [x] 5.1 Fungera utan nätverk när möjligt.
+   - [x] 5.2 Hantera inloggning och utloggning.
+   - [x] 5.3 Undvik synkkonflikter och dataförlust.
+   - [x] 5.4 Undvik nya kostsamma beroenden.
+6. [x] **Tillgänglighet och svenska texter (4/4)**
+   - [x] 6.1 Använd tydlig svenska.
+   - [x] 6.2 Granska TalkBack och fokus.
+   - [x] 6.3 Granska små skärmar och stor text.
+   - [x] 6.4 Granska tryckytor och kontrast.
+7. [x] **Automatiska tester och CI (4/4)**
+   - [x] 7.1 Testa centrala domänfall.
+   - [x] 7.2 Testa fel- och avbrottsfall.
+   - [x] 7.3 Testa integritet och dataseparering.
+   - [x] 7.4 Verifiera obligatorisk CI.
+8. [x] **Slutverifiering och merge (4/4)**
+   - [x] 8.1 Dokumentera genomförd acceptans.
+   - [x] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
+   - [x] 8.3 Verifiera grön CI på slutlig commit.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 19.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Anpassa detaljer före fasstart, inte genom löpande scope creep.

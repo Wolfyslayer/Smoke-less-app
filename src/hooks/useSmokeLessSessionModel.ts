@@ -1,3 +1,4 @@
+import {useActionPlans} from './useActionPlans';
 import {usePersonalJourney} from './usePersonalJourney';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {useLiveClock} from './useLiveClock';
@@ -19,6 +20,7 @@ export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurr
  const [data,setData]=useState<Data>(EMPTY),[ready,setReady]=useState(false),[loadError,setLoadError]=useState<string|null>(null);
  const {tab,setTab,goBack,resetToHome}=useSessionNavigation();
  const clock=useLiveClock();
+ const actionPlans=useActionPlans(sessionUser?.uid??null);
  const journey=usePersonalJourney(sessionUser?.uid??null);
  const {dialog,setDialog,showMessage,ask}=useConfirmationDialog();
  const {sosProps,startSos,stopSos}=useSosFlow(setData,resetToHome);
@@ -47,5 +49,5 @@ export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurr
   previousTabRef.current=tab;
  },[tab]);
 
- return {journey,data,setData,ready:sessionReady,loadError,tab,goBack:navigateBack,resetToHome,clock,dialog,setDialog,ask,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,googleAccountAction,linkGoogleAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,retrySync,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,changeDailyTarget,period,setPeriod};
+ return {actionPlans,journey,data,setData,ready:sessionReady,loadError,tab,goBack:navigateBack,resetToHome,clock,dialog,setDialog,ask,sosProps,startSos,backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup,onStep,setOnStep,mode,setMode,speed,setSpeed,scheduled,setScheduled,quitDay,setQuitDay,baseline,setBaseline,packSize,setPackSize,packPrice,setPackPrice,begin,registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister,accountUser,emailVerified,verificationBusy,accountBusy,accountMode,setAccountMode,accountEmail,setAccountEmail,accountPassword,setAccountPassword,migrationBusy,cloudPreviewBusy,cloudPreviewResult,previewCloud,requestCloudImport,verificationAction,sendSignedInPasswordReset,accountAction,googleAccountAction,linkGoogleAction,inspectCloudData,requestGuestReset,requestGuestMigration,syncStatus,retrySync,p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly,remove,go,changeProfile,changeDailyTarget,period,setPeriod};
 }
