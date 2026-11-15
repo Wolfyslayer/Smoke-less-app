@@ -34,6 +34,10 @@ Senaste lokala raderingsmilstolpe: TypeScript, 297 ordinarie tester (inklusive 2
 
 CI-verifiering: `1a413ad` har grön validate/rules. Jobbstegen visar att både regler och de tre callable-integrationerna faktiskt kördes och passerade med Node 22. Befintlig telefonprocess svarar efter JS-ändringarna utan ReactNativeJS-/AndroidRuntime-fel i det riktade loggutdraget; detta är ingen ersättning för de ej körda nativa raderingsfallen.
 
+## Efterföljande driftsatt serverprov
+
+Efter uttryckligt användargodkännande är serverdelen nu driftsatt och provad i `smoke-less-75efa`/`europe-west1`. Fakturering var redan aktiv; ingen betalplansändring gjordes. Befintliga granskade Firestore-regler driftsattes före funktionen och tillbakalästes med exakt matchning. Två nya syntetiska konton verifierade egen radering, kontoisolering, nekad återuppladdning med gammal token och idempotent återförsök; båda testkontona städades via egen callable. Två serverägda säkerhetslås behålls. Inga befintliga konton eller telefondata raderades. Appflaggan förblir avstängd; native-/tvåenhetsacceptans, extern väg, support och retention återstår. Se `ACCOUNT_DELETION_DEPLOYMENT.md`. Fasstatus är oförändrad 1/8 och 8/32.
+
 ## Kvarvarande obligatoriska prov
 
 Alla nedan är **EJ KÖRDA**, inte godkända:
