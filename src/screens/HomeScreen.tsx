@@ -1,19 +1,17 @@
+import {DashboardOverview} from '../components/DashboardOverview';
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import Svg,{Circle} from 'react-native-svg';
-import {PlusCircle,Heart,Target,History,Clock,ArrowUpRight} from 'lucide-react-native';
+import {PlusCircle,Heart,Target,History,ArrowUpRight} from 'lucide-react-native';
 import {C} from '../theme';
-import {dayKey,savings,type Data} from '../domain';
+import {dayKey,type Data} from '../domain';
 
-type Props={data:Data;goal:number;todayCount:number;duration:string;weekly:number[];today:string;onRegister:()=>void;onSOS:()=>void;onPlan:()=>void;onHistory:()=>void;onStats:()=>void;onConfirmToday:()=>void};
-const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
+type Props={uid:string|null;clock:number;data:Data;goal:number;todayCount:number;duration:string;weekly:number[];today:string;onRegister:()=>void;onSOS:()=>void;onPlan:()=>void;onHistory:()=>void;onStats:()=>void;onConfirmToday:()=>void};
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Tile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.tile,featured&&{backgroundColor:C.limeSoft,borderColor:'#5C6B24'}]}><View style={styles.tileIcon}><Icon color={C.lime} size={23}/></View><Text style={[styles.tileText,{flexShrink:1}]}>{title}</Text><ArrowUpRight color={C.dim} size={16} style={{position:'absolute',right:15,top:17}}/></Pressable>}
 function Ring({value}:{value:number}){const r=46,circ=2*Math.PI*r,p=Math.max(0,Math.min(100,value));return <View accessible accessibilityRole="text" accessibilityLabel={`Dagens förbrukning: ${Math.round(p)} procent av dagsmålet`} style={{width:106,height:106,alignItems:'center',justifyContent:'center'}}><Svg width={106} height={106} viewBox="0 0 120 120"><Circle cx="60" cy="60" r={r} stroke={C.soft} strokeWidth="11" fill="none"/><Circle cx="60" cy="60" r={r} stroke={C.lime} strokeWidth="11" fill="none" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ*(1-p/100)} rotation={-90} origin="60,60"/></Svg><Text style={[styles.ringText,{position:'absolute'}]}>{Math.round(p)}%</Text></View>}
-function Bars({values}:{values:number[]}){const max=Math.max(1,...values);return <View accessible accessibilityRole="text" accessibilityLabel={`Registrerade cigaretter under veckan: ${values.map((n,i)=>`${['måndag','tisdag','onsdag','torsdag','fredag','lördag','söndag'][i%7]} ${n}`).join(', ')}`} style={styles.bars}>{values.map((n,i)=><View key={i} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:9}}><View style={{height:78,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*74),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:10}}>{['M','T','O','T','F','L','S'][i%7]}</Text></View>)}</View>}
-function Stat({label,value,detail}:{label:string;value:string;detail?:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text>{detail?<Text style={styles.muted}>{detail}</Text>:null}</Card>}
-export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
+export function HomeScreen({uid,clock,data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
  const checkin=data.checkins.find(x=>x.date===today);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
  const previousDays=new Set(data.checkins.filter(x=>x.date<today&&x.complete).map(x=>x.date)).size;
@@ -47,7 +45,8 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
      ?'Ta dagen i din egen takt. Registrera det som händer och ge dig själv utrymme att lyckas.'
      :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
-  <Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}><View style={{flexGrow:1,flexShrink:1,minWidth:150}}><Text adjustsFontSizeToFit minimumFontScale={0.65} numberOfLines={1} style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>
+  <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
+  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} goalCard={<Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}><View style={{flexGrow:1,flexShrink:1,minWidth:150}}><Text adjustsFontSizeToFit minimumFontScale={0.65} numberOfLines={1} style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>}/>
   <Card><Text accessibilityRole="header" style={styles.label}>DAGENS UPPMUNTRAN</Text><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   {bestStrategy?<Card style={{gap:9}}>
    <Text style={styles.label}>DIN PERSONLIGA COACH</Text>
@@ -67,10 +66,10 @@ export function HomeScreen({data,goal,todayCount,duration,weekly,today,onRegiste
    <Pressable accessibilityRole="button" accessibilityHint="Visar tidigare registreringar utan att ändra dem" onPress={onHistory} style={styles.recoveryLink}><Text style={styles.link}>Se mina tidigare framsteg</Text></Pressable>
    <Pressable accessibilityRole="button" accessibilityHint="Öppnar planen där du kan fortsätta eller ändra takten utan att radera historik" onPress={onPlan} style={styles.recoveryLink}><Text style={styles.link}>Se eller anpassa min plan</Text></Pressable>
   </Card>:null}
-  <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
-  <Card><View style={styles.inline}><Clock color={C.lime} size={22}/><View style={{flex:1,gap:5}}><Label>TID SEDAN SENASTE CIGARETTEN</Label><Text style={styles.statValue}>{duration}</Text></View></View></Card>
-  <View style={[styles.sectionRow,{flexWrap:'wrap'}]}><Text accessibilityRole="header" style={[styles.heading,{flexShrink:1}]}>Din utveckling</Text><Pressable accessibilityRole="button" accessibilityLabel="Visa mer statistik om din utveckling" onPress={onStats} style={styles.recoveryLink}><Text style={styles.link}>Visa mer</Text></Pressable></View><Card><Bars values={weekly}/></Card>
-  <View style={styles.grid}><Stat label="DIN BESPARING" value={fmt(savings(data))+' kr'}/><Stat label="DAGENS MÅL" value={String(goal)} detail="Högsta riktvärde"/></View>
+  <View style={[styles.sectionRow,{flexWrap:'wrap'}]}><Text accessibilityRole="header" style={[styles.heading,{flexShrink:1}]}>Din utveckling</Text><Pressable accessibilityRole="button" accessibilityLabel="Visa mer statistik om din utveckling" onPress={onStats} style={styles.recoveryLink}><Text style={styles.link}>Visa mer</Text></Pressable></View>
+
+
+
   <Card><Label>DAGLIG AVSTÄMNING</Label><Text style={styles.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Pressable accessibilityRole="button" accessibilityLabel="Bekräfta dagens registreringar" accessibilityHint="Markerar dagens registreringar som avstämda" onPress={onConfirmToday} style={styles.button}><Text style={styles.buttonText}>Bekräfta dagens registreringar</Text></Pressable>:<Text style={styles.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>
  </View>;
 }

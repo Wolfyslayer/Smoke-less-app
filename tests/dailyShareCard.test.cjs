@@ -222,8 +222,10 @@ test('quit mode disables daily target adjustment controls rather than offering a
 test('home progress visuals announce their meaning and weekly values to screen readers',()=>{
  const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
  assert.match(home,/accessibilityLabel=\{\x60Dagens förbrukning: \$\{Math\.round\(p\)\} procent av dagsmålet\x60\}/);
- assert.match(home,/accessibilityLabel=\{\x60Registrerade cigaretter under veckan:/);
- assert.match(home,/måndag','tisdag','onsdag','torsdag','fredag','lördag','söndag/);
+ const overview=fs.readFileSync('src/components/DashboardOverview.tsx','utf8');
+ assert.match(overview,/accessible accessibilityRole="text" accessibilityLabel=\{`\$\{date\.toLocaleDateString/);
+ assert.match(overview,/\$\{count\} registrerade cigaretter/);
+ assert.match(overview,/Noll registreringar är inte en bekräftad rökfri dag/);
 });
 
 test('plan settings preserve goal labels and headings at large font scales',()=>{

@@ -1,33 +1,24 @@
 # Fortsättning – Smoke Less
 
-## Aktivt arbete
+- Aktiv fas: **16.5 – personlig dashboard**, branch `feat/phase-16-5-personal-dashboard`, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/162.
+- Bas: uppdaterad lokal main `07ff48c315f7d535da56f3053594f503cfd0bc00`.
+- Fas 16.4 är avslutad och mergad i PR #161. `validate` och `rules` gröna på slutlig head `d19dd36`; 159 lokala tester och TypeScript godkända. 8/8 huvudpunkter och 32/32 delpunkter klara på kod-/test-/dokumentationsnivå. Fysisk Android-, BrowserStack- och TalkBack-QA återstår i fas 25.
+- Main:s debug-keystore-plugin och app.json-post har bevarats oförändrade. Inga hemligheter eller regler ändrades.
 
-- Fas 16.4, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/161 (öppen draft).
-- Branch: `feat/phase-16-4-ui-safe-area-audit`.
-- Senast verifierad fjärrcommit: `da974ab`, båda obligatoriska CI gröna. Denna fils commit innehåller nästa milstolpe.
-- Verifierad checklista: `docs/PHASE_16_4_UI_SAFE_AREA.md`, oförändrade 8 huvudpunkter och 32 delpunkter. 6/8 huvudpunkter (75 %), 29/32 delpunkter (90,625 %). Nya ändringar räknas inte som verifierade innan CI.
-- GitHub `validate` och `rules` var gröna på `da974ab`. Kontrollera båda på den nya committen efter push.
+## Fas 16.5
 
-## Senaste milstolpe
+Fast checklista finns i `docs/PHASE_16_5_DASHBOARD.md`, kopierad från roadmapens ursprungliga 8×4-punkter. Verifierat på `ee6fffd` med grön CI: 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter (96,875 %). Kortval, ordning, återställning, lokal persistens och UI är implementerade. TypeScript och 166 lokala tester är godkända. Fysisk QA är inte utförd.
 
-Ren lokal branch uppdaterades med fast-forward från `5d2cb35` till `e8673f9`. Ingen lokal ändring skrevs över. Rättade saknade nedre insets på onboardingens inloggningslänk och login före onboarding samt sidoinsets på huvudflikar och bottennavigation. Huvudflikarnas nederkant ägs fortsatt av den separata bottennavigationen. Ett källkodsbaserat regressionstest skyddar dessa kontrakt; det mäter inte renderad Android-geometri.
+Nästa steg: kontrollera båda CI på slutdokumentationscommitten, kontrollera PR-head/mergebarhet och merga #162 först när båda är gröna. Uppdatera därefter roadmap och fasfil med faktiskt merge-SHA innan 16.6. Registrering och SOS förblir direkt åtkomliga. Datamodell, Firestore-regler och molnsynk är oförändrade. Ny Android-build: NEJ, bara TypeScript, testscript och dokumentation; inga beroenden tillkom.
 
-Nästa milstolpe åtgärdar modalernas sidoinsets, Android-tangentbord i auth-modal, knapptryck i kontoscroll och kalenderlayout. Kalendern växlar till fullbreddslista vid smal skärm eller stor text. Onboardingens textfönster kan växa. Lokalt: TypeScript godkänd, ordinarie testsvit 142/142, storage 10/10 och migration 6/6 godkända. Fjärr-CI för den nya committen måste verifieras efter push.
+## Arbetsregler och risker
 
-## Kvarstår och nästa steg
-
-Efter push kontrollerar AI själv båda obligatoriska CI på senaste PR-commit och fortsätter när de är gröna enligt användarens beslut 2026-11-15. Separat klartecken krävs inte mellan commits. Fortsätt med kvarvarande granskning och verifiering enligt faschecklistan. Dokumentera faktiska resultat i skärmmatrisen. Ingen fysisk Android-QA är utförd i detta arbetspass.
-
-Senaste kodpaketet förbättrar Historik (48 dp + unik etikett), SOS/Statistik/bottenflikar (radbrytbara val och tryckytor), Backup-rubriker, diagramhöjd och scrollbara sessionsfel. TypeScript och 143 ordinarie tester passerar. Nästa steg efter grön CI: slutavstämning av statiska punkter 2, 4, 5 och 6, därefter bevara senaste main/debug-keystore-pluginet och verifiera acceptans inför merge. Ingen fysisk verifiering ska bockas av.
-
-## Risker och dokumentkonflikter
-
-- Roadmapens äldre checklista för 16.4 skiljer sig i ordalydelse och status från den aktiva fasfilens verifierade 8×4-checklista. Använd den aktiva fasfilens ID och status; ersätt inte delpunkter med äldre roadmaptext.
-- AI_WORKFLOW.md har äldre hänvisningar till fas 17 som slut-QA. Senare masterplan och användarens instruktion anger fas 25. Detta gäller bred fysisk QA, inte riskkritiska fel.
-- `origin/main` (`30670d7`) har integrerats utan konflikter. Debug-keystore-pluginet och dess app.json-post är oförändrade från main. Ingen keystore eller hemlighet har lagts till. Detta paket innehåller även sista 48 dp-korrigeringarna för onboardingval och tekniska detaljer.
-- PR-beskrivningen har synkroniserats med fasfilens checklista; fortsätt hålla dessa uppdaterade.
-- Native-build för UI-korrigeringarna: **NEJ**, endast TypeScript/test/dokumentation. Synken återför main:s befintliga native-plugin; ingen ytterligare native-ändring jämfört med main görs. Vid nygenerering av Android-projekt ska main:s etablerade keystore-miljövariabler användas. Riktad Android-verifiering av systemfält återstår i fas 25.
+- Användarens beslut 2026-11-15: AI kontrollerar själv båda obligatoriska CI på senaste PR-head och fortsätter när de är gröna. Separat klartecken krävs inte mellan commits.
+- Vid röd CI: felsök och rätta i samma PR. Bevara alltid lokala ändringar. Ingen destruktiv Git-åtgärd är godkänd.
+- Äldre roadmapchecklista för 16.4 har avvikande ordalydelse; den avslutade fasfilen och PR #161 dokumenterar faktiskt resultat. Äldre QA-hänvisningar till fas 17 är ersatta av fas 25 enligt senare masterplan.
+- Ny Android-build för dashboardens planerade TypeScript-/lagringsarbete: **NEJ**, om inga native-beroenden eller konfigurationer ändras.
+- EAS Update ska planeras i en separat senare PR enligt roadmapens prioriteringar, utan automatisk produktionspublicering.
 
 ## Återuppta
 
-Läs AGENTS.md och de refererade projektfilerna, kontrollera arbetskatalog, senaste PR-head och CI. Fortsätt självständigt efter gröna kontroller i samma PR. Avsluta 16.4 innan nästa roadmapfas. EAS Update ska ha en separat senare PR.
+Läs AGENTS.md, AI_WORKFLOW.md, roadmapen och aktiv fasplan. Kontrollera arbetskatalog, aktuell PR/head och CI innan ändringar. Uppdatera denna fil vid nästa verkliga milstolpe.

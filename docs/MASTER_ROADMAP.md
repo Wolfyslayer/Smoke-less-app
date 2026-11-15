@@ -39,8 +39,8 @@
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
-| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Pågående; 6/8 huvudpunkter, 29/32 delpunkter verifierade | #161 |
-| 16.5 | Personlig dashboard och anpassningsbar startsida | Planerad | — |
+| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
+| 16.5 | Personlig dashboard och anpassningsbar startsida | Klar för merge; 7/8 och 31/32 verifierade, fysisk QA i fas 25 | #162, docs/PHASE_16_5_DASHBOARD.md |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Planerad | — |
 | 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
@@ -511,7 +511,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 
 ### Fas 16.4 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Aktuell statuskorrigering:** PR #161 är aktiv. Verifierad fast checklista finns i `docs/PHASE_16_4_UI_SAFE_AREA.md`: 6/8 huvudpunkter (75 %), 29/32 delpunkter (90,625 %). Nedanstående äldre plantext skiljer sig i delpunkternas ordalydelse och är historisk, inte en andra aktiv checklista. Behåll ID och antal i den aktiva fasfilen. Se `docs/CODEX_CONTINUATION.md` för senaste arbete och CI-grind.
+**Slutlig statuskorrigering:** PR #161 är mergad (`07ff48c`). Verifierad fast checklista finns i `docs/PHASE_16_4_UI_SAFE_AREA.md`: 8/8 huvudpunkter och 32/32 delpunkter (100 %) på kod-/test-/dokumentationsnivå. Fysisk QA kvarstår i fas 25. Nedanstående äldre plantext skiljer sig i delpunkternas ordalydelse och är historisk, inte en andra aktiv checklista. Se `docs/CODEX_CONTINUATION.md` för aktuellt arbete.
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [ ] **Fast skärminventering (0/4)**
@@ -556,47 +556,47 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR utan kosmetisk scope creep.
 
 ### Fas 16.5 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+Se docs/PHASE_16_5_DASHBOARD.md och PR #162. 7/8, 31/32 verifierade; merge inv?ntas.
 
-1. [ ] **Dashboardinventering (0/4)**
-   - [ ] 1.1 Kartlägg befintliga kort.
-   - [ ] 1.2 Identifiera datakällor.
-   - [ ] 1.3 Fastställ standardlayout.
-   - [ ] 1.4 Fastställ integritetsgränser.
-2. [ ] **Anpassning (0/4)**
-   - [ ] 2.1 Välj synliga kort.
-   - [ ] 2.2 Ändra kortordning.
-   - [ ] 2.3 Återställ standard.
-   - [ ] 2.4 Hantera saknade värden.
-3. [ ] **Kortinnehåll (0/4)**
-   - [ ] 3.1 Dagens mål.
-   - [ ] 3.2 Rökfri tid och delmål.
-   - [ ] 3.3 Besparingar.
-   - [ ] 3.4 Röksug och framsteg.
-4. [ ] **Persistens (0/4)**
-   - [ ] 4.1 Spara lokala val.
-   - [ ] 4.2 Hantera gästläge.
-   - [ ] 4.3 Synka endast när säkert.
-   - [ ] 4.4 Hantera kontobyte.
-5. [ ] **Layout (0/4)**
-   - [ ] 5.1 Behåll överblick utan onödig scroll.
-   - [ ] 5.2 Stöd stora textstorlekar.
-   - [ ] 5.3 Stöd små skärmar.
-   - [ ] 5.4 Granska tillgänglighet.
-6. [ ] **Prestanda (0/4)**
-   - [ ] 6.1 Undvik onödiga omrenderingar.
-   - [ ] 6.2 Beräkna aggregat effektivt.
-   - [ ] 6.3 Hantera offline.
-   - [ ] 6.4 Hantera snabba registreringar.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa val och ordning.
-   - [ ] 7.2 Testa återställning.
-   - [ ] 7.3 Testa dataseparering.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera standardval.
-   - [ ] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
+1. [x] **Dashboardinventering (4/4)**
+   - [x] 1.1 Kartlägg befintliga kort.
+   - [x] 1.2 Identifiera datakällor.
+   - [x] 1.3 Fastställ standardlayout.
+   - [x] 1.4 Fastställ integritetsgränser.
+2. [x] **Anpassning (4/4)**
+   - [x] 2.1 Välj synliga kort.
+   - [x] 2.2 Ändra kortordning.
+   - [x] 2.3 Återställ standard.
+   - [x] 2.4 Hantera saknade värden.
+3. [x] **Kortinnehåll (4/4)**
+   - [x] 3.1 Dagens mål.
+   - [x] 3.2 Rökfri tid och delmål.
+   - [x] 3.3 Besparingar.
+   - [x] 3.4 Röksug och framsteg.
+4. [x] **Persistens (4/4)**
+   - [x] 4.1 Spara lokala val.
+   - [x] 4.2 Hantera gästläge.
+   - [x] 4.3 Synka endast när säkert.
+   - [x] 4.4 Hantera kontobyte.
+5. [x] **Layout (4/4)**
+   - [x] 5.1 Behåll överblick utan onödig scroll.
+   - [x] 5.2 Stöd stora textstorlekar.
+   - [x] 5.3 Stöd små skärmar.
+   - [x] 5.4 Granska tillgänglighet.
+6. [x] **Prestanda (4/4)**
+   - [x] 6.1 Undvik onödiga omrenderingar.
+   - [x] 6.2 Beräkna aggregat effektivt.
+   - [x] 6.3 Hantera offline.
+   - [x] 6.4 Hantera snabba registreringar.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa val och ordning.
+   - [x] 7.2 Testa återställning.
+   - [x] 7.3 Testa dataseparering.
+   - [x] 7.4 Verifiera CI.
+8. [ ] **Avslut (3/4)**
+   - [x] 8.1 Dokumentera standardval.
+   - [x] 8.2 Samla enhets-QA till fas 25.
+   - [x] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 16.6 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)

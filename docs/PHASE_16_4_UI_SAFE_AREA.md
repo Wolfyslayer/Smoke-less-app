@@ -4,7 +4,7 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 
 ## Fast checklista (8 × 4 = 32)
 
-**Status:** Pågående. 6/8 huvudpunkter, 29/32 verifierade delpunkter (90,625 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
+**Status:** Mergad i PR #161, commit `07ff48c315f7d535da56f3053594f503cfd0bc00`. 8/8 huvudpunkter och 32/32 delpunkter (100 %) verifierade på kod-, automatisk test- och dokumentationsnivå. Fysisk Android-QA är inte genomförd och kvarstår i fas 25.
 
 1. **Skärmmatris och inventering (4/4)**
    - [x] 1.1 Inventera alla tabbar och underskärmar.
@@ -26,8 +26,8 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
    - [x] 4.2 Granska större skärmar och bildförhållanden.
    - [x] 4.3 Granska maximal textstorlek och visningsskalning.
    - [x] 4.4 Åtgärda verifierad horisontell scroll eller avklippt innehåll.
-5. **Tillgänglighet och konsekvens (3/4)**
-   - [ ] 5.1 Granska tryckytor (mål minst 48 dp).
+5. **Tillgänglighet och konsekvens (4/4)**
+   - [x] 5.1 Granska tryckytor (mål minst 48 dp).
    - [x] 5.2 Granska etiketter, roller och läsordning statiskt.
    - [x] 5.3 Granska kontrast, fel-, laddnings- och tomlägen.
    - [x] 5.4 Dokumentera TalkBack som uppskjuten fysisk QA i fas 25.
@@ -41,17 +41,19 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
    - [x] 7.2 Kontrollera TypeScript och ordinarie testsvit.
    - [x] 7.3 Kontrollera Firestore-regel-CI utan onödiga regeländringar.
    - [x] 7.4 Dokumentera testtäckning och kvarstående begränsningar.
-8. **Acceptans och avslut (2/4)**
+8. **Acceptans och avslut (4/4)**
    - [x] 8.1 Stäm av alla skärmar mot inventeringsmatrisen.
    - [x] 8.2 Dokumentera uppskjutna enhetstester i fas 25.
-   - [ ] 8.3 Verifiera båda CI på senaste commit och native-buildbehov.
-   - [ ] 8.4 Merga enbart efter verifierade acceptanskriterier.
+   - [x] 8.3 Verifiera båda CI på senaste commit och native-buildbehov.
+   - [x] 8.4 Merga enbart efter verifierade acceptanskriterier.
 
 ## Arbetsregler
 
 En PR för fasen, sammanhängande commits och grön CI innan nästa commit. Efter varje commit rapporteras 8 huvudpunkter och 32 delpunkter samt Android-build JA/NEJ. Ändra inte Firebase-regler eller hemligheter. Utöka inte omfattningen med orelaterad kosmetik.
 
 ## Verifieringsnoteringar
+
+- **Slutacceptans 5.1, 8.3–8.4:** `d19dd36` hade gröna `validate` och `rules`; TypeScript och 159 lokala tester passerade. PR #161 mergades efter denna kontroll, med exakt kontrollerad head-SHA. Debug-keystore-plugin och app.json bevarades identiska med main. Ingen ny native-konfiguration jämfört med main infördes. Äldre väntande CI-noteringar nedan är historiska milstolpar.
 
 - **2.4, 4.1–4.4, 5.2–5.3, 6.2, 6.4, 8.1 (statisk avstämning och CI):** Skärmmatrisens sammanfattning omfattar samtliga inventerade appvyer, systeminsets, flex/wrap, textskalning, roller, kontrastpar, statuslägen och modalernas tillbaka-flöde. Identifierade fel har korrigerats och TypeScript/tester samt båda CI är gröna på `da974ab`. Statisk granskning är avslutad för dessa punkter; renderad geometri, visningsskalning, fokus/TalkBack, systemdelning och riktiga systemfält är fortsatt fysisk QA i fas 25. Ingen ny blockerande data-/auth-risk har identifierats. Punkt 5.1 inväntar de sista 48 dp-korrigeringarna i onboarding/tekniska detaljer och deras CI.
 
