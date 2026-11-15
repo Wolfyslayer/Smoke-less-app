@@ -42,7 +42,7 @@
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
-| 16.7 | Fördjupad statistik och personliga trender | Pågående; 1/8 och 4/32 verifierade, implementation inväntar CI | #164, docs/PHASE_16_7_TRENDS.md |
+| 16.7 | Fördjupad statistik och personliga trender | Klar för merge; 7/8 och 31/32 verifierade, fysisk QA i fas 25 | #164, docs/PHASE_16_7_TRENDS.md |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Planerad | — |
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Planerad | — |
@@ -644,47 +644,47 @@ PR #163 merged as 525b07b: 8/8 and 32/32. See docs/PHASE_16_6_PLANNING.md.
    - [x] 8.4 Merga fas-PR.
 
 ### Fas 16.7 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+PR #164: 7/8, 31/32. See docs/PHASE_16_7_TRENDS.md.
 
-1. [ ] **Statistikinventering (0/4)**
-   - [ ] 1.1 Kartlägg befintliga diagram.
-   - [ ] 1.2 Kartlägg beräkningskällor.
-   - [ ] 1.3 Identifiera saknade-data-fall.
-   - [ ] 1.4 Fastställ korrekta definitioner.
-2. [ ] **Jämförelser (0/4)**
-   - [ ] 2.1 Vecka mot vecka.
-   - [ ] 2.2 Månad mot månad.
-   - [ ] 2.3 Visa planmål mot registreringar.
-   - [ ] 2.4 Förklara jämförelseperioder.
-3. [ ] **Trender (0/4)**
-   - [ ] 3.1 Visa konsumtionstrend.
-   - [ ] 3.2 Visa röksugstrend.
-   - [ ] 3.3 Visa personliga rekord.
-   - [ ] 3.4 Undvik missvisande sviter.
-4. [ ] **Datakvalitet (0/4)**
-   - [ ] 4.1 Skilj saknad data från noll.
-   - [ ] 4.2 Skilj fakta från uppskattning.
-   - [ ] 4.3 Hantera ändrade planer.
-   - [ ] 4.4 Hantera tidszon och datumgräns.
-5. [ ] **Presentation (0/4)**
-   - [ ] 5.1 Stöd små skärmar.
-   - [ ] 5.2 Stöd stora texter.
-   - [ ] 5.3 Gör diagram TalkBack-läsbara.
-   - [ ] 5.4 Samordna dashboard.
-6. [ ] **Prestanda (0/4)**
-   - [ ] 6.1 Beräkna lokalt.
-   - [ ] 6.2 Undvik upprepade tunga aggregat.
-   - [ ] 6.3 Hantera lång historik.
-   - [ ] 6.4 Fungera offline.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa jämförelser.
-   - [ ] 7.2 Testa saknade data.
-   - [ ] 7.3 Testa datumgränser.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera statistikdefinitioner.
-   - [ ] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
+1. [x] **Statistikinventering (4/4)**
+   - [x] 1.1 Kartlägg befintliga diagram.
+   - [x] 1.2 Kartlägg beräkningskällor.
+   - [x] 1.3 Identifiera saknade-data-fall.
+   - [x] 1.4 Fastställ korrekta definitioner.
+2. [x] **Jämförelser (4/4)**
+   - [x] 2.1 Vecka mot vecka.
+   - [x] 2.2 Månad mot månad.
+   - [x] 2.3 Visa planmål mot registreringar.
+   - [x] 2.4 Förklara jämförelseperioder.
+3. [x] **Trender (4/4)**
+   - [x] 3.1 Visa konsumtionstrend.
+   - [x] 3.2 Visa röksugstrend.
+   - [x] 3.3 Visa personliga rekord.
+   - [x] 3.4 Undvik missvisande sviter.
+4. [x] **Datakvalitet (4/4)**
+   - [x] 4.1 Skilj saknad data från noll.
+   - [x] 4.2 Skilj fakta från uppskattning.
+   - [x] 4.3 Hantera ändrade planer.
+   - [x] 4.4 Hantera tidszon och datumgräns.
+5. [x] **Presentation (4/4)**
+   - [x] 5.1 Stöd små skärmar.
+   - [x] 5.2 Stöd stora texter.
+   - [x] 5.3 Gör diagram TalkBack-läsbara.
+   - [x] 5.4 Samordna dashboard.
+6. [x] **Prestanda (4/4)**
+   - [x] 6.1 Beräkna lokalt.
+   - [x] 6.2 Undvik upprepade tunga aggregat.
+   - [x] 6.3 Hantera lång historik.
+   - [x] 6.4 Fungera offline.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa jämförelser.
+   - [x] 7.2 Testa saknade data.
+   - [x] 7.3 Testa datumgränser.
+   - [x] 7.4 Verifiera CI.
+8. [ ] **Avslut (3/4)**
+   - [x] 8.1 Dokumentera statistikdefinitioner.
+   - [x] 8.2 Samla enhets-QA till fas 25.
+   - [x] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 17.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)

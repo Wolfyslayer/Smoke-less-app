@@ -1,5 +1,5 @@
 # Fas 16.7 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #164. Inventering verifierad mot befintlig kod och startcommit `60b1030` med grön validate/rules: 1/8 huvudpunkter (12,5 %) och 4/32 delpunkter (12,5 %). Implementationen inväntar egen CI. Ursprunglig 8×4-checklista är bevarad.
+**Status:** Klar för merge i PR #164. 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter (96,875 %) verifierade på kod-/automatisk test-/dokumentationsnivå med grön validate/rules på `6248bb5`. 8.4 inväntar faktisk merge. Ursprunglig 8×4-checklista är bevarad; fysisk Android/TalkBack-QA är inte utförd.
 
 ## Nästa konkreta arbete
 
@@ -12,43 +12,45 @@ Förändra inte historik, planmodell, synk eller Firestore-regler. Återanvänd 
    - [x] 1.2 Kartlägg beräkningskällor.
    - [x] 1.3 Identifiera saknade-data-fall.
    - [x] 1.4 Fastställ korrekta definitioner.
-2. [ ] **Jämförelser (0/4)**
-   - [ ] 2.1 Vecka mot vecka.
-   - [ ] 2.2 Månad mot månad.
-   - [ ] 2.3 Visa planmål mot registreringar.
-   - [ ] 2.4 Förklara jämförelseperioder.
-3. [ ] **Trender (0/4)**
-   - [ ] 3.1 Visa konsumtionstrend.
-   - [ ] 3.2 Visa röksugstrend.
-   - [ ] 3.3 Visa personliga rekord.
-   - [ ] 3.4 Undvik missvisande sviter.
-4. [ ] **Datakvalitet (0/4)**
-   - [ ] 4.1 Skilj saknad data från noll.
-   - [ ] 4.2 Skilj fakta från uppskattning.
-   - [ ] 4.3 Hantera ändrade planer.
-   - [ ] 4.4 Hantera tidszon och datumgräns.
-5. [ ] **Presentation (0/4)**
-   - [ ] 5.1 Stöd små skärmar.
-   - [ ] 5.2 Stöd stora texter.
-   - [ ] 5.3 Gör diagram TalkBack-läsbara.
-   - [ ] 5.4 Samordna dashboard.
-6. [ ] **Prestanda (0/4)**
-   - [ ] 6.1 Beräkna lokalt.
-   - [ ] 6.2 Undvik upprepade tunga aggregat.
-   - [ ] 6.3 Hantera lång historik.
-   - [ ] 6.4 Fungera offline.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa jämförelser.
-   - [ ] 7.2 Testa saknade data.
-   - [ ] 7.3 Testa datumgränser.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera statistikdefinitioner.
-   - [ ] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
+2. [x] **Jämförelser (4/4)**
+   - [x] 2.1 Vecka mot vecka.
+   - [x] 2.2 Månad mot månad.
+   - [x] 2.3 Visa planmål mot registreringar.
+   - [x] 2.4 Förklara jämförelseperioder.
+3. [x] **Trender (4/4)**
+   - [x] 3.1 Visa konsumtionstrend.
+   - [x] 3.2 Visa röksugstrend.
+   - [x] 3.3 Visa personliga rekord.
+   - [x] 3.4 Undvik missvisande sviter.
+4. [x] **Datakvalitet (4/4)**
+   - [x] 4.1 Skilj saknad data från noll.
+   - [x] 4.2 Skilj fakta från uppskattning.
+   - [x] 4.3 Hantera ändrade planer.
+   - [x] 4.4 Hantera tidszon och datumgräns.
+5. [x] **Presentation (4/4)**
+   - [x] 5.1 Stöd små skärmar.
+   - [x] 5.2 Stöd stora texter.
+   - [x] 5.3 Gör diagram TalkBack-läsbara.
+   - [x] 5.4 Samordna dashboard.
+6. [x] **Prestanda (4/4)**
+   - [x] 6.1 Beräkna lokalt.
+   - [x] 6.2 Undvik upprepade tunga aggregat.
+   - [x] 6.3 Hantera lång historik.
+   - [x] 6.4 Fungera offline.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa jämförelser.
+   - [x] 7.2 Testa saknade data.
+   - [x] 7.3 Testa datumgränser.
+   - [x] 7.4 Verifiera CI.
+8. [ ] **Avslut (3/4)**
+   - [x] 8.1 Dokumentera statistikdefinitioner.
+   - [x] 8.2 Samla enhets-QA till fas 25.
+   - [x] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
 ## Inventering, definitioner och genomförande
+
+**Slutacceptans:** TypeScript och 182 lokala tester passerade (166 ordinarie inklusive nio trendfall, 10 storage, 6 migration). Samma kontroller körs i validate; rules är grön utan ändrade Firestore-regler. Funktionerna är testade med verklig domänkod och kontrollerade datum/indata. Layout, läsordning och offlineberoenden är statiskt granskade; testerna simulerar inte en fysisk telefon eller TalkBack. Fasens återstående fysiska kontroller är redovisade nedan och flyttade till fas 25. Ingen native-build behövs: inga nya beroenden/native-inställningar, endast testscript och TypeScript/dokumentation.
 
 StatsScreen har redan sjudagarsstaplar, valda rullande perioder, besparingsuppskattningar, milstolpar och SOS-sammanställningar. `getDashboardMetrics` försörjer startsidans dagsmål/antal/vecka från samma sessionsdata. Ny statistik använder rena `buildPersonalTrends`, utan ändrad datamodell eller nätverksberoende.
 

@@ -5,7 +5,7 @@
 - Aktiv fas **16.7 – fördjupad statistik och personliga trender**.
 - Branch `feat/phase-16-7-personal-trends`, från uppdaterad lokal main `525b07ba970d528ddafabb295504b2c111e99c29`.
 - Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/164. Skapa inte en till.
-- Fast checklista: `docs/PHASE_16_7_TRENDS.md`, 1/8 huvudpunkter och 4/32 delpunkter verifierade (12,5 %). Startcommit `60b1030` har båda obligatoriska CI gröna. Implementationspaketet inväntar egen CI.
+- Fast checklista: `docs/PHASE_16_7_TRENDS.md`, 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter verifierade (96,875 %). Implementationscommit `6248bb5` har båda obligatoriska CI gröna. Slutdokumentationen behöver egen grön CI före merge.
 
 ## Avslutat i detta arbetspass
 
@@ -17,7 +17,7 @@
 
 Implementerat kalenderjämförelser för avslutade veckor/månader, täckning, dagsgenomsnitt, röksug, bekräftade rekord och kända planmål. Saknade dagar får inte rökfrihetsstatus. Planmål före senaste planstart anges som saknade. StatsScreen:s gamla milstolpar delar ny beräkning. Dashboardens antal exkluderar framtida poster utan att radera eller dölja dem från Historik. Tunga nya aggregat och dashboardmått memoiseras per dataändring/minut.
 
-TypeScript och 182 tester godkända lokalt: 166 ordinarie, 10 storage, 6 migration. Nio nya trendtester täcker kalender/DST/årsskifte, täckning, olika månadslängder, luckor/motsägelser, framtida data, ändrade planer/nollmål, 20 000 poster och samordning med dashboard. Nästa steg: invänta båda CI på implementationscommitten, granska presentation och definitionskontrakt och stäm av återstående fasta checklistan före acceptans/merge. Fysisk TalkBack/Android/offline-QA är inte genomförd.
+TypeScript och 182 tester godkända lokalt: 166 ordinarie, 10 storage, 6 migration. Nio nya trendtester täcker kalender/DST/årsskifte, täckning, olika månadslängder, luckor/motsägelser, framtida data, ändrade planer/nollmål, 20 000 poster och samordning med dashboard. Nästa steg: invänta båda CI på slutdokumentationscommitten och merga #164 med kontrollerad head-SHA när båda är gröna. Därefter uppdatera faktisk fasstatus och fortsätt till 17.0 enligt roadmapen. Fysisk TalkBack/Android/offline-QA är inte genomförd.
 
 ## Regler och kvarstående risker
 
