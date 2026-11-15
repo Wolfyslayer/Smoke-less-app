@@ -53,6 +53,7 @@
 | 24.0 | Lättbegriplig onboarding och vägledd användning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #172, `d606126` |
 | 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Startad; fast 8x4-checklista | docs/PHASE_25_RELEASE.md |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
+| 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Startad enligt nytt användarbeslut; QA/release kvar i fas 25 | docs/PHASE_27_DESIGN.md |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -365,6 +366,59 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Bygg och testa signerad release; verifiera riktiga Android-enheter, notifieringar och inloggning.
 - Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
+
+## Fas 27.0 – Premium UI/UX-redesign och Light/Dark/System-teman (PÅGÅR)
+
+**Beslut 2026-11-15:** Användaren önskar en genomgripande, professionell och sammanhängande redesign av Smoke Less. Nuvarande gröna varumärkesidentitet är utgångspunkt, men layout, navigation, komponenter, typografi, spacing och färgnyanser får förändras när användbarheten och helhetsintrycket förbättras. Inför tre temaval: **Ljust**, **Mörkt** och **System** (systemtema som standard). Temat ska kunna växlas utan omstart, sparas säkert och fungera i onboarding, modaler, diagram, delningskort och systemfält.
+
+**Ordning och avgränsning:** Nytt användarbeslut 2026-11-15 prioriterar fas 27 före färdig testbuild och offentlig lansering. Fas 25:s kvarvarande QA-/releasegrindar lämnas öppna och fas 26 skjuts upp till efter lansering. Fas 27 får egen branch/PR ovanpå fas 25:s branch för att bevara aktuella säkerhetsändringar; fas 25 mergas inte som färdig. Inga orelaterade Firebase-, datamodells- eller native-ändringar. Behåll alla kärnflöden och tillgänglighet.
+
+### Fas 27.0 – fast planerad checklista (8 huvudpunkter × 4 delpunkter = 32)
+
+**Status:** Pågår. Inventering/designriktning och semantiska paletter lokalt verifierade: 1/8 huvudpunkter (12,5 %), 5/32 delpunkter (15,625 %). Senaste CI måste passera före nästa commit. Se `PHASE_27_DESIGN.md`.
+
+1. [x] **Designgranskning och riktning (4/4)**
+   - [x] 1.1 Inventera samtliga skärmar och gemensamma UI-komponenter.
+   - [x] 1.2 Identifiera konkreta visuella och användbarhetsmässiga problem.
+   - [x] 1.3 Fastställ en sammanhängande premiumdesign med grön identitet som utgångspunkt.
+   - [x] 1.4 Dokumentera design-tokens, referensvyer och acceptanskriterier.
+2. [ ] **Light/Dark Theme System (1/4)**
+   - [x] 2.1 Skapa semantiska färgtokens för ljust och mörkt tema.
+   - [ ] 2.2 Inför Ljust, Mörkt och System med System som standard.
+   - [ ] 2.3 Spara och återställ temaval utan att påverka kontodata.
+   - [ ] 2.4 Anpassa statusfält, systemnavigation, modaler och diagram till valt tema.
+3. [ ] **Startsida och dashboard (0/4)**
+   - [ ] 3.1 Förbättra progresscirkel och dagens översikt.
+   - [ ] 3.2 Omstrukturera kort, spacing och informationshierarki.
+   - [ ] 3.3 Förbättra SOS och snabbregistrering utan extra steg.
+   - [ ] 3.4 Verifiera dashboardens båda teman och olika skärmstorlekar.
+4. [ ] **Navigation och gemensamma komponenter (0/4)**
+   - [ ] 4.1 Modernisera navigation utan att bryta Android Tillbaka.
+   - [ ] 4.2 Standardisera knappar, kort, formulär och återkoppling.
+   - [ ] 4.3 Förbättra dialoger, datumväljare och överlägg.
+   - [ ] 4.4 Inför konsekvent typografi, ikoner, avstånd och tryckytor.
+5. [ ] **Övriga skärmar (0/4)**
+   - [ ] 5.1 Förbättra plan och registrering.
+   - [ ] 5.2 Förbättra statistik och historik.
+   - [ ] 5.3 Förbättra profil, inställningar och fördelar.
+   - [ ] 5.4 Förbättra onboarding och kontoflöden i båda teman.
+6. [ ] **Responsivitet och tillgänglighet (0/4)**
+   - [ ] 6.1 Kontrollera Safe Area och tangentbordsbeteende.
+   - [ ] 6.2 Kontrollera stor text och varierande skärmstorlekar.
+   - [ ] 6.3 Kontrollera kontrast och minst 48 dp tryckytor där möjligt.
+   - [ ] 6.4 Kontrollera etiketter, roller, läsordning och temaväxling med hjälpmedel.
+7. [ ] **Animationer och slutpolering (0/4)**
+   - [ ] 7.1 Inför diskreta rörelser med respekt för reducerad rörelse.
+   - [ ] 7.2 Förbättra laddnings-, tom- och fellägen.
+   - [ ] 7.3 Granska prestanda och undvik onödiga omrenderingar.
+   - [ ] 7.4 Kontrollera visuell konsekvens i alla huvudflöden.
+8. [ ] **Tester och leverans (0/4)**
+   - [ ] 8.1 Lägg till tester för temaval, lagring och systemtema.
+   - [ ] 8.2 Regressionstesta befintliga kärnflöden och dataintegritet.
+   - [ ] 8.3 Verifiera båda CI-kontrollerna och dokumentera Android-buildbehov.
+   - [ ] 8.4 Slutför fasens PR efter verifierade acceptanskriterier.
+
+---
 
 ## Fas 26.0 – Uppföljning och förbättringar efter lansering
 - Etablera kostnadsmedveten hantering av buggrapporter, krascher och supportärenden utan onödig insamling av personuppgifter.
@@ -1244,7 +1298,7 @@ Nästa driftmilstolpe: återhämtningsverktyget kräver uttryckligt projekt och 
 - Lägg inte till nya faser eller utöka fasta 8×4-checklistor för små förbättringar. Registrera nya idéer i backlog och avgör om de verkligen motiverar en separat fas.
 
 ## Princip för kommande faser
-- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering).
+- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman).
 - En fas = en PR med **fast åttapunktschecklista och fyra fasta delpunkter per huvudpunkt** (32 totalt). Räkna bara verifierat klart efter relevanta tester och CI.
 - Ändra inte fasens mål eller nämnare under arbetet utan uttryckligt beslut. Nya önskemål läggs i kommande fas eller backlog. Samla relaterade förbättringar i meningsfulla commits; undvik en PR per småfix.
 - Fas 25 är den slutliga manuella Android-/BrowserStack-/TalkBack-/Safe Area- och säkerhetsgrinden. Blockerande säkerhets- och datafel får aldrig skjutas upp.

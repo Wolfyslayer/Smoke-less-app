@@ -2,6 +2,11 @@
 
 ## Aktiv fas
 
+- **Nytt beslut 2026-11-15:** Fas 27 prioriteras nu enligt användarens uttryckliga önskemål. Branch `feat/phase-27-premium-ui-themes`, separat staplad PR med bas fas 25:s branch. Main:s PR #174 (`dc7f93a`) är inläst; befintligt säkerhetsarbete bevaras. Fas 25 är vilande med öppna QA/releasepunkter, inte godkänd eller mergad. Fas 26 väntar på lansering.
+- Läs `PHASE_27_DESIGN.md` och `PHASE_27_CHECKLIST.md`. Inventering/designriktning och paletter: 1/8, 5/32 lokalt verifierade. TypeScript och 303 ordinarie test passerar. UI byter ännu inte tema; nästa steg är provider, robust enhetslokal preferens och successiv migration av statiska stilar. Inga Android-byggen startas.
+
+## Föregående aktiv fas (historik)
+
 - Fas **25.0 – slutlig QA, säkerhet och release**, branch `feat/phase-25-release-readiness`, PR #173. Bas main `d606126`.
 - Fast checklista: `docs/PHASE_25_RELEASE.md`. Merga inte fasen eller markera roadmapen färdig innan verkliga releasegrindar passerat. Fas 26 kräver lansering och faktisk återkoppling.
 - Användaren har gett stående klartecken att AI kontrollerar senaste `validate` och `rules` och fortsätter till nästa commit/fas när de är gröna. Inget extra klartecken mellan vanliga commits/merge. Produktionspublicering kräver uttryckligt beslut.
