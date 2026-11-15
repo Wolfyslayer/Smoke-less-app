@@ -42,8 +42,8 @@
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
-| 16.7 | Fördjupad statistik och personliga trender | Klar för merge; 7/8 och 31/32 verifierade, fysisk QA i fas 25 | #164, docs/PHASE_16_7_TRENDS.md |
-| 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
+| 16.7 | Fördjupad statistik och personliga trender | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #164, `1781333` |
+| 17.0 | Delningsbild som matchar dagens framsteg | Pågående; 1/8 och 4/32 verifierade, implementation inväntar CI | #165, docs/PHASE_17_SHARE_PROGRESS.md |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Planerad | — |
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Planerad | — |
 | 20.0 | Långsiktigt rökfri och återfallsprevention | Planerad | — |
@@ -644,7 +644,7 @@ PR #163 merged as 525b07b: 8/8 and 32/32. See docs/PHASE_16_6_PLANNING.md.
    - [x] 8.4 Merga fas-PR.
 
 ### Fas 16.7 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-PR #164: 7/8, 31/32. See docs/PHASE_16_7_TRENDS.md.
+PR #164 merged as 1781333: 8/8 and 32/32. See docs/PHASE_16_7_TRENDS.md.
 
 1. [x] **Statistikinventering (4/4)**
    - [x] 1.1 Kartlägg befintliga diagram.
@@ -681,11 +681,11 @@ PR #164: 7/8, 31/32. See docs/PHASE_16_7_TRENDS.md.
    - [x] 7.2 Testa saknade data.
    - [x] 7.3 Testa datumgränser.
    - [x] 7.4 Verifiera CI.
-8. [ ] **Avslut (3/4)**
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera statistikdefinitioner.
    - [x] 8.2 Samla enhets-QA till fas 25.
    - [x] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 17.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.

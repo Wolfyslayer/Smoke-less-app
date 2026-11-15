@@ -1,8 +1,9 @@
+import {buildDailyShareCard,progressCardLayout} from '../domain/dailyShareCard';
 import React,{useLayoutEffect,useRef,useState} from 'react';
 import type Svg from 'react-native-svg';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import {Pressable,Share,StyleSheet,Text,View} from 'react-native';
+import {Pressable,Share,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {UserRound,ChevronRight,Target,History,Leaf,Settings,Heart,Cloud,Share2} from 'lucide-react-native';
 import {C} from '../theme';
 import {AppCard} from '../components/ui';
@@ -15,6 +16,8 @@ const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',ye
 const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
 const quickLinks=[{label:'Min plan',icon:Target,to:'plan',detail:'Mål och framsteg'},{label:'Min logg',icon:History,to:'history',detail:'Din registrerade historik'},{label:'Hälsa och besparing',icon:Leaf,to:'benefits',detail:'Se vad du vinner'},{label:'Konto och säkerhet',icon:UserRound,to:'account',detail:'Inloggning och kontoinställningar'},{label:'Synkronisering',icon:Cloud,to:'backup',detail:'Kontosynk mellan enheter'},{label:'Inställningar',icon:Settings,to:'settings',detail:'Anpassa appen'},{label:'Stöd vid röksug',icon:Heart,to:'sos',detail:'Hjälp i stunden'}] as const;
 export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavigate}:Props){
+ const {fontScale}=useWindowDimensions();
+ const latestFontScaleRef=useRef(fontScale);
  const [showSharePreview,setShowSharePreview]=useState(false);
  const artworkRef=useRef<Svg|null>(null);
  const previewOpenRef=useRef(false);
@@ -26,14 +29,15 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const [sharingPng,setSharingPng]=useState(false);
  const [shareError,setShareError]=useState(false);
  useLayoutEffect(()=>{
-  if(latestCountsRef.current.todayCount===todayCount&&latestCountsRef.current.dailyGoal===dailyGoal)return;
+  if(latestCountsRef.current.todayCount===todayCount&&latestCountsRef.current.dailyGoal===dailyGoal&&latestFontScaleRef.current===fontScale)return;
   latestCountsRef.current={todayCount,dailyGoal};
+  latestFontScaleRef.current=fontScale;
   ++exportGenerationRef.current;
   pngPathRef.current=null;
   exportCountsRef.current=null;
   setPngStatus('idle');
   setShareError(false);
- },[todayCount,dailyGoal]);
+ },[todayCount,dailyGoal,fontScale]);
  const sharePng=async()=>{
   if(pngStatus!=='ready'||!pngPathRef.current||sharingPng||exportCountsRef.current?.todayCount!==todayCount||exportCountsRef.current?.dailyGoal!==dailyGoal)return;
   setSharingPng(true);
@@ -70,7 +74,7 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
      setPngStatus('ready');
     }catch{if(generation===exportGenerationRef.current)setPngStatus('error');}
     })();
-   },{width:680,height:840});
+   },{width:680,height:Math.round(2*progressCardLayout(buildDailyShareCard({todayCount,dailyGoal}),fontScale).height)});
   }catch{if(generation===exportGenerationRef.current)setPngStatus('error');}
  };
  const loggedIn=accountEmail!==null;
@@ -87,7 +91,7 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
   <Card style={{gap:12}}>
    <View style={styles.inline}><Share2 size={21} color={C.lime}/><Text accessibilityRole="header" style={[styles.cardTitle,{flexShrink:1}]}>Dela framsteg eller uppmuntran</Text></View>
    <Pressable accessibilityRole="button" accessibilityLabel={showSharePreview?'Dölj dagens framstegskort':'Förhandsgranska dagens framstegskort'} accessibilityState={{expanded:showSharePreview}} onPress={()=>{++exportGenerationRef.current;previewOpenRef.current=!previewOpenRef.current;setShowSharePreview(previewOpenRef.current);setPngStatus('idle');exportCountsRef.current=null;pngPathRef.current=null;setShareError(false);}} style={[styles.row,{minHeight:56}]}><Text style={[styles.cardTitle,{flexShrink:1}]}>{showSharePreview?'Dölj dagens framsteg':'Visa dagens framsteg'}</Text><ChevronRight size={19} color={C.dim}/></Pressable>
-   {showSharePreview?<><View style={{width:'100%',maxWidth:340,aspectRatio:340/420,alignSelf:'center'}}><DailyProgressShareArtwork ref={artworkRef} todayCount={todayCount} dailyGoal={dailyGoal}/></View><Pressable accessibilityRole="button" accessibilityLabel="Förbered dagens framsteg som bild" onPress={renderPng} disabled={pngStatus==='rendering'} accessibilityState={{disabled:pngStatus==='rendering',busy:pngStatus==='rendering'}} style={[styles.row,{minHeight:56}]}><Text style={[styles.cardTitle,{flexShrink:1}]}>{pngStatus==='rendering'?'Förbereder bilden…':'Förbered bild för delning'}</Text></Pressable>{pngStatus==='rendering'?<Text accessibilityLiveRegion="polite" accessibilityRole="text" style={styles.muted}>Bilden förbereds. Vänta tills den är klar innan du delar.</Text>:null}{pngStatus==='ready'&&exportCountsRef.current?.todayCount===todayCount&&exportCountsRef.current?.dailyGoal===dailyGoal?<><Text accessibilityLiveRegion="polite" style={styles.muted}>Bilden är klar. Tryck på Dela bilden och välj själv mottagare, eller avbryt.</Text><Pressable accessibilityRole="button" accessibilityLabel="Dela PNG-bild av dagens framsteg" accessibilityHint="Öppnar telefonens delningsdialog för den förhandsgranskade bilden" onPress={()=>void sharePng()} disabled={sharingPng} accessibilityState={{disabled:sharingPng,busy:sharingPng}} style={[styles.row,{minHeight:56}]}><Share2 size={21} color={C.lime}/><Text style={[styles.cardTitle,{flexShrink:1}]}>{sharingPng?'Öppnar delning…':'Dela bilden'}</Text></Pressable>{shareError?<Text accessibilityLiveRegion="polite" style={styles.muted}>Det gick inte att öppna bilddelningen. Försök igen.</Text>:null}</>:pngStatus==='ready'?<Text accessibilityLiveRegion="polite" style={styles.muted}>Dagens värden har ändrats. Förbered bilden på nytt innan du delar.</Text>:pngStatus==='error'?<Text accessibilityLiveRegion="polite" style={styles.muted}>Det gick inte att skapa bilden. Försök igen.</Text>:null}<Text style={styles.muted}>Bilden innehåller bara dagens antal och mål, utan namn eller kontouppgifter. Inget skickas förrän du själv väljer att dela.</Text></>:null}
+   {showSharePreview?<><View style={{width:'100%',maxWidth:340,alignSelf:'center'}}><DailyProgressShareArtwork ref={artworkRef} todayCount={todayCount} dailyGoal={dailyGoal}/></View><Pressable accessibilityRole="button" accessibilityLabel="Förbered dagens framsteg som bild" onPress={renderPng} disabled={pngStatus==='rendering'} accessibilityState={{disabled:pngStatus==='rendering',busy:pngStatus==='rendering'}} style={[styles.row,{minHeight:56}]}><Text style={[styles.cardTitle,{flexShrink:1}]}>{pngStatus==='rendering'?'Förbereder bilden…':'Förbered bild för delning'}</Text></Pressable>{pngStatus==='rendering'?<Text accessibilityLiveRegion="polite" accessibilityRole="text" style={styles.muted}>Bilden förbereds. Vänta tills den är klar innan du delar.</Text>:null}{pngStatus==='ready'&&exportCountsRef.current?.todayCount===todayCount&&exportCountsRef.current?.dailyGoal===dailyGoal?<><Text accessibilityLiveRegion="polite" style={styles.muted}>Bilden är klar. Tryck på Dela bilden och välj själv mottagare, eller avbryt.</Text><Pressable accessibilityRole="button" accessibilityLabel="Dela PNG-bild av dagens framsteg" accessibilityHint="Öppnar telefonens delningsdialog för den förhandsgranskade bilden" onPress={()=>void sharePng()} disabled={sharingPng} accessibilityState={{disabled:sharingPng,busy:sharingPng}} style={[styles.row,{minHeight:56}]}><Share2 size={21} color={C.lime}/><Text style={[styles.cardTitle,{flexShrink:1}]}>{sharingPng?'Öppnar delning…':'Dela bilden'}</Text></Pressable>{shareError?<Text accessibilityLiveRegion="polite" style={styles.muted}>Det gick inte att öppna bilddelningen. Försök igen.</Text>:null}</>:pngStatus==='ready'?<Text accessibilityLiveRegion="polite" style={styles.muted}>Dagens värden har ändrats. Förbered bilden på nytt innan du delar.</Text>:pngStatus==='error'?<Text accessibilityLiveRegion="polite" style={styles.muted}>Det gick inte att skapa bilden. Försök igen.</Text>:null}<Text style={styles.muted}>Bilden innehåller bara dagens antal och mål, utan namn eller kontouppgifter. Inget skickas förrän du själv väljer att dela.</Text></>:null}
    <Text style={styles.muted}>Du kan också dela en allmän uppmuntran utan personliga uppgifter.</Text>
    <Text style={styles.muted}>Du kan alltid avbryta delningen. Appen du väljer kan ha egna integritetsvillkor.</Text>
    <Pressable accessibilityRole="button" accessibilityLabel="Dela ett stödmeddelande" accessibilityHint="Öppnar telefonens delningsdialog där du själv väljer mottagare eller avbryter. Inga personliga registreringar följer med." onPress={()=>void shareSupport()} style={[styles.row,{minHeight:56}]}><View style={styles.actionIcon}><Share2 size={21} color={C.lime}/></View><View style={{flex:1}}><Text style={styles.cardTitle}>Dela en uppmuntran</Text></View><ChevronRight size={19} color={C.dim}/></Pressable>

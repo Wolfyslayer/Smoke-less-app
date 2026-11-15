@@ -11,23 +11,23 @@ const {buildDailyShareCard}=context.exports;
 test('within limit: percentage is consumption, not success',()=>{
  const card=buildDailyShareCard({todayCount:3,dailyGoal:10});
  assert.equal(card.todayCount,3);assert.equal(card.dailyGoal,10);
- assert.equal(card.progressPercent,30);assert.match(card.message,/inom dagens gräns/);
+ assert.equal(card.progressPercent,30);assert.equal(card.remaining,7);assert.match(card.message,/7 kvar/);
 });
 test('at and above limit: percentage capped but actual count preserved',()=>{
  assert.equal(buildDailyShareCard({todayCount:10,dailyGoal:10}).progressPercent,100);
  const over=buildDailyShareCard({todayCount:15,dailyGoal:10});
  assert.equal(over.progressPercent,100);assert.equal(over.todayCount,15);
- assert.match(over.message,/utan att ge upp/);
+ assert.equal(over.remaining,0);assert.match(over.message,/framsteg räknas fortfarande/);
 });
 test('zero goal and malformed inputs are safe',()=>{
  assert.equal(buildDailyShareCard({todayCount:0,dailyGoal:0}).progressPercent,0);
- assert.match(buildDailyShareCard({todayCount:0,dailyGoal:0}).message,/cigarettfri stund/);
+ assert.match(buildDailyShareCard({todayCount:0,dailyGoal:0}).message,/mål är en rökfri dag/);
  const card=buildDailyShareCard({todayCount:-4,dailyGoal:NaN});
  assert.equal(card.todayCount,0);assert.equal(card.dailyGoal,0);assert.equal(card.progressPercent,0);
 });
 test('share card model does not leak unrelated fields',()=>{
  const card=buildDailyShareCard({todayCount:2,dailyGoal:8,accountEmail:'private@example.com',entries:[{id:'secret'}]});
- assert.deepEqual(Object.keys(card).sort(),['dailyGoal','message','progressPercent','todayCount'].sort());
+ assert.deepEqual(Object.keys(card).sort(),['dailyGoal','remaining','message','progressPercent','todayCount'].sort());
  assert.doesNotMatch(JSON.stringify(card),/private@example.com|secret/);
 });
 test('preview is opt-in and card does not access account data',()=>{
@@ -52,7 +52,7 @@ test('preview is opt-in and card does not access account data',()=>{
  assert.match(profile,/Dela framsteg eller uppmuntran/);
  assert.match(profile,/Bilden innehåller bara dagens antal och mål/);
  assert.match(profile,/style=\{\[styles\.cardTitle,\{flexShrink:1\}\]\}/);
- assert.match(profile,/aspectRatio:340\/420/);
+ assert.match(profile,/progressCardLayout\(buildDailyShareCard\(\{todayCount,dailyGoal\}\),fontScale\)\.height/);
  assert.match(profile,/accessibilityLiveRegion="polite"/);
  assert.match(profile,/accessibilityState=\{\{disabled:sharingPng,busy:sharingPng\}\}/);
  const card=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
@@ -76,7 +76,7 @@ test('zero cigarette goal stays at zero fill even when a cigarette was registere
  assert.equal(card.todayCount,2);
  assert.equal(card.dailyGoal,0);
  assert.equal(card.progressPercent,0);
- assert.match(card.message,/Fortsätt i din egen takt/);
+ assert.match(card.message,/egen takt/);
 });
 test('daily share artwork has a descriptive accessible label and uses only normalized card values',()=>{
  const artwork=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
@@ -91,6 +91,20 @@ test('artwork is memoized to avoid SVG redraws when share status changes',()=>{
  const artwork=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
  assert.match(artwork,/import React,\{forwardRef,memo\} from 'react'/);
  assert.match(artwork,/DailyProgressShareArtwork=memo\(forwardRef/);
+});
+
+test('shared card geometry grows for large text and keeps the message below the ring',()=>{
+ const {progressCardLayout}=context.exports;
+ for(const scale of [1,1.3,2,2.5,3.2])for(const [todayCount,dailyGoal] of [[0,0],[2,0],[3,10],[15,10],[900000,1000000]]){
+  const card=buildDailyShareCard({todayCount,dailyGoal}),layout=progressCardLayout(card,scale);
+  assert.ok(Number.isFinite(layout.height));
+  assert.ok(layout.messageY-13*layout.scale>layout.ringY+layout.ringRadius);
+  assert.ok(layout.height>layout.messageY+layout.lines.length*13*layout.scale);
+  assert.equal(layout.lines.join(' '),card.message);
+ }
+ const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+ assert.match(profile,/latestFontScaleRef\.current===fontScale/);
+ assert.match(profile,/\[todayCount,dailyGoal,fontScale\]/);
 });
 
 test('starting a new image clears an earlier sharing error and guards synchronous render errors',()=>{
@@ -144,8 +158,8 @@ test('PNG preparation and stale-value status are announced to screen readers',()
 test('changed daily values invalidate an in-flight PNG export before share',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/useLayoutEffect\(\(\)=>\{/);
- assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
- assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal\]\)/);
+ assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*latestFontScaleRef\.current=fontScale;\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
+ assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal,fontScale\]\)/);
 });
 
 test('reminder settings support larger text and announce status changes without intrusive alerts',()=>{
@@ -183,9 +197,11 @@ test('home statistics and daily check-in actions have clear labels and minimum t
 
 test('home progress hero remains readable with large system fonts and narrow screens',()=>{
  const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
- assert.match(home,/justifyContent:'space-between',flexWrap:'wrap',gap:8/);
- assert.match(home,/flexGrow:1,flexShrink:1,minWidth:150/);
- assert.match(home,/adjustsFontSizeToFit minimumFontScale=\{0\.65\} numberOfLines=\{1\} style=\{styles\.heroNumber\}/);
+ assert.match(home,/goalCard=\{<DailyProgressShareArtwork todayCount=\{todayCount\} dailyGoal=\{goal\}\/>\}/);
+ const {progressCardLayout}=context.exports;
+ const card=buildDailyShareCard({todayCount:3,dailyGoal:10});
+ assert.ok(progressCardLayout(card,3).height>progressCardLayout(card,1).height);
+ assert.equal(progressCardLayout(card,3).stacked,true);
  assert.match(home,/style=\{\[styles\.sectionRow,\{flexWrap:'wrap'\}\]\}/);
 });
 
@@ -220,8 +236,8 @@ test('quit mode disables daily target adjustment controls rather than offering a
 });
 
 test('home progress visuals announce their meaning and weekly values to screen readers',()=>{
- const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
- assert.match(home,/accessibilityLabel=\{\x60Dagens förbrukning: \$\{Math\.round\(p\)\} procent av dagsmålet\x60\}/);
+ const artwork=fs.readFileSync('src/components/DailyProgressShareArtwork.tsx','utf8');
+ assert.match(artwork,/\$\{card\.progressPercent\} procent av dagsmålet använt/);
  const overview=fs.readFileSync('src/components/DashboardOverview.tsx','utf8');
  assert.match(overview,/accessible accessibilityRole="text" accessibilityLabel=\{`\$\{date\.toLocaleDateString/);
  assert.match(overview,/\$\{count\} registrerade cigaretter/);
