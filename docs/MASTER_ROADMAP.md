@@ -57,8 +57,8 @@
 | 28.0 | Profil, kontohantering och organiserade inställningar | Startad enligt användarbeslut | — |
 | 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Planerad; efter fas 31 | — |
 | 31.0 | Automatiserade Android-flödestester och regressionsskydd | Planerad; efter fas 30, inga onödiga native-byggen | — |
-| 30.0 | Release Polish och Production Readiness | Planerad; slutpolering efter fas 29, release sker endast på användarens beslut | — |
-| 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Kodmilstolpe: 4/8 och 24/32; senaste CI och native-acceptans kvar | docs/PHASE_29_PREVIEW_OTA.md |
+| 30.0 | Release Polish och Production Readiness | Kodmilstolpe 2/8 och 19/32; CI och fysisk acceptans kvar | docs/PHASE_30_RELEASE_POLISH.md |
+| 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Kodmilstolpe: 5/8 och 25/32; CI grön, native-acceptans kvar | docs/PHASE_29_PREVIEW_OTA.md |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -395,7 +395,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 
 ### Fas 29.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Kodmilstolpe verifierad lokalt; senaste CI väntar. 4/8 huvudpunkter (50 %), 24/32 delpunkter (75 %). Ingen Android-build eller publicering körd.
+**Status:** Senaste ecf8438 har grön validate/rules. 5/8 huvudpunkter (62,5 %), 25/32 delpunkter (78,125 %). Ingen Android-build eller publicering körd.
 
 1. **Inventering och riskbedömning (4/4)**
    - [x] 1.1 Inventera Expo SDK, config-plugins, Android-build och befintlig CI.
@@ -427,10 +427,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [x] 6.2 Skydda tokens, hemligheter och kanalval.
    - [x] 6.3 Undvik native-build vid rena JS-/asset-ändringar.
    - [x] 6.4 Dokumentera hur Codex använder arbetsflödet utan oavsiktlig release.
-7. **Automatiska tester och dokumentation (3/4)**
+7. **Automatiska tester och dokumentation (4/4)**
    - [x] 7.1 Testa app-ID, kanaler, profiler och runtime-konfiguration.
    - [x] 7.2 Testa skydd mot fel kanal, fel miljö, felaktig native-version och opålitliga uppdateringslänkar.
-   - [ ] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
+   - [x] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
    - [x] 7.4 Dokumentera installations- och uppdateringskommandon för Windows.
 8. **Android-acceptans och leverans (0/4)**
    - [ ] 8.1 Installera fristående Preview APK utan dev-server.
@@ -438,9 +438,9 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.3 Verifiera Firebase, Google-inloggning, widgets, synk och dataseparation.
    - [ ] 8.4 Slutför fasens PR efter verifierad CI och dokumenterad acceptans.
 
-Verifiering: TypeScript och 339 ordinarie tester PASS; webbexport PASS. 7.3 inväntar senaste validate/rules. Öppna native-punkter är inte ersatta med mocktester. Se PHASE_29_PREVIEW_OTA.md för konfiguration, delad Firebase, credentials och Windows-kommandon.
+Verifiering: TypeScript och 339 ordinarie tester PASS; webbexport PASS. 7.3 verifierad på ecf8438. Öppna native-punkter är inte ersatta med mocktester. Se PHASE_29_PREVIEW_OTA.md för konfiguration, delad Firebase, credentials och Windows-kommandon.
 
-## Fas 30.0 – Release Polish & Production Readiness (PLANERAD)
+## Fas 30.0 – Release Polish & Production Readiness (PÅGÅR)
 
 **Beslut 2026-11-15:** Smoke Less ska ha en särskild slutpoleringsfas som gör en riktig **release-build** professionell, konsekvent och trygg att publicera när användaren själv bestämmer. Detta är **inte** ett beslut om att publicera appen eller att aktivera automatiska produktionsreleaser. Fas 25:s tidigare QA-/säkerhetsgrind gäller fortfarande; fas 30 kompletterar den med slutlig produktionsupplevelse efter senare UI-, profil- och OTA-faser.
 
@@ -452,50 +452,52 @@ Verifiering: TypeScript och 339 ordinarie tester PASS; webbexport PASS. 7.3 inv�
 
 **Ordning:** Planerad efter fas 29 för att kunna granska det färdiga Preview/Production-upplägget och UI från faserna 27–28. Om ordningen ändras krävs uttryckligt beslut. En fas = en PR, fast 8×4-checklista, verifierade tester och grön CI.
 
-### Fas 30.0 – fast planerad checklista (8 huvudpunkter × 4 delpunkter = 32)
+### Fas 30.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Planerad, ej påbörjad. 0/8 huvudpunkter, 0/32 delpunkter (0 %).
+**Status:** Kodmilstolpe: 2/8 huvudpunkter (25 %), 19/32 delpunkter (59,375 %). Lokal verifiering PASS, senaste CI väntar. Fysisk acceptans och offentlig release är öppna.
 
-1. **Release-inventering och kriterier (0/4)**
-   - [ ] 1.1 Inventera samtliga användarsynliga skärmar, dialoger, knappar och texter.
-   - [ ] 1.2 Inventera Preview-/development-specifika funktioner och buildflaggor.
-   - [ ] 1.3 Identifiera blockerande releaseproblem och fastställ acceptanskriterier.
-   - [ ] 1.4 Dokumentera vad som ska behållas, döljas, tas bort eller skrivas om.
-2. **Texter och språkpolering (0/4)**
-   - [ ] 2.1 Ersätt debug-, placeholder- och utvecklingstexter med begripliga produkttexter.
-   - [ ] 2.2 Gör rubriker, hjälptexter och knappetiketter konsekventa och tydliga.
+1. **Release-inventering och kriterier (4/4)**
+   - [x] 1.1 Inventera samtliga användarsynliga skärmar, dialoger, knappar och texter.
+   - [x] 1.2 Inventera Preview-/development-specifika funktioner och buildflaggor.
+   - [x] 1.3 Identifiera blockerande releaseproblem och fastställ acceptanskriterier.
+   - [x] 1.4 Dokumentera vad som ska behållas, döljas, tas bort eller skrivas om.
+2. **Texter och språkpolering (3/4)**
+   - [x] 2.1 Ersätt debug-, placeholder- och utvecklingstexter med begripliga produkttexter.
+   - [x] 2.2 Gör rubriker, hjälptexter och knappetiketter konsekventa och tydliga.
    - [ ] 2.3 Granska svenska formuleringar, stavning och icke-skuldbeläggande ton.
-   - [ ] 2.4 Granska fel-, tom-, laddnings- och offline-meddelanden.
-3. **Knappar, flöden och release-UI (0/4)**
-   - [ ] 3.1 Ta bort eller villkorsstyr överflödiga test-/debug-knappar i Production.
+   - [x] 2.4 Granska fel-, tom-, laddnings- och offline-meddelanden.
+3. **Knappar, flöden och release-UI (2/4)**
+   - [x] 3.1 Ta bort eller villkorsstyr överflödiga test-/debug-knappar i Production.
    - [ ] 3.2 Säkerställ att alla synliga knappar har korrekt, fungerande handling.
-   - [ ] 3.3 Förbättra bekräftelser, avbrytande och återgång utan datarisk.
+   - [x] 3.3 Förbättra bekräftelser, avbrytande och återgång utan datarisk.
    - [ ] 3.4 Kontrollera konsekvent design, teman och tillgängliga tryckytor.
-4. **Notiser och påminnelser (0/4)**
-   - [ ] 4.1 Inventera alla notiser, kanaler, triggers och behörighetsflöden.
-   - [ ] 4.2 Förbättra notistexter, ton, integritet och användarstyrning.
-   - [ ] 4.3 Förebygg dubletter och testa schemaläggning, avstängning och tidzoner.
+4. **Notiser och påminnelser (3/4)**
+   - [x] 4.1 Inventera alla notiser, kanaler, triggers och behörighetsflöden.
+   - [x] 4.2 Förbättra notistexter, ton, integritet och användarstyrning.
+   - [x] 4.3 Förebygg dubletter och testa schemaläggning, avstängning och tidzoner.
    - [ ] 4.4 Kontrollera notisinteraktion, bakgrund, omstart och relevanta Android-versioner.
-5. **Preview/Production-separation (0/4)**
-   - [ ] 5.1 Verifiera buildprofil, app-ID och OTA-kanal för Production.
-   - [ ] 5.2 Avgränsa utvecklingsverktyg, tekniska statusfält och testkonfiguration.
+5. **Preview/Production-separation (2/4)**
+   - [x] 5.1 Verifiera buildprofil, app-ID och OTA-kanal för Production.
+   - [x] 5.2 Avgränsa utvecklingsverktyg, tekniska statusfält och testkonfiguration.
    - [ ] 5.3 Kontrollera produktions-Firebase, Google-inloggning och secrets.
    - [ ] 5.4 Kontrollera att inga Preview-data eller interna länkar läcker till Production.
-6. **Visuell och funktionell slutpolering (0/4)**
-   - [ ] 6.1 Granska appnamn, ikon, splash, versionsvisning och branding.
+6. **Visuell och funktionell slutpolering (1/4)**
+   - [x] 6.1 Granska appnamn, ikon, splash, versionsvisning och branding.
    - [ ] 6.2 Granska navigation, Safe Area, tangentbord och stora textstorlekar.
    - [ ] 6.3 Granska onboarding, konto, synk, SOS, historik, widgets och offline-läge.
    - [ ] 6.4 Granska prestanda, felåterhämtning och begriplig statuskommunikation.
-7. **Releasekontroller och dokumentation (0/4)**
-   - [ ] 7.1 Lägg till tester som upptäcker debug-/Preview-UI i Production.
-   - [ ] 7.2 Lägg till relevanta notis-, text- och navigationsregressionstester.
-   - [ ] 7.3 Dokumentera versionering, signering, OTA/native-gräns och rollback.
-   - [ ] 7.4 Förbered release-checklista och Play Store-underlag utan publicering.
+7. **Releasekontroller och dokumentation (4/4)**
+   - [x] 7.1 Lägg till tester som upptäcker debug-/Preview-UI i Production.
+   - [x] 7.2 Lägg till relevanta notis-, text- och navigationsregressionstester.
+   - [x] 7.3 Dokumentera versionering, signering, OTA/native-gräns och rollback.
+   - [x] 7.4 Förbered release-checklista och Play Store-underlag utan publicering.
 8. **Verifiering och överlämning (0/4)**
    - [ ] 8.1 Kör TypeScript, relevanta tester och båda obligatoriska CI-kontrollerna.
    - [ ] 8.2 Verifiera fristående Preview och release-liknande Android-build på enhet.
    - [ ] 8.3 Kontrollera kontosäkerhet, databevarande, notiser och tillgänglighet.
    - [ ] 8.4 Slutför fasens PR och dokumentera kvarvarande releasehinder; invänta uttryckligt publiceringsbeslut.
+
+Evidens och kvarstående grindar: PHASE_30_RELEASE_POLISH.md. TypeScript, 342 tester och webbexport PASS. Full språk-/knapp-/enhetsacceptans räknas inte från kodtester.
 
 ---
 

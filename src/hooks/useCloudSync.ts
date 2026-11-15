@@ -1,3 +1,4 @@
+import {userMessage} from '../userMessage.cjs';
 import {useEffect,useRef,useState} from 'react';
 import type {Dispatch,MutableRefObject,SetStateAction} from 'react';
 import type {Data} from '../domain';
@@ -41,9 +42,9 @@ export function useCloudSync({
       if(verifyCurrentUid()!==uid || JSON.stringify(dataRef.current)!==original)return;
       setData(merged);
      }
-     setSyncStatus('Synkroniserad med Firestore');
+     setSyncStatus('Historiken är synkroniserad');
     }catch(error){
-     if(verifyCurrentUid()===uid)setSyncStatus(error instanceof Error?error.message:'Synkronisering misslyckades. Försöker igen nästa gång appen öppnas.');
+     if(verifyCurrentUid()===uid)setSyncStatus(userMessage(error,'Synkronisering misslyckades. Försöker igen nästa gång appen öppnas.'));
     }finally{
      syncInFlight.current=false;
      if(syncQueued.current){syncQueued.current=false;setSyncTrigger(v=>v+1);}
@@ -62,7 +63,7 @@ export function useCloudSync({
     else setSyncTrigger(v=>v+1);
    }
   },error=>{
-   if(active && verifyCurrentUid()===uid)setSyncStatus('Firestore-lyssnare: '+error.message);
+   if(active && verifyCurrentUid()===uid)setSyncStatus(userMessage(error,'Kunde inte följa ändringar i molnet. Försök synkronisera igen.'));
   });
   return()=>{active=false;unsubscribe();};
  },[sessionUser?.uid,ready,migrationBusy,cloudPreviewBusy]);

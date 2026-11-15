@@ -6,10 +6,10 @@ import {createReminderService} from '../reminderService';
 import {ReminderError,reminderDefaults,type ReminderSettings as Settings} from '../domain/reminders';
 import {useThemeStyles,type ThemeColors} from '../theme';
 const service=createReminderService(AsyncStorage,{
- permission:async()=>{if(Platform.OS==='web')return false;const current=await Notifications.getPermissionsAsync();return current.granted||(await Notifications.requestPermissionsAsync()).granted;},
+ permission:async()=>{if(Platform.OS==='web')return false;if(Platform.OS==='android')await Notifications.setNotificationChannelAsync('smokeless-reminders-v1',{name:'Frivilliga påminnelser',importance:Notifications.AndroidImportance.DEFAULT,lockscreenVisibility:Notifications.AndroidNotificationVisibility.PRIVATE});const current=await Notifications.getPermissionsAsync();return current.granted||(await Notifications.requestPermissionsAsync()).granted;},
  cancel:async id=>{if(Platform.OS!=='web')await Notifications.cancelScheduledNotificationAsync(id);},
  scheduled:async()=>Platform.OS==='web'?[]:(await Notifications.getAllScheduledNotificationsAsync()).map(n=>n.identifier),
- schedule:async request=>Notifications.scheduleNotificationAsync({identifier:request.identifier,content:{title:'Smoke Less',body:request.body},trigger:request.weekly?{type:Notifications.SchedulableTriggerInputTypes.WEEKLY,weekday:2,hour:request.hour,minute:request.minute}:{type:Notifications.SchedulableTriggerInputTypes.DAILY,hour:request.hour,minute:request.minute}}),
+ schedule:async request=>Notifications.scheduleNotificationAsync({identifier:request.identifier,content:{title:'Smoke Less',body:request.body},trigger:request.weekly?{type:Notifications.SchedulableTriggerInputTypes.WEEKLY,weekday:2,hour:request.hour,minute:request.minute,channelId:'smokeless-reminders-v1'}:{type:Notifications.SchedulableTriggerInputTypes.DAILY,hour:request.hour,minute:request.minute,channelId:'smokeless-reminders-v1'}}),
 });
 const timeFields=['hour','minute','riskHour','riskMinute','quietStart','quietEnd'] as const;
 type Times=Record<typeof timeFields[number],string>;
