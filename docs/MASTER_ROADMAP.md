@@ -382,6 +382,10 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Tydlig och säker hantering av Firebase `google-services.json`, Google-inloggning, SHA-fingeravtryck, paket-ID, signeringscertifikat och miljövariabler för Preview. Inga hemligheter i Git eller loggar. Separat Firebase-projekt/miljö ska utredas och väljas utifrån dataseparation och kostnad; anta inte att ett ändrat paket-ID automatiskt isolerar backenddata.
 - OTA gäller endast kompatibla JS-/asset-ändringar. Ändringar i native-plugins, Android-konfiguration, Firebase-moduler, widgets, behörigheter eller annan native-kod kräver **ny Android-build**.
 - Dokumentera kommandon för Preview APK, installation och OTA-publicering samt hur användaren kontrollerar kanal, runtime och uppdateringsstatus. Publicera aldrig till produktion automatiskt.
+- **Distribution via Expo:** Preview-APK byggs primärt med **Expo EAS Build** (Expo-dashboardens byggflöde) och hämtas från Expo-byggresultatet. EAS Update distribuerar OTA. EAS Build är en bygg-/distributionsväg, inte i sig en versionskatalog som appen automatiskt kan jämföra med; inför en separat betrodd versionsmanifestkälla eller release-endpoint för nya native-byggen, med verifierade nedladdningslänkar till aktuella Expo-artifakter och hantering av länkarnas livslängd. Utred eventuell EAS Hosting/annan lämplig stabil manifestvärd utifrån kostnad och åtkomst.
+- **Inbyggd uppdateringskontroll:** Vid appstart (med rimlig frekvens) och via **Appinställningar → Sök efter uppdateringar** ska Preview kunna kontrollera både kompatibla OTA-uppdateringar och om en nyare native-build finns. Visa installerad version/buildnummer, senaste kontroll, status och ett begripligt uppdateringsmeddelande. Vid OTA: erbjud säker hämtning/aktivering eller tillämpa vid nästa start. Vid ny native-build: visa knapp till verifierad nedladdning/installationsflöde; Android måste godkänna installationen. Ingen tyst native-installation och inget påstående om att OTA kan uppgradera native-kod.
+- **Versionsjämförelse och skydd:** Jämför paket-ID, plattform, native-buildnummer och runtimeVersion; undvik falska erbjudanden om äldre/inkompatibla byggen. Låt produktion följa Google Plays normala uppdateringsflöde när den distribueras där. Säkra manifest, URL:er och eventuell signering samt fel-/offlinehantering. Separata kanaler och länkar för Preview respektive Production.
+
 - Bevara tidigare fasers funktioner, konton och historik. Ingen oavsiktlig överföring av användardata mellan Preview och produktion.
 
 **Ordning:** Fas 29 är planerad efter fas 28. Eftersom en fristående testapp kan vara nyttig tidigare får prioriteten ändras endast efter uttryckligt beslut; pågående fas 25:s QA eller säkerhetsarbete ska inte störas. En fas = en PR med fast 8×4-checklista och obligatoriska CI-kontroller.
@@ -411,23 +415,23 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 4.3 Välj runtimeVersion-strategi som skyddar native-kompatibilitet.
    - [ ] 4.4 Verifiera att Preview inte kan få produktionsuppdateringar av misstag.
 5. **OTA-upplevelse och återhämtning (0/4)**
-   - [ ] 5.1 Definiera när uppdateringar hämtas och aktiveras.
-   - [ ] 5.2 Hantera offline-läge, utebliven uppdatering och återstart.
-   - [ ] 5.3 Säkerställ användarvänlig status utan påtvingad dataförlust.
-   - [ ] 5.4 Dokumentera rollback/återställning och kända begränsningar.
+   - [ ] 5.1 Definiera kontroll vid start och via Appinställningar → Sök efter uppdateringar, samt när OTA hämtas och aktiveras.
+   - [ ] 5.2 Hantera offline-läge, utebliven uppdatering, omstart och tydlig versionsstatus.
+   - [ ] 5.3 Visa OTA-dialog respektive native-uppdateringsdialog med verifierad APK-länk, utan påtvingad dataförlust.
+   - [ ] 5.4 Dokumentera rollback/återställning, versionsmanifest, byggnummerjämförelse och Androids installationsgodkännande.
 6. **GitHub Actions och arbetsflöde (0/4)**
-   - [ ] 6.1 Skapa säker manuell eller kontrollerad Preview-OTA-publicering.
+   - [ ] 6.1 Skapa säker manuell eller kontrollerad Preview-OTA-publicering samt versionsmanifest för EAS-byggda Preview-APK:er.
    - [ ] 6.2 Skydda tokens, hemligheter och kanalval.
    - [ ] 6.3 Undvik native-build vid rena JS-/asset-ändringar.
    - [ ] 6.4 Dokumentera hur Codex använder arbetsflödet utan oavsiktlig release.
 7. **Automatiska tester och dokumentation (0/4)**
    - [ ] 7.1 Testa app-ID, kanaler, profiler och runtime-konfiguration.
-   - [ ] 7.2 Testa skydd mot fel kanal och fel miljö.
+   - [ ] 7.2 Testa skydd mot fel kanal, fel miljö, felaktig native-version och opålitliga uppdateringslänkar.
    - [ ] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
    - [ ] 7.4 Dokumentera installations- och uppdateringskommandon för Windows.
 8. **Android-acceptans och leverans (0/4)**
    - [ ] 8.1 Installera fristående Preview APK utan dev-server.
-   - [ ] 8.2 Verifiera verklig Preview OTA-uppdatering på Android.
+   - [ ] 8.2 Verifiera verklig Preview OTA-uppdatering samt native-uppdateringsnotis och APK-installation på Android.
    - [ ] 8.3 Verifiera Firebase, Google-inloggning, widgets, synk och dataseparation.
    - [ ] 8.4 Slutför fasens PR efter verifierad CI och dokumenterad acceptans.
 
