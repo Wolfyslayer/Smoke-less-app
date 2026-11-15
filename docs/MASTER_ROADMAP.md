@@ -48,8 +48,8 @@
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #167, `9d0505e` |
 | 20.0 | Långsiktigt rökfri och återfallsprevention | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #168, `7cb70a4` |
 | 21.0 | Evidensbaserat stod, nikotinlakemedel och vardvagar | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #169, `70a2295` |
-| 22.0 | Varsamma paminnelser och tillganglig motivation | Startad; fast 8x4-checklista | docs/PHASE_22_REMINDERS.md |
-| 23.0 | Förenklad startsida och tydlig informationshierarki | Planerad | — |
+| 22.0 | Varsamma påminnelser och tillgänglig motivation | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #170, `577558d` |
+| 23.0 | Förenklad startsida och tydlig informationshierarki | Startad; fast 8x4-checklista | docs/PHASE_23_HOME.md |
 | 24.0 | Lättbegriplig onboarding och vägledd användning | Planerad | — |
 | 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
@@ -927,7 +927,7 @@ Verifiera aktuella primärkällor före textändring: 1177:s Hjälp att sluta r�
 Bygg vidare på installerade Expo-notiser. Två frivilliga typer: avstämning (dagligen/veckovis måndag) och förberedelse inför risksituation (dagligen vid självvald tid, utan att spara situationstext). Tysta tider sparas lokalt; blockera aktivering om någon vald tid ligger inom fönstret. Generisk låsskärmstext utan plan, antal, hälsodata eller kontouppgifter. Inga automatiska tillståndsfrågor eller molnanrop. Befintligt önskemål/tid/frekvens läses bakåtkompatibelt. Ändrade tider kräver uttrycklig aktivering.
 
 Använd en serialiserad schemaläggare med stabila identifierare och städning av äldre sparat ID. Hantera dubbeltryck, nekad behörighet, lagringsfel och delvis misslyckad schemaläggning. Nya inställningar är enhetslokala och neutrala över kontobyten, utan historikändring. Faktisk notisleverans, omstart, tidszonsbyte och Android-behörighet provas i fas 25; koda och testa gränserna nu.
-**Status:** Lokalt verifierad implementation; nya kodpunkter inväntar CI. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %).
+**Status:** Mergad i PR #170 som `577558d`, head `377fb72` med gron validate/rules. 8/8 och 32/32 (100 %); fysisk QA kvar i fas 25.
 
 ## Genomförd acceptans och återstående enhetsprov
 
@@ -942,41 +942,41 @@ Inte utfört: faktisk leverans efter omstart, Androids tillstånd/batteriinstäl
    - [x] 1.2 Dokumentera användarbehov och begränsningar.
    - [x] 1.3 Fastställ acceptanskriterier.
    - [x] 1.4 Fastställ risker och testmatris.
-2. [ ] **Datamodell och integritet (0/4)**
-   - [ ] 2.1 Definiera minsta nödvändiga datamängd.
-   - [ ] 2.2 Skydda gäst- och kontodata.
-   - [ ] 2.3 Bevara tidigare historik.
-   - [ ] 2.4 Verifiera bakåtkompatibilitet.
-3. [ ] **Grundflöde (0/4)**
-   - [ ] 3.1 Implementera fasens huvudflöde.
-   - [ ] 3.2 Hantera tomma och felaktiga värden.
-   - [ ] 3.3 Hantera avbrott och återstart.
-   - [ ] 3.4 Säkerställ tydliga användarval.
-4. [ ] **Personalisering (0/4)**
-   - [ ] 4.1 Anpassa till användarens uttryckliga val.
-   - [ ] 4.2 Behåll säkra standardinställningar.
-   - [ ] 4.3 Undvik skuldbeläggande formuleringar.
-   - [ ] 4.4 Gör anpassning frivillig och reversibel.
-5. [ ] **Offline och synk (0/4)**
-   - [ ] 5.1 Fungera utan nätverk när möjligt.
-   - [ ] 5.2 Hantera inloggning och utloggning.
-   - [ ] 5.3 Undvik synkkonflikter och dataförlust.
-   - [ ] 5.4 Undvik nya kostsamma beroenden.
-6. [ ] **Tillgänglighet och svenska texter (0/4)**
-   - [ ] 6.1 Använd tydlig svenska.
-   - [ ] 6.2 Granska TalkBack och fokus.
-   - [ ] 6.3 Granska små skärmar och stor text.
-   - [ ] 6.4 Granska tryckytor och kontrast.
-7. [ ] **Automatiska tester och CI (0/4)**
-   - [ ] 7.1 Testa centrala domänfall.
-   - [ ] 7.2 Testa fel- och avbrottsfall.
-   - [ ] 7.3 Testa integritet och dataseparering.
-   - [ ] 7.4 Verifiera obligatorisk CI.
-8. [ ] **Slutverifiering och merge (2/4)**
+2. [x] **Datamodell och integritet (4/4)**
+   - [x] 2.1 Definiera minsta nödvändiga datamängd.
+   - [x] 2.2 Skydda gäst- och kontodata.
+   - [x] 2.3 Bevara tidigare historik.
+   - [x] 2.4 Verifiera bakåtkompatibilitet.
+3. [x] **Grundflöde (4/4)**
+   - [x] 3.1 Implementera fasens huvudflöde.
+   - [x] 3.2 Hantera tomma och felaktiga värden.
+   - [x] 3.3 Hantera avbrott och återstart.
+   - [x] 3.4 Säkerställ tydliga användarval.
+4. [x] **Personalisering (4/4)**
+   - [x] 4.1 Anpassa till användarens uttryckliga val.
+   - [x] 4.2 Behåll säkra standardinställningar.
+   - [x] 4.3 Undvik skuldbeläggande formuleringar.
+   - [x] 4.4 Gör anpassning frivillig och reversibel.
+5. [x] **Offline och synk (4/4)**
+   - [x] 5.1 Fungera utan nätverk när möjligt.
+   - [x] 5.2 Hantera inloggning och utloggning.
+   - [x] 5.3 Undvik synkkonflikter och dataförlust.
+   - [x] 5.4 Undvik nya kostsamma beroenden.
+6. [x] **Tillgänglighet och svenska texter (4/4)**
+   - [x] 6.1 Använd tydlig svenska.
+   - [x] 6.2 Granska TalkBack och fokus.
+   - [x] 6.3 Granska små skärmar och stor text.
+   - [x] 6.4 Granska tryckytor och kontrast.
+7. [x] **Automatiska tester och CI (4/4)**
+   - [x] 7.1 Testa centrala domänfall.
+   - [x] 7.2 Testa fel- och avbrottsfall.
+   - [x] 7.3 Testa integritet och dataseparering.
+   - [x] 7.4 Verifiera obligatorisk CI.
+8. [x] **Slutverifiering och merge (4/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
-   - [ ] 8.3 Verifiera grön CI på slutlig commit.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera grön CI på slutlig commit.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 23.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade.

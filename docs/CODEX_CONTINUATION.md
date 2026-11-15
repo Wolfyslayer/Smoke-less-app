@@ -2,10 +2,10 @@
 
 ## Aktuellt
 
-- Fas **22.0 – varsamma påminnelser**.
-- Branch `feat/phase-22-gentle-reminders`, från uppdaterad main `70a2295`.
+- Fas **23.0 – förenklad startsida**.
+- Branch `feat/phase-23-simpler-home`, från uppdaterad main `577558d`.
 - En PR öppnas för denna branch; hitta den på GitHub och skapa inte dubblett.
-- Fast checklista: `docs/PHASE_22_REMINDERS.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
+- Fast checklista: `docs/PHASE_23_HOME.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
 
 ## Senaste avslutade arbete
 
