@@ -1,5 +1,5 @@
 # Fas 17.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #165. Inventering klar mot startcommit `dfb5989` med grön CI: 1/8 huvudpunkter och 4/32 delpunkter (12,5 %). Implementationen inväntar egen CI. Ursprunglig 8×4-checklista är bevarad.
+**Status:** Mergad i PR #165 som `0fdd4b1`. 8/8 huvudpunkter och 32/32 delpunkter (100 %) verifierade på kod-/test-/statisk bildnivå. Slutlig head `f4cc575` hade båda obligatoriska CI gröna. Fysisk Android-export/delning och TalkBack är inte utförda och kvarstår i fas 25.
 
 ## Nästa arbete och avgränsning
 
@@ -12,41 +12,41 @@ Bevara befintliga export-/integritetsskydd i ProfileScreen: explicit förhandsvi
    - [x] 1.2 Fastställ gemensam layout och färger.
    - [x] 1.3 Fastställ typografi och ringstorlek.
    - [x] 1.4 Dokumentera exempeldata.
-2. [ ] **Gemensam datamodell (0/4)**
-   - [ ] 2.1 Beräkna kvar av mål.
-   - [ ] 2.2 Beräkna använd procent.
-   - [ ] 2.3 Hantera nollmål.
-   - [ ] 2.4 Hantera överskridet mål.
-3. [ ] **Bildlayout (0/4)**
-   - [ ] 3.1 Matcha startsidans huvudvärde.
-   - [ ] 3.2 Matcha mindre ring till höger.
-   - [ ] 3.3 Matcha rubrik och stödtext.
-   - [ ] 3.4 Behåll delningsytan fristående.
-4. [ ] **Export (0/4)**
-   - [ ] 4.1 Generera PNG av kortytan.
-   - [ ] 4.2 Behåll förhandsvisning.
-   - [ ] 4.3 Dela endast på uttrycklig åtgärd.
-   - [ ] 4.4 Hantera fel och avbrott.
-5. [ ] **Integritet (0/4)**
-   - [ ] 5.1 Uteslut kontoidentifierare.
-   - [ ] 5.2 Uteslut detaljerad historik.
-   - [ ] 5.3 Undvik automatisk uppladdning.
-   - [ ] 5.4 Förhindra gammal bild efter dataändring.
-6. [ ] **Tillgänglighet (0/4)**
-   - [ ] 6.1 Tydliga svenska knapptexter.
-   - [ ] 6.2 Förhandsvisning med etiketter.
-   - [ ] 6.3 Tillräckliga tryckytor.
-   - [ ] 6.4 Hantera stora textstorlekar.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa delad beräkningslogik.
-   - [ ] 7.2 Testa nollmål och överskridande.
-   - [ ] 7.3 Testa exportens integritetsgränser.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera visuell acceptans.
-   - [ ] 8.2 Samla native-delningstest till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+2. [x] **Gemensam datamodell (4/4)**
+   - [x] 2.1 Beräkna kvar av mål.
+   - [x] 2.2 Beräkna använd procent.
+   - [x] 2.3 Hantera nollmål.
+   - [x] 2.4 Hantera överskridet mål.
+3. [x] **Bildlayout (4/4)**
+   - [x] 3.1 Matcha startsidans huvudvärde.
+   - [x] 3.2 Matcha mindre ring till höger.
+   - [x] 3.3 Matcha rubrik och stödtext.
+   - [x] 3.4 Behåll delningsytan fristående.
+4. [x] **Export (4/4)**
+   - [x] 4.1 Generera PNG av kortytan.
+   - [x] 4.2 Behåll förhandsvisning.
+   - [x] 4.3 Dela endast på uttrycklig åtgärd.
+   - [x] 4.4 Hantera fel och avbrott.
+5. [x] **Integritet (4/4)**
+   - [x] 5.1 Uteslut kontoidentifierare.
+   - [x] 5.2 Uteslut detaljerad historik.
+   - [x] 5.3 Undvik automatisk uppladdning.
+   - [x] 5.4 Förhindra gammal bild efter dataändring.
+6. [x] **Tillgänglighet (4/4)**
+   - [x] 6.1 Tydliga svenska knapptexter.
+   - [x] 6.2 Förhandsvisning med etiketter.
+   - [x] 6.3 Tillräckliga tryckytor.
+   - [x] 6.4 Hantera stora textstorlekar.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa delad beräkningslogik.
+   - [x] 7.2 Testa nollmål och överskridande.
+   - [x] 7.3 Testa exportens integritetsgränser.
+   - [x] 7.4 Verifiera CI.
+8. [x] **Avslut (4/4)**
+   - [x] 8.1 Dokumentera visuell acceptans.
+   - [x] 8.2 Samla native-delningstest till fas 25.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ## Inventering och implementation
 
