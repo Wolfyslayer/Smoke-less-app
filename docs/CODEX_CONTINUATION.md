@@ -7,9 +7,9 @@
 
 ## Fas 16.5
 
-Fast checklista finns i `docs/PHASE_16_5_DASHBOARD.md`, kopierad från roadmapens ursprungliga 8×4-punkter. Verifierat på `e0cb614` med grön CI: 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %). Kortval, ordning, återställning, lokal persistens och UI är nu implementerade och inväntar egen CI. TypeScript och 166 lokala tester är godkända.
+Fast checklista finns i `docs/PHASE_16_5_DASHBOARD.md`, kopierad från roadmapens ursprungliga 8×4-punkter. Verifierat på `ee6fffd` med grön CI: 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter (96,875 %). Kortval, ordning, återställning, lokal persistens och UI är implementerade. TypeScript och 166 lokala tester är godkända. Fysisk QA är inte utförd.
 
-Nästa steg: kontrollera båda CI på implementationscommitten. Granska därefter slutligt kontoövergångar, UI-kontrakt och prestanda mot fasplanen. Uppdatera checklistans verifierade status först efter grön CI. Registrering och SOS förblir direkt åtkomliga. Datamodell, Firestore-regler och molnsynk är oförändrade. Ny Android-build: NEJ, bara TypeScript, testscript och dokumentation; inga beroenden tillkom.
+Nästa steg: kontrollera båda CI på slutdokumentationscommitten, kontrollera PR-head/mergebarhet och merga #162 först när båda är gröna. Uppdatera därefter roadmap och fasfil med faktiskt merge-SHA innan 16.6. Registrering och SOS förblir direkt åtkomliga. Datamodell, Firestore-regler och molnsynk är oförändrade. Ny Android-build: NEJ, bara TypeScript, testscript och dokumentation; inga beroenden tillkom.
 
 ## Arbetsregler och risker
 

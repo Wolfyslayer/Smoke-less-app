@@ -1,5 +1,5 @@
 # Fas 16.5 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #162, startad från `main` (`07ff48c`). 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %) verifierade genom inventeringen på `e0cb614` med båda CI gröna. Implementationen nedan inväntar egen CI. Checklistans ursprungliga ID och omfattning är frysta.
+**Status:** Klar för merge i PR #162. 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter (96,875 %) verifierade på kod-/automatisk test-/dokumentationsnivå med gröna `validate` och `rules` på `ee6fffd`. 8.4 inväntar faktisk merge. Ingen fysisk Android-QA har utförts. Checklistans ursprungliga ID och omfattning är frysta.
 
 ## Inventering och avgränsning
 
@@ -14,43 +14,45 @@ Först verifieras normalisering, ordning, återställning och lagringsisolering.
    - [x] 1.2 Identifiera datakällor.
    - [x] 1.3 Fastställ standardlayout.
    - [x] 1.4 Fastställ integritetsgränser.
-2. [ ] **Anpassning (0/4)**
-   - [ ] 2.1 Välj synliga kort.
-   - [ ] 2.2 Ändra kortordning.
-   - [ ] 2.3 Återställ standard.
-   - [ ] 2.4 Hantera saknade värden.
-3. [ ] **Kortinnehåll (0/4)**
-   - [ ] 3.1 Dagens mål.
-   - [ ] 3.2 Rökfri tid och delmål.
-   - [ ] 3.3 Besparingar.
-   - [ ] 3.4 Röksug och framsteg.
-4. [ ] **Persistens (0/4)**
-   - [ ] 4.1 Spara lokala val.
-   - [ ] 4.2 Hantera gästläge.
-   - [ ] 4.3 Synka endast när säkert.
-   - [ ] 4.4 Hantera kontobyte.
-5. [ ] **Layout (0/4)**
-   - [ ] 5.1 Behåll överblick utan onödig scroll.
-   - [ ] 5.2 Stöd stora textstorlekar.
-   - [ ] 5.3 Stöd små skärmar.
-   - [ ] 5.4 Granska tillgänglighet.
-6. [ ] **Prestanda (0/4)**
-   - [ ] 6.1 Undvik onödiga omrenderingar.
-   - [ ] 6.2 Beräkna aggregat effektivt.
-   - [ ] 6.3 Hantera offline.
-   - [ ] 6.4 Hantera snabba registreringar.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa val och ordning.
-   - [ ] 7.2 Testa återställning.
-   - [ ] 7.3 Testa dataseparering.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (2/4)**
+2. [x] **Anpassning (4/4)**
+   - [x] 2.1 Välj synliga kort.
+   - [x] 2.2 Ändra kortordning.
+   - [x] 2.3 Återställ standard.
+   - [x] 2.4 Hantera saknade värden.
+3. [x] **Kortinnehåll (4/4)**
+   - [x] 3.1 Dagens mål.
+   - [x] 3.2 Rökfri tid och delmål.
+   - [x] 3.3 Besparingar.
+   - [x] 3.4 Röksug och framsteg.
+4. [x] **Persistens (4/4)**
+   - [x] 4.1 Spara lokala val.
+   - [x] 4.2 Hantera gästläge.
+   - [x] 4.3 Synka endast när säkert.
+   - [x] 4.4 Hantera kontobyte.
+5. [x] **Layout (4/4)**
+   - [x] 5.1 Behåll överblick utan onödig scroll.
+   - [x] 5.2 Stöd stora textstorlekar.
+   - [x] 5.3 Stöd små skärmar.
+   - [x] 5.4 Granska tillgänglighet.
+6. [x] **Prestanda (4/4)**
+   - [x] 6.1 Undvik onödiga omrenderingar.
+   - [x] 6.2 Beräkna aggregat effektivt.
+   - [x] 6.3 Hantera offline.
+   - [x] 6.4 Hantera snabba registreringar.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa val och ordning.
+   - [x] 7.2 Testa återställning.
+   - [x] 7.3 Testa dataseparering.
+   - [x] 7.4 Verifiera CI.
+8. [ ] **Avslut (3/4)**
    - [x] 8.1 Dokumentera standardval.
    - [x] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
 ## Implementationsmilstolpe
+
+**Slutgranskning:** Samtliga funktionella delpunkter är genomförda och kontrollerade i koden. Testerna kör den faktiska normaliserings-/lagringsmodulen med styrda lagringsfel och fördröjningar. Identitetsgränsen i React-hooken samt tillgänglig UI/layout kompletteras med källkodskontrakt och statisk granskning. CI verifierar TypeScript, 150 ordinarie tester, 10 storage och 6 migrationstester. Offline betyder här att dashboardvalen inte har något nätverksberoende; fysisk flygplans-/kontobytes-QA återstår i fas 25. Snabba registreringar använder oförändrade sessionsuppdateringar och nya dataproppar; det är granskat statiskt, inte stresskört på telefon. Native-build: NEJ, inga native-konfigurationer eller beroenden har ändrats, endast npm:s testscript.
 
 `DashboardOverview` visar valda kort i sparad ordning. Standard är dagens mål, tid sedan senaste registrerade cigaretten, uppskattad besparing och veckans registreringar. Röksug och nästa delmål är tillval. Noll registreringar kallas inte bekräftad rökfrihet. Saknat delmål har neutral fallback. Registrering/SOS/plan/logg ligger före korten och kan inte döljas. Uppmuntran, tidigare coach/återfallsstöd och daglig avstämning bevaras.
 
