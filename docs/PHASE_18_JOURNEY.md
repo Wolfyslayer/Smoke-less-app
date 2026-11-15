@@ -1,5 +1,5 @@
 # Fas 18.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #166. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %) verifierade genom startinventering/kontrakt på `e9e9df3`, båda CI gröna. Implementationen inväntar egen CI. Ursprungliga 8×4-ID är bevarade.
+**Status:** Pågående i PR #166. 6/8 huvudpunkter (75 %) och 29/32 delpunkter (90,625 %) verifierade på kod-/automatisk test-/dokumentationsnivå med grön validate/rules på `17f9e6f`. Sista regressionstestet 7.2 och slutlig CI/merge återstår. Ursprungliga 8×4-ID är bevarade. Fysisk TalkBack/Android-QA är inte utförd.
 
 ## Ändringskontrakt och riskmatris
 
@@ -12,36 +12,36 @@ Lagra bara fas-ID separat per UID/gäst, utan ny molnsynk. Återanvänd säker p
    - [x] 1.2 Dokumentera användarbehov och begränsningar.
    - [x] 1.3 Fastställ acceptanskriterier.
    - [x] 1.4 Fastställ risker och testmatris.
-2. [ ] **Datamodell och integritet (0/4)**
-   - [ ] 2.1 Definiera minsta nödvändiga datamängd.
-   - [ ] 2.2 Skydda gäst- och kontodata.
-   - [ ] 2.3 Bevara tidigare historik.
-   - [ ] 2.4 Verifiera bakåtkompatibilitet.
-3. [ ] **Grundflöde (0/4)**
-   - [ ] 3.1 Implementera fasens huvudflöde.
-   - [ ] 3.2 Hantera tomma och felaktiga värden.
-   - [ ] 3.3 Hantera avbrott och återstart.
-   - [ ] 3.4 Säkerställ tydliga användarval.
-4. [ ] **Personalisering (0/4)**
-   - [ ] 4.1 Anpassa till användarens uttryckliga val.
-   - [ ] 4.2 Behåll säkra standardinställningar.
-   - [ ] 4.3 Undvik skuldbeläggande formuleringar.
-   - [ ] 4.4 Gör anpassning frivillig och reversibel.
-5. [ ] **Offline och synk (0/4)**
-   - [ ] 5.1 Fungera utan nätverk när möjligt.
-   - [ ] 5.2 Hantera inloggning och utloggning.
-   - [ ] 5.3 Undvik synkkonflikter och dataförlust.
-   - [ ] 5.4 Undvik nya kostsamma beroenden.
-6. [ ] **Tillgänglighet och svenska texter (0/4)**
-   - [ ] 6.1 Använd tydlig svenska.
-   - [ ] 6.2 Granska TalkBack och fokus.
-   - [ ] 6.3 Granska små skärmar och stor text.
-   - [ ] 6.4 Granska tryckytor och kontrast.
-7. [ ] **Automatiska tester och CI (0/4)**
-   - [ ] 7.1 Testa centrala domänfall.
+2. [x] **Datamodell och integritet (4/4)**
+   - [x] 2.1 Definiera minsta nödvändiga datamängd.
+   - [x] 2.2 Skydda gäst- och kontodata.
+   - [x] 2.3 Bevara tidigare historik.
+   - [x] 2.4 Verifiera bakåtkompatibilitet.
+3. [x] **Grundflöde (4/4)**
+   - [x] 3.1 Implementera fasens huvudflöde.
+   - [x] 3.2 Hantera tomma och felaktiga värden.
+   - [x] 3.3 Hantera avbrott och återstart.
+   - [x] 3.4 Säkerställ tydliga användarval.
+4. [x] **Personalisering (4/4)**
+   - [x] 4.1 Anpassa till användarens uttryckliga val.
+   - [x] 4.2 Behåll säkra standardinställningar.
+   - [x] 4.3 Undvik skuldbeläggande formuleringar.
+   - [x] 4.4 Gör anpassning frivillig och reversibel.
+5. [x] **Offline och synk (4/4)**
+   - [x] 5.1 Fungera utan nätverk när möjligt.
+   - [x] 5.2 Hantera inloggning och utloggning.
+   - [x] 5.3 Undvik synkkonflikter och dataförlust.
+   - [x] 5.4 Undvik nya kostsamma beroenden.
+6. [x] **Tillgänglighet och svenska texter (4/4)**
+   - [x] 6.1 Använd tydlig svenska.
+   - [x] 6.2 Granska TalkBack och fokus.
+   - [x] 6.3 Granska små skärmar och stor text.
+   - [x] 6.4 Granska tryckytor och kontrast.
+7. [ ] **Automatiska tester och CI (3/4)**
+   - [x] 7.1 Testa centrala domänfall.
    - [ ] 7.2 Testa fel- och avbrottsfall.
-   - [ ] 7.3 Testa integritet och dataseparering.
-   - [ ] 7.4 Verifiera obligatorisk CI.
+   - [x] 7.3 Testa integritet och dataseparering.
+   - [x] 7.4 Verifiera obligatorisk CI.
 8. [ ] **Slutverifiering och merge (2/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
@@ -49,6 +49,8 @@ Lagra bara fas-ID separat per UID/gäst, utan ny molnsynk. Återanvänd säker p
    - [ ] 8.4 Merga fas-PR.
 
 ## Implementation och verifieringsunderlag
+
+Slutgranskningen hittade ett befintligt relaterat avstämningsfel: `skipRegister` skrev en cigarett direkt och lämnade dagens check-in kvar. Båda registreringsvägarna använder nu samma `addCigaretteEntry`, som ogiltigförklarar avstämningen och behåller tidigare poster, samt samma dubbeltrycksspärr. Nytt test verifierar faktisk mutation/immutabilitet och kopplingen från båda knapparna. TypeScript och 190 lokala tester passerar (174 ordinarie, 10 storage, 6 migration). Denna korrigering inväntar egen CI.
 
 `personalJourney` normaliserar endast version och ett frivilligt fas-ID. Standard är ingen fasanpassning; användaren kan välja eller återställa utan ändrad profil, plan, historik eller bekräftelse på ett hälsotillstånd. Fem val täcker förberedelse, nedtrappning, stoppdag, tidig rökfrihet och underhåll. Stödtexten ger nästa konkreta steg (plan, SOS eller avstämning); vid registrerad cigarett i rökfri fas erbjuds stöd utan nollställning eller skuldbeläggning.
 

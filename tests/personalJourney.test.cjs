@@ -42,3 +42,16 @@ test('session identity guard and check-in use current data rather than a capture
  const routes=fs.readFileSync('src/components/ProgressScreenRoutes.tsx','utf8');assert.match(routes,/countOn\(v\.entries\.filter/);assert.match(routes,/journeyPanel=\{journeyPanel\}/);
  const view=fs.readFileSync('src/components/PersonalJourney.tsx','utf8');assert.match(view,/accessibilityRole="radio"/);assert.match(view,/minHeight:48/);
 });
+test('registration with skipped questions uses the same check-in invalidation and duplicate guard',()=>{
+ const hook=fs.readFileSync('src/hooks/useCigaretteRegistration.ts','utf8');
+ assert.match(hook,/const record=\(skip:boolean\)=>\{/);
+ assert.match(hook,/if\(busy\.current\)return/);
+ assert.match(hook,/addCigaretteEntry\(v,skip\?null:feeling,skip\?null:cigTrigger\)/);
+ assert.match(hook,/const skipRegister=\(\)=>record\(true\)/);
+ const context={exports:{},require:()=>({dayKey:d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')})};
+ vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/utils/entryActions.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,context);
+ const now=new Date(),day=context.require().dayKey(now),old={profile:null,entries:[],cravings:[],checkins:[{date:day,complete:true,smokeFree:true}]};
+ const result=context.exports.addCigaretteEntry(old,null,null);
+ assert.equal(result.entries.length,1);assert.equal(result.checkins.length,0);assert.equal(old.checkins.length,1);
+ assert.equal(result.entries[0].feeling,undefined);assert.equal(result.entries[0].trigger,undefined);
+});

@@ -5,7 +5,7 @@
 - Fas **18.0 – personlig rökstoppsresa**.
 - Branch `feat/phase-18-personal-journey`, från uppdaterad main `0fdd4b1`.
 - Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/166.
-- Fast checklista: `docs/PHASE_18_JOURNEY.md`. 1/8 (12,5 %) och 6/32 (18,75 %) verifierade mot startcommit `e9e9df3` med grön validate/rules. Implementationen inväntar egen CI.
+- Fast checklista: `docs/PHASE_18_JOURNEY.md`. 6/8 (75 %) och 29/32 (90,625 %) verifierade mot `17f9e6f` med grön validate/rules. Sista avstämningsregressionen inväntar egen CI.
 
 ## Senaste avslutade arbete
 
@@ -19,7 +19,7 @@ Tidigare faser: 16.4 PR #161 (`07ff48c`), 16.5 PR #162 (`a3c53e8`), 16.6 PR #163
 
 Implementerat gemensam modell och SVG-renderare i startsida, förhandsvisning och PNG. Bilden visar kvar av mål, mindre ring och samma stödtext. FontScale får kortet att växa/staplas och ogiltigförklarar gamla exporter. En statisk bildöversikt renderad från faktisk komponent finns i docs/assets/phase17-progress-review.png; visuell inspektion är utförd, men inte Android-export. TypeScript och 183 tester passerar lokalt.
 
-Fas 17 är mergad i PR #165 (`0fdd4b1`), slutlig head `f4cc575` grön validate/rules. Fas 18 har nu frivilligt fasval, privat lokal lagring och nästa steg på Hem/SOS, utan ändrad profil/plan/historik. Dagens avstämning använder senaste poster. TypeScript och 189 tester passerar lokalt. Nästa steg: verifiera båda CI på implementationscommitten, gör slutavstämning mot fasplanen, avsluta #166 och fortsätt direkt till fas 19. Stanna bara vid verkligt hinder, produktbeslut eller godkännandekrav. Fysisk PNG/systemdelning och TalkBack ligger kvar i fas 25.
+Fas 17 är mergad i PR #165 (`0fdd4b1`). Fas 18:s huvudimplementation har grön CI. Slutgranskning rättade dessutom skipRegister så båda registreringsvägarna använder samma avstämningsinvalidering och dubbeltrycksspärr. TypeScript och 190 tester passerar lokalt. Nästa steg: verifiera båda CI på denna korrigering, avsluta #166 när kriterierna är uppfyllda och fortsätt direkt till fas 19. Stanna bara vid verkligt hinder, produktbeslut eller godkännandekrav. Fysisk PNG/systemdelning och TalkBack ligger kvar i fas 25.
 
 ## Regler och risker
 

@@ -7,21 +7,17 @@ export function useCigaretteRegistration(setData:Dispatch<SetStateAction<Data>>)
  const [feeling,setFeeling]=useState<string|null>(null);
  const [cigTrigger,setCigTrigger]=useState<string|null>(null);
  const busy=useRef(false);
- const register=()=>{
+ const record=(skip:boolean)=>{
   if(busy.current)return;
   busy.current=true;
   setTimeout(()=>busy.current=false,600);
-  setData(v=>addCigaretteEntry(v,feeling,cigTrigger));
+  setData(v=>addCigaretteEntry(v,skip?null:feeling,skip?null:cigTrigger));
   setRegisterOpen(false);
   setFeeling(null);
   setCigTrigger(null);
  };
+ const register=()=>record(false);
  const openRegister=()=>{setFeeling(null);setCigTrigger(null);setRegisterOpen(true)};
- const skipRegister=()=>{
-  setFeeling(null);
-  setCigTrigger(null);
-  setData(v=>({...v,entries:[...v.entries,{id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2),at:new Date().toISOString()}]}));
-  setRegisterOpen(false);
- };
+ const skipRegister=()=>record(true);
  return {registerOpen,setRegisterOpen,feeling,setFeeling,cigTrigger,setCigTrigger,register,openRegister,skipRegister};
 }
