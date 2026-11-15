@@ -57,6 +57,8 @@
 | 28.0 | Profil, kontohantering och organiserade inställningar | Planerad; efter fas 27 | — |
 | 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Planerad; efter fas 28, tidigare endast efter uttryckligt beslut | — |
 | 30.0 | Release Polish och Production Readiness | Planerad; slutpolering efter fas 29, release sker endast på användarens beslut | — |
+| 31.0 | Automatiserade Android-flödestester och regressionsskydd | Planerad; efter fas 30, inga onödiga native-byggen | — |
+| 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Planerad; efter fas 31 | — |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -369,6 +371,112 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Bygg och testa signerad release; verifiera riktiga Android-enheter, notifieringar och inloggning.
 - Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
+
+## Fas 31.0 – Automatiserade Android-flödestester och regressionsskydd (PLANERAD)
+
+**Underlag från granskning 2026-11-15:** `main` har många Node-baserade domän-, synk-, migrations- och regeltester, men de granskade testerna och fas 25:s QA-underlag visar ännu inte ett färdigt automatiserat verkligt Android-end-to-end-flöde. PR #173 dokumenterar omfattande EJ KÖRDA manuella acceptansfall (onboarding, SOS, notiser, widgets, konto, tvåenhetssynk, radering, TalkBack). PR #175 ändrar ett stort antal UI-filer, vilket ökar regressionsrisken. Detta är ett testtäckningsbehov, inte ett påstående om att funktionerna är trasiga. **Syfte:** bygg ett litet men hållbart automatiserat E2E-röktest för releasekandidater och en pålitlig CI-matris, med manuella tester kvar där automation inte räcker. Undvik kostsam native-build per commit och undvik verkliga användarkonton.
+
+**Gräns:** Efter fas 30.0 enligt roadmapen. En fas = en PR, 8 fasta huvudpunkter × 4 fasta delpunkter. Påbörja inte medan fas 25/27 är aktiv. Inga produktionsdriftsättningar, raderingar av verkliga konton eller publicering utan uttryckligt godkännande.
+
+### Fas 31.0 – fast checklista (8 × 4 = 32)
+
+**Status:** Planerad, ej påbörjad. 0/8 huvudpunkter, 0/32 delpunkter (0 %).
+
+1. **Teststrategi och riskprioritering (0/4)**
+   - [ ] 1.1 Inventera testsviter, manuella fall och CI.
+   - [ ] 1.2 Välj Android E2E-verktyg efter Expo/native-kompatibilitet och kostnad.
+   - [ ] 1.3 Definiera deterministiska testdata och testkonton.
+   - [ ] 1.4 Dokumentera minsta releasekritiska flöden.
+2. **Reproducerbar testmiljö (0/4)**
+   - [ ] 2.1 Isolera Firebase-emulator/testprojekt från produktion.
+   - [ ] 2.2 Definiera stabila installations-/återställningsrutiner.
+   - [ ] 2.3 Hantera testidentiteter och hemligheter säkert.
+   - [ ] 2.4 Förbered APK/Android-testmiljö utan att bygga per commit.
+3. **Onboarding och vardagsflöden (0/4)**
+   - [ ] 3.1 Automatisera första start och gästläge.
+   - [ ] 3.2 Automatisera plan och registrering.
+   - [ ] 3.3 Automatisera historik och statistik.
+   - [ ] 3.4 Automatisera SOS och återgång.
+4. **Konto och dataintegritet (0/4)**
+   - [ ] 4.1 Automatisera kontoinloggning med testidentitet där möjligt.
+   - [ ] 4.2 Testa gästmigrering och synkkonflikter utan produktionsdata.
+   - [ ] 4.3 Testa kontobyten och omstart.
+   - [ ] 4.4 Testa raderingsspärr och säkra återförsök i isolerad miljö.
+5. **UI och tillgänglighet (0/4)**
+   - [ ] 5.1 Testa huvudnavigation och Android Tillbaka.
+   - [ ] 5.2 Testa ljus/mörk/system och sparat tema.
+   - [ ] 5.3 Testa stora texter, fokus och grundläggande semantik.
+   - [ ] 5.4 Definiera manuella TalkBack- och visuella fall som inte kan automatiseras.
+6. **Notiser, widget och OTA (0/4)**
+   - [ ] 6.1 Testa påminnelsekonfiguration och avstängning.
+   - [ ] 6.2 Testa widgetens opt-in och integritetsgräns.
+   - [ ] 6.3 Testa Preview-OTA kontra native-runtime-skydd.
+   - [ ] 6.4 Dokumentera vilka enhetsfall som kräver manuell kontroll.
+7. **CI och rapportering (0/4)**
+   - [ ] 7.1 Kör snabba enhetstester på varje PR.
+   - [ ] 7.2 Kör Android E2E vid releasekandidat eller manuellt val.
+   - [ ] 7.3 Publicera anonymiserade testresultat och felrapporter.
+   - [ ] 7.4 Säkerställ att röda releasekritiska tester blockerar release.
+8. **Verifiering och leverans (0/4)**
+   - [ ] 8.1 Verifiera testernas stabilitet och felsökningsbarhet.
+   - [ ] 8.2 Verifiera dataseparation och hemlighetsskydd.
+   - [ ] 8.3 Kontrollera båda obligatoriska CI och Android-buildbehov.
+   - [ ] 8.4 Slutför PR med dokumenterad täckning och kvarstående manuella fall.
+
+---
+
+## Fas 32.0 – Arkitektur, kodhälsa och långsiktigt underhåll (PLANERAD)
+
+**Underlag från granskning 2026-11-15:** `src/components/AppSessionView.tsx` är fortfarande en stor sessions-/navigationsvy på `main`, medan `useSmokeLessSessionModel.ts` samordnar många hooks och `AccountSettingsRoutes.tsx` kopplar samman flera kontovyer. PR #173 ändrar 71 filer och PR #175 ändrar 65 filer. Detta motiverar en riktad ansvarsfördelnings- och underhållsgranskning, men bevisar inte prestandafel eller att en stor omskrivning behövs. **Syfte:** minska framtida regressionsrisk och förenkla fortsatt utveckling utan att ändra användardata, funktioner eller gränssnitt i onödan. Inga abstraktioner utan konkret nytta.
+
+**Gräns:** Efter fas 31.0 enligt roadmapen. En fas = en PR, 8 fasta huvudpunkter × 4 fasta delpunkter. Påbörja inte medan fas 25/27 är aktiv. Inga produktionsdriftsättningar, raderingar av verkliga konton eller publicering utan uttryckligt godkännande.
+
+### Fas 32.0 – fast checklista (8 × 4 = 32)
+
+**Status:** Planerad, ej påbörjad. 0/8 huvudpunkter, 0/32 delpunkter (0 %).
+
+1. **Arkitektur- och beroendeinventering (0/4)**
+   - [ ] 1.1 Kartlägg komponenter, hooks, domän och lagringslager.
+   - [ ] 1.2 Identifiera överlappande ansvar och svårtestad kod.
+   - [ ] 1.3 Granska native/Expo-konfiguration och versionspolicy.
+   - [ ] 1.4 Prioritera endast belagda underhållsproblem.
+2. **Sessions- och navigationsansvar (0/4)**
+   - [ ] 2.1 Separera ren presentationslogik från sessionsbeslut där lämpligt.
+   - [ ] 2.2 Minska onödig prop-drilling med tydliga gränssnitt.
+   - [ ] 2.3 Behåll Android Tillbaka och navigationens beteende.
+   - [ ] 2.4 Lägg till regressionstester före refaktorering.
+3. **Datamodell och lagring (0/4)**
+   - [ ] 3.1 Dokumentera källa till sanning för gäst/konto/moln.
+   - [ ] 3.2 Verifiera migrerings- och konfliktregler.
+   - [ ] 3.3 Håll raderings- och retentionlogik tydligt avgränsad.
+   - [ ] 3.4 Säkra bakåtkompatibilitet och befintlig historik.
+4. **Gemensamma komponenter och teman (0/4)**
+   - [ ] 4.1 Återanvänd UI-komponenter utan dubbel implementation.
+   - [ ] 4.2 Granska tema- och tillgänglighetstokens.
+   - [ ] 4.3 Standardisera fel-/laddningsstatus och meddelanden.
+   - [ ] 4.4 Undvik nya kopplingar mellan UI och Firebase.
+5. **Testbarhet och prestanda (0/4)**
+   - [ ] 5.1 Profilera endast mätbara flaskhalsar.
+   - [ ] 5.2 Minska onödiga omrenderingar där de verifierats.
+   - [ ] 5.3 Stärk tester för kritiska gränssnitt.
+   - [ ] 5.4 Undvik nya beroenden utan motiverad nytta.
+6. **Bygg- och versionshygien (0/4)**
+   - [ ] 6.1 Granska låsfil, versionspinning och Expo-kompatibilitet.
+   - [ ] 6.2 Separera dev/preview/production i config.
+   - [ ] 6.3 Dokumentera native-ändring kontra OTA-kompatibilitet.
+   - [ ] 6.4 Minimera långsamma och duplicerade CI-jobb.
+7. **Dokumentation och överlämning (0/4)**
+   - [ ] 7.1 Synkronisera AI_WORKFLOW med faktisk fasordning.
+   - [ ] 7.2 Rensa motsägande gamla QA-fashänvisningar utan att tappa historik.
+   - [ ] 7.3 Dokumentera ansvar, drift och felsökningsvägar.
+   - [ ] 7.4 Gör nästa AI-session reproducerbar utan gissningar.
+8. **Verifiering och leverans (0/4)**
+   - [ ] 8.1 Kör typkontroll och samtliga relevanta regressioner.
+   - [ ] 8.2 Verifiera konto/synk/radering med isolerade testdata.
+   - [ ] 8.3 Verifiera båda obligatoriska CI och Android-buildbehov.
+   - [ ] 8.4 Slutför PR endast med oförändrat beteende eller dokumenterad förbättring.
+
+---
 
 ## Fas 30.0 – Release Polish & Production Readiness (PLANERAD)
 
@@ -1456,7 +1564,7 @@ TypeScript och 218 tester passerar (202 ordinarie, 10 storage, 6 migration). Tes
 - Lägg inte till nya faser eller utöka fasta 8×4-checklistor för små förbättringar. Registrera nya idéer i backlog och avgör om de verkligen motiverar en separat fas.
 
 ## Princip för kommande faser
-- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman) → 28.0 (profil och organiserade inställningar) → 29.0 (fristående Preview och OTA) → 30.0 (releasepolering på användarens beslut).
+- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman) → 28.0 (profil och organiserade inställningar) → 29.0 (fristående Preview och OTA) → 30.0 (releasepolering) → 31.0 (Android E2E) → 32.0 (arkitektur och underhåll).
 - En fas = en PR med **fast åttapunktschecklista och fyra fasta delpunkter per huvudpunkt** (32 totalt). Räkna bara verifierat klart efter relevanta tester och CI.
 - Ändra inte fasens mål eller nämnare under arbetet utan uttryckligt beslut. Nya önskemål läggs i kommande fas eller backlog. Samla relaterade förbättringar i meningsfulla commits; undvik en PR per småfix.
 - Fas 25 är den slutliga manuella Android-/BrowserStack-/TalkBack-/Safe Area- och säkerhetsgrinden. Blockerande säkerhets- och datafel får aldrig skjutas upp.
