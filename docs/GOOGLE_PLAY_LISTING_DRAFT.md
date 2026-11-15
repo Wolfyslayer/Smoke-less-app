@@ -1,6 +1,6 @@
 # Smoke Less – Google Play listing draft
 
-**Status:** Draft only. Review against the tested Android build before publishing.
+**Status:** Updated during phase 25 on 2026-11-15. Draft only; account deletion, policy/contact details, real release screenshots and signed release acceptance remain blockers. See `PLAY_DATA_SAFETY_REVIEW.md`.
 
 ## App identity
 - Name: Smoke Less
@@ -14,9 +14,11 @@ Följ dina rökvanor, minska i din takt och se dina framsteg.
 ## Full description (Swedish, draft)
 Smoke Less hjälper dig att förstå dina rökvanor och följa din resa mot färre cigaretter eller ett rökstopp. Sätt personliga mål, registrera dina framsteg och använd stöd när röksuget kommer.
 
-Appen erbjuder bland annat en plan för nedtrappning eller rökstopp, översikt över historik och statistik, påminnelser som du själv väljer att aktivera och möjlighet att använda appen i gästläge. Med ett konto kan historik synkroniseras via Firebase. Gästläget lagrar historik lokalt på enheten. Ingen manuell JSON-export eller JSON-återställning erbjuds. Slutlig butikstext ska stämmas av mot acceptanstestad version.
+Välj gradvis minskning, rökstopp direkt eller ett eget stoppdatum. Registrera cigaretter och följ din plan, historik och statistik. SOS erbjuder pauser och strategier när röksuget kommer. Personliga stödval och påminnelser är frivilliga.
 
-Smoke Less är ett hjälpmedel för egen uppföljning och ersätter inte medicinsk rådgivning.
+Du kan börja utan konto. Gästhistorik sparas på enheten och kan gå förlorad vid enhetsbyte eller rensning. Ett frivilligt konto kan synkronisera historik mellan enheter. Slutlig butikstext ska stämmas av mot acceptanstestad version.
+
+Smoke Less är ett hjälpmedel för egen uppföljning och ersätter inte medicinsk rådgivning. Appen är inte en medicinteknisk produkt och ställer inte diagnos, behandlar, botar eller förebygger sjukdomar. Vänd dig till vården för individuell medicinsk rådgivning.
 
 ## Graphics and release checklist
 - [ ] Verify final app icon and adaptive icon on Android launcher.

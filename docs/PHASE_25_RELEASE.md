@@ -5,13 +5,25 @@
 Ingen offentlig publicering eller produktionsändring ingår utan uttryckligt lanseringsbeslut. Verifiera befintlig säkerhetsmodell, negativa emulatorfall, serverns raderingsprototyp, lokal lagring och releaseunderlag. Samla uppskjuten fysisk QA från faser 8–24. Markera inte fysisk eller driftsatt funktion klar på grund av kodtester. Firestore-regler ändras bara vid verifierat behov och då enligt separat säkerhets-PR-policy.
 
 Vid start: ADB finns men `adb devices -l` visar ingen ansluten enhet. Native-projektkällor och signerad releasekonfiguration saknas i arbetskopian (endast tidigare byggcache finns). Kontoradering är en icke driftsatt serverprototyp utan klientflöde. Integritetspolicy saknar ansvarig, kontakt, lagringsregioner och publicerad URL. Kontrollera vad som kan färdigställas lokalt och dokumentera konkret återstående acceptans innan fasen får avslutas. Fas 26 kräver faktisk lansering och verklig återkoppling.
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
-1. [ ] **Testplan (0/4)**
-   - [ ] 1.1 Samla uppskjutna testfall från faser 8–17.
-   - [ ] 1.2 Fastställ enhetsmatris.
+## Faktisk framdrift
+
+Telefon anslöts senare: A024/Android 17, befintlig utvecklingsbuild med aktuell JS. Riktad fysisk granskning och PNG/systemdelning är utförda enligt `PHASE_25_QA_RESULTS.md`; bred acceptans är inte klar. Textskala återställd till 1,0. Inga testposter, kontoändringar eller meddelanden skickades från telefonen.
+
+SOS inställningar ligger nu bakom valbar fördjupning efter hjälpen. Dubblerade introytor tas bort från Hem/SOS. Byte av SOS-situation rensar tidigare hjälpsamhetssvar för att undvika felaktig attribution. Nya lokala återställningskopior identifierar gäst/UID; äldre omärkta kopior behålls och är en uttrycklig releaseblockerare.
+
+Ordinarie enhetssvit upptäcks automatiskt: 265 tester inklusive serverns 21 säkerhetstester passerar, plus 10 storage, 6 migration och 9 riktiga emulatortester (290 totalt). TypeScript passerar. Fem tidigare utelämnade, föråldrade källkontrakt uppdaterades till aktuell funktionsgräns/texter; säkerhetskraven behölls. Emulatorn kördes isolerat utan produktionsdata.
+
+Manuella Android-CI-byggen saknade miljö för main:s obligatoriska keystore-plugin. De förbereds nu med en disponibel QA-testnyckel, utan hemlighetsändringar eller borttagen plugin. Detta är inte Play-signering och får inte ersätta befintlig installation med annan signatur. Ny native QA-build ska köras efter push; signerad produktionsrelease är fortfarande öppen.
+
+Officiella Play-källor kontrollerade 2026-11-15 i `PLAY_DATA_SAFETY_REVIEW.md`. Utkast till policy/listning uppdaterade mot faktisk datahantering. Ansvarig, kontakt, URL, retention och färdig kontoradering återstår. Inget har publicerats eller driftsatts.
+**Status:** Pågår. 0/8 huvudpunkter (0 %) och 7/32 delpunkter (21,875 %) verifierade. Fysisk slutacceptans, radering och release är inte klara.
+
+1. [ ] **Testplan (3/4)**
+   - [x] 1.1 Samla uppskjutna testfall från faser 8–17.
+   - [x] 1.2 Fastställ enhetsmatris.
    - [ ] 1.3 Dokumentera PASS/FAIL och testad commit.
-   - [ ] 1.4 Prioritera blockerande fel.
+   - [x] 1.4 Prioritera blockerande fel.
 2. [ ] **Android-regression (0/4)**
    - [ ] 2.1 Testa onboarding och planer.
    - [ ] 2.2 Testa SOS, historik och statistik.
@@ -27,16 +39,16 @@ Vid start: ADB finns men `adb devices -l` visar ingen ansluten enhet. Native-pro
    - [ ] 4.2 Testa tvåenhetssynk och konflikter.
    - [ ] 4.3 Testa kontobyten.
    - [ ] 4.4 Testa kontoradering.
-5. [ ] **Säkerhet (0/4)**
-   - [ ] 5.1 Granska Firestore-regler.
-   - [ ] 5.2 Verifiera negativa behörighetstester.
-   - [ ] 5.3 Granska datalagring och loggar.
+5. [ ] **Säkerhet (3/4)**
+   - [x] 5.1 Granska Firestore-regler.
+   - [x] 5.2 Verifiera negativa behörighetstester.
+   - [x] 5.3 Granska datalagring och loggar.
    - [ ] 5.4 Åtgärda blockerande säkerhetsfel.
-6. [ ] **Play Store (0/4)**
+6. [ ] **Play Store (1/4)**
    - [ ] 6.1 Färdigställ integritetspolicy.
    - [ ] 6.2 Färdigställ Data safety.
    - [ ] 6.3 Färdigställ butikstexter och skärmbilder.
-   - [ ] 6.4 Verifiera aktuell Play-policy.
+   - [x] 6.4 Verifiera aktuell Play-policy.
 7. [ ] **Release (0/4)**
    - [ ] 7.1 Bygg signerad release.
    - [ ] 7.2 Verifiera release på Android.

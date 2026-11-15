@@ -1,6 +1,6 @@
 # Smoke Less – integritetspolicy (UTKAST, ej publiceringsklar)
 
-**Status:** Utkast för fas 7.0. Granska mot faktisk kod, Firebase-konfiguration och Play Console innan publicering. Policyn får inte användas som färdig integritetspolicy förrän kontaktuppgifter och samtliga kontroller nedan är klara.
+**Status:** Tekniskt uppdaterat i fas 25, 2026-11-15. Inte publiceringsklart. Se `PLAY_DATA_SAFETY_REVIEW.md` och `PHASE_25_SECURITY_REVIEW.md`. Kontakt, tjänstekonfiguration, retention och fungerande radering återstår.
 
 ## App och ansvarig
 Smoke Less är en app för att följa rökvanor, nedtrappning och rökstopp.
@@ -12,7 +12,11 @@ Smoke Less är en app för att följa rökvanor, nedtrappning och rökstopp.
 ## Uppgifter som kan behandlas
 Appen kan hantera uppgifter som användaren själv registrerar om rökvanor, mål, tidsstämplar och framsteg. Dessa uppgifter kan avslöja hälsorelaterade förhållanden och ska hanteras med särskild omsorg.
 
-Gästhistorik lagras lokalt på enheten. När användaren väljer att skapa eller använda ett konto kan e-postadress och kontouppgifter behandlas via Firebase Authentication. Kontofunktioner kan även använda Firestore för molnhistorik och synkronisering. Exakt omfattning, tidpunkt och villkor för molnöverföring måste verifieras i den faktiska implementationen.
+Gästhistorik lagras lokalt på enheten. När användaren väljer konto används Firebase Authentication för inloggning och Firestore för automatisk synk av kontots plan, cigaretter, röksug och avstämningar. Google-inloggning är frivillig och koppling till befintligt konto kräver uttryckligt val. Gästhistorik flyttas inte automatiskt till ett befintligt konto.
+
+Dashboardval, resestöd, personliga handlingsplaner och avvisade tips sparas lokalt för gäst/konto. Påminnelser väljs per enhet och använder generiska texter. Widgeten kan efter opt-in visa dagens antal och mål på hemskärmen. PNG-delning kan innehålla dagens antal/mål; appen öppnar systemets delningsdialog och användaren väljer själv mottagare eller avbryter. Externa källänkar innehåller inga tillagda registreringar eller konto-ID:n.
+
+Lokala återställningskopior kan skapas före import och återställning. Nya kopior är märkta per identitet. Äldre omärkta kopior och gallring måste hanteras innan kontoradering kan beskrivas som fullständig; ingen färdig raderings- eller retentionstid utlovas i detta utkast.
 
 ## Användarens val
 Appen kan användas i gästläge utan konto. Användaren kan själv välja att aktivera lokala påminnelser och måste ge telefonens notisbehörighet där det krävs. Manuell JSON-export och JSON-återställning erbjuds inte i appens gränssnitt. Kontohistorik synkroniseras via Firebase medan gästhistorik lagras lokalt på enheten.

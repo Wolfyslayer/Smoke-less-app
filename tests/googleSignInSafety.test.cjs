@@ -123,7 +123,7 @@ test('Android picker rejects malformed OAuth client IDs before loading native mo
 test('native Google sign-in refuses an already authenticated session and never links identities implicitly',()=>{
  const fs=require('node:fs'),path=require('node:path');
  const source=fs.readFileSync(path.join(__dirname,'../src/authService.native.ts'),'utf8');
- const fn=source.slice(source.indexOf('export async function signInWithGoogleCredential'));
+ const fn=source.slice(source.indexOf('export async function signInWithGoogleCredential'),source.indexOf('export async function linkGoogleToEmailAccount'));
  assert.match(fn,/if\(auth\.currentUser\)throw Error/);
  assert.match(fn,/signInWithCredential\(auth,GoogleAuthProvider\.credential\(idToken\)\)/);
  assert.doesNotMatch(fn,/linkWithCredential|updateCurrentUser|deleteUser|mergeGuestHistory/);

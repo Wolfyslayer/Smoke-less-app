@@ -13,12 +13,15 @@ test('coach only counts helpful, nonempty strategies from valid nonfuture record
 
 test('coach ranks strategies by recorded frequency with stable tie breaking',()=>{
  assert.match(home,/helpfulStrategies\.set\(strategy,\(helpfulStrategies\.get\(strategy\)\?\?0\)\+1\)/);
- assert.match(home,/bestStrategy=\[\.\.\.helpfulStrategies\.entries\(\)\]\.sort\(\(a,b\)=>b\[1\]-a\[1\]\|\|a\[0\]\.localeCompare\(b\[0\]\)\)/);
+ assert.match(home,/const topEntry=\(counts:Map<string,number>\)=>\[\.\.\.counts.entries\(\)\]\.sort/);
+ assert.match(home,/b\[1\]-a\[1\]\|\|a\[0\]\.localeCompare\(b\[0\]\)/);
+ assert.match(home,/bestStrategy=topEntry\(helpfulStrategies\)/);
 });
 
 test('situation-specific advice uses the same trigger and positive feedback',()=>{
- assert.match(home,/craving\.trigger!==frequentTrigger\[0\]/);
- assert.match(home,/triggerStrategies\.set\(strategy,\(triggerStrategies\.get\(strategy\)\?\?0\)\+1\)/);
+ assert.match(home,/helpfulByTrigger.get\(craving.trigger\)/);
+ assert.match(home,/helpfulByTrigger.get\(frequentTrigger\[0\]\)/);
+ assert.match(home,/strategies\.set\(strategy,\(strategies\.get\(strategy\)\?\?0\)\+1\)/);
  assert.match(home,/matchingStrategy\?/);
  assert.match(home,/Fundera på ett enkelt alternativ inför nästa gång/);
 });
