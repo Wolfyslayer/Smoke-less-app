@@ -39,8 +39,8 @@
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
-| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Pågående; 6/8 huvudpunkter, 29/32 delpunkter verifierade | #161 |
-| 16.5 | Personlig dashboard och anpassningsbar startsida | Planerad | — |
+| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
+| 16.5 | Personlig dashboard och anpassningsbar startsida | Startad; fast 8×4-checklista, implementation återstår | Se docs/PHASE_16_5_DASHBOARD.md |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Planerad | — |
 | 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
