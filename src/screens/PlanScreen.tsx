@@ -1,16 +1,24 @@
 import React,{useState} from 'react';
 import {Modal,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import {CompactDateModal} from '../components/CompactDateModal';
 import {target,quitDate,nextReductionMilestone,restartReductionPlan,resumeGradualReduction,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
 
 type WeekDay={key:string;confirmed:boolean;within:boolean};
 type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
-function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
-function Heading({children}:{children:React.ReactNode}){return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
+function Card({children,style}:{children:React.ReactNode;style?:any}){
+ const styles=useThemeStyles(createStyles);
+return <View style={[styles.card,style]}>{children}</View>}
+function Label({children}:{children:React.ReactNode}){
+ const styles=useThemeStyles(createStyles);
+return <Text style={styles.label}>{children}</Text>}
+function Heading({children}:{children:React.ReactNode}){
+ const styles=useThemeStyles(createStyles);
+return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
 export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile}:Props){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
  const {height:windowHeight}=useWindowDimensions();
  const percentage=p.baseline>0?Math.max(0,Math.min(100,Math.round(todayReduction/p.baseline*100))):0;
  const customGoal=p.dailyTargetOverride!==null;
@@ -87,7 +95,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
        ?'Du har nått målet noll cigaretter'
        :'Inget kommande minskningssteg i grundplanen';
  return <View style={styles.screen}>
-  <Card style={{gap:14,padding:19,borderColor:'#425C29'}}>
+  <Card style={{gap:14,padding:19,borderColor:C.border}}>
    <Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}<Text style={{fontSize:20,color:C.muted}}> cigaretter</Text></Text>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
    <Text style={styles.cardTitle}>{p.mode==='quit'?'Ditt rökstopp':scheduled?'Ditt valda stoppdatum':customGoal?'Rökstopp enligt grundplanen':'Beräknat rökstopp'}</Text><Text style={styles.statValue}>{date(quitDate(p))}</Text>
@@ -108,7 +116,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   <Heading>{p.mode==='quit'?'Ditt rökstopp':'Din nedtrappning'}</Heading>
   <Card style={{gap:10}}>
    <View style={styles.grid}>
-    <View style={{flex:1,minWidth:115}}><Label>{p.mode==='quit'?'MÅL JÄMFÖRT MED START':'MINSKNING AV DAGSMÅL'}</Label><Text style={styles.statValue}>{todayReduction} <Text style={{fontSize:13,color:C.muted}}>färre/dag</Text></Text></View>
+    <View style={{flex:1,minWidth:115}}><Label>{p.mode==='quit'?'MÅL JÄMFÖRT MED START':'MINSKNING AV DAGSMÅL'}</Label><Text style={styles.statValue}>{todayReduction} <Text style={{fontSize:15,color:C.muted}}>färre/dag</Text></Text></View>
     <View style={{flex:1,minWidth:115}}><Label>JÄMFÖRT MED START</Label><Text style={styles.statValue}>{percentage}%</Text></View>
    </View>
    <View style={styles.progressTrack} accessible accessibilityRole="progressbar" accessibilityLabel="Minskning av dagsmål jämfört med start, inte faktisk konsumtion" accessibilityValue={{min:0,max:100,now:percentage}}><View style={[styles.progressFill,{width:`${Math.min(100,percentage)}%` as `${number}%`}]}/></View>
@@ -144,11 +152,11 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
   <Text style={styles.muted}>Dagsmålet är ett högsta riktvärde. Du behöver aldrig röka för att nå det.</Text>
  </View>;
 }
-const styles=StyleSheet.create({
- screen:{gap:20,minWidth:0},actionButton:{minHeight:48,justifyContent:'center',alignSelf:'stretch',paddingHorizontal:12},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:48,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17},
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ screen:{gap:20,minWidth:0},actionButton:{minHeight:48,justifyContent:'center',alignSelf:'stretch',paddingHorizontal:12},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:48,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.elevated,borderRadius:24,borderWidth:1,borderColor:C.border,padding:17},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime,flexShrink:1},heading:{fontSize:19,fontWeight:'800',color:C.white,flexShrink:1},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white,flexShrink:1},statValue:{fontSize:26,fontWeight:'800',color:C.white,flexShrink:1},cardTitle:{fontSize:16,fontWeight:'800',color:C.white,flexShrink:1},
- muted:{fontSize:13,color:C.dim,flexShrink:1},divider:{height:1,backgroundColor:C.border},
+ muted:{fontSize:15,color:C.dim,flexShrink:1},divider:{height:1,backgroundColor:C.border},
  grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:10},
  progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
  dayCell:{width:'21%',flexGrow:1,alignItems:'center',padding:10,gap:5,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},
@@ -162,9 +170,9 @@ const styles=StyleSheet.create({
  calendarWeekday:{width:'14.2857%',textAlign:'center',fontSize:12,fontWeight:'700',color:C.dim,paddingVertical:8},
  calendarDay:{width:'14.2857%',minHeight:40,alignItems:'center',justifyContent:'center',borderRadius:8},
  calendarSelected:{backgroundColor:C.lime},
- calendarSelectedText:{color:'#111111',fontWeight:'800'},
+ calendarSelectedText:{color:C.onAccent,fontWeight:'800'},
  calendarDisabled:{opacity:0.35},
  calendarPreview:{flexShrink:1,minHeight:44},
  modalActions:{flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',gap:12,borderTopWidth:1,borderTopColor:C.border,paddingTop:8},
- dateInput:{borderWidth:1,borderColor:C.border,borderRadius:10,padding:12,color:C.white,fontSize:16,minHeight:48,width:'100%'},error:{color:C.danger,fontSize:13},
+ dateInput:{borderWidth:1,borderColor:C.border,borderRadius:10,padding:12,color:C.white,fontSize:16,minHeight:48,width:'100%'},error:{color:C.danger,fontSize:15},
 });

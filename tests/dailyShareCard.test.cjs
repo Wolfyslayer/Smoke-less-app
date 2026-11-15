@@ -104,7 +104,7 @@ test('shared card geometry grows for large text and keeps the message below the 
  }
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/latestFontScaleRef\.current===fontScale/);
- assert.match(profile,/\[todayCount,dailyGoal,fontScale\]/);
+ assert.match(profile,/\[todayCount,dailyGoal,fontScale,themeName\]/);
 });
 
 test('starting a new image clears an earlier sharing error and guards synchronous render errors',()=>{
@@ -129,7 +129,7 @@ test('profile account status and quick navigation accommodate large text and scr
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/accessibilityRole="header" style=\{\{color:C\.white,fontWeight:'900',fontSize:20,flexShrink:1\}\}/);
  assert.match(profile,/selectable style=\{\[styles\.muted,\{flexShrink:1\}\]\}/);
- assert.match(profile,/fontSize:13,flexShrink:1,textAlign:'right'/);
+ assert.match(profile,/fontSize:15,flexShrink:1,textAlign:'right'/);
  assert.match(profile,/style=\{\[styles\.cardTitle,\{flexShrink:1\}\]\}>\{item\.label\}/);
  assert.match(profile,/sectionRow:\{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12\}/);
 });
@@ -158,8 +158,8 @@ test('PNG preparation and stale-value status are announced to screen readers',()
 test('changed daily values invalidate an in-flight PNG export before share',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/useLayoutEffect\(\(\)=>\{/);
- assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*latestFontScaleRef\.current=fontScale;\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
- assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal,fontScale\]\)/);
+ assert.match(profile,/latestCountsRef\.current=\{todayCount,dailyGoal\};\s*latestFontScaleRef\.current=fontScale;\s*latestThemeRef\.current=themeName;\s*\+\+exportGenerationRef\.current;\s*pngPathRef\.current=null;\s*exportCountsRef\.current=null;/);
+ assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal,fontScale,themeName\]\)/);
 });
 
 test('reminder settings support larger text and polite status announcements',()=>{
@@ -170,7 +170,7 @@ test('reminder settings support larger text and polite status announcements',()=
 test('home quick actions expose accessible labels and adapt to larger text',()=>{
  const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
  assert.match(home,/function Tile\([\s\S]*?accessibilityRole="button" accessibilityLabel=\{title\}/);
- assert.match(home,/style=\{\[styles\.tileText,\{flexShrink:1\}\]\}>\{title\}/);
+ assert.match(home,/style=\{\[styles\.tileText,\{flexShrink:1\},featured&&\{color:C\.onAccent\}\]\}>\{title\}/);
  assert.match(home,/accessibilityRole="header" style=\{\[styles\.heading,\{flexShrink:1\}\]\}>Din utveckling/);
  assert.match(home,/accessibilityLabel="Visa mer statistik om din utveckling"/);
 });
@@ -250,7 +250,7 @@ test('plan settings preserve goal labels and headings at large font scales',()=>
 test('shared buttons and plan descriptions remain readable at large system text sizes',()=>{
  const ui=fs.readFileSync('src/components/ui.tsx','utf8');
  const plan=fs.readFileSync('src/screens/SettingsPlanSection.tsx','utf8');
- assert.match(ui,/buttonText:\{color:C\.background,fontWeight:'900',fontSize:15,textAlign:'center',flexShrink:1\}/);
+ assert.match(ui,/buttonText:\{color:C\.onAccent,fontWeight:'800',fontSize:16,textAlign:'center',flexShrink:1\}/);
  assert.match(plan,/<View style=\{\{flex:1,minWidth:0,gap:4\}\}>/);
  assert.match(plan,/<View style=\{\{flex:1,minWidth:0,gap:3\}\}>/);
 });

@@ -10,7 +10,7 @@ function luminance(hex){const v=hex.slice(1).match(/../g).map(x=>parseInt(x,16)/
 function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
 test('semantic text and action pairs remain readable in both palettes',()=>{
  for(const [name,c] of Object.entries(themePalettes)){
-  for(const bg of ['background','surface','elevated','soft']){
+  for(const bg of ['background','surface','elevated','soft','accentSubtle']){
    for(const fg of ['text','textMuted','textSecondary','success','warning','danger'])assert(contrast(c[fg],c[bg])>=4.5,`${name}: ${fg}/${bg}`);
   }
   for(const bg of ['accent','accentPressed'])assert(contrast(c.onAccent,c[bg])>=4.5,`${name}: onAccent/${bg}`);

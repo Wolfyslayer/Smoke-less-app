@@ -1,10 +1,12 @@
 import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {DASHBOARD_CARDS,defaultDashboardPreferences,moveDashboardCard,toggleDashboardCard,type DashboardCard,type DashboardPreferences} from '../dashboardPreferences';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 
 export const dashboardCardLabels:Record<DashboardCard,string>={goal:'Dagens mål',time:'Tid sedan senaste cigaretten',savings:'Besparingar',progress:'Veckans framsteg',cravings:'Röksug',milestone:'Nästa delmål'};
 export const DashboardEditor=React.memo(function DashboardEditor({value,ready,error,onChange}:{value:DashboardPreferences;ready:boolean;error:string|null;onChange:(value:DashboardPreferences)=>void}){
+ const s=useThemeStyles(createS);
+
  const [open,setOpen]=useState(false);
  const ordered=[...value.cards,...DASHBOARD_CARDS.filter(id=>!value.cards.includes(id))];
  return <View style={s.panel}>
@@ -21,4 +23,4 @@ export const DashboardEditor=React.memo(function DashboardEditor({value,ready,er
   </>:null}
  </View>;
 });
-const s=StyleSheet.create({panel:{gap:12},row:{gap:8,padding:12,borderWidth:1,borderColor:C.border,borderRadius:14},toggle:{minHeight:48,justifyContent:'center',gap:4},actions:{flexDirection:'row',flexWrap:'wrap',gap:8},button:{minHeight:48,minWidth:48,padding:12,alignItems:'center',justifyContent:'center',backgroundColor:C.surface,borderRadius:12},buttonText:{color:C.lime,textAlign:'center',fontWeight:'800',flexShrink:1},label:{color:C.white,fontWeight:'800'},message:{color:C.muted,lineHeight:21}});
+const createS=(C:ThemeColors)=>StyleSheet.create({panel:{gap:12},row:{gap:8,padding:12,borderWidth:1,borderColor:C.border,borderRadius:14},toggle:{minHeight:48,justifyContent:'center',gap:4},actions:{flexDirection:'row',flexWrap:'wrap',gap:8},button:{minHeight:48,minWidth:48,padding:12,alignItems:'center',justifyContent:'center',backgroundColor:C.surface,borderRadius:12},buttonText:{color:C.lime,textAlign:'center',fontWeight:'800',flexShrink:1},label:{color:C.white,fontWeight:'800'},message:{color:C.muted,lineHeight:21}});

@@ -18,7 +18,7 @@ Gemensamma komponenter: AppCard/AppButton i ui, ScreenHeader, BottomNavigation, 
 
 Ljust tema: varm grågrön sidyta, vita kort och djupgrön primär handling. Mörkt tema: djup skogsgrön sidyta, lätt separerade gröna kort och ljusgrön primär handling. Typografi och information ska bära hierarkin; undvik ytterligare dekorativa kort eller fler steg i kärnflöden.
 
-`src/themeTokens.ts` fastställer semantiska paletter, spacing 4/8/12/16/24/32, kort 24, kontroller 14, minsta tryckyta 48 och innehållsbredd högst 640. Normaltext börjar vid 16. Tokens är grund; nuvarande UI byter ännu inte tema. Befintlig C-palett behålls under kontrollerad migration.
+`src/themeTokens.ts` fastställer semantiska paletter, spacing 4/8/12/16/24/32, kort 24, kontroller 14, minsta tryckyta 48 och innehållsbredd högst 640. Normaltext börjar vid 16. Alla tidigare C-konsumenter är nu migrerade till reaktiv kontext och cachade stilfabriker. Äldre färgnamn är kompatibilitetsalias till semantiska roller; ingen fast C-palett exporteras längre. Se `PHASE_27_QA.md` för faktisk verifieringsgräns.
 
 ## Referensvyer och acceptans
 

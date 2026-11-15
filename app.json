@@ -5,7 +5,7 @@
     "scheme": "smokeless",
     "version": "6.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "plugins": [
       "expo-router",
       "expo-dev-client",

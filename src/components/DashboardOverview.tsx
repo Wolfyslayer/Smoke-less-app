@@ -3,10 +3,12 @@ import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {dayKey,nextReductionMilestone,savings,type Data} from '../domain';
 import {useDashboardPreferences} from '../hooks/useDashboardPreferences';
 import {DashboardEditor,dashboardCardLabels} from './DashboardEditor';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 
 type Props={actions?:React.ReactNode;uid:string|null;data:Data;clock:number;duration:string;weekly:number[];goalCard:React.ReactNode};
 export function DashboardOverview({actions,uid,data,clock,duration,weekly,goalCard}:Props){
+ const s=useThemeStyles(createS);
+
  const [expanded,setExpanded]=useState(false);
  useEffect(()=>setExpanded(false),[uid]);
  const preferences=useDashboardPreferences(uid);
@@ -33,4 +35,4 @@ export function DashboardOverview({actions,uid,data,clock,duration,weekly,goalCa
   </View>:null}
  </View>;
 }
-const s=StyleSheet.create({container:{gap:16},toggle:{minHeight:48,paddingVertical:12,justifyContent:'center'},card:{gap:10,padding:17,borderRadius:20,borderWidth:1,borderColor:C.border,backgroundColor:C.elevated},title:{color:C.white,fontSize:17,fontWeight:'800'},value:{color:C.white,fontSize:21,fontWeight:'800',flexShrink:1},muted:{color:C.muted,fontSize:13,lineHeight:20},week:{flexDirection:'row',flexWrap:'wrap',gap:8},day:{minWidth:48,flexGrow:1,alignItems:'center',paddingVertical:8}});
+const createS=(C:ThemeColors)=>StyleSheet.create({container:{gap:16},toggle:{minHeight:48,paddingVertical:12,justifyContent:'center'},card:{gap:10,padding:17,borderRadius:24,borderWidth:1,borderColor:C.border,backgroundColor:C.elevated},title:{color:C.white,fontSize:17,fontWeight:'800'},value:{color:C.white,fontSize:21,fontWeight:'800',flexShrink:1},muted:{color:C.muted,fontSize:15,lineHeight:23},week:{flexDirection:'row',flexWrap:'wrap',gap:8},day:{minWidth:48,flexGrow:1,alignItems:'center',paddingVertical:8}});

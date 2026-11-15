@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import {Pressable,Share,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {UserRound,ChevronRight,Target,History,Leaf,Settings,Heart,Cloud,Share2} from 'lucide-react-native';
-import {C} from '../theme';
+import {useAppTheme,useThemeStyles,type ThemeColors} from '../theme';
 import {AppCard} from '../components/ui';
 import {DailyProgressShareArtwork} from '../components/DailyProgressShareArtwork';
 import type {Profile} from '../domain';
@@ -16,8 +16,11 @@ const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',ye
 const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="elevated" style={style}>{children}</AppCard>;
 const quickLinks=[{label:'Min plan',icon:Target,to:'plan',detail:'Mål och framsteg'},{label:'Min logg',icon:History,to:'history',detail:'Din registrerade historik'},{label:'Hälsa och besparing',icon:Leaf,to:'benefits',detail:'Se vad du vinner'},{label:'Konto och säkerhet',icon:UserRound,to:'account',detail:'Inloggning och kontoinställningar'},{label:'Synkronisering',icon:Cloud,to:'backup',detail:'Kontosynk mellan enheter'},{label:'Inställningar',icon:Settings,to:'settings',detail:'Anpassa appen'},{label:'Stöd vid röksug',icon:Heart,to:'sos',detail:'Hjälp i stunden'}] as const;
 export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavigate}:Props){
+ const {colors:C,name:themeName}=useAppTheme(); const styles=useThemeStyles(createStyles);
+
  const {fontScale}=useWindowDimensions();
  const latestFontScaleRef=useRef(fontScale);
+ const latestThemeRef=useRef(themeName);
  const [showSharePreview,setShowSharePreview]=useState(false);
  const artworkRef=useRef<Svg|null>(null);
  const previewOpenRef=useRef(false);
@@ -29,15 +32,16 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const [sharingPng,setSharingPng]=useState(false);
  const [shareError,setShareError]=useState(false);
  useLayoutEffect(()=>{
-  if(latestCountsRef.current.todayCount===todayCount&&latestCountsRef.current.dailyGoal===dailyGoal&&latestFontScaleRef.current===fontScale)return;
+  if(latestCountsRef.current.todayCount===todayCount&&latestCountsRef.current.dailyGoal===dailyGoal&&latestFontScaleRef.current===fontScale&&latestThemeRef.current===themeName)return;
   latestCountsRef.current={todayCount,dailyGoal};
   latestFontScaleRef.current=fontScale;
+  latestThemeRef.current=themeName;
   ++exportGenerationRef.current;
   pngPathRef.current=null;
   exportCountsRef.current=null;
   setPngStatus('idle');
   setShareError(false);
- },[todayCount,dailyGoal,fontScale]);
+ },[todayCount,dailyGoal,fontScale,themeName]);
  const sharePng=async()=>{
   if(pngStatus!=='ready'||!pngPathRef.current||sharingPng||exportCountsRef.current?.todayCount!==todayCount||exportCountsRef.current?.dailyGoal!==dailyGoal)return;
   setSharingPng(true);
@@ -80,9 +84,9 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
  const loggedIn=accountEmail!==null;
  const shareSupport=async()=>{try{await Share.share({message:'Ett litet steg i taget kan göra skillnad. Jag hejar på dig! 💚'});}catch{/* Delningsappen kan avbrytas eller saknas. Ingen personlig data skickas av appen. */}};
  return <View style={styles.screen}>
-  <Card style={{gap:14,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
+  <Card style={{gap:14,padding:19,backgroundColor:C.accentSubtle,borderColor:C.border}}>
    <View style={styles.inline}><View style={[styles.actionIcon,{width:54,height:54,borderRadius:18}]}><UserRound size={27} color={C.lime}/></View><View style={{flex:1,gap:5}}><Text accessibilityRole="header" style={{color:C.white,fontWeight:'900',fontSize:20,flexShrink:1}}>{loggedIn?'Mitt konto':'Din personliga resa'}</Text><Text selectable style={[styles.muted,{flexShrink:1}]}>{accountEmail||'Följ din utveckling i din egen takt'}</Text></View></View>
-   <View style={{height:1,backgroundColor:'#425C29'}}/><View style={styles.sectionRow}><Text style={[styles.muted,{flexShrink:1}]}>Kontostatus</Text><Text style={{color:loggedIn?C.lime:'#E7B967',fontWeight:'800',fontSize:13,flexShrink:1,textAlign:'right'}}>{loggedIn?'● Inloggad':'● Gästläge'}</Text></View>
+   <View style={{height:1,backgroundColor:C.border}}/><View style={styles.sectionRow}><Text style={[styles.muted,{flexShrink:1}]}>Kontostatus</Text><Text style={{color:loggedIn?C.lime:C.warning,fontWeight:'800',fontSize:15,flexShrink:1,textAlign:'right'}}>{loggedIn?'● Inloggad':'● Gästläge'}</Text></View>
   </Card>
   <View style={styles.inline}><Target size={19} color={C.lime}/><Text accessibilityRole="header" style={styles.heading}>Din resa</Text></View>
   <Pressable accessibilityRole="button" accessibilityLabel="Öppna min plan" accessibilityHint="Visar dina mål och din plan" onPress={()=>onNavigate('plan')} style={[styles.row,{minHeight:72}]}><View style={styles.actionIcon}><Target size={22} color={C.lime}/></View><View style={{flex:1,minWidth:0,gap:5}}><Text style={[styles.cardTitle,{flexShrink:1}]}>{profile.mode==='quit'?'Sluta helt':'Minska gradvis'}</Text><Text style={[styles.muted,{flexShrink:1}]}>Planstart: {date(new Date(profile.startAt))}</Text></View><ChevronRight size={20} color={C.lime}/></Pressable>
@@ -98,10 +102,10 @@ export function ProfileScreen({profile,accountEmail,todayCount,dailyGoal,onNavig
   </Card>
  </View>;
 }
-const styles=StyleSheet.create({
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
  screen:{gap:20},
  inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
- muted:{fontSize:13,lineHeight:19,color:C.dim},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},heading:{fontSize:19,fontWeight:'800',color:C.white},
+ muted:{fontSize:15,lineHeight:23,color:C.dim},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},heading:{fontSize:19,fontWeight:'800',color:C.white},
  actionIcon:{width:42,height:42,borderRadius:13,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},
  planAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
  row:{minHeight:64,flexDirection:'row',alignItems:'center',gap:14,borderRadius:17,backgroundColor:C.surface,borderWidth:1,borderColor:C.border,paddingHorizontal:15,paddingVertical:15}

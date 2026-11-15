@@ -2,10 +2,12 @@ import React,{forwardRef,memo} from 'react';
 import {View,useWindowDimensions} from 'react-native';
 import Svg,{Circle,Rect,Text as SvgText,TSpan} from 'react-native-svg';
 import {buildDailyShareCard,progressCardLayout,type DailyShareProgress} from '../domain/dailyShareCard';
-import {C} from '../theme';
+import {useThemeColors,type ThemeColors} from '../theme';
 
 /** One renderer for the home card, preview and isolated PNG export. */
 export const DailyProgressShareArtwork=memo(forwardRef<Svg,DailyShareProgress>(function DailyProgressShareArtwork({todayCount,dailyGoal},ref){
+ const C=useThemeColors();
+
  const card=buildDailyShareCard({todayCount,dailyGoal});
  const {fontScale}=useWindowDimensions();
  const layout=progressCardLayout(card,fontScale);
@@ -13,8 +15,8 @@ export const DailyProgressShareArtwork=memo(forwardRef<Svg,DailyShareProgress>(f
  const ringX=layout.stacked?170:264;
  return <View style={{width:'100%',aspectRatio:layout.width/layout.height}}>
  <Svg ref={ref} width="100%" height="100%" fontFamily="sans-serif" viewBox={`0 0 ${layout.width} ${layout.height}`} accessible accessibilityRole="image" accessibilityLabel={`Dagens framsteg. ${card.remaining} kvar av dagsmålet ${card.dailyGoal}. ${card.todayCount} registrerade cigaretter. ${card.progressPercent} procent av dagsmålet använt. ${card.message}`}>
-  <Rect x="0" y="0" width={layout.width} height={layout.height} rx="20" fill={C.elevated}/>
-  <Rect x="1" y="1" width={layout.width-2} height={layout.height-2} rx="19" stroke="#425C29" strokeWidth="1" fill="none"/>
+  <Rect x="0" y="0" width={layout.width} height={layout.height} rx="24" fill={C.surface}/>
+  <Rect x="1" y="1" width={layout.width-2} height={layout.height-2} rx="23" stroke={C.border} strokeWidth="1" fill="none"/>
   <SvgText x="19" y={layout.titleY} fill={C.lime} fontSize={Math.min(44,11*layout.scale)} fontWeight="800" letterSpacing="1.5">{layout.titleLines.map((line,index)=><TSpan key={index} x="19" dy={index===0?0:16*layout.scale}>{line}</TSpan>)}</SvgText>
   <SvgText x="19" y={layout.numberY} fill={C.white} fontSize={layout.numberSize} fontWeight="900">{card.remaining} / {card.dailyGoal}</SvgText>
   <SvgText x="19" y={layout.captionY} fill={C.muted} fontSize={13*layout.scale}>{layout.captionLines.map((line,index)=><TSpan key={index} x="19" dy={index===0?0:20*layout.scale}>{line}</TSpan>)}</SvgText>

@@ -2,8 +2,10 @@ import React from 'react';
 import {ActivityIndicator,BackHandler,Pressable,StyleSheet,Text,View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import type {useAccountDeletion} from '../hooks/useAccountDeletion';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 export function AccountDeletionStatus({deletion}:{deletion:ReturnType<typeof useAccountDeletion>}){
+ const C=useThemeColors(); const s=useThemeStyles(createS);
+
  const insets=useSafeAreaInsets(),{state}=deletion;
  return <View style={[s.screen,{paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24)}]}>
   <Text accessibilityRole="header" style={s.heading}>{state.phase==='restart'?'Raderingen är slutförd':state.phase==='loading'?'Startar Smoke Less':'Kontoradering'}</Text>
@@ -13,4 +15,4 @@ export function AccountDeletionStatus({deletion}:{deletion:ReturnType<typeof use
   {state.phase==='restart'||state.phase==='error'?<Pressable accessibilityRole="button" onPress={()=>BackHandler.exitApp()} style={s.button}><Text style={s.link}>Stäng appen</Text></Pressable>:null}
  </View>;
 }
-const s=StyleSheet.create({screen:{flex:1,gap:20,justifyContent:'center',paddingHorizontal:24,backgroundColor:C.background},heading:{fontSize:24,fontWeight:'800',color:C.white},text:{fontSize:15,lineHeight:23,color:C.dim},button:{minHeight:48,padding:14,justifyContent:'center',borderRadius:14,backgroundColor:C.surface},link:{fontSize:15,fontWeight:'700',color:C.lime}});
+const createS=(C:ThemeColors)=>StyleSheet.create({screen:{flex:1,gap:20,justifyContent:'center',paddingHorizontal:24,backgroundColor:C.background},heading:{fontSize:24,fontWeight:'800',color:C.white},text:{fontSize:15,lineHeight:23,color:C.dim},button:{minHeight:48,padding:14,justifyContent:'center',borderRadius:14,backgroundColor:C.surface},link:{fontSize:15,fontWeight:'700',color:C.lime}});

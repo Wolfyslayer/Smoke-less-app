@@ -3,7 +3,7 @@
 ## Aktiv fas
 
 - **Nytt beslut 2026-11-15:** Fas 27 prioriteras nu enligt användarens uttryckliga önskemål. Branch `feat/phase-27-premium-ui-themes`, separat staplad PR med bas fas 25:s branch. Main:s PR #174 (`dc7f93a`) är inläst; befintligt säkerhetsarbete bevaras. Fas 25 är vilande med öppna QA/releasepunkter, inte godkänd eller mergad. Fas 26 väntar på lansering.
-- Läs `PHASE_27_DESIGN.md` och `PHASE_27_CHECKLIST.md`. Inventering/designriktning och paletter: 1/8, 5/32 lokalt verifierade. TypeScript och 303 ordinarie test passerar. UI byter ännu inte tema; nästa steg är provider, robust enhetslokal preferens och successiv migration av statiska stilar. Inga Android-byggen startas.
+- Läs `PHASE_27_DESIGN.md`, `PHASE_27_CHECKLIST.md` och `PHASE_27_QA.md`. Aktiv PR #175 mot fas 25:s branch. Full reaktiv temamigrering, enhetslokal preferens, statusfält, dialoger, SVG och reducerad rörelse är implementerade. 315 ordinarie test, 10 storage, 6 migration, TypeScript och webbexport passerar. 3/8 huvudpunkter och 24/32 efter grön senaste CI. Fysisk/visuell acceptans (2.4, 3.4, 6.1–6.4, 7.4) och 8.4 är öppna. Ingen ansluten webbläsare fanns för visuell QA. Android-build krävs för userInterfaceStyle automatic men ska inte startas; användaren bygger senare. Merga inte ofärdig fas 25 eller fas 27 som slutgodkänd.
 
 ## Föregående aktiv fas (historik)
 

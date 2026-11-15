@@ -2,10 +2,12 @@ import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {PLAN_TRIGGERS,actionSteps,clearActionPlan,isPlanTrigger,moveActionStep,rememberActionStrategy,toggleActionStep} from '../domain/actionPlans';
 import type {useActionPlans} from '../hooks/useActionPlans';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 
 type Props={store:ReturnType<typeof useActionPlans>;trigger:string;strategy:string;onUseStep:(id:string)=>void;onTrigger:(trigger:string)=>void};
 export function PersonalActionPlan({store,trigger,strategy,onUseStep,onTrigger}:Props){
+ const s=useThemeStyles(createS);
+
  const [editing,setEditing]=useState(false);
  if(!isPlanTrigger(trigger))return null;
  const steps=store.value.plans[trigger]??[];
@@ -24,4 +26,4 @@ export function PersonalActionPlan({store,trigger,strategy,onUseStep,onTrigger}:
   {editing?<><Text style={s.text}>Högst tre steg. Planen sparas lokalt för ditt konto eller gästläge. Att välja ett tips sparar inte en röksugsregistrering.</Text>{actionSteps.map(step=>{const selected=steps.includes(step.id),disabled=!store.ready||(!selected&&steps.length>=3);return <Pressable key={step.id} accessibilityRole="checkbox" accessibilityState={{checked:selected,disabled}} disabled={disabled} style={s.button} onPress={()=>store.update(toggleActionStep(store.value,trigger,step.id))}><Text style={s.action}>{selected?'✓ ':''}{step.title}</Text></Pressable>})}<Pressable accessibilityRole="button" accessibilityState={{disabled:!store.ready}} disabled={!store.ready} style={s.button} onPress={()=>store.update(clearActionPlan(store.value,trigger))}><Text style={s.action}>Rensa planen för denna situation</Text></Pressable></>:null}
  </View>;
 }
-const s=StyleSheet.create({card:{padding:17,gap:12,borderRadius:20,borderWidth:1,borderColor:C.border,backgroundColor:C.surface},title:{color:C.white,fontSize:16,fontWeight:'800'},text:{color:C.muted,fontSize:13,lineHeight:21},button:{minWidth:48,minHeight:48,padding:12,justifyContent:'center',backgroundColor:C.elevated,borderRadius:12},action:{color:C.lime,fontWeight:'800',flexShrink:1},row:{flexDirection:'row',flexWrap:'wrap',gap:8},group:{gap:8,paddingVertical:8}});
+const createS=(C:ThemeColors)=>StyleSheet.create({card:{padding:17,gap:12,borderRadius:24,borderWidth:1,borderColor:C.border,backgroundColor:C.surface},title:{color:C.white,fontSize:16,fontWeight:'800'},text:{color:C.muted,fontSize:15,lineHeight:21},button:{minWidth:48,minHeight:48,padding:12,justifyContent:'center',backgroundColor:C.elevated,borderRadius:12},action:{color:C.lime,fontWeight:'800',flexShrink:1},row:{flexDirection:'row',flexWrap:'wrap',gap:8},group:{gap:8,paddingVertical:8}});

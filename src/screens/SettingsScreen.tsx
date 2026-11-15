@@ -1,8 +1,9 @@
 import {LegacyRecoveryCleanup} from '../components/LegacyRecoveryCleanup';
+import {AppearanceSettings} from '../components/AppearanceSettings';
 import React,{useEffect,useState} from 'react';
 import {ReminderSettings} from '../components/ReminderSettings';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import {AppCard,AppButton} from '../components/ui';
 import type {Profile,Data} from '../domain';
 import {setWidgetOptIn,widgetOptedIn,refreshWidgetSnapshot} from '../widgets/widgetPreferences';
@@ -17,6 +18,8 @@ export function reminderStatusMessage(optedIn:boolean,permissionGranted:boolean,
 const Card=({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']})=><AppCard tone="surface" style={style}>{children}</AppCard>;
 const Button=({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean})=><AppButton title={title} onPress={onPress} secondary={secondary} secondaryTone="elevated"/>;
 export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarget}:Props){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
  const [widgetEnabled,setWidgetEnabled]=useState(false);
  const [widgetBusy,setWidgetBusy]=useState(true);
  const [widgetMessage,setWidgetMessage]=useState('');
@@ -37,6 +40,7 @@ export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarg
  };
 
  return <View style={styles.screen}>
+  <AppearanceSettings/>
   <SettingsPlanSection profile={profile} goal={goal} onChangeMode={onChangeMode} onChangeDailyTarget={onChangeDailyTarget}/>
   <View style={styles.inlineHeading}><Text accessibilityRole="header" style={styles.heading}>Android-widget</Text></View>
   <Card style={{gap:10,padding:18}}>
@@ -51,13 +55,13 @@ export function SettingsScreen({profile,goal,data,onChangeMode,onChangeDailyTarg
   <Text style={[styles.muted,{textAlign:'center',paddingHorizontal:12,paddingVertical:9}]}>Smoke Less hjälper dig att följa din utveckling och ersätter inte medicinsk rådgivning.</Text>
  </View>;
 }
-const styles=StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.surface,borderRadius:20,padding:15,borderWidth:1,borderColor:C.border,gap:9},
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ screen:{gap:20},card:{backgroundColor:C.surface,borderRadius:24,padding:15,borderWidth:1,borderColor:C.border,gap:9},
  inline:{flexDirection:'row',alignItems:'center',gap:12},inlineHeading:{flexDirection:'row',alignItems:'center',gap:9},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
- heading:{fontSize:19,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},muted:{fontSize:13,color:C.muted,lineHeight:20},
+ heading:{fontSize:19,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},muted:{fontSize:15,color:C.muted,lineHeight:23},
  button:{backgroundColor:C.lime,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},buttonSecondary:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
- buttonText:{color:C.background,fontWeight:'900',fontSize:15},
+ buttonText:{color:C.onAccent,fontWeight:'900',fontSize:15},
  timeInput:{minHeight:48,flex:1,minWidth:0,textAlign:'center'},
- input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,minHeight:110,textAlignVertical:'top',fontSize:13},
+ input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,minHeight:110,textAlignVertical:'top',fontSize:15},
 });
