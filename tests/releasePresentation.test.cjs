@@ -30,7 +30,7 @@ test('Android reminder channel is created only on explicit activation and before
 
 test('release presentation has no technical build instructions or raw errors in account and sync flows',()=>{
  for(const file of ['src/screens/AccountScreen.tsx','src/screens/SettingsScreen.tsx','src/components/OnboardingAuthModal.tsx'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/under utveckling|Android-build|development build/);
- for(const file of ['src/hooks/useAccountFlow.ts','src/hooks/useCloudSync.ts'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/error\.message|Firestore-lyssnare/);
+ for(const file of ['src/hooks/useAccountFlow.ts','src/hooks/useCloudSync.ts','src/hooks/useLocalSession.ts','src/hooks/useSettingsFlow.ts'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/error\.message|Firestore-lyssnare/);
  const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');assert.match(settings,/appVariant==='preview'/);
  const client=fs.readFileSync('src/updates/previewUpdateClient.native.ts','utf8');assert.match(client,/appVariant!=='preview'/);
  const hook=fs.readFileSync('src/hooks/useCloudSync.ts','utf8'),view=fs.readFileSync('src/components/AppSessionView.tsx','utf8');

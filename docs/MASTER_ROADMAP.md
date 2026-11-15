@@ -22,7 +22,7 @@
 - Samla **alla icke-nödvändiga ändringar** av `firestore.rules` och tillhörande regeltester i en gemensam **avslutande säkerhetsfas före Google Play-lansering**, efter funktionsfaserna. För in varje identifierat behov i fasplanen utan att ändra reglerna i vanliga funktions-PR:er.
 - **Undantag:** Om en aktuell fas kräver ändrade regler för att funktionen ska fungera korrekt och säkert, gör en **separat, avgränsad PR mot `main`** med regler och tester. Verifiera Firestore-CI och merga den innan den beroende funktionen godkänns.
 - Behåll säkerhetstester och ändringsdetektion. Skjut aldrig upp en regeländring som krävs för åtkomstkontroll, integritet eller säker dataseparering bara för att spara CI-tid.
-- **Fas 17, slutlig regelgranskning före release:** samla uppskjutna regelbehov, granska läs-/skrivrättigheter och kontoägarskap, testa med emulator (även nekade anrop), verifiera synk och kontoradering och merga den separata säkerhets-PR:en före publicering. Denna policy gäller även efter fas 8.
+- **Slutlig regelgranskning i fas 25 enligt aktuell masterplan:** samla uppskjutna regelbehov, granska läs-/skrivrättigheter och kontoägarskap, testa med emulator (även nekade anrop), verifiera synk och kontoradering och merga den separata säkerhets-PR:en före publicering. Denna policy gäller även efter fas 8.
 
 ## Statusöversikt
 
@@ -60,7 +60,7 @@
 | 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Kodmilstolpe: 5/8 och 25/32; CI grön, native-acceptans kvar | docs/PHASE_29_PREVIEW_OTA.md |
 | 30.0 | Release Polish och Production Readiness | Kodmilstolpe 2/8 och 20/32; CI grön, fysisk acceptans kvar | docs/PHASE_30_RELEASE_POLISH.md |
 | 31.0 | Automatiserade Android-flödestester och regressionsskydd | Kodunderlag 2/8 och 20/32; CI grön, verklig E2E ej körd | docs/PHASE_31_ANDROID_REGRESSION.md |
-| 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Kodmilstolpe 6/8 och 27/32; CI och slutacceptans kvar | docs/PHASE_32_MAINTENANCE.md |
+| 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Kodmilstolpe 6/8 och 28/32; isolerad säkerhets-CI grön, nästa push/slutacceptans kvar | docs/PHASE_32_MAINTENANCE.md |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -566,7 +566,7 @@ Evidens: PHASE_31_ANDROID_REGRESSION.md. TypeScript, 344 ordinarie + 10 storage 
 
 ### Fas 32.0 – fast checklista (8 × 4 = 32)
 
-**Status:** Kodmilstolpe: 6/8 huvudpunkter (75 %), 27/32 delpunkter (84,375 %). Senaste CI väntar. Prestandaprofilering och slutacceptans är öppna.
+**Status:** Kodmilstolpe: 6/8 huvudpunkter (75 %), 28/32 delpunkter (87,5 %). Isolerad säkerhets-CI grön på 3801bdb; nästa push inväntar CI. Prestandaprofilering och slutacceptans är öppna.
 
 1. **Arkitektur- och beroendeinventering (4/4)**
    - [x] 1.1 Kartlägg komponenter, hooks, domän och lagringslager.
@@ -603,13 +603,13 @@ Evidens: PHASE_31_ANDROID_REGRESSION.md. TypeScript, 344 ordinarie + 10 storage 
    - [x] 7.2 Rensa motsägande gamla QA-fashänvisningar utan att tappa historik.
    - [x] 7.3 Dokumentera ansvar, drift och felsökningsvägar.
    - [x] 7.4 Gör nästa AI-session reproducerbar utan gissningar.
-8. **Verifiering och leverans (1/4)**
+8. **Verifiering och leverans (2/4)**
    - [x] 8.1 Kör typkontroll och samtliga relevanta regressioner.
-   - [ ] 8.2 Verifiera konto/synk/radering med isolerade testdata.
+   - [x] 8.2 Verifiera konto/synk/radering med isolerade testdata.
    - [ ] 8.3 Verifiera båda obligatoriska CI och Android-buildbehov.
    - [ ] 8.4 Slutför PR endast med oförändrat beteende eller dokumenterad förbättring.
 
-Evidens: PHASE_32_MAINTENANCE.md. Regressionstest rött före och grönt efter UID-/synkfasändringen. TypeScript, 348 ordinarie tester, 10 storage och 6 migration, webbexport och Expo-kompatibilitet kontrolleras före push. 8.2/8.3 inväntar senaste säkerhets-CI; inga riktiga konto-/Android-testresultat påstås. Native-build JA; användaren bygger senare.
+Evidens: PHASE_32_MAINTENANCE.md. Regressionstest rött före och grönt efter UID-/synkfasändringen. TypeScript, 348 ordinarie tester, 10 storage och 6 migration, webbexport och Expo-kompatibilitet kontrolleras före push. 8.2 verifierad med riktiga isolerade Auth/Firestore/Functions-emulatorer på 3801bdb; 8.3 inväntar nästa pushs senaste CI; inga riktiga konto-/Android-testresultat påstås. Native-build JA; användaren bygger senare.
 
 ---
 

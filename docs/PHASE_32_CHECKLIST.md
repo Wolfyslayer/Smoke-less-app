@@ -1,6 +1,6 @@
 ### Fas 32.0 – fast checklista (8 × 4 = 32)
 
-**Status:** Kodmilstolpe: 6/8 huvudpunkter (75 %), 27/32 delpunkter (84,375 %). Senaste CI väntar. Prestandaprofilering och slutacceptans är öppna.
+**Status:** Kodmilstolpe: 6/8 huvudpunkter (75 %), 28/32 delpunkter (87,5 %). Isolerad säkerhets-CI grön på 3801bdb; nästa push inväntar CI. Prestandaprofilering och slutacceptans är öppna.
 
 1. **Arkitektur- och beroendeinventering (4/4)**
    - [x] 1.1 Kartlägg komponenter, hooks, domän och lagringslager.
@@ -37,10 +37,10 @@
    - [x] 7.2 Rensa motsägande gamla QA-fashänvisningar utan att tappa historik.
    - [x] 7.3 Dokumentera ansvar, drift och felsökningsvägar.
    - [x] 7.4 Gör nästa AI-session reproducerbar utan gissningar.
-8. **Verifiering och leverans (1/4)**
+8. **Verifiering och leverans (2/4)**
    - [x] 8.1 Kör typkontroll och samtliga relevanta regressioner.
-   - [ ] 8.2 Verifiera konto/synk/radering med isolerade testdata.
+   - [x] 8.2 Verifiera konto/synk/radering med isolerade testdata.
    - [ ] 8.3 Verifiera båda obligatoriska CI och Android-buildbehov.
    - [ ] 8.4 Slutför PR endast med oförändrat beteende eller dokumenterad förbättring.
 
-Evidens: PHASE_32_MAINTENANCE.md. Regressionstest rött före och grönt efter UID-/synkfasändringen. TypeScript, 348 ordinarie tester, 10 storage och 6 migration, webbexport och Expo-kompatibilitet kontrolleras före push. 8.2/8.3 inväntar senaste säkerhets-CI; inga riktiga konto-/Android-testresultat påstås. Native-build JA; användaren bygger senare.
+Evidens: PHASE_32_MAINTENANCE.md. Regressionstest rött före och grönt efter UID-/synkfasändringen. TypeScript, 348 ordinarie tester, 10 storage och 6 migration, webbexport och Expo-kompatibilitet kontrolleras före push. 8.2 verifierad med riktiga isolerade Auth/Firestore/Functions-emulatorer på 3801bdb; 8.3 inväntar nästa pushs senaste CI; inga riktiga konto-/Android-testresultat påstås. Native-build JA; användaren bygger senare.

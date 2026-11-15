@@ -45,3 +45,5 @@ eas build --platform android --profile preview
 ```
 
 Behåll signeringsgrund och registrera rätt SHA före Google-acceptans. Se fas 29 för Firebase/EAS-miljö och uppdateringspublicering, fas 30 för releasehinder och fas 31 för disponibel QA-emulator. Ingen offentlig release eller OTA-publicering ingår.
+
+Slutgranskning: även fel från lokal sessionsläsning/sparning och den äldre återställningshandlern använder nu samma säkra produktmeddelanden. Guarderna mot gammalt konto och överskrivning behålls. 19 riktade presentation-/storage-/migrationstester och TypeScript passerar. 3801bdb har grön validate/rules inklusive riktiga isolerade Auth-, Firestore- och Functions-emulatorer; den efterföljande felmeddelandepushen måste få egen grön senaste CI.
