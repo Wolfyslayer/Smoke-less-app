@@ -52,7 +52,7 @@ const styles=StyleSheet.create({
  dateSelect:{backgroundColor:C.elevated,borderColor:C.border,borderWidth:1,borderRadius:12,minHeight:48,paddingHorizontal:14,justifyContent:'center'},
  dateOptions:{gap:12,padding:14,borderRadius:16,backgroundColor:C.surface},
  dateHeading:{color:C.white,fontSize:16,fontWeight:'800'},
- dateOption:{minHeight:44,justifyContent:'center'},
+ dateOption:{minHeight:48,justifyContent:'center'},
  dateOptionText:{color:C.white,fontSize:14},
  dateHint:{color:C.muted,fontSize:12},
  eyebrow:{fontSize:11,color:C.muted,fontWeight:'800',letterSpacing:1.7},

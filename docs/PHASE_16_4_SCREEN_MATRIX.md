@@ -36,6 +36,8 @@ Samtliga huvudsakliga skärmkomponenter, onboardingflöden, routing, modaler och
 
 ## Konfigurationsavvikelse mellan main och fasbranch
 
+**Avvikelsen löst vid slutavstämningen:** `origin/main` (`30670d7`) har integrerats utan konflikter. Pluginfilen och `app.json`-posten bevaras oförändrade från main. Ingen keystore ingår i committen. Äldre noteringar nedan beskriver läget före synkroniseringen.
+
 Efter att PR #161 skapades uppdaterades `main` med en extra `./plugins/withCustomDebugKeystore`-post i `app.json` och den nya filen `plugins/withCustomDebugKeystore.js`. De finns **ännu inte** i fasbranchen. Rör inte den lokala debug-keystoren eller hemligheter. Synkronisera med senaste `main` innan fasen mergas och bedöm native-buildbehov separat; enbart dokumentationsändringarna i denna commit kräver ingen ny Android-build.
 
 ## Avgränsning och verifiering

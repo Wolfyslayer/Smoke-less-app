@@ -4,9 +4,9 @@
 
 - Fas 16.4, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/161 (öppen draft).
 - Branch: `feat/phase-16-4-ui-safe-area-audit`.
-- Senast verifierad fjärrcommit: `92073b6`, båda obligatoriska CI gröna. Denna fils commit innehåller nästa milstolpe.
-- Verifierad checklista: `docs/PHASE_16_4_UI_SAFE_AREA.md`, oförändrade 8 huvudpunkter och 32 delpunkter. 3/8 huvudpunkter (37,5 %), 19/32 delpunkter (59,375 %). Nya ändringar räknas inte som verifierade innan CI.
-- GitHub `validate` och `rules` var gröna på `92073b6`. Kontrollera båda på den nya committen efter push.
+- Senast verifierad fjärrcommit: `da974ab`, båda obligatoriska CI gröna. Denna fils commit innehåller nästa milstolpe.
+- Verifierad checklista: `docs/PHASE_16_4_UI_SAFE_AREA.md`, oförändrade 8 huvudpunkter och 32 delpunkter. 6/8 huvudpunkter (75 %), 29/32 delpunkter (90,625 %). Nya ändringar räknas inte som verifierade innan CI.
+- GitHub `validate` och `rules` var gröna på `da974ab`. Kontrollera båda på den nya committen efter push.
 
 ## Senaste milstolpe
 
@@ -24,9 +24,9 @@ Senaste kodpaketet förbättrar Historik (48 dp + unik etikett), SOS/Statistik/b
 
 - Roadmapens äldre checklista för 16.4 skiljer sig i ordalydelse och status från den aktiva fasfilens verifierade 8×4-checklista. Använd den aktiva fasfilens ID och status; ersätt inte delpunkter med äldre roadmaptext.
 - AI_WORKFLOW.md har äldre hänvisningar till fas 17 som slut-QA. Senare masterplan och användarens instruktion anger fas 25. Detta gäller bred fysisk QA, inte riskkritiska fel.
-- `main` innehåller debug-keystore-pluginet som saknas på fasbranchen. Bevara detta vid framtida synk/merge; lägg aldrig keystore eller hemligheter i Git. Ingen main-merge har utförts i detta arbetspass.
+- `origin/main` (`30670d7`) har integrerats utan konflikter. Debug-keystore-pluginet och dess app.json-post är oförändrade från main. Ingen keystore eller hemlighet har lagts till. Detta paket innehåller även sista 48 dp-korrigeringarna för onboardingval och tekniska detaljer.
 - PR-beskrivningen har synkroniserats med fasfilens checklista; fortsätt hålla dessa uppdaterade.
-- Native-build för denna milstolpe: **NEJ**, endast TypeScript, test och dokumentation. Riktad Android-verifiering av systemfält återstår; ingen native-konfiguration ändras här.
+- Native-build för UI-korrigeringarna: **NEJ**, endast TypeScript/test/dokumentation. Synken återför main:s befintliga native-plugin; ingen ytterligare native-ändring jämfört med main görs. Vid nygenerering av Android-projekt ska main:s etablerade keystore-miljövariabler användas. Riktad Android-verifiering av systemfält återstår i fas 25.
 
 ## Återuppta
 

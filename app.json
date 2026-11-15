@@ -22,7 +22,8 @@
         }
       ],
       "./plugins/withAndroidConfigChanges",
-      "./plugins/withSmokeLessWidget"
+      "./plugins/withSmokeLessWidget",
+      "./plugins/withCustomDebugKeystore"
     ],
     "web": {
       "bundler": "metro",
