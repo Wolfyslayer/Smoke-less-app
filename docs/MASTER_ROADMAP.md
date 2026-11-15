@@ -41,8 +41,8 @@
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
-| 16.6 | Flexiblare planering och långsiktig målanpassning | Pågående; 6/8 och 28/32 verifierade | #163, docs/PHASE_16_6_PLANNING.md |
-| 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
+| 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
+| 16.7 | Fördjupad statistik och personliga trender | Startad; fast 8×4-checklista, implementation återstår | docs/PHASE_16_7_TRENDS.md |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Planerad | — |
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Planerad | — |
@@ -600,7 +600,7 @@ PR #162 merged as a3c53e8; 8/8 and 32/32. See docs/PHASE_16_5_DASHBOARD.md.
    - [x] 8.4 Merga fas-PR.
 
 ### Fas 16.6 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-PR #163: 6/8, 28/32. See docs/PHASE_16_6_PLANNING.md.
+PR #163 merged as 525b07b: 8/8 and 32/32. See docs/PHASE_16_6_PLANNING.md.
 
 1. [x] **Inventering (4/4)**
    - [x] 1.1 Kartlägg befintliga tre planlägen.
@@ -627,9 +627,9 @@ PR #163: 6/8, 28/32. See docs/PHASE_16_6_PLANNING.md.
    - [x] 5.2 Hantera revisionskonflikter.
    - [x] 5.3 Hantera offlineändringar.
    - [x] 5.4 Hantera kontobyte.
-6. [ ] **UX (2/4)**
-   - [ ] 6.1 Visa begriplig bekräftelse.
-   - [ ] 6.2 Erbjud avbryt.
+6. [x] **UX (4/4)**
+   - [x] 6.1 Visa begriplig bekräftelse.
+   - [x] 6.2 Erbjud avbryt.
    - [x] 6.3 Visa stödjande texter.
    - [x] 6.4 Granska tillgänglighet.
 7. [x] **Tester (4/4)**
@@ -637,11 +637,11 @@ PR #163: 6/8, 28/32. See docs/PHASE_16_6_PLANNING.md.
    - [x] 7.2 Testa datumgränser.
    - [x] 7.3 Testa konfliktfall.
    - [x] 7.4 Verifiera CI.
-8. [ ] **Avslut (2/4)**
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera ändringskontrakt.
    - [x] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 16.7 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
