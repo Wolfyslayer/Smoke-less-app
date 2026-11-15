@@ -1,0 +1,9 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');const identity=require('../config/projectIdentity.json');
+function load(file,deps,globals={}){const c={exports:{},require:id=>{assert(id in deps,id);return deps[id]},URL,...globals};vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText,c);return c.exports;}
+const manifest=load('src/updates/previewManifest.ts',{'../../config/projectIdentity.json':identity});const service=load('src/updates/previewUpdateService.ts',{'./previewManifest':manifest});
+test('native adapter requires Preview package, project, channel, module availability and release mode',()=>{
+ const options=[{}, {variant:'production'}, {dev:true}, {package:identity.production.package}, {project:identity.production.projectId}, {channel:'production'}, {missing:true}];
+ for(const patch of options){let called=0;const o={variant:'preview',dev:false,package:identity.preview.package,project:identity.preview.projectId,channel:'preview',...patch};const deps={'expo-constants':{expoConfig:{extra:{appVariant:o.variant}},easConfig:{projectId:o.project}},'@react-native-async-storage/async-storage':{},'react-native':{Linking:{openURL:()=>called++}},'../../config/projectIdentity.json':identity,'./previewUpdateService':service,'./previewManifest':manifest,'expo-updates':{isEnabled:true,runtimeVersion:'runtime',channel:o.channel,checkForUpdateAsync:()=>called++,fetchUpdateAsync:()=>called++},'expo-application':o.missing?undefined:{applicationId:o.package,nativeApplicationVersion:'6.0.0',nativeBuildVersion:'10'}};
+  const adapter=load('src/updates/previewUpdateClient.native.ts',deps,{__DEV__:o.dev});const client=adapter.getPreviewUpdateService();assert.equal(!!client,Object.keys(patch).length===0);assert.equal(called,0);
+ }
+});

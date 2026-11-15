@@ -1,9 +1,13 @@
 const {withAndroidManifest,withDangerousMod}=require('expo/config-plugins');
 const fs=require('node:fs');
 const path=require('node:path');
-const packageName='com.smokeless.app';
-const providerName=packageName+'.SmokeLessWidgetProvider';
 module.exports=function withSmokeLessWidget(config){
+ const packageName=config.android?.package||'com.smokeless.app';
+ if(!/^com\.smokeless\.app(?:\.preview)?$/.test(packageName))throw Error('Unsupported widget application package');
+ const providerName=packageName+'.SmokeLessWidgetProvider';
+ const displayName=packageName.endsWith('.preview')?'Smoke Less Preview':'Smoke Less';
+ const scheme=config.scheme||'smokeless';
+ if(!['smokeless','smokeless-preview'].includes(scheme))throw Error('Unsupported widget URI scheme');
  config=withAndroidManifest(config,c=>{
   const app=c.modResults.manifest.application?.[0];
   if(!app)throw Error('Missing Android application manifest');
@@ -13,7 +17,7 @@ module.exports=function withSmokeLessWidget(config){
    c.modResults.manifest['uses-permission'].push({$:{'android:name':'android.permission.RECEIVE_BOOT_COMPLETED'}});
   }
   if(!app.receiver.some(r=>r.$?.['android:name']===providerName)){
-   app.receiver.push({$:{'android:name':providerName,'android:exported':'true','android:label':'Smoke Less'},'intent-filter':[{'action':[{$:{'android:name':'android.appwidget.action.APPWIDGET_UPDATE'}},{$:{'android:name':'android.intent.action.BOOT_COMPLETED'}},{$:{'android:name':'android.intent.action.DATE_CHANGED'}},{$:{'android:name':'android.intent.action.TIME_CHANGED'}},{$:{'android:name':'android.intent.action.TIMEZONE_CHANGED'}}]}],'meta-data':[{$:{'android:name':'android.appwidget.provider','android:resource':'@xml/smoke_less_widget_info'}}]});
+   app.receiver.push({$:{'android:name':providerName,'android:exported':'true','android:label':displayName},'intent-filter':[{'action':[{$:{'android:name':'android.appwidget.action.APPWIDGET_UPDATE'}},{$:{'android:name':'android.intent.action.BOOT_COMPLETED'}},{$:{'android:name':'android.intent.action.DATE_CHANGED'}},{$:{'android:name':'android.intent.action.TIME_CHANGED'}},{$:{'android:name':'android.intent.action.TIMEZONE_CHANGED'}}]}],'meta-data':[{$:{'android:name':'android.appwidget.provider','android:resource':'@xml/smoke_less_widget_info'}}]});
   }
   return c;
  });
@@ -23,7 +27,7 @@ module.exports=function withSmokeLessWidget(config){
   const res=path.join(root,'app/src/main/res');
   for(const d of [javaDir,path.join(res,'layout'),path.join(res,'xml'),path.join(res,'drawable')])fs.mkdirSync(d,{recursive:true});
   const files={
-   [path.join(javaDir,'SmokeLessWidgetModule.kt')]:`package com.smokeless.app
+   [path.join(javaDir,'SmokeLessWidgetModule.kt')]:`package ${packageName}
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -62,7 +66,7 @@ class SmokeLessWidgetModule(private val reactContext: ReactApplicationContext) :
  }
 }
 `,
-   [path.join(javaDir,'SmokeLessWidgetPackage.kt')]:`package com.smokeless.app
+   [path.join(javaDir,'SmokeLessWidgetPackage.kt')]:`package ${packageName}
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -76,7 +80,7 @@ class SmokeLessWidgetPackage : ReactPackage {
 }
 `,
 
-   [path.join(javaDir,'SmokeLessWidgetProvider.kt')]:`package com.smokeless.app
+   [path.join(javaDir,'SmokeLessWidgetProvider.kt')]:`package ${packageName}
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -130,7 +134,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
    }
    views.setTextViewText(R.id.smoke_less_widget_summary, summary)
    views.setContentDescription(R.id.smoke_less_widget_root, "Smoke Less. $summary. Tryck för att öppna appen.")
-   val launch = Intent(Intent.ACTION_VIEW, Uri.parse("smokeless://")).apply {
+   val launch = Intent(Intent.ACTION_VIEW, Uri.parse("${scheme}://")).apply {
     setPackage(context.packageName)
     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
    }
@@ -172,7 +176,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
  android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."
  android:padding="20dp" android:background="@drawable/smoke_less_widget_background">
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:text="Smoke Less · Dagens framsteg" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
+ android:text="${displayName} · Dagens framsteg" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
  <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
  android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="8dp" android:text="Öppna appen för att se din dag"
  android:textColor="#FFFFFF" android:textSize="15sp" android:maxLines="3" android:ellipsize="end" />

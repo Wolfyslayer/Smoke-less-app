@@ -1,0 +1,39 @@
+name: Publish existing Preview APK manifest (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: Finished Preview EAS Build UUID (does not start a build)
+        required: true
+        type: string
+permissions:
+  contents: write
+  checks: read
+concurrency:
+  group: preview-native-manifest
+  cancel-in-progress: false
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    environment: preview
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
+      PREVIEW_BUILD_ID: ${{ inputs.build_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/require-green-ci.cjs
+      - name: Validate the existing build ID
+        run: node -e "if(!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(process.env.PREVIEW_BUILD_ID||'')) process.exit(1)"
+      - run: npm install --global eas-cli@27.3.0 --no-audit --no-fund
+      - name: Read finished build metadata (no build starts)
+        run: |
+          test -n "$EXPO_TOKEN"
+          eas build:view "$PREVIEW_BUILD_ID" --json > "$RUNNER_TEMP/preview-build.json"
+      - name: Verify APK identity and produce manifest
+        run: node scripts/publish-preview-manifest.cjs "$RUNNER_TEMP/preview-build.json" "$RUNNER_TEMP/preview.json"
+      - name: Publish only the Preview manifest file
+        run: node scripts/upload-preview-manifest.cjs "$RUNNER_TEMP/preview.json"

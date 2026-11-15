@@ -2,6 +2,9 @@
 
 ## Aktiv fas
 
+- Fas 29: `feat/phase-29-preview-ota`, staplad på fas 28 (#180). Main till e7194c6 med fulla planer 29–32 bevarad. Läs PHASE_29_PREVIEW_OTA.md och PHASE_29_CHECKLIST.md. TypeScript + 339 tester + webbexport PASS; 4/8 och 24/32 tills senaste CI verifierats. Android-build JA men kör inte nu. Ingen OTA eller manifest publicerat. Preview-EAS-projekt och egen Firebase Android-app registrerade; EAS preview-miljö konfigurerad, inga GitHub-secrets ändrade.
+- Användaren har uttryckligen godkänt samma Firebase (`smoke-less-75efa`) tills ett nytt projekt finns. Behåll synlig kontovarning; syntetiska QA-konton. Preview-SHA, Google-login, credentials, riktig APK/OTA/widget/sida-vid-sida är öppna. Merga inte fasen som färdig. Efter grön CI kan kodarbete fortsätta enligt användarens roadmapbeslut.
+
 - Senaste styrning: rätta fyrkantig navmarkering, använd egna bekräftelsemodaler och fortsätt sedan självständigt genom de nya faserna på main. UI-fix i fas 28: rund indikator/klippt tryckyta, sista Alert.alert ersatt med ConfirmationDialog, tester för avbryt/dubbeltryck och alla flikval. 325 ordinarie tester lokalt PASS. Main har nu faser 29–32; läs deras fulla krav före fasstart och bevara öppna native-/publiceringsgrindar. Inga Android-byggen startas enligt tidigare beslut.
 
 - **Nytt användarbeslut:** Designen i fas 27 ser bättre ut och utvecklingen går vidare till fas 28. Branch `feat/phase-28-profile-settings`, separat PR ovanpå fas 27. Main:s PR #176 (`b205507`) är inläst; tidigare säkerhetsarbete och design är bevarade. Fas 25/27 har fortsatt öppna enhetsgrindar och är inte mergade som slutgodkända.

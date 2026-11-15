@@ -1,0 +1,40 @@
+name: Publish Preview OTA (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: Preview update message
+        required: true
+        type: string
+permissions:
+  contents: read
+  checks: read
+concurrency:
+  group: preview-ota
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: preview
+    env:
+      APP_VARIANT: preview
+      SMOKELESS_PREVIEW_OTA: 'true'
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
+      PREVIEW_GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.PREVIEW_GOOGLE_SERVICES_JSON_BASE64 }}
+      UPDATE_MESSAGE: ${{ inputs.message }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: node scripts/require-green-ci.cjs
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/prepare-preview-firebase.cjs
+      - run: npm run typecheck && npm test
+      - run: npm install --global eas-cli@27.3.0 --no-audit --no-fund
+      - name: Publish only the Preview channel
+        run: |
+          test -n "$EXPO_TOKEN"
+          eas update --channel preview --environment preview --non-interactive --message "$UPDATE_MESSAGE"
