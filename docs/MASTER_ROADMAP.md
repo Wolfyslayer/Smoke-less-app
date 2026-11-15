@@ -55,6 +55,7 @@
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 | 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Planerad; start först efter fas 25 och enligt fas 26-prioritering | — |
 | 28.0 | Profil, kontohantering och organiserade inställningar | Planerad; efter fas 27 | — |
+| 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Planerad; efter fas 28, tidigare endast efter uttryckligt beslut | — |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -367,6 +368,70 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Bygg och testa signerad release; verifiera riktiga Android-enheter, notifieringar och inloggning.
 - Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
+
+## Fas 29.0 – Fristående Preview APK och OTA-uppdateringar med Expo EAS (PLANERAD)
+
+**Beslut 2026-11-15:** Användaren vill kunna installera en **fristående Android Preview APK som en egen app**, helt utan Metro/dev-server, och leverera kompatibla JavaScript-/asset-uppdateringar OTA till just Preview. Preview ska kunna installeras sida vid sida med produktionsappen och ha en egen uppdateringskanal, utan att oavsiktligt påverka produktion eller kontodata.
+
+**Verifierat nuläge på `main` vid planering:** `app.json` har `android.package: com.smokeless.app` och `userInterfaceStyle: dark`, men ingen EAS Update-konfiguration. `eas.json` saknas och `expo-updates` finns inte i `package.json`. `expo-dev-client` är installerat och projektet använder Expo SDK 58, React Native Firebase, Google-inloggning, widgets och egna Android-config plugins. Detta är en planeringsinventering, inte ett genomfört bygge.
+
+**Tekniska acceptanskrav:**
+- EAS Build-profil för en **installationsbar, fristående Preview APK**, utan beroende av Metro eller dev-client-server; separat från development-builds.
+- Separat Android application ID för Preview (exempelvis `com.smokeless.app.preview`, verifieras mot Firebase/Google OAuth-konfiguration), så Preview och produktion kan samexistera. Separera appnamn/ikonmarkering så de är lätta att skilja åt.
+- EAS Update med separat `preview`-kanal och lämplig runtimeVersion-policy; OTA får inte levereras till inkompatibla native-versioner eller fel kanal.
+- Tydlig och säker hantering av Firebase `google-services.json`, Google-inloggning, SHA-fingeravtryck, paket-ID, signeringscertifikat och miljövariabler för Preview. Inga hemligheter i Git eller loggar. Separat Firebase-projekt/miljö ska utredas och väljas utifrån dataseparation och kostnad; anta inte att ett ändrat paket-ID automatiskt isolerar backenddata.
+- OTA gäller endast kompatibla JS-/asset-ändringar. Ändringar i native-plugins, Android-konfiguration, Firebase-moduler, widgets, behörigheter eller annan native-kod kräver **ny Android-build**.
+- Dokumentera kommandon för Preview APK, installation och OTA-publicering samt hur användaren kontrollerar kanal, runtime och uppdateringsstatus. Publicera aldrig till produktion automatiskt.
+- Bevara tidigare fasers funktioner, konton och historik. Ingen oavsiktlig överföring av användardata mellan Preview och produktion.
+
+**Ordning:** Fas 29 är planerad efter fas 28. Eftersom en fristående testapp kan vara nyttig tidigare får prioriteten ändras endast efter uttryckligt beslut; pågående fas 25:s QA eller säkerhetsarbete ska inte störas. En fas = en PR med fast 8×4-checklista och obligatoriska CI-kontroller.
+
+### Fas 29.0 – fast planerad checklista (8 huvudpunkter × 4 delpunkter = 32)
+
+**Status:** Planerad, ej påbörjad. 0/8 huvudpunkter, 0/32 delpunkter (0 %).
+
+1. **Inventering och riskbedömning (0/4)**
+   - [ ] 1.1 Inventera Expo SDK, config-plugins, Android-build och befintlig CI.
+   - [ ] 1.2 Inventera Firebase, Google-inloggning, SHA och signering.
+   - [ ] 1.3 Definiera Preview/Production-isolering och kostnadsram.
+   - [ ] 1.4 Dokumentera native-risker, säkerhet och acceptanskriterier.
+2. **EAS-projekt och buildprofiler (0/4)**
+   - [ ] 2.1 Konfigurera EAS-projekt och versionshanterad `eas.json`.
+   - [ ] 2.2 Skapa fristående APK-profil för Preview utan Metro-beroende.
+   - [ ] 2.3 Behåll separat development-profil och säkra produktionsprofilen.
+   - [ ] 2.4 Säkerställ reproducerbar Android-build och hantering av credentials.
+3. **Separat Preview-app (0/4)**
+   - [ ] 3.1 Ge Preview eget Android application ID och tydligt namn.
+   - [ ] 3.2 Separera Preview-konfiguration utan att bryta produktion.
+   - [ ] 3.3 Säkerställ kompatibel Firebase/Google-inloggning för Preview.
+   - [ ] 3.4 Verifiera installation sida vid sida med produktionsappen.
+4. **EAS Update och kanaler (0/4)**
+   - [ ] 4.1 Installera och konfigurera `expo-updates` kompatibelt med SDK.
+   - [ ] 4.2 Konfigurera `preview`-kanal och separat produktionskanal.
+   - [ ] 4.3 Välj runtimeVersion-strategi som skyddar native-kompatibilitet.
+   - [ ] 4.4 Verifiera att Preview inte kan få produktionsuppdateringar av misstag.
+5. **OTA-upplevelse och återhämtning (0/4)**
+   - [ ] 5.1 Definiera när uppdateringar hämtas och aktiveras.
+   - [ ] 5.2 Hantera offline-läge, utebliven uppdatering och återstart.
+   - [ ] 5.3 Säkerställ användarvänlig status utan påtvingad dataförlust.
+   - [ ] 5.4 Dokumentera rollback/återställning och kända begränsningar.
+6. **GitHub Actions och arbetsflöde (0/4)**
+   - [ ] 6.1 Skapa säker manuell eller kontrollerad Preview-OTA-publicering.
+   - [ ] 6.2 Skydda tokens, hemligheter och kanalval.
+   - [ ] 6.3 Undvik native-build vid rena JS-/asset-ändringar.
+   - [ ] 6.4 Dokumentera hur Codex använder arbetsflödet utan oavsiktlig release.
+7. **Automatiska tester och dokumentation (0/4)**
+   - [ ] 7.1 Testa app-ID, kanaler, profiler och runtime-konfiguration.
+   - [ ] 7.2 Testa skydd mot fel kanal och fel miljö.
+   - [ ] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
+   - [ ] 7.4 Dokumentera installations- och uppdateringskommandon för Windows.
+8. **Android-acceptans och leverans (0/4)**
+   - [ ] 8.1 Installera fristående Preview APK utan dev-server.
+   - [ ] 8.2 Verifiera verklig Preview OTA-uppdatering på Android.
+   - [ ] 8.3 Verifiera Firebase, Google-inloggning, widgets, synk och dataseparation.
+   - [ ] 8.4 Slutför fasens PR efter verifierad CI och dokumenterad acceptans.
+
+---
 
 ## Fas 28.0 – Profil, kontohantering och organiserade inställningar (PLANERAD)
 
@@ -1327,7 +1392,7 @@ TypeScript och 218 tester passerar (202 ordinarie, 10 storage, 6 migration). Tes
 - Lägg inte till nya faser eller utöka fasta 8×4-checklistor för små förbättringar. Registrera nya idéer i backlog och avgör om de verkligen motiverar en separat fas.
 
 ## Princip för kommande faser
-- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman) → 28.0 (profil och organiserade inställningar).
+- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman) → 28.0 (profil och organiserade inställningar) → 29.0 (fristående Preview och OTA).
 - En fas = en PR med **fast åttapunktschecklista och fyra fasta delpunkter per huvudpunkt** (32 totalt). Räkna bara verifierat klart efter relevanta tester och CI.
 - Ändra inte fasens mål eller nämnare under arbetet utan uttryckligt beslut. Nya önskemål läggs i kommande fas eller backlog. Samla relaterade förbättringar i meningsfulla commits; undvik en PR per småfix.
 - Fas 25 är den slutliga manuella Android-/BrowserStack-/TalkBack-/Safe Area- och säkerhetsgrinden. Blockerande säkerhets- och datafel får aldrig skjutas upp.
