@@ -9,6 +9,8 @@ Lägg diskreta valbara tips i registrering, SOS, plan och statistik med Läsa/st
 
 ## Genomförd acceptans
 
+Slutgranskning efter grön CI på `dd68804`: paketstorlek begränsas till 1–200 och pris till 0–100000 kr enligt befintligt Firestore-schema. Gränstester tillagda; reglerna ändras inte. TypeScript och 218 tester passerar även efter korrigeringen. Ny slutlig CI krävs före merge.
+
 Fyra steg och alla planval är kvar. Välkomsttexten roterar inte längre och stor logobild visas bara på första steget. Lugn standardtakt kan ändras via utfällning. Endast basnivå behöver anges; frivillig ekonomidel har öppna standarder (20 per paket, pris 0 utan besparing). Tidigare exempelpris 85 används inte som om det vore användarens eget. Tomma tal och exponent-/hexformat accepteras inte som verkliga uppgifter. Nollnivå och nollpris stöds. Fel före nästa steg visas på svenska; Tillbaka behåller värden. Stegindikator har tillgängligt värde och radioval använder checked.
 
 Profilskapandet har ändrats från ersättning av hela Data med EMPTY till en funktion som bevarar historik och inte ersätter befintlig profil. Konto-/gästval, synkförklaring och samtyckesflöde är kvar. Fyra diskreta utfällbara tips finns i respektive register-/SOS-/plan-/statistikvy. Endast avvisade ID:n sparas per identitet; sparfel visas med återförsök. Inga registreringar eller molnanrop skapas av tips.

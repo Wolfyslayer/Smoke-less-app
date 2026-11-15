@@ -2,6 +2,6 @@
 export function parseOnboardingNumbers(baseline:string,packSize:string,packPrice:string){
  if(!/^\d+$/.test(baseline.trim())||!/^\d+$/.test(packSize.trim())||!/^\d+(?:[.,]\d{1,2})?$/.test(packPrice.trim()))return null;
  const b=Number(baseline),ps=Number(packSize),price=Number(packPrice.replace(',','.'));
- if(!Number.isFinite(b)||b<0||b>200||!Number.isInteger(b)||!Number.isFinite(ps)||ps<1||!Number.isInteger(ps)||!Number.isFinite(price)||price<0)return null;
+ if(!Number.isFinite(b)||b<0||b>200||!Number.isInteger(b)||!Number.isFinite(ps)||ps<1||ps>200||!Number.isInteger(ps)||!Number.isFinite(price)||price<0||price>100000)return null;
  return {baseline:b,packSize:ps,packPrice:price};
 }

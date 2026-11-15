@@ -5,7 +5,7 @@ const {createLocalPreferences:create}=load('src/localPreferences.ts');
 test('setup requires an explicit valid baseline and allows zero-price optional economy',()=>{
  assert.equal(parse('0','20','0').baseline,0);assert.equal(parse('12','20','85,50').packPrice,85.5);
  for(const b of ['',' ','-1','201','1.2','1e2','0x10','NaN'])assert.equal(parse(b,'20','0'),null,b);
- for(const [p,c] of [['0','0'],['1.5','0'],['20',''],['20','-1'],['20','1e3'],['20','85,555']])assert.equal(parse('12',p,c),null);
+ for(const [p,c] of [['0','0'],['201','0'],['20','100000.01'],['1.5','0'],['20',''],['20','-1'],['20','1e3'],['20','85,555']])assert.equal(parse('12',p,c),null);
 });
 test('initial profile creation preserves all prior records and never replaces an existing plan',()=>{
  const data={profile:null,entries:[{id:'cig'}],cravings:[{id:'craving'}],checkins:[{date:'2026-11-15'}]},profile={mode:'reduce'};
