@@ -2,7 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 
-const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
+const profile=fs.readFileSync('src/screens/JourneyScreen.tsx','utf8');
 const shareFunction=profile.match(/const shareSupport=async\(\)=>\{[\s\S]*?\};/);
 test('sharing is an explicit user action and uses the system dialog',()=>{
  assert.ok(shareFunction,'sharing handler exists');

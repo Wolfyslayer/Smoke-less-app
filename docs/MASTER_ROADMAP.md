@@ -54,6 +54,7 @@
 | 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Startad; fast 8x4-checklista | docs/PHASE_25_RELEASE.md |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 | 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Startad enligt nytt användarbeslut; QA/release kvar i fas 25 | docs/PHASE_27_DESIGN.md |
+| 28.0 | Profil, kontohantering och organiserade inställningar | Startad enligt användarbeslut | — |
 
 
 **Statuskorrigering 2026-11-05:** Fas 16.0 mergades i PR #156 (squash-commit `593d6c2`). Äldre inventerings- och checklistesektioner längre ned är historiska ögonblicksbilder, inte aktuell fasstatus. Androids PNG-export/systemdelning, Safe Area på olika enheter och bred manuell regression är inte enhetsverifierade och ingår i fas 25. En särskild visuell korrigering av delningskortet planeras i fas 17.
@@ -366,6 +367,66 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Bygg och testa signerad release; verifiera riktiga Android-enheter, notifieringar och inloggning.
 - Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
+
+## Fas 28.0 – Profil, kontohantering och organiserade inställningar (PÅGÅR)
+
+**Beslut 2026-11-15:** Profilskärmen ska få en tydlig informationsarkitektur där kontouppgifter, den personliga rökstoppsresan, appinställningar, data/synk och information om appen ligger på rätt plats. Nuvarande `ProfileScreen.tsx` blandar länkar till plan, historik, hälsa, konto, synk, appinställningar, SOS och delning. `SettingsScreen.tsx` innehåller både planinställningar och apprelaterade inställningar (widget och påminnelser). Denna fas ska lösa kategoriseringen och minska onödig scroll, inte bara döpa om rubriker.
+
+**Föreslagen struktur (valideras genom inventering):**
+- **Mitt konto:** inloggning, e-post, lösenord, kontosäkerhet och relevanta kontoflöden.
+- **Min rökstoppsresa:** mål, plan, personlig utveckling och relevanta genvägar.
+- **Appinställningar:** tema (Light/Dark/System från fas 27), påminnelser, Android-widget, appbeteende och andra appövergripande val.
+- **Data och synkronisering:** molnstatus, gästdata, integritet och säkra dataåtgärder.
+- **Om Smoke Less:** appversion, hjälp, källor och relevant information.
+
+**Principer:** Undvik dubbla inställningar och döda länkar; behåll genvägar till viktiga funktioner där de hjälper användaren. Flytta inte känslig datalogik eller ändra Firebase-behörigheter bara för att organisera UI. Bevara gästläge, synk, historik, kontoradering och Android Tillbaka. Arbeta efter fas 27 så att temakomponenterna återanvänds. En PR per fas, fast 8×4-checklista, relevanta regressionstester och grön CI. Fas 25:s pågående QA ska inte störas.
+
+### Fas 28.0 – fast planerad checklista (8 huvudpunkter × 4 delpunkter = 32)
+
+**Status:** Kod och automatiska tester verifierade lokalt. 6/8 huvudpunkter (75 %), 29/32 delpunkter (90,625 %) efter grön senaste CI. 7.3, 7.4 och 8.4 är öppna; fysisk Android-/slutacceptans är inte verifierad. Se `PHASE_28_PROFILE_SETTINGS.md`.
+
+1. [x] **Inventering och informationsarkitektur (4/4)**
+   - [x] 1.1 Inventera Profil, Inställningar, kontovyer och navigationsvägar.
+   - [x] 1.2 Kartlägg varje befintlig inställning, genväg och åtgärd till rätt kategori.
+   - [x] 1.3 Identifiera dubbleringar, otydliga etiketter och överflödig scroll.
+   - [x] 1.4 Dokumentera målnavigation och acceptanskriterier.
+2. [x] **Profilöversikt (4/4)**
+   - [x] 2.1 Skapa tydlig profilöversikt med kontostatus.
+   - [x] 2.2 Gruppera huvudkategorier med begriplig ordning.
+   - [x] 2.3 Bevara viktiga genvägar utan att överbelasta profilen.
+   - [x] 2.4 Verifiera gästläge och inloggat läge.
+3. [x] **Mitt konto (4/4)**
+   - [x] 3.1 Samla inloggning och kontoinformation.
+   - [x] 3.2 Samla säkerhets- och kontohanteringsåtgärder.
+   - [x] 3.3 Säkerställ korrekt återgång och tydliga bekräftelser.
+   - [x] 3.4 Regressionstesta kontoflöden utan att ändra autentiseringslogik.
+4. [x] **Appinställningar (4/4)**
+   - [x] 4.1 Samla tema, påminnelser och Android-widget.
+   - [x] 4.2 Flytta planrelaterade inställningar till relevant planvy.
+   - [x] 4.3 Strukturera övriga appövergripande inställningar utan dubblering.
+   - [x] 4.4 Verifiera att inställningarna sparas och återställs korrekt.
+5. [x] **Data, synk och integritet (4/4)**
+   - [x] 5.1 Samla molnstatus och synkinformation.
+   - [x] 5.2 Placera gästdata och datahantering med rätt förklaringar.
+   - [x] 5.3 Säkerställ tydlig väg till integritet och kontoradering där det finns stöd.
+   - [x] 5.4 Regressionstesta dataflöden och skydd mot oavsiktlig radering.
+6. [x] **Min resa, hjälp och delning (4/4)**
+   - [x] 6.1 Ordna plan, historik och framsteg efter användarens uppgift.
+   - [x] 6.2 Säkerställ lätt åtkomst till SOS och stöd.
+   - [x] 6.3 Placera delningsfunktioner i relevant sammanhang.
+   - [x] 6.4 Samla appinformation, version och hjälp på ett logiskt ställe.
+7. [ ] **Visuell konsekvens och tillgänglighet (2/4)**
+   - [x] 7.1 Återanvänd fas 27:s designkomponenter och temastöd.
+   - [x] 7.2 Kontrollera läsordning, rubriker, roller och tryckytor.
+   - [ ] 7.3 Kontrollera Safe Area, stor text och små skärmar.
+   - [ ] 7.4 Kontrollera Android Tillbaka och navigering mellan kategorier.
+8. [ ] **Tester och leverans (3/4)**
+   - [x] 8.1 Lägg till tester för navigation och kategoriindelning.
+   - [x] 8.2 Verifiera konto-, synk-, inställnings- och gästregressioner.
+   - [x] 8.3 Kontrollera båda CI-kontrollerna och Android-buildbehov.
+   - [ ] 8.4 Merga fasens enda PR först efter verifierad acceptans.
+
+---
 
 ## Fas 27.0 – Premium UI/UX-redesign och Light/Dark/System-teman (PÅGÅR)
 
@@ -1298,7 +1359,7 @@ Nästa driftmilstolpe: återhämtningsverktyget kräver uttryckligt projekt och 
 - Lägg inte till nya faser eller utöka fasta 8×4-checklistor för små förbättringar. Registrera nya idéer i backlog och avgör om de verkligen motiverar en separat fas.
 
 ## Princip för kommande faser
-- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman).
+- Fasordning: 16.1 → 16.2 → 16.3 → 16.4 → 16.5 → 16.6 → 16.7 → 17.0 (delningskort) → 18.0–22.0 (beteendestöd och långsiktig rökfrihet) → 23.0 (förenklad startsida) → 24.0 (vägledd onboarding) → 25.0 (slutlig QA/Play) → 26.0 (efter lansering) → 27.0 (premium UI/UX och teman) → 28.0 (profil och organiserade inställningar).
 - En fas = en PR med **fast åttapunktschecklista och fyra fasta delpunkter per huvudpunkt** (32 totalt). Räkna bara verifierat klart efter relevanta tester och CI.
 - Ändra inte fasens mål eller nämnare under arbetet utan uttryckligt beslut. Nya önskemål läggs i kommande fas eller backlog. Samla relaterade förbättringar i meningsfulla commits; undvik en PR per småfix.
 - Fas 25 är den slutliga manuella Android-/BrowserStack-/TalkBack-/Safe Area- och säkerhetsgrinden. Blockerande säkerhets- och datafel får aldrig skjutas upp.

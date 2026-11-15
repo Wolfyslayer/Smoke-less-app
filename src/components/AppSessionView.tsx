@@ -150,7 +150,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  <AppSessionOverlays model={model}/></View>;
  if(authPrompt!==null && !accountUser)return <View style={s.root}><AppSessionOnboarding model={model}/><AppSessionOverlays model={model}/>{authModal}</View>;
  return <View style={s.root}><ScrollView key={tab} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={{width:'100%',maxWidth:680,alignSelf:'center',paddingLeft:Math.max(insets.left,20),paddingRight:Math.max(insets.right,20),paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
- <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
+ <ScreenHeader tab={tab} clock={clock} onNavigate={go} onBack={()=>{const leave=()=>{if(!model.goBack())go('profile');};if(tab==='account'&&!accountUser&&(model.accountEmail.trim()||model.accountPassword)){model.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>{model.setAccountEmail('');model.setAccountPassword('');leave();},'Lämna inloggningen');}else leave();}}/>
  <AppScreenRouter model={model}/>
  </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><AppSessionOverlays model={model}/>
  {authModal}

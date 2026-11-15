@@ -1,6 +1,6 @@
 import {useCallback,useRef,useState,type Dispatch,type SetStateAction} from 'react';
 
-export type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings'|'backup';
+export type Tab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings'|'backup'|'journey'|'about'|'plan-settings';
 
 /**
  * Keep navigation history within the single Expo Router screen.

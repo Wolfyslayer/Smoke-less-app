@@ -5,7 +5,7 @@ import {CompactDateModal} from '../components/CompactDateModal';
 import {target,quitDate,nextReductionMilestone,restartReductionPlan,resumeGradualReduction,rescheduleQuitPlan,parseFutureQuitDate,weeklyPlanProgress,type Profile,type Speed} from '../domain';
 
 type WeekDay={key:string;confirmed:boolean;within:boolean};
-type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void};
+type Props={profile:Profile;goal:number;todayReduction:number;confirmedDays:number;withinDays:number;planWeek:WeekDay[];clock:number;onChangeProfile:(patch:Partial<Profile>)=>void;onOpenPlanSettings?:()=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 function Card({children,style}:{children:React.ReactNode;style?:any}){
  const styles=useThemeStyles(createStyles);
@@ -16,7 +16,7 @@ return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){
  const styles=useThemeStyles(createStyles);
 return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
-export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile}:Props){
+export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDays,planWeek,clock,onChangeProfile,onOpenPlanSettings}:Props){
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 
  const {height:windowHeight}=useWindowDimensions();
@@ -95,6 +95,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
        ?'Du har nått målet noll cigaretter'
        :'Inget kommande minskningssteg i grundplanen';
  return <View style={styles.screen}>
+  {onOpenPlanSettings?<Pressable accessibilityRole="button" accessibilityLabel="Anpassa min plan" accessibilityHint="Ändra metod och förhandsgranska ett nytt dagsmål" onPress={onOpenPlanSettings} style={styles.actionButton}><Text style={styles.link}>Anpassa metod och dagsmål →</Text></Pressable>:null}
   <Card style={{gap:14,padding:19,borderColor:C.border}}>
    <View style={styles.planHero}><View style={{flex:1,gap:8}}><Label>DAGENS MÅL</Label><Text style={styles.heroNumber}>{goal}</Text><Text style={styles.muted}>cigaretter som övre gräns</Text></View><View style={styles.goalBadge}><Text style={{fontSize:36,color:C.accent}}>↘</Text><Text style={{fontSize:12,color:C.accent,fontWeight:'700'}}>DIN TAKT</Text></View></View>
    <Text style={styles.muted}>Startnivå: {p.baseline} per dag</Text><View style={styles.divider}/>
@@ -153,6 +154,7 @@ export function PlanScreen({profile:p,goal,todayReduction,confirmedDays,withinDa
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ link:{color:C.accent,fontSize:16,fontWeight:'700'},
  screen:{gap:24,minWidth:0},planHero:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',gap:20},goalBadge:{width:96,height:96,borderRadius:32,backgroundColor:C.accentSubtle,alignItems:'center',justifyContent:'center',gap:4},actionButton:{minHeight:48,justifyContent:'center',alignSelf:'stretch',paddingHorizontal:12},flexText:{flexShrink:1,minWidth:0},milestoneList:{gap:8},moreGoalsButton:{minHeight:48,justifyContent:'center',alignItems:'center',marginTop:12},milestoneRow:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:12,borderWidth:1,borderColor:C.border,backgroundColor:C.soft},milestoneToday:{borderColor:C.lime,backgroundColor:C.limeSoft},card:{backgroundColor:C.surface,borderRadius:28,padding:22,gap:14},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime,flexShrink:1},heading:{fontSize:19,fontWeight:'800',color:C.white,flexShrink:1},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white,flexShrink:1},statValue:{fontSize:26,fontWeight:'800',color:C.white,flexShrink:1},cardTitle:{fontSize:16,fontWeight:'800',color:C.white,flexShrink:1},
