@@ -4,8 +4,8 @@
 
 - Fas **17.0 – delningsbild som matchar dagens framsteg**.
 - Branch `feat/phase-17-share-progress-card`, från uppdaterad lokal main `1781333a1689ae7c163a0b7bf484bee01b3d5338`.
-- Exakt en ny fas-PR öppnas med denna dokumentationsmilstolpe. Hitta den via branchen; skapa inte en till.
-- Fast checklista: `docs/PHASE_17_SHARE_PROGRESS.md`. 0/8 huvudpunkter och 0/32 delpunkter verifierade (0 %). Implementation återstår.
+- Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/165. Skapa inte en till.
+- Fast checklista: `docs/PHASE_17_SHARE_PROGRESS.md`. 1/8 huvudpunkter och 4/32 delpunkter verifierade (12,5 %). Startcommit `dfb5989` har grön validate/rules. Implementationen inväntar egen CI.
 
 ## Senaste avslutade arbete
 
@@ -17,7 +17,9 @@ Tidigare faser: 16.4 PR #161 (`07ff48c`), 16.5 PR #162 (`a3c53e8`), 16.6 PR #163
 
 ## Nästa konkreta steg
 
-Kontrollera båda CI på fas 17:s startcommit och fortsätt i samma PR. Inventera startsidans faktiska framstegskort och befintlig SVG/PNG-export. Skapa en gemensam presentationsmodell för kvar av mål, använd procent och stödtext; återanvänd den i startsida, förhandsvisning och PNG. Bevara uttryckligt godkännande, känslig-data-gräns och befintliga skydd mot föråldrade exportsvar. Dokumentera visuell jämförelse utan att påstå fysisk Android-delning.
+Implementerat gemensam modell och SVG-renderare i startsida, förhandsvisning och PNG. Bilden visar kvar av mål, mindre ring och samma stödtext. FontScale får kortet att växa/staplas och ogiltigförklarar gamla exporter. En statisk bildöversikt renderad från faktisk komponent finns i docs/assets/phase17-progress-review.png; visuell inspektion är utförd, men inte Android-export. TypeScript och 183 tester passerar lokalt.
+
+Nästa steg: verifiera båda CI på implementationscommitten, stäm av återstående checklista och slutacceptans och merga endast när kriterierna är uppfyllda. Fortsätt därefter automatiskt till fas 18 enligt användarens uttryckliga instruktion. Bevara befintliga export-/integritetsgränser. Fysisk PNG/systemdelning och TalkBack ligger kvar i fas 25.
 
 ## Regler och risker
 

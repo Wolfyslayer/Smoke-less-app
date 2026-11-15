@@ -1,7 +1,7 @@
+import {DailyProgressShareArtwork} from '../components/DailyProgressShareArtwork';
 import {DashboardOverview} from '../components/DashboardOverview';
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import Svg,{Circle} from 'react-native-svg';
 import {PlusCircle,Heart,Target,History,ArrowUpRight} from 'lucide-react-native';
 import {C} from '../theme';
 import {dayKey,type Data} from '../domain';
@@ -10,7 +10,6 @@ type Props={uid:string|null;clock:number;data:Data;goal:number;todayCount:number
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Tile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.tile,featured&&{backgroundColor:C.limeSoft,borderColor:'#5C6B24'}]}><View style={styles.tileIcon}><Icon color={C.lime} size={23}/></View><Text style={[styles.tileText,{flexShrink:1}]}>{title}</Text><ArrowUpRight color={C.dim} size={16} style={{position:'absolute',right:15,top:17}}/></Pressable>}
-function Ring({value}:{value:number}){const r=46,circ=2*Math.PI*r,p=Math.max(0,Math.min(100,value));return <View accessible accessibilityRole="text" accessibilityLabel={`Dagens förbrukning: ${Math.round(p)} procent av dagsmålet`} style={{width:106,height:106,alignItems:'center',justifyContent:'center'}}><Svg width={106} height={106} viewBox="0 0 120 120"><Circle cx="60" cy="60" r={r} stroke={C.soft} strokeWidth="11" fill="none"/><Circle cx="60" cy="60" r={r} stroke={C.lime} strokeWidth="11" fill="none" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ*(1-p/100)} rotation={-90} origin="60,60"/></Svg><Text style={[styles.ringText,{position:'absolute'}]}>{Math.round(p)}%</Text></View>}
 export function HomeScreen({uid,clock,data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
  const checkin=data.checkins.find(x=>x.date===today);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
@@ -46,7 +45,7 @@ export function HomeScreen({uid,clock,data,goal,todayCount,duration,weekly,today
      :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
   <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
-  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} goalCard={<Card style={{padding:19,gap:14,borderColor:'#425C29'}}><Label>DAGENS FRAMSTEG</Label><View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}><View style={{flexGrow:1,flexShrink:1,minWidth:150}}><Text adjustsFontSizeToFit minimumFontScale={0.65} numberOfLines={1} style={styles.heroNumber}>{Math.max(0,goal-todayCount)}<Text style={{fontSize:24,color:C.muted}}> / {goal}</Text></Text><Text style={styles.muted}>cigaretter kvar idag</Text></View><Ring value={goal===0?(todayCount>0?100:0):Math.min(100,todayCount/goal*100)}/></View><Text style={{color:C.white,fontSize:13}}>{goal===0?todayCount===0?'Ditt mål är en rökfri dag.':'Fortsätt framåt i din egen takt.':todayCount<=goal?'Du har '+(goal-todayCount)+' kvar till dagens övre gräns.':'Det blev lite mer än planerat idag, men dina framsteg räknas fortfarande. Fortsätt i din egen takt.'}</Text></Card>}/>
+  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} goalCard={<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
   <Card><Text accessibilityRole="header" style={styles.label}>DAGENS UPPMUNTRAN</Text><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   {bestStrategy?<Card style={{gap:9}}>
    <Text style={styles.label}>DIN PERSONLIGA COACH</Text>
