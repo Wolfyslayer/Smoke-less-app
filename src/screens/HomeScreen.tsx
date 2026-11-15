@@ -1,8 +1,8 @@
 import {DailyProgressShareArtwork} from '../components/DailyProgressShareArtwork';
 import {DashboardOverview} from '../components/DashboardOverview';
-import React from 'react';
+import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import {PlusCircle,Heart,Target,History,ArrowUpRight} from 'lucide-react-native';
+import {PlusCircle,Heart,ArrowUpRight} from 'lucide-react-native';
 import {C} from '../theme';
 import {dayKey,type Data} from '../domain';
 
@@ -11,7 +11,8 @@ function Card({children,style}:{children:React.ReactNode;style?:any}){return <Vi
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Tile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.tile,featured&&{backgroundColor:C.limeSoft,borderColor:'#5C6B24'}]}><View style={styles.tileIcon}><Icon color={C.lime} size={23}/></View><Text style={[styles.tileText,{flexShrink:1}]}>{title}</Text><ArrowUpRight color={C.dim} size={16} style={{position:'absolute',right:15,top:17}}/></Pressable>}
 export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
- const checkin=data.checkins.find(x=>x.date===today);
+ const [supportOpen,setSupportOpen]=useState(false);
+ const checkin=data.checkins.find(x=>x.date===today&&x.complete);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
  const previousDays=new Set(data.checkins.filter(x=>x.date<today&&x.complete).map(x=>x.date)).size;
  const triggerCounts=new Map<string,number>();
@@ -19,7 +20,7 @@ export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,to
  const helpfulByTrigger=new Map<string,Map<string,number>>();
  for(const craving of data.cravings){
   const date=new Date(craving.at);
-  if(!Number.isFinite(date.getTime())||dayKey(date)>today)continue;
+  if(!Number.isFinite(date.getTime())||date.getTime()>clock||dayKey(date)>today)continue;
   if(craving.trigger)triggerCounts.set(craving.trigger,(triggerCounts.get(craving.trigger)??0)+1);
   if(craving.helpful!==true||!craving.strategy?.trim())continue;
   const strategy=craving.strategy.trim();
@@ -44,10 +45,11 @@ export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,to
      ?'Ta dagen i din egen takt. Registrera det som händer och ge dig själv utrymme att lyckas.'
      :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
+  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} actions={<View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/></View>} goalCard={maintenancePanel??<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
+  <Text style={styles.muted}>{encouragement}</Text>
+  <Pressable accessibilityRole="button" accessibilityState={{expanded:supportOpen}} onPress={()=>setSupportOpen(v=>!v)} style={styles.recoveryLink}><Text style={styles.link}>{supportOpen?'Dölj stöd och fördjupning':'Stöd och fördjupning'}</Text></Pressable>
+  {supportOpen?<View style={{gap:16}}>
   {journeyPanel}
-  <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
-  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} goalCard={maintenancePanel??<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
-  <Card><Text accessibilityRole="header" style={styles.label}>DAGENS UPPMUNTRAN</Text><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   {bestStrategy?<Card style={{gap:9}}>
    <Text style={styles.label}>DIN PERSONLIGA COACH</Text>
    <Text accessibilityRole="header" style={styles.cardTitle}>Ett tips som du själv tyckt hjälpte</Text>
@@ -70,7 +72,8 @@ export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,to
 
 
 
-  <Card><Label>DAGLIG AVSTÄMNING</Label><Text style={styles.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Pressable accessibilityRole="button" accessibilityLabel="Bekräfta dagens registreringar" accessibilityHint="Markerar dagens registreringar som avstämda" onPress={onConfirmToday} style={styles.button}><Text style={styles.buttonText}>Bekräfta dagens registreringar</Text></Pressable>:<Text style={styles.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>
+  </View>:null}
+  {!maintenancePanel?<Card><Label>DAGLIG AVSTÄMNING</Label><Text style={styles.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Pressable accessibilityRole="button" accessibilityLabel="Bekräfta dagens registreringar" accessibilityHint="Markerar dagens registreringar som avstämda" onPress={onConfirmToday} style={styles.button}><Text style={styles.buttonText}>Bekräfta dagens registreringar</Text></Pressable>:<Text style={styles.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>:null}
  </View>;
 }
 const styles=StyleSheet.create({
