@@ -2,10 +2,10 @@
 
 ## Aktuellt
 
-- Fas **20.0 – långsiktigt stöd och underhåll**.
-- Branch `feat/phase-20-maintenance-support`, från uppdaterad main `9d0505e`.
-- Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/168.
-- Fast checklista: `docs/PHASE_20_MAINTENANCE.md`. 1/8 (12,5 %) och 6/32 (18,75 %) verifierade mot startcommit `daf24f1` med grön CI. Implementation inväntar egen CI.
+- Fas **21.0 – evidensbaserat stöd**.
+- Branch `feat/phase-21-evidence-based-support`, från uppdaterad main `7cb70a4`.
+- En PR öppnas för denna branch; hitta den på GitHub och skapa inte dubblett.
+- Fast checklista: `docs/PHASE_21_EVIDENCE_SUPPORT.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
 
 ## Senaste avslutade arbete
 
@@ -19,7 +19,7 @@ Tidigare faser: 16.4 PR #161 (`07ff48c`), 16.5 PR #162 (`a3c53e8`), 16.6 PR #163
 
 Implementerat gemensam modell och SVG-renderare i startsida, förhandsvisning och PNG. Bilden visar kvar av mål, mindre ring och samma stödtext. FontScale får kortet att växa/staplas och ogiltigförklarar gamla exporter. En statisk bildöversikt renderad från faktisk komponent finns i docs/assets/phase17-progress-review.png; visuell inspektion är utförd, men inte Android-export. TypeScript och 183 tester passerar lokalt.
 
-Fas 17 #165 (`0fdd4b1`), 18 #166 (`2857e3f`) och 19 #167 (`9d0505e`) mergade med grön CI. Fas 20 har nu underhållskort vid valt maintenance-läge, bekräftade rekord, stöd utan nollställning och frivillig uppföljning. Inställningar erbjuder av/dagligen/veckovis måndag; byte avbokar gammal notis och kräver ny aktivering. TypeScript och 198 tester passerar lokalt. Nästa steg: verifiera implementations-CI, granska fasens acceptans och merga #168 när kriterierna är uppfyllda. Fortsätt direkt till fas 21 med verifierade svenska primärkällor. Fysisk notis-, PNG-, Android- och TalkBack-QA kvarstår i fas 25.
+Faserna 17–20 är mergade i #165–#168. Senaste main `7cb70a4`, slutlig head `6861470` grön validate/rules, TypeScript och 198 tester. Nästa steg: verifiera start-CI för fas 21 och färdigställ källbelagda generella stödtexter med verifierade 1177-/Sluta-röka-linjen-länkar, kontrolldatum och offlineinnehåll. Ingen personlig dosering eller känslig inmatning. Fortsätt direkt till fas 22 efter acceptans/merge. Fysisk notis-, PNG-, Android- och TalkBack-QA kvarstår i fas 25.
 
 ## Regler och risker
 
