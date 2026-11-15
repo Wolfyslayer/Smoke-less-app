@@ -1,15 +1,15 @@
 # Fortsättning – Smoke Less
 
-- Aktiv fas: **16.5 – personlig dashboard**, branch `feat/phase-16-5-personal-dashboard`. Exakt en ny fas-PR ska öppnas med denna milstolpe.
+- Aktiv fas: **16.5 – personlig dashboard**, branch `feat/phase-16-5-personal-dashboard`, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/162.
 - Bas: uppdaterad lokal main `07ff48c315f7d535da56f3053594f503cfd0bc00`.
 - Fas 16.4 är avslutad och mergad i PR #161. `validate` och `rules` gröna på slutlig head `d19dd36`; 159 lokala tester och TypeScript godkända. 8/8 huvudpunkter och 32/32 delpunkter klara på kod-/test-/dokumentationsnivå. Fysisk Android-, BrowserStack- och TalkBack-QA återstår i fas 25.
 - Main:s debug-keystore-plugin och app.json-post har bevarats oförändrade. Inga hemligheter eller regler ändrades.
 
 ## Fas 16.5
 
-Fast checklista finns i `docs/PHASE_16_5_DASHBOARD.md`, kopierad från roadmapens ursprungliga 8×4-punkter. Status: 0/8 huvudpunkter och 0/32 verifierade delpunkter (0 %). Inventering och genomförandegränser är dokumenterade; implementation återstår.
+Fast checklista finns i `docs/PHASE_16_5_DASHBOARD.md`, kopierad från roadmapens ursprungliga 8×4-punkter. Verifierat på `e0cb614` med grön CI: 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %). Kortval, ordning, återställning, lokal persistens och UI är nu implementerade och inväntar egen CI. TypeScript och 166 lokala tester är godkända.
 
-Nästa steg: öppna exakt en PR, kontrollera CI på denna commit och implementera normalisering/ordning/återställning för dashboardkort med tester. Lägg till lokal persistens separat för gäst och konto, skydda kontobyten och koppla till startsidan med tillgängliga kontroller. Låt registrering och SOS förbli direkt åtkomliga. Ändra inte datamodell, Firestore-regler eller molnsynk.
+Nästa steg: kontrollera båda CI på implementationscommitten. Granska därefter slutligt kontoövergångar, UI-kontrakt och prestanda mot fasplanen. Uppdatera checklistans verifierade status först efter grön CI. Registrering och SOS förblir direkt åtkomliga. Datamodell, Firestore-regler och molnsynk är oförändrade. Ny Android-build: NEJ, bara TypeScript, testscript och dokumentation; inga beroenden tillkom.
 
 ## Arbetsregler och risker
 

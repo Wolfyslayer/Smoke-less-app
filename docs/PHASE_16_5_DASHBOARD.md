@@ -1,5 +1,5 @@
 # Fas 16.5 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Startad 2026-11-15 från `main` (`07ff48c`). 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklistans ursprungliga ID och omfattning från masterplanen är frysta. En PR för fasen; verifiera båda CI innan nästa commit.
+**Status:** Pågående i PR #162, startad från `main` (`07ff48c`). 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %) verifierade genom inventeringen på `e0cb614` med båda CI gröna. Implementationen nedan inväntar egen CI. Checklistans ursprungliga ID och omfattning är frysta.
 
 ## Inventering och avgränsning
 
@@ -9,11 +9,11 @@ Anpassning ska gälla en begränsad uppsättning översiktskort: dagens mål, ti
 
 Först verifieras normalisering, ordning, återställning och lagringsisolering. Sedan kopplas tillgängliga visa/dölj- och flytta-knappar till startsidan. Bred fysisk QA dokumenteras för fas 25.
 
-1. [ ] **Dashboardinventering (0/4)**
-   - [ ] 1.1 Kartlägg befintliga kort.
-   - [ ] 1.2 Identifiera datakällor.
-   - [ ] 1.3 Fastställ standardlayout.
-   - [ ] 1.4 Fastställ integritetsgränser.
+1. [x] **Dashboardinventering (4/4)**
+   - [x] 1.1 Kartlägg befintliga kort.
+   - [x] 1.2 Identifiera datakällor.
+   - [x] 1.3 Fastställ standardlayout.
+   - [x] 1.4 Fastställ integritetsgränser.
 2. [ ] **Anpassning (0/4)**
    - [ ] 2.1 Välj synliga kort.
    - [ ] 2.2 Ändra kortordning.
@@ -44,9 +44,23 @@ Först verifieras normalisering, ordning, återställning och lagringsisolering.
    - [ ] 7.2 Testa återställning.
    - [ ] 7.3 Testa dataseparering.
    - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera standardval.
-   - [ ] 8.2 Samla enhets-QA till fas 25.
+8. [ ] **Avslut (2/4)**
+   - [x] 8.1 Dokumentera standardval.
+   - [x] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
+
+## Implementationsmilstolpe
+
+`DashboardOverview` visar valda kort i sparad ordning. Standard är dagens mål, tid sedan senaste registrerade cigaretten, uppskattad besparing och veckans registreringar. Röksug och nästa delmål är tillval. Noll registreringar kallas inte bekräftad rökfrihet. Saknat delmål har neutral fallback. Registrering/SOS/plan/logg ligger före korten och kan inte döljas. Uppmuntran, tidigare coach/återfallsstöd och daglig avstämning bevaras.
+
+`DashboardEditor` har etiketterade switchar samt Upp/Ned-knappar och återställning. Hela redigeringen fälls ihop; högst sex översiktskort finns. Kontrollerna har minst 48 dp, text får radbrytas och veckans dagrader kan radbrytas på smal skärm. Ingen fixerad höjd eller avstängd textskalning införs.
+
+`dashboardPreferences` normaliserar formatversion/ID/ordning utan duplicerade kort. Eget AsyncStorage-namespace skiljer gäst från varje UID. Varje identitet har en skrivkö; återinläsning inväntar tidigare skrivningar. Hooken döljer en föregående identitets layout direkt och ignorerar inaktuella asynkrona läs-/felsvar. Läsfel spärrar redigering och visas; skrivfel visas utan att röra historik. Ingen molnsynk sker: 4.3 verifieras genom att layoutval aldrig skickas till Firestore.
+
+Redigeraren är memoiserad och callbacken stabil vid klocktick. Röksugsaggregat beräknas vid nya data/dag/minut, delmål vid ny profil/dag och besparing vid nya data/dag. Snabba registreringar använder fortsatt befintlig sessionsmodell; layoutval skriver aldrig registreringsdata.
+
+Lokalt: TypeScript godkänd, ordinarie tester 150/150, storage 10/10 och migration 6/6. Sju nya tester täcker normalisering, val/ordning/återställning, gäst/konto-isolering, skrivkö, lagringsfel och återhämtning; hook/editor har kompletterande källkodskontrakt. Dessa tester är inte verklig Android-rendering eller en full React-interaktionstestsvit.
+
+Fas 25 ska verifiera: kallstart/offline, konto A → gäst → konto B → A, tappningar i snabb följd, alla kort dolda/återställda, maximal text/skärmskalning, smal skärm, TalkBack-läsordning/etiketter och fokus vid flytt av kort. Ingen sådan fysisk QA är markerad godkänd.
 
