@@ -1,5 +1,5 @@
 # Fas 18.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #166. 6/8 huvudpunkter (75 %) och 29/32 delpunkter (90,625 %) verifierade på kod-/automatisk test-/dokumentationsnivå med grön validate/rules på `17f9e6f`. Sista regressionstestet 7.2 och slutlig CI/merge återstår. Ursprungliga 8×4-ID är bevarade. Fysisk TalkBack/Android-QA är inte utförd.
+**Status:** Mergad i PR #166 som `2857e3f`. 8/8 och 32/32 (100 %) verifierade på kod-/test-/dokumentationsnivå. Slutlig head `50707eb` hade grön validate/rules; TypeScript och 190 tester passerade. Fysisk TalkBack/Android-QA är inte utförd och kvarstår i fas 25.
 
 ## Ändringskontrakt och riskmatris
 
@@ -37,16 +37,16 @@ Lagra bara fas-ID separat per UID/gäst, utan ny molnsynk. Återanvänd säker p
    - [x] 6.2 Granska TalkBack och fokus.
    - [x] 6.3 Granska små skärmar och stor text.
    - [x] 6.4 Granska tryckytor och kontrast.
-7. [ ] **Automatiska tester och CI (3/4)**
+7. [x] **Automatiska tester och CI (4/4)**
    - [x] 7.1 Testa centrala domänfall.
-   - [ ] 7.2 Testa fel- och avbrottsfall.
+   - [x] 7.2 Testa fel- och avbrottsfall.
    - [x] 7.3 Testa integritet och dataseparering.
    - [x] 7.4 Verifiera obligatorisk CI.
-8. [ ] **Slutverifiering och merge (2/4)**
+8. [x] **Slutverifiering och merge (4/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
-   - [ ] 8.3 Verifiera grön CI på slutlig commit.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera grön CI på slutlig commit.
+   - [x] 8.4 Merga fas-PR.
 
 ## Implementation och verifieringsunderlag
 
