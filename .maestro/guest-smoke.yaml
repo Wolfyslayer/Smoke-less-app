@@ -1,0 +1,49 @@
+appId: com.smokeless.app.preview
+name: Guest smoke on disposable offline QA emulator
+---
+- launchApp
+- tapOn: Kom igång
+- tapOn: Fortsätt
+- tapOn: Cigaretter per dag
+- eraseText
+- inputText: '10'
+- hideKeyboard
+- tapOn: Fortsätt
+- tapOn: Starta min resa
+- tapOn: Inte nu
+- tapOn: Nej tack, fortsätt som gäst
+- assertVisible: Hem
+- tapOn:
+    id: bottom-nav-register
+- tapOn: '\+ Registrera cigarett'
+- assertVisible: Vad fick dig att röka?
+- tapOn: Stäng registreringen
+- assertVisible: REGISTRERADE IDAG
+- tapOn: '\+ Registrera cigarett'
+- scrollUntilVisible:
+    element: Hoppa över frågorna
+    direction: DOWN
+- tapOn: Hoppa över frågorna
+- assertVisible: REGISTRERADE IDAG
+- tapOn: Visa alla registreringar
+- back
+- tapOn:
+    id: bottom-nav-stats
+- assertVisible: Statistik
+- tapOn:
+    id: bottom-nav-profile
+- tapOn: Öppna SOS-stöd
+- assertVisible: Starta andningsövning
+- tapOn: Starta andningsövning
+- assertVisible: Avsluta övning
+- tapOn: Avsluta övning
+- back
+- assertVisible: Din personliga resa
+- tapOn: Appinställningar
+- tapOn: Utseende
+- tapOn: Mörkt
+- stopApp
+- launchApp
+- tapOn:
+    id: bottom-nav-profile
+- assertVisible: Gästläge · sparat på den här enheten

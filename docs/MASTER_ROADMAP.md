@@ -56,8 +56,8 @@
 | 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Startad enligt nytt användarbeslut; QA/release kvar i fas 25 | docs/PHASE_27_DESIGN.md |
 | 28.0 | Profil, kontohantering och organiserade inställningar | Startad enligt användarbeslut | — |
 | 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Planerad; efter fas 31 | — |
-| 31.0 | Automatiserade Android-flödestester och regressionsskydd | Planerad; efter fas 30, inga onödiga native-byggen | — |
-| 30.0 | Release Polish och Production Readiness | Kodmilstolpe 2/8 och 19/32; CI och fysisk acceptans kvar | docs/PHASE_30_RELEASE_POLISH.md |
+| 31.0 | Automatiserade Android-flödestester och regressionsskydd | Kodunderlag 2/8 och 19/32; verklig E2E ej körd | docs/PHASE_31_ANDROID_REGRESSION.md |
+| 30.0 | Release Polish och Production Readiness | Kodmilstolpe 2/8 och 20/32; CI grön, fysisk acceptans kvar | docs/PHASE_30_RELEASE_POLISH.md |
 | 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Kodmilstolpe: 5/8 och 25/32; CI grön, native-acceptans kvar | docs/PHASE_29_PREVIEW_OTA.md |
 
 
@@ -454,7 +454,7 @@ Verifiering: TypeScript och 339 ordinarie tester PASS; webbexport PASS. 7.3 veri
 
 ### Fas 30.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Kodmilstolpe: 2/8 huvudpunkter (25 %), 19/32 delpunkter (59,375 %). Lokal verifiering PASS, senaste CI väntar. Fysisk acceptans och offentlig release är öppna.
+**Status:** Kodmilstolpe: 2/8 huvudpunkter (25 %), 20/32 delpunkter (62,5 %). Senaste 529be8b har grön validate/rules. Fysisk acceptans och offentlig release är öppna.
 
 1. **Release-inventering och kriterier (4/4)**
    - [x] 1.1 Inventera samtliga användarsynliga skärmar, dialoger, knappar och texter.
@@ -491,8 +491,8 @@ Verifiering: TypeScript och 339 ordinarie tester PASS; webbexport PASS. 7.3 veri
    - [x] 7.2 Lägg till relevanta notis-, text- och navigationsregressionstester.
    - [x] 7.3 Dokumentera versionering, signering, OTA/native-gräns och rollback.
    - [x] 7.4 Förbered release-checklista och Play Store-underlag utan publicering.
-8. **Verifiering och överlämning (0/4)**
-   - [ ] 8.1 Kör TypeScript, relevanta tester och båda obligatoriska CI-kontrollerna.
+8. **Verifiering och överlämning (1/4)**
+   - [x] 8.1 Kör TypeScript, relevanta tester och båda obligatoriska CI-kontrollerna.
    - [ ] 8.2 Verifiera fristående Preview och release-liknande Android-build på enhet.
    - [ ] 8.3 Kontrollera kontosäkerhet, databevarande, notiser och tillgänglighet.
    - [ ] 8.4 Slutför fasens PR och dokumentera kvarvarande releasehinder; invänta uttryckligt publiceringsbeslut.
@@ -501,7 +501,7 @@ Evidens och kvarstående grindar: PHASE_30_RELEASE_POLISH.md. TypeScript, 342 te
 
 ---
 
-## Fas 31.0 – Automatiserade Android-flödestester och regressionsskydd (PLANERAD)
+## Fas 31.0 – Automatiserade Android-flödestester och regressionsskydd (PÅGÅR)
 
 **Underlag från granskning 2026-11-15:** `main` har många Node-baserade domän-, synk-, migrations- och regeltester, men de granskade testerna och fas 25:s QA-underlag visar ännu inte ett färdigt automatiserat verkligt Android-end-to-end-flöde. PR #173 dokumenterar omfattande EJ KÖRDA manuella acceptansfall (onboarding, SOS, notiser, widgets, konto, tvåenhetssynk, radering, TalkBack). PR #175 ändrar ett stort antal UI-filer, vilket ökar regressionsrisken. Detta är ett testtäckningsbehov, inte ett påstående om att funktionerna är trasiga. **Syfte:** bygg ett litet men hållbart automatiserat E2E-röktest för releasekandidater och en pålitlig CI-matris, med manuella tester kvar där automation inte räcker. Undvik kostsam native-build per commit och undvik verkliga användarkonton.
 
@@ -509,48 +509,50 @@ Evidens och kvarstående grindar: PHASE_30_RELEASE_POLISH.md. TypeScript, 342 te
 
 ### Fas 31.0 – fast checklista (8 × 4 = 32)
 
-**Status:** Planerad, ej påbörjad. 0/8 huvudpunkter, 0/32 delpunkter (0 %).
+**Status:** Förberedelser och snabba regressioner: 2/8 huvudpunkter (25 %), 19/32 delpunkter (59,375 %). Senaste CI väntar; inget Android E2E-flöde kördes.
 
-1. **Teststrategi och riskprioritering (0/4)**
-   - [ ] 1.1 Inventera testsviter, manuella fall och CI.
-   - [ ] 1.2 Välj Android E2E-verktyg efter Expo/native-kompatibilitet och kostnad.
-   - [ ] 1.3 Definiera deterministiska testdata och testkonton.
-   - [ ] 1.4 Dokumentera minsta releasekritiska flöden.
-2. **Reproducerbar testmiljö (0/4)**
-   - [ ] 2.1 Isolera Firebase-emulator/testprojekt från produktion.
-   - [ ] 2.2 Definiera stabila installations-/återställningsrutiner.
-   - [ ] 2.3 Hantera testidentiteter och hemligheter säkert.
+1. **Teststrategi och riskprioritering (4/4)**
+   - [x] 1.1 Inventera testsviter, manuella fall och CI.
+   - [x] 1.2 Välj Android E2E-verktyg efter Expo/native-kompatibilitet och kostnad.
+   - [x] 1.3 Definiera deterministiska testdata och testkonton.
+   - [x] 1.4 Dokumentera minsta releasekritiska flöden.
+2. **Reproducerbar testmiljö (3/4)**
+   - [x] 2.1 Isolera Firebase-emulator/testprojekt från produktion.
+   - [x] 2.2 Definiera stabila installations-/återställningsrutiner.
+   - [x] 2.3 Hantera testidentiteter och hemligheter säkert.
    - [ ] 2.4 Förbered APK/Android-testmiljö utan att bygga per commit.
 3. **Onboarding och vardagsflöden (0/4)**
    - [ ] 3.1 Automatisera första start och gästläge.
    - [ ] 3.2 Automatisera plan och registrering.
    - [ ] 3.3 Automatisera historik och statistik.
    - [ ] 3.4 Automatisera SOS och återgång.
-4. **Konto och dataintegritet (0/4)**
+4. **Konto och dataintegritet (3/4)**
    - [ ] 4.1 Automatisera kontoinloggning med testidentitet där möjligt.
-   - [ ] 4.2 Testa gästmigrering och synkkonflikter utan produktionsdata.
-   - [ ] 4.3 Testa kontobyten och omstart.
-   - [ ] 4.4 Testa raderingsspärr och säkra återförsök i isolerad miljö.
-5. **UI och tillgänglighet (0/4)**
-   - [ ] 5.1 Testa huvudnavigation och Android Tillbaka.
-   - [ ] 5.2 Testa ljus/mörk/system och sparat tema.
+   - [x] 4.2 Testa gästmigrering och synkkonflikter utan produktionsdata.
+   - [x] 4.3 Testa kontobyten och omstart.
+   - [x] 4.4 Testa raderingsspärr och säkra återförsök i isolerad miljö.
+5. **UI och tillgänglighet (3/4)**
+   - [x] 5.1 Testa huvudnavigation och Android Tillbaka.
+   - [x] 5.2 Testa ljus/mörk/system och sparat tema.
    - [ ] 5.3 Testa stora texter, fokus och grundläggande semantik.
-   - [ ] 5.4 Definiera manuella TalkBack- och visuella fall som inte kan automatiseras.
-6. **Notiser, widget och OTA (0/4)**
-   - [ ] 6.1 Testa påminnelsekonfiguration och avstängning.
-   - [ ] 6.2 Testa widgetens opt-in och integritetsgräns.
-   - [ ] 6.3 Testa Preview-OTA kontra native-runtime-skydd.
-   - [ ] 6.4 Dokumentera vilka enhetsfall som kräver manuell kontroll.
-7. **CI och rapportering (0/4)**
-   - [ ] 7.1 Kör snabba enhetstester på varje PR.
+   - [x] 5.4 Definiera manuella TalkBack- och visuella fall som inte kan automatiseras.
+6. **Notiser, widget och OTA (4/4)**
+   - [x] 6.1 Testa påminnelsekonfiguration och avstängning.
+   - [x] 6.2 Testa widgetens opt-in och integritetsgräns.
+   - [x] 6.3 Testa Preview-OTA kontra native-runtime-skydd.
+   - [x] 6.4 Dokumentera vilka enhetsfall som kräver manuell kontroll.
+7. **CI och rapportering (1/4)**
+   - [x] 7.1 Kör snabba enhetstester på varje PR.
    - [ ] 7.2 Kör Android E2E vid releasekandidat eller manuellt val.
    - [ ] 7.3 Publicera anonymiserade testresultat och felrapporter.
    - [ ] 7.4 Säkerställ att röda releasekritiska tester blockerar release.
-8. **Verifiering och leverans (0/4)**
+8. **Verifiering och leverans (1/4)**
    - [ ] 8.1 Verifiera testernas stabilitet och felsökningsbarhet.
-   - [ ] 8.2 Verifiera dataseparation och hemlighetsskydd.
+   - [x] 8.2 Verifiera dataseparation och hemlighetsskydd.
    - [ ] 8.3 Kontrollera båda obligatoriska CI och Android-buildbehov.
    - [ ] 8.4 Slutför PR med dokumenterad täckning och kvarstående manuella fall.
+
+Evidens: PHASE_31_ANDROID_REGRESSION.md. TypeScript, 344 ordinarie + 10 storage + 6 migration PASS lokalt. 4.x/5.x/6.x verifieras av isolerade befintliga kodtester där markerat; ingen Google-/konto-/tema-/widget-/OTA-acceptans på Android påstås. Windows-köraren avvisade fysisk serial före alla ADB-anrop. Maestro och egen runner är inte verifierade.
 
 ---
 
