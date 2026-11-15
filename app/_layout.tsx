@@ -1,13 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, Text, View} from 'react-native';
+import {Leaf} from 'lucide-react-native';
+import {ThemeProvider} from '../src/ThemeProvider';
+import {useAppTheme} from '../src/theme';
 import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {StatusBar} from 'expo-status-bar';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // Android's system splash is only a brief launch placeholder.
-// The full-screen image below is a normal React Native view.
+// The themed launch overlay below is a normal React Native view.
 export default function RootLayout() {
+ return <SafeAreaProvider><ThemeProvider><ThemedLayout/></ThemeProvider></SafeAreaProvider>;
+}
+function ThemedLayout(){
+  const {colors:C,name}=useAppTheme();
   const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
@@ -18,26 +25,18 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" hidden={showIntro} />
-      <View style={styles.root}>
-        <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor: '#090A0C'}}} />
+    <>
+      <StatusBar style={name==='dark'?'light':'dark'} hidden={showIntro} />
+      <View style={{flex:1,backgroundColor:C.background}}>
+        <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor:C.background}}} />
         {showIntro && (
-          <View style={styles.intro} accessibilityLabel="Smoke Less startar" accessibilityRole="image">
-            <Image
-              source={require('../assets/branding/splash.png')}
-              resizeMode="cover"
-              style={styles.image}
-            />
+          <View style={{position:'absolute',inset:0,backgroundColor:C.background,zIndex:10,alignItems:'center',justifyContent:'center',gap:20}} accessibilityLabel="Smoke Less startar">
+            <Leaf color={C.accent} size={56}/>
+            <Text style={{fontSize:32,fontWeight:'800',color:C.text}}>Smoke Less</Text>
+            <ActivityIndicator color={C.accent}/>
           </View>
         )}
       </View>
-    </SafeAreaProvider>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {flex: 1, backgroundColor: '#101a15'},
-  intro: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: '#101a15', zIndex: 10},
-  image: {width: '100%', height: '100%'},
-});

@@ -10,7 +10,7 @@ test('session safe areas protect login footer without doubling main bottom inset
  assert.match(session,/paddingBottom:Math\.max\(insets\.bottom,40\)/);
  assert.match(session,/paddingBottom:Math\.max\(insets\.bottom,16\)/);
  assert.match(session,/paddingLeft:Math\.max\(insets\.left,20\),paddingRight:Math\.max\(insets\.right,20\)/);
- assert.match(nav,/paddingBottom:Math\.max\(insets\.bottom,10\),paddingLeft:Math\.max\(insets\.left,5\),paddingRight:Math\.max\(insets\.right,5\)/);
+ assert.match(nav,/paddingBottom:Math\.max\(insets\.bottom,10\),paddingLeft:Math\.max\(insets\.left,8\),paddingRight:Math\.max\(insets\.right,8\)/);
  const main=session.slice(session.indexOf('return <View style={s.root}><ScrollView key={tab}'));
  assert.match(main,/paddingBottom:32/);
  assert.doesNotMatch(main,/paddingBottom:Math\.max\(insets\.bottom/);
@@ -100,9 +100,9 @@ test('account actions remain tappable with keyboard and calendar headings can wr
 test('bottom tabs and shared buttons preserve accessible touch targets',()=>{
  const nav=read('src/components/BottomNavigation.tsx');
  const ui=read('src/components/ui.tsx');
- assert.match(nav,/navItem:\{[^}]*minHeight:48/);
+ const target=nav.match(/navItem:\{[^}]*minHeight:(\d+)/);assert.ok(target&&Number(target[1])>=48);
  assert.match(nav,/accessibilityRole="tab" accessibilityLabel=\{item\.label\}/);
- assert.match(ui,/button:\{[^}]*minHeight:48/);
+ const button=ui.match(/button:\{[^}]*minHeight:(\d+)/);assert.ok(button&&Number(button[1])>=48);
 });
 
 test('history deletion and dense selection rows preserve separate accessible targets',()=>{

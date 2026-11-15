@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript'),React=require('react'),{renderToStaticMarkup:render}=require('react-dom/server');
 function load(path,deps){const scope={exports:{},require:id=>{if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText,scope);return scope.exports;}
-const rn={View:'div',Text:'p',Pressable:'button',StyleSheet:{create:v=>v}},theme={C:{}},domain={dayKey:date=>date.toISOString().slice(0,10),savings:()=>0,nextReductionMilestone:()=>null};
+const rn={View:'div',Text:'p',Pressable:({style,...props})=>React.createElement('button',{...props,style:Object.assign({},...[typeof style==='function'?style({pressed:false}):style].flat(Infinity).filter(Boolean))}),StyleSheet:{create:v=>v}},theme={useThemeColors:()=>({}),useThemeStyles:fn=>fn({})},domain={dayKey:date=>date.toISOString().slice(0,10),savings:()=>0,nextReductionMilestone:()=>null};
 const artwork=({todayCount,dailyGoal})=>React.createElement('article',null,`progress ${todayCount}/${dailyGoal}`);
 function dashboard(cards){return load('src/components/DashboardOverview.tsx',{'react':React,'react-native':rn,'../domain':domain,'../theme':theme,'../hooks/useDashboardPreferences':{useDashboardPreferences:()=>({value:{cards},ready:true})},'./DashboardEditor':{DashboardEditor:()=>React.createElement('span',null,'editor'),dashboardCardLabels:{}}}).DashboardOverview;}
 const Home=load('src/screens/HomeScreen.tsx',{'react':React,'react-native':rn,'lucide-react-native':Object.fromEntries(['PlusCircle','Heart','ArrowUpRight'].map(key=>[key,()=>null])),'../theme':theme,'../domain':domain,'../components/DailyProgressShareArtwork':{DailyProgressShareArtwork:artwork},'../components/DashboardOverview':{DashboardOverview:dashboard(['goal','time','savings'])}}).HomeScreen;
@@ -17,4 +17,8 @@ test('incomplete check-in remains actionable and maintenance does not duplicate 
 });
 test('dashboard renders selected goal before actions regardless of stored order, while respecting hidden goal',()=>{
  for(const cards of [['savings','goal'],[]]){const Dashboard=dashboard(cards);const html=render(React.createElement(Dashboard,{...props,goalCard:React.createElement('article',null,'GOAL'),actions:React.createElement('button',null,'ACTION')}));assert.ok(html.includes('ACTION'));assert.equal(html.includes('GOAL'),cards.includes('goal'));if(cards.length)assert.ok(html.indexOf('GOAL')<html.indexOf('ACTION'));assert.ok(!html.includes('editor'));}
+});
+
+test('compact overview shows only the selected summary cards without opening customization',()=>{
+ for(const cards of [['goal','time','savings'],['goal']]){const Dashboard=dashboard(cards);const html=render(React.createElement(Dashboard,{...props,goalCard:React.createElement('article',null,'GOAL'),actions:React.createElement('button',null,'ACTION')}));assert.equal(html.includes('Sedan senaste registrering'),cards.includes('time'));assert.equal(html.includes('Uppskattat sparat'),cards.includes('savings'));assert.ok(html.includes('Anpassa'));assert.ok(!html.includes('editor'));assert.ok(html.indexOf('GOAL')<html.indexOf('ACTION'));}
 });

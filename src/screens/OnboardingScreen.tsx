@@ -3,7 +3,7 @@ import React,{useState} from 'react';
 import {Image,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 import type {Mode,Speed} from '../domain';
 import {AppCard,AppButton} from '../components/ui';
 import {OnboardingField,OnboardingChoice} from '../components/OnboardingControls';
@@ -19,6 +19,8 @@ export function OnboardingScreen({onStep,setOnStep,mode,setMode,speed,setSpeed,s
  packPrice:string;setPackPrice:(value:string)=>void;
  begin:()=>void;
 }){
+ const styles=useThemeStyles(createStyles);
+
  const insets=useSafeAreaInsets();
  const [datePickerOpen,setDatePickerOpen]=useState(false);
  const [speedOpen,setSpeedOpen]=useState(false);
@@ -32,8 +34,10 @@ export function OnboardingScreen({onStep,setOnStep,mode,setMode,speed,setSpeed,s
  {mode==='reduce'&&scheduled?<View style={styles.dateOptions}><Text style={styles.dateHeading}>När vill du vara rökfri?</Text><Pressable accessibilityRole="button" onPress={()=>setDatePickerOpen(true)} style={styles.dateSelect}><Text style={styles.dateOptionText}>{quitDay||'Välj stoppdatum i kalendern'}</Text></Pressable><Text style={styles.dateHint}>Ditt dagsmål minskar automatiskt mot noll på det valda datumet.</Text></View>:null}
  </View>:null}{onStep===2?<View style={{gap:15}}><OnboardingField label="Cigaretter per dag" value={baseline} onChange={setBaseline}/><Text style={styles.muted}>Paketstorlek 20 och pris 0 kr används tills du anger egna uppgifter. Med pris 0 beräknas ingen ekonomisk besparing.</Text><Pressable accessibilityRole="button" accessibilityState={{expanded:economyOpen}} onPress={()=>setEconomyOpen(v=>!v)} style={styles.dateSelect}><Text style={styles.dateOptionText}>{economyOpen?'Dölj ekonomiuppgifter':'Lägg till ekonomi (frivilligt)'}</Text></Pressable>{economyOpen?<View style={{gap:15}}><OnboardingField label="Cigaretter per paket" value={packSize} onChange={setPackSize}/><OnboardingField label="Pris per paket (kr)" value={packPrice} onChange={setPackPrice}/></View>:null}</View>:null}{onStep===3?<AppCard><Label>DIN STARTPUNKT</Label><View style={styles.startValueRow}><Text style={styles.statValue}>{baseline}</Text><Text style={styles.startValueUnit}>cigaretter/dag</Text></View><Text style={styles.muted}>{mode==='quit'?'Mål: rökfri från start':scheduled?`Planerat stopp: ${quitDay||'Välj datum'}`:speed==='gentle'?'Lugn nedtrappning':speed==='fast'?'Snabb nedtrappning':'Balanserad nedtrappning'} · {packPrice} kr/paket</Text></AppCard>:null}{fieldError?<Text accessibilityRole="alert" style={styles.muted}>{fieldError}</Text>:null}<AppButton title={onStep===3?'Starta min resa':onStep===0?'Kom igång':'Fortsätt'} onPress={()=>{setFieldError('');if(onStep===2&&!parseOnboardingNumbers(baseline,packSize,packPrice)){setFieldError('Ange 0–200 cigaretter per dag. Paketstorlek ska vara 1–200 och pris 0–100000 kr.');return;}if(onStep===3){begin();return;}if(onStep===1&&mode==='reduce'&&scheduled&&!quitDay){setDatePickerOpen(true);return;}setOnStep(v=>v+1);}}/>{onStep>0?<AppButton title="Tillbaka" secondary onPress={()=>{setFieldError('');setOnStep(v=>v-1);}}/>:null}</ScrollView><CompactDateModal visible={datePickerOpen&&onStep===1&&scheduled&&mode==='reduce'} value={/^\d{4}-\d{2}-\d{2}$/.test(quitDay)?new Date(quitDay+'T12:00:00'):null} onCancel={()=>setDatePickerOpen(false)} onConfirm={date=>{setQuitDay(date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0'));setDatePickerOpen(false);}}/></>;
 }
-function Label({children}:{children:React.ReactNode}){return <Text style={styles.eyebrow}>{children}</Text>}
-const styles=StyleSheet.create({
+function Label({children}:{children:React.ReactNode}){
+ const styles=useThemeStyles(createStyles);
+return <Text style={styles.eyebrow}>{children}</Text>}
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
  root:{flex:1,backgroundColor:C.background},
  brandLogo:{width:225,height:225},
  dateSelect:{backgroundColor:C.elevated,borderColor:C.border,borderWidth:1,borderRadius:12,minHeight:48,paddingHorizontal:14,justifyContent:'center'},
@@ -48,9 +52,9 @@ const styles=StyleSheet.create({
  startValueRow:{flexDirection:'row',alignItems:'baseline',flexWrap:'wrap',columnGap:10,rowGap:4,minHeight:38},
  statValue:{fontSize:28,lineHeight:38,fontWeight:'900',color:C.white,letterSpacing:-.5,includeFontPadding:true},
  startValueUnit:{fontSize:15,lineHeight:24,color:C.muted,includeFontPadding:true},
- muted:{fontSize:13,color:C.muted,lineHeight:20},
- welcomeArt:{height:220,borderRadius:30,backgroundColor:'#171D10',alignItems:'center',justifyContent:'center',overflow:'hidden'},
- artOuter:{width:190,height:190,borderWidth:2,borderColor:'#485E1B',borderRadius:100,alignItems:'center',justifyContent:'center'},
+ muted:{fontSize:15,color:C.muted,lineHeight:23},
+ welcomeArt:{height:220,borderRadius:30,backgroundColor:C.accentSubtle,alignItems:'center',justifyContent:'center',overflow:'hidden'},
+ artOuter:{width:190,height:190,borderWidth:2,borderColor:C.accent,borderRadius:100,alignItems:'center',justifyContent:'center'},
  artInner:{width:135,height:135,borderRadius:90,backgroundColor:C.limeSoft,borderWidth:12,borderColor:C.lime,alignItems:'center',justifyContent:'center'},
  progressTrack:{height:5,borderRadius:4,backgroundColor:C.soft,overflow:'hidden'},
  progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:4}

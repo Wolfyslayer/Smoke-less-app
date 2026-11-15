@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript'),React=require('react'),{renderToStaticMarkup:render}=require('react-dom/server');
 function load(path,deps){const scope={exports:{},require:id=>{if(id==='./accountDeletionSafety')return load('src/accountDeletionSafety.ts');if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{fileName:path,compilerOptions:{jsx:ts.JsxEmit.React,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText,scope);return scope.exports;}
 test('SOS renders immediate breathing support before optional personal plan settings',()=>{
- const Screen=load('src/screens/SOSScreen.tsx',{'react':React,'react-native':{View:'div',Text:'p',Pressable:'button',Animated:{View:'div'},StyleSheet:{create:x=>x}},'lucide-react-native':{Wind:()=>null},'../theme':{C:{}}}).SOSScreen;
+ const Screen=load('src/screens/SOSScreen.tsx',{'react':React,'react-native':{View:'div',Text:'p',Pressable:'button',Animated:{View:'div'},StyleSheet:{create:x=>x}},'lucide-react-native':{Wind:()=>null},'../theme':{useThemeColors:()=>({}),useThemeStyles:fn=>fn({})}}).SOSScreen;
  const html=render(React.createElement(Screen,{journeyPanel:React.createElement('p',null,'PERSONAL SETTINGS'),breathScale:{interpolate:()=>1},breathing:false,breathSeconds:0,sosIdeas:[{title:'Water',detail:'Take a break'}],sosTip:0,trigger:'Stress',sosTimer:0,sosStartIntensity:null}));
  assert.ok(html.includes('Starta andningsövning'));assert.ok(html.includes('Min plan för röksug'));assert.ok(!html.includes('PERSONAL SETTINGS'));assert.ok(html.indexOf('Starta andningsövning')<html.indexOf('Min plan för röksug'));
 });
@@ -18,5 +18,5 @@ test('new recovery copies remain scoped to guest or the exact account without ch
  await assert.rejects(backup(data,'user/a'),/Ogiltigt/);assert.equal(values.get('legacy-copy'),'keep');assert.equal(values.size,4);
 });
 test('home and SOS do not repeat introductory cards above their primary content',()=>{
- const ui=fs.readFileSync('src/components/AppSessionView.tsx','utf8');assert.match(ui,/\(\['plan','register','stats','history','benefits'\] as Tab\[\]\)\.includes\(tab\)\?<SectionIntroCard/);
+ const ui=fs.readFileSync('src/components/AppSessionView.tsx','utf8');assert.doesNotMatch(ui,/<SectionIntroCard/);assert.match(ui,/<ScreenHeader/);assert.match(ui,/<AppScreenRouter/);
 });

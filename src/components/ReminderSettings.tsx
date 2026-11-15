@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import {createReminderService} from '../reminderService';
 import {ReminderError,reminderDefaults,type ReminderSettings as Settings} from '../domain/reminders';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 const service=createReminderService(AsyncStorage,{
  permission:async()=>{if(Platform.OS==='web')return false;const current=await Notifications.getPermissionsAsync();return current.granted||(await Notifications.requestPermissionsAsync()).granted;},
  cancel:async id=>{if(Platform.OS!=='web')await Notifications.cancelScheduledNotificationAsync(id);},
@@ -15,6 +15,8 @@ const timeFields=['hour','minute','riskHour','riskMinute','quietStart','quietEnd
 type Times=Record<typeof timeFields[number],string>;
 const timeTexts=(settings:Settings)=>Object.fromEntries(timeFields.map(key=>[key,String(settings[key]).padStart(2,'0')])) as Times;
 export function ReminderSettings(){
+ const styles=useThemeStyles(createStyles);
+
  const [settings,setSettings]=useState<Settings>(reminderDefaults),[times,setTimes]=useState(timeTexts(reminderDefaults));
  const [ready,setReady]=useState(false),[busy,setBusy]=useState(false),[status,setStatus]=useState('Läser inställningar…');
  const lock=useRef(false),mounted=useRef(true);
@@ -50,4 +52,4 @@ export function ReminderSettings(){
   <Text style={styles.text}>Tiderna följer telefonens lokala tidszon. Ändringar gäller efter aktivering. Saknade registreringar används inte för att skicka fler notiser. Du kan också stänga av notiser i telefonens inställningar.</Text>
  </View>;
 }
-const styles=StyleSheet.create({card:{gap:12,padding:18,borderRadius:20,backgroundColor:C.surface,borderWidth:1,borderColor:C.border},section:{gap:8},heading:{fontSize:19,fontWeight:'800',color:C.white},text:{fontSize:14,lineHeight:21,color:C.dim},link:{fontSize:15,fontWeight:'800',color:C.lime},row:{flexDirection:'row',gap:12},input:{flex:1,minWidth:0,minHeight:48,padding:12,fontSize:16,color:C.white,borderWidth:1,borderColor:C.border,borderRadius:12,backgroundColor:C.elevated},button:{minHeight:48,padding:12,justifyContent:'center',borderWidth:1,borderColor:C.border,borderRadius:12}});
+const createStyles=(C:ThemeColors)=>StyleSheet.create({card:{gap:12,padding:18,borderRadius:24,backgroundColor:C.surface,borderWidth:1,borderColor:C.border},section:{gap:8},heading:{fontSize:19,fontWeight:'800',color:C.white},text:{fontSize:14,lineHeight:21,color:C.dim},link:{fontSize:15,fontWeight:'800',color:C.lime},row:{flexDirection:'row',gap:12},input:{flex:1,minWidth:0,minHeight:48,padding:12,fontSize:16,color:C.white,borderWidth:1,borderColor:C.border,borderRadius:12,backgroundColor:C.elevated},button:{minHeight:48,padding:12,justifyContent:'center',borderWidth:1,borderColor:C.border,borderRadius:12}});

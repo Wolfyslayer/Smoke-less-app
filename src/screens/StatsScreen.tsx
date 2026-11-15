@@ -1,19 +1,32 @@
 import {buildPersonalTrends} from '../domain/personalTrends';
 import {PersonalTrends} from '../components/PersonalTrends';
-import React,{useMemo} from 'react';
+import React,{useMemo,useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import {calendarDaysInclusive,dayKey,savings,type Data} from '../domain';
 
 type Props={data:Data;period:number;onPeriodChange:(days:number)=>void;clock:number;weekly:number[];todayCount:number;recentCravingsCount:number;cravingTriggers:[string,number][];cigaretteTriggers:[string,number][]};
 const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(n);
 const periodStart=(clock:number,days:number)=>{const d=new Date(clock);d.setHours(0,0,0,0);d.setDate(d.getDate()-(days-1));return d.getTime()};
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
-function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
-function Heading({children}:{children:React.ReactNode}){return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
-function Stat({label,value}:{label:string;value:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
-function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessible accessibilityRole="text" accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter${n===0?". Ingen cigarett registrerad; eventuell rökfri bekräftelse visas separat.":""}`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
+function Card({children,style}:{children:React.ReactNode;style?:any}){
+ const styles=useThemeStyles(createStyles);
+return <View style={[styles.card,style]}>{children}</View>}
+function Label({children}:{children:React.ReactNode}){
+ const styles=useThemeStyles(createStyles);
+return <Text style={styles.label}>{children}</Text>}
+function Heading({children}:{children:React.ReactNode}){
+ const styles=useThemeStyles(createStyles);
+return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
+function Stat({label,value}:{label:string;value:string}){
+ const styles=useThemeStyles(createStyles);
+return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
+function Bars({values,clock}:{values:number[];clock:number}){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessible accessibilityRole="text" accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter${n===0?". Ingen cigarett registrerad; eventuell rökfri bekräftelse visas separat.":""}`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
+ const [showTrends,setShowTrends]=useState(false);
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
  const minute=Math.floor(clock/60000);
  const trends=useMemo(()=>buildPersonalTrends(data,clock),[data,minute]);
  const strategyOutcomes=new Map<string,{yes:number;no:number}>();
@@ -57,9 +70,8 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const confirmedSmokeFreeDays=trends.smokeFreeDays.filter(key=>planStartKey!==null&&key>=planStartKey&&(startKey===null||key>=startKey)).length;
 
  return <View style={styles.screen}>
-  <PersonalTrends trends={trends}/>
-  <Card style={{padding:19,borderColor:'#425C29'}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{periodEntries.length}</Text><Text style={styles.muted}>{period===0?'Alla registreringar':'Kalenderdagar inklusive idag'}</Text></Card>
-  <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" accessibilityState={{selected:period===v}} accessibilityLabel={`Visa statistik för ${label.toLowerCase()}`} key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.background:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
+  <Card style={{padding:19,borderColor:C.border}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{periodEntries.length}</Text><Text style={styles.muted}>{period===0?'Alla registreringar':'Kalenderdagar inklusive idag'}</Text></Card>
+  <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" accessibilityState={{selected:period===v}} accessibilityLabel={`Visa statistik för ${label.toLowerCase()}`} key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.onAccent:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
   <Heading>Cigaretter per dag</Heading><Card><Text style={styles.muted}>Diagrammet visar alltid de senaste sju dagarna, oavsett vald statistikperiod.</Text><Bars values={weekly} clock={clock}/><Text style={styles.muted}>De senaste sju kalenderdagarna, med antal registrerade cigaretter ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text></Card>
   <Text style={styles.muted}>Rökfria dagar räknas bara när dagen har bekräftats och ligger inom vald period. Dagar utan registrering räknas inte automatiskt som rökfria.</Text>
   <View style={styles.grid}><Stat label="REGISTRERAT IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="UPPSKATTAT SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="UPPSKATTAT SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.filter(e=>Number.isFinite(Date.parse(e.at))&&Date.parse(e.at)<=clock).length)}/><Stat label="REGISTRERAT SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
@@ -86,13 +98,15 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
    {cravingTriggers.length===0?<Text style={styles.muted}>Registrera röksug under Stöd vid röksug för att upptäcka dina vanligaste situationer.</Text>:cravingTriggers.slice(0,5).map(([name,n])=><View key={name} style={{gap:6}}><View style={styles.sectionRow}><Text style={styles.cardTitle}>{name}</Text><Text style={styles.muted}>{n} st</Text></View><View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${Math.round(n/recentCravingsCount*100)}%` as `${number}%`}]}/></View></View>)}
   </Card>
   <Card style={{gap:12}}><Label>VANLIGA SITUATIONER VID CIGARETTER</Label>{cigaretteTriggers.length===0?<Text style={styles.muted}>Välj en situation när du registrerar en cigarett för att se mönster här.</Text>:cigaretteTriggers.slice(0,5).map(([name,n])=><View key={name} style={styles.sectionRow}><Text style={styles.cardTitle}>{name}</Text><Text style={styles.muted}>{n} st</Text></View>)}<Text style={styles.muted}>Statistiken bygger på dina egna registreringar de senaste 30 dagarna. Den visar mönster, inte medicinska slutsatser.</Text></Card>
+  <Pressable accessibilityRole="button" accessibilityState={{expanded:showTrends}} onPress={()=>setShowTrends(value=>!value)} style={styles.trendsToggle}><View style={{gap:4,flex:1}}><Text style={styles.cardTitle}>Fördjupade trender</Text><Text style={styles.muted}>Veckor, mönster och personliga rekord</Text></View><Text style={{color:C.accent,fontSize:22}}>{showTrends?'−':'+'}</Text></Pressable>
+  {showTrends?<PersonalTrends trends={trends}/>:null}
  </View>;
 }
-const styles=StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17,gap:8},
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ screen:{gap:24},trendsToggle:{flexDirection:'row',alignItems:'center',gap:16,minHeight:72,paddingVertical:12,borderBottomWidth:1,borderBottomColor:C.border},card:{backgroundColor:C.surface,borderRadius:28,padding:22,gap:14},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
- muted:{fontSize:13,lineHeight:19,color:C.dim},grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexWrap:'wrap',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
+ muted:{fontSize:15,lineHeight:23,color:C.dim},grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexWrap:'wrap',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
  segment:{flexDirection:'row',flexWrap:'wrap',gap:5,padding:5,backgroundColor:C.elevated,borderRadius:15},segmentItem:{flex:1,minWidth:96,minHeight:48,justifyContent:'center',paddingVertical:11,borderRadius:11,alignItems:'center'},
  bars:{minHeight:120,flexDirection:'row',alignItems:'flex-end',gap:8},progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
 });
