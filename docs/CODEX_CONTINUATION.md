@@ -4,8 +4,8 @@
 
 - Fas **16.6 – flexiblare planering**, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/163.
 - Branch `feat/phase-16-6-flexible-planning`, bas main `a3c53e8`.
-- Senast verifierad PR-commit före implementationspaketet: `c9ce3d8`, både validate och rules gröna.
-- Verifierad checklista: `docs/PHASE_16_6_PLANNING.md`. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %). Implementationen i nästa commit räknas först efter egen grön CI.
+- Senast verifierad implementationscommit: `f4231c3`, både validate och rules gröna.
+- Verifierad checklista: `docs/PHASE_16_6_PLANNING.md`. 6/8 huvudpunkter (75 %) och 28/32 delpunkter (87,5 %). Sista bekräftelsefeedbacken i nästa commit räknas först efter egen grön CI.
 
 ## Senaste arbete
 
@@ -15,7 +15,7 @@ Lokalt: TypeScript godkänd och 173 tester godkända (157 ordinarie, 10 storage,
 
 ## Nästa steg
 
-Kontrollera både CI på implementationscommitten. Granska den kvarvarande faschecklistan, särskilt takt-/datumförhandsvisning i PlanScreen, kontokonflikter och användarmeddelande om en profil hinner ändras vid bekräftelse. Slutför acceptans innan merge. Uppdatera roadmap och fasfil först med faktiska resultat. Bred fysisk Android-, TalkBack-, offline- och tvåenhets-QA ligger i fas 25 och är inte genomförd.
+Kontrollera båda CI på sista bekräftelsefeedbacken. Förhandsvisning stängs nu först när renderad profil motsvarar den bekräftade; en konflikt lämnar utkastet öppet med förklaring. Takt/datum och befintliga revisionsskydd är avstämda i fasplanen. Därefter återstår slutacceptans 6.1–6.2, 8.3–8.4 innan merge. Bred fysisk Android-, TalkBack-, offline- och tvåenhets-QA ligger i fas 25 och är inte genomförd.
 
 ## Avslutade faser
 

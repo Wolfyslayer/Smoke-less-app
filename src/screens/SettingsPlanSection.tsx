@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect,useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {Target,CalendarDays,Minus,Plus} from 'lucide-react-native';
 import {C} from '../theme';
@@ -17,6 +17,12 @@ function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;
 export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTarget}:Props){
  const [draft,setDraft]=useState<{base:Profile;value:number}|null>(null);
  const [policy,setPolicy]=useState<PlanDatePolicy>('keep');
+ const [submitted,setSubmitted]=useState<DailyTargetPreview|null>(null);
+ useEffect(()=>{
+  if(!submitted)return;
+  if(JSON.stringify(p)===JSON.stringify(submitted.next)){setDraft(null);setSubmitted(null);}
+  else if(JSON.stringify(p)!==JSON.stringify(submitted.expected)||dayKey(new Date())!==submitted.day)setSubmitted(null);
+ },[p,submitted]);
  const now=new Date();
  const expired=!!draft?.base.plannedQuitAt&&dayKey(new Date(draft.base.plannedQuitAt))<=dayKey(now);
  const preview=draft?previewDailyTarget(draft.base,draft.value,policy,now):null;
@@ -44,8 +50,8 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
     {draft.base.plannedQuitAt?<><Choice title="Behåll valt stoppdatum" subtitle={expired?'Datumet har passerat. Välj automatisk omräkning eller avbryt.':'Det valda datumet ligger fast och framtida mål anpassas.'} selected={policy==='keep'} onPress={()=>setPolicy('keep')}/><Choice title="Räkna om stoppdatum automatiskt" subtitle="Det fasta datumet tas bort. Din sparade takt används från det nya dagsmålet." selected={policy==='automatic'} onPress={()=>setPolicy('automatic')}/></>:null}
     {stale?<Text accessibilityRole="alert" style={styles.muted}>Planen har ändrats sedan förhandsvisningen. Avbryt och välj ditt mål igen.</Text>:null}
     {preview?<><Text style={styles.muted}>{policy==='keep'&&draft.base.plannedQuitAt?'Behållet':'Beräknat'} stoppdatum: {preview.quitAt}. Din ursprungliga start, registreringar, röksug och avstämningar behålls.</Text>{preview.goals.map(row=><Text key={row.day} style={styles.muted}>{row.day}: högst {row.goal} cigaretter</Text>)}</>:<Text accessibilityRole="alert" style={styles.muted}>Det här valet kan inte sparas. Kontrollera datumvalet eller avbryt.</Text>}
-    <Pressable accessibilityRole="button" accessibilityLabel="Bekräfta nytt dagsmål" accessibilityState={{disabled:!preview||stale}} disabled={!preview||stale} style={[styles.choice,(!preview||stale)&&styles.disabled]} onPress={()=>{if(preview&&!stale){onChangeDailyTarget(preview);setDraft(null);}}}><Text style={styles.cardTitle}>Bekräfta nytt dagsmål</Text></Pressable>
-    <Pressable accessibilityRole="button" accessibilityLabel="Avbryt måländring" style={styles.choice} onPress={()=>{setDraft(null);setPolicy('keep');}}><Text style={styles.cardTitle}>Avbryt</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Bekräfta nytt dagsmål" accessibilityState={{disabled:!preview||stale||!!submitted,busy:!!submitted}} disabled={!preview||stale||!!submitted} style={[styles.choice,(!preview||stale||!!submitted)&&styles.disabled]} onPress={()=>{if(preview&&!stale&&!submitted){setSubmitted(preview);onChangeDailyTarget(preview);}}}><Text style={styles.cardTitle}>{submitted?'Bekräftar…':'Bekräfta nytt dagsmål'}</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Avbryt måländring" style={styles.choice} onPress={()=>{setDraft(null);setSubmitted(null);setPolicy('keep');}}><Text style={styles.cardTitle}>Avbryt</Text></Pressable>
    </View>:null}
 
   </Card>

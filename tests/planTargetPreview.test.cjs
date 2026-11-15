@@ -63,6 +63,7 @@ test('calendar keeps a stable incoming timestamp and rechecks future date at con
  assert.match(source,/disabled=new Date\(year,month,day\)\.getTime\(\)<=today\.getTime\(\)/);
  assert.match(source,/if\(chosen&&parseFutureQuitDate\(dayKey\(chosen\),new Date\(\)\)\)onConfirm\(chosen\)/);
  const settings=fs.readFileSync('src/screens/SettingsPlanSection.tsx','utf8');
- assert.match(settings,/disabled=\{!preview\|\|stale\}/);
- assert.match(settings,/onPress=\{\(\)=>\{setDraft\(null\);setPolicy\('keep'\);\}\}/);
+ assert.match(settings,/disabled=\{!preview\|\|stale\|\|!!submitted\}/);
+ assert.match(settings,/JSON\.stringify\(p\)===JSON\.stringify\(submitted\.next\)\)\{setDraft\(null\);setSubmitted\(null\);\}/);
+ assert.match(settings,/onPress=\{\(\)=>\{setDraft\(null\);setSubmitted\(null\);setPolicy\('keep'\);\}\}/);
 });

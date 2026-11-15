@@ -41,7 +41,7 @@
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
-| 16.6 | Flexiblare planering och långsiktig målanpassning | Pågående; 1/8 och 6/32 verifierade, implementation inväntar CI | #163, docs/PHASE_16_6_PLANNING.md |
+| 16.6 | Flexiblare planering och långsiktig målanpassning | Pågående; 6/8 och 28/32 verifierade | #163, docs/PHASE_16_6_PLANNING.md |
 | 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Planerad | — |
@@ -556,7 +556,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR utan kosmetisk scope creep.
 
 ### Fas 16.5 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-Se docs/PHASE_16_5_DASHBOARD.md och PR #162. 8/8, 32/32; PR #162 merged (a3c53e8).
+PR #162 merged as a3c53e8; 8/8 and 32/32. See docs/PHASE_16_5_DASHBOARD.md.
 
 1. [x] **Dashboardinventering (4/4)**
    - [x] 1.1 Kartlägg befintliga kort.
@@ -600,46 +600,46 @@ Se docs/PHASE_16_5_DASHBOARD.md och PR #162. 8/8, 32/32; PR #162 merged (a3c53e8
    - [x] 8.4 Merga fas-PR.
 
 ### Fas 16.6 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+PR #163: 6/8, 28/32. See docs/PHASE_16_6_PLANNING.md.
 
-1. [ ] **Inventering (0/4)**
-   - [ ] 1.1 Kartlägg befintliga tre planlägen.
-   - [ ] 1.2 Kartlägg datum- och målberäkningar.
-   - [ ] 1.3 Kartlägg synk och historik.
-   - [ ] 1.4 Undvik dubbel implementation.
-2. [ ] **Måländring (0/4)**
-   - [ ] 2.1 Förhandsvisa nytt dagsmål.
-   - [ ] 2.2 Förhandsvisa ny takt.
-   - [ ] 2.3 Förhandsvisa stoppdatum.
-   - [ ] 2.4 Förklara konsekvenser tydligt.
-3. [ ] **Datumval (0/4)**
-   - [ ] 3.1 Behåll valt slutdatum vid behov.
-   - [ ] 3.2 Tillåt automatisk omräkning.
-   - [ ] 3.3 Hantera passerade datum.
-   - [ ] 3.4 Hantera lokala kalenderdagar.
-4. [ ] **Historik (0/4)**
-   - [ ] 4.1 Bevara cigarettregistreringar.
-   - [ ] 4.2 Bevara SOS och avstämningar.
-   - [ ] 4.3 Bevara ursprunglig start.
-   - [ ] 4.4 Undvik tyst överskrivning.
-5. [ ] **Kontosynk (0/4)**
-   - [ ] 5.1 Hantera gästläge.
-   - [ ] 5.2 Hantera revisionskonflikter.
-   - [ ] 5.3 Hantera offlineändringar.
-   - [ ] 5.4 Hantera kontobyte.
-6. [ ] **UX (0/4)**
+1. [x] **Inventering (4/4)**
+   - [x] 1.1 Kartlägg befintliga tre planlägen.
+   - [x] 1.2 Kartlägg datum- och målberäkningar.
+   - [x] 1.3 Kartlägg synk och historik.
+   - [x] 1.4 Undvik dubbel implementation.
+2. [x] **Måländring (4/4)**
+   - [x] 2.1 Förhandsvisa nytt dagsmål.
+   - [x] 2.2 Förhandsvisa ny takt.
+   - [x] 2.3 Förhandsvisa stoppdatum.
+   - [x] 2.4 Förklara konsekvenser tydligt.
+3. [x] **Datumval (4/4)**
+   - [x] 3.1 Behåll valt slutdatum vid behov.
+   - [x] 3.2 Tillåt automatisk omräkning.
+   - [x] 3.3 Hantera passerade datum.
+   - [x] 3.4 Hantera lokala kalenderdagar.
+4. [x] **Historik (4/4)**
+   - [x] 4.1 Bevara cigarettregistreringar.
+   - [x] 4.2 Bevara SOS och avstämningar.
+   - [x] 4.3 Bevara ursprunglig start.
+   - [x] 4.4 Undvik tyst överskrivning.
+5. [x] **Kontosynk (4/4)**
+   - [x] 5.1 Hantera gästläge.
+   - [x] 5.2 Hantera revisionskonflikter.
+   - [x] 5.3 Hantera offlineändringar.
+   - [x] 5.4 Hantera kontobyte.
+6. [ ] **UX (2/4)**
    - [ ] 6.1 Visa begriplig bekräftelse.
    - [ ] 6.2 Erbjud avbryt.
-   - [ ] 6.3 Visa stödjande texter.
-   - [ ] 6.4 Granska tillgänglighet.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa alla planlägen.
-   - [ ] 7.2 Testa datumgränser.
-   - [ ] 7.3 Testa konfliktfall.
-   - [ ] 7.4 Verifiera CI.
-8. [ ] **Avslut (0/4)**
-   - [ ] 8.1 Dokumentera ändringskontrakt.
-   - [ ] 8.2 Samla enhets-QA till fas 25.
+   - [x] 6.3 Visa stödjande texter.
+   - [x] 6.4 Granska tillgänglighet.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa alla planlägen.
+   - [x] 7.2 Testa datumgränser.
+   - [x] 7.3 Testa konfliktfall.
+   - [x] 7.4 Verifiera CI.
+8. [ ] **Avslut (2/4)**
+   - [x] 8.1 Dokumentera ändringskontrakt.
+   - [x] 8.2 Samla enhets-QA till fas 25.
    - [ ] 8.3 Verifiera slutlig grön CI.
    - [ ] 8.4 Merga fas-PR.
 
