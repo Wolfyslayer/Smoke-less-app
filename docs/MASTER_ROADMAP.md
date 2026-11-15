@@ -50,8 +50,8 @@
 | 21.0 | Evidensbaserat stod, nikotinlakemedel och vardvagar | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #169, `70a2295` |
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #170, `577558d` |
 | 23.0 | Förenklad startsida och tydlig informationshierarki | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #171, `3a05bfc` |
-| 24.0 | Lättbegriplig onboarding och vägledd användning | Startad; fast 8x4-checklista | docs/PHASE_24_ONBOARDING.md |
-| 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
+| 24.0 | Lättbegriplig onboarding och vägledd användning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #172, `d606126` |
+| 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Startad; fast 8x4-checklista | docs/PHASE_25_RELEASE.md |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 
 
@@ -1041,9 +1041,11 @@ Faktiska React-renderingar med plattformsadapter verifierar ordning, kollapsade 
 Behåll fyra steg, alla tre planvägar, gästläge och befintlig frivillig kontoanslutning. Ersätt automatiskt växlande välkomsttext med stabil kort introduktion. Basnivå anges uttryckligen; paketstorlek 20 och pris 0 är öppet redovisade standardvärden i frivillig ekonomidel. Lugn standardtakt med valbar annan takt. Validera fält innan nästa steg; behåll inmatning vid Tillbaka. Ingen befintlig historik får raderas när profil skapas. Kontoval och synkförklaring ska finnas kvar.
 
 Lägg diskreta valbara tips i registrering, SOS, plan och statistik med Läsa/stänga och Visa inte igen. Endast avvisade tips-ID:n sparas lokalt per gäst/konto via befintlig preferenstjänst; aldrig registreringar eller medicinska slutsatser. Fel vid sparning ska vara återförsökbara. Tips ska inte täcka innehåll eller registrera något. Verifiera nollnivå, tomma/ogiltiga tal, datum, data-/kontoisolering, bakåtnavigering och frivillig hjälp. Fysisk TalkBack/tangentbord/Safe Area kvar i fas 25.
-**Status:** Lokala kontroller passerar. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %); kodpunkter inväntar CI.
+**Status:** Mergad i PR #172 som `d606126`, head `99e3560` med grön validate/rules. 8/8 och 32/32 (100 %); fysisk QA kvar i fas 25.
 
 ## Genomförd acceptans
+
+Slutgranskning efter grön CI på `dd68804`: paketstorlek begränsas till 1–200 och pris till 0–100000 kr enligt befintligt Firestore-schema. Gränstester tillagda; reglerna ändras inte. TypeScript och 218 tester passerar även efter korrigeringen. Ny slutlig CI krävs före merge.
 
 Fyra steg och alla planval är kvar. Välkomsttexten roterar inte längre och stor logobild visas bara på första steget. Lugn standardtakt kan ändras via utfällning. Endast basnivå behöver anges; frivillig ekonomidel har öppna standarder (20 per paket, pris 0 utan besparing). Tidigare exempelpris 85 används inte som om det vore användarens eget. Tomma tal och exponent-/hexformat accepteras inte som verkliga uppgifter. Nollnivå och nollpris stöds. Fel före nästa steg visas på svenska; Tillbaka behåller värden. Stegindikator har tillgängligt värde och radioval använder checked.
 
@@ -1056,41 +1058,41 @@ TypeScript och 218 tester passerar (202 ordinarie, 10 storage, 6 migration). Tes
    - [x] 1.2 Identifiera information som konkurrerar om uppmärksamhet.
    - [x] 1.3 Definiera tre viktigaste förstagångsuppgifter.
    - [x] 1.4 Fastställ acceptanskriterier och avgränsning.
-2. [ ] **Informationshierarki (0/4)**
-   - [ ] 2.1 Definiera tydligt huvudfokus.
-   - [ ] 2.2 Flytta sekundär information till rätt vy.
-   - [ ] 2.3 Ta bort duplicerade navigationsvägar.
-   - [ ] 2.4 Behåll åtkomst till fördjupning.
-3. [ ] **Primära användarflöden (0/4)**
-   - [ ] 3.1 Gör registrering tydlig.
-   - [ ] 3.2 Gör SOS lätt att hitta.
-   - [ ] 3.3 Gör planval lätt att förstå.
-   - [ ] 3.4 Visa nästa relevanta steg.
-4. [ ] **Tillstånd och innehåll (0/4)**
-   - [ ] 4.1 Hantera helt ny användare.
-   - [ ] 4.2 Hantera tom historik och nollmål.
-   - [ ] 4.3 Hantera svår dag utan skuldbeläggning.
-   - [ ] 4.4 Använd korta begripliga svenska texter.
-5. [ ] **Visuell design (0/4)**
-   - [ ] 5.1 Använd konsekvent typografi.
-   - [ ] 5.2 Behåll tydlig knapphierarki.
-   - [ ] 5.3 Begränsa skroll och visuell täthet.
-   - [ ] 5.4 Granska olika skärmstorlekar.
-6. [ ] **Tillgänglighet och kontroll (0/4)**
-   - [ ] 6.1 Granska TalkBack-ordning.
-   - [ ] 6.2 Granska stora textstorlekar.
-   - [ ] 6.3 Granska tryckytor och kontrast.
-   - [ ] 6.4 Gör hjälp och tips frivilliga.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa huvudflöden och tillstånd.
-   - [ ] 7.2 Testa databevarande och gästläge.
-   - [ ] 7.3 Testa navigering och avbrott.
-   - [ ] 7.4 Verifiera CI på aktuell commit.
-8. [ ] **Avslut (2/4)**
+2. [x] **Informationshierarki (4/4)**
+   - [x] 2.1 Definiera tydligt huvudfokus.
+   - [x] 2.2 Flytta sekundär information till rätt vy.
+   - [x] 2.3 Ta bort duplicerade navigationsvägar.
+   - [x] 2.4 Behåll åtkomst till fördjupning.
+3. [x] **Primära användarflöden (4/4)**
+   - [x] 3.1 Gör registrering tydlig.
+   - [x] 3.2 Gör SOS lätt att hitta.
+   - [x] 3.3 Gör planval lätt att förstå.
+   - [x] 3.4 Visa nästa relevanta steg.
+4. [x] **Tillstånd och innehåll (4/4)**
+   - [x] 4.1 Hantera helt ny användare.
+   - [x] 4.2 Hantera tom historik och nollmål.
+   - [x] 4.3 Hantera svår dag utan skuldbeläggning.
+   - [x] 4.4 Använd korta begripliga svenska texter.
+5. [x] **Visuell design (4/4)**
+   - [x] 5.1 Använd konsekvent typografi.
+   - [x] 5.2 Behåll tydlig knapphierarki.
+   - [x] 5.3 Begränsa skroll och visuell täthet.
+   - [x] 5.4 Granska olika skärmstorlekar.
+6. [x] **Tillgänglighet och kontroll (4/4)**
+   - [x] 6.1 Granska TalkBack-ordning.
+   - [x] 6.2 Granska stora textstorlekar.
+   - [x] 6.3 Granska tryckytor och kontrast.
+   - [x] 6.4 Gör hjälp och tips frivilliga.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa huvudflöden och tillstånd.
+   - [x] 7.2 Testa databevarande och gästläge.
+   - [x] 7.3 Testa navigering och avbrott.
+   - [x] 7.4 Verifiera CI på aktuell commit.
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Flytta bred fysisk enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 25.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.

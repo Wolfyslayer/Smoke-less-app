@@ -2,10 +2,10 @@
 
 ## Aktuellt
 
-- Fas **24.0 – onboarding och vägledning**.
-- Branch `feat/phase-24-guided-onboarding`, från uppdaterad main `3a05bfc`.
+- Fas **25.0 – slutlig QA, säkerhet och release**.
+- Branch `feat/phase-25-release-readiness`, från uppdaterad main `d606126`.
 - En PR öppnas för denna branch; hitta den på GitHub och skapa inte dubblett.
-- Fast checklista: `docs/PHASE_24_ONBOARDING.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
+- Fast checklista: `docs/PHASE_25_RELEASE.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
 
 ## Senaste avslutade arbete
 

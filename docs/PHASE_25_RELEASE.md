@@ -1,0 +1,49 @@
+# Fas 25.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
+
+## Grind och avgränsning
+
+Ingen offentlig publicering eller produktionsändring ingår utan uttryckligt lanseringsbeslut. Verifiera befintlig säkerhetsmodell, negativa emulatorfall, serverns raderingsprototyp, lokal lagring och releaseunderlag. Samla uppskjuten fysisk QA från faser 8–24. Markera inte fysisk eller driftsatt funktion klar på grund av kodtester. Firestore-regler ändras bara vid verifierat behov och då enligt separat säkerhets-PR-policy.
+
+Vid start: ADB finns men `adb devices -l` visar ingen ansluten enhet. Native-projektkällor och signerad releasekonfiguration saknas i arbetskopian (endast tidigare byggcache finns). Kontoradering är en icke driftsatt serverprototyp utan klientflöde. Integritetspolicy saknar ansvarig, kontakt, lagringsregioner och publicerad URL. Kontrollera vad som kan färdigställas lokalt och dokumentera konkret återstående acceptans innan fasen får avslutas. Fas 26 kräver faktisk lansering och verklig återkoppling.
+**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
+
+1. [ ] **Testplan (0/4)**
+   - [ ] 1.1 Samla uppskjutna testfall från faser 8–17.
+   - [ ] 1.2 Fastställ enhetsmatris.
+   - [ ] 1.3 Dokumentera PASS/FAIL och testad commit.
+   - [ ] 1.4 Prioritera blockerande fel.
+2. [ ] **Android-regression (0/4)**
+   - [ ] 2.1 Testa onboarding och planer.
+   - [ ] 2.2 Testa SOS, historik och statistik.
+   - [ ] 2.3 Testa PNG-delning och widgets.
+   - [ ] 2.4 Testa Google-inloggning och notiser.
+3. [ ] **Enheter och tillgänglighet (0/4)**
+   - [ ] 3.1 Testa Safe Area och systemfält.
+   - [ ] 3.2 Testa små/stora skärmar och text.
+   - [ ] 3.3 Testa TalkBack och tangentbord.
+   - [ ] 3.4 Testa navigering och avslutsdialog.
+4. [ ] **Synk och integritet (0/4)**
+   - [ ] 4.1 Testa offline och gästläge.
+   - [ ] 4.2 Testa tvåenhetssynk och konflikter.
+   - [ ] 4.3 Testa kontobyten.
+   - [ ] 4.4 Testa kontoradering.
+5. [ ] **Säkerhet (0/4)**
+   - [ ] 5.1 Granska Firestore-regler.
+   - [ ] 5.2 Verifiera negativa behörighetstester.
+   - [ ] 5.3 Granska datalagring och loggar.
+   - [ ] 5.4 Åtgärda blockerande säkerhetsfel.
+6. [ ] **Play Store (0/4)**
+   - [ ] 6.1 Färdigställ integritetspolicy.
+   - [ ] 6.2 Färdigställ Data safety.
+   - [ ] 6.3 Färdigställ butikstexter och skärmbilder.
+   - [ ] 6.4 Verifiera aktuell Play-policy.
+7. [ ] **Release (0/4)**
+   - [ ] 7.1 Bygg signerad release.
+   - [ ] 7.2 Verifiera release på Android.
+   - [ ] 7.3 Verifiera alla obligatoriska CI.
+   - [ ] 7.4 Säkerställ support och återställningsplan.
+8. [ ] **Avslut (0/4)**
+   - [ ] 8.1 Dokumentera slutacceptans.
+   - [ ] 8.2 Åtgärda blockerande regressioner.
+   - [ ] 8.3 Verifiera godkända releasegrindar.
+   - [ ] 8.4 Publicera först efter uttryckligt lanseringsbeslut.
