@@ -1,0 +1,36 @@
+name: Android release smoke (manual, existing APK)
+on:
+  workflow_dispatch:
+    inputs:
+      apk_sha256:
+        description: SHA-256 of pre-installed standalone candidate on dedicated QA runner
+        required: true
+        type: string
+permissions:
+  contents: read
+  checks: read
+concurrency:
+  group: android-release-smoke
+  cancel-in-progress: false
+jobs:
+  guest-smoke:
+    runs-on: [self-hosted, smokeless-qa]
+    timeout-minutes: 15
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      APK_SHA256: ${{ inputs.apk_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/require-green-ci.cjs
+      - name: Test only the disposable offline QA emulator
+        shell: pwsh
+        run: ./scripts/run-android-e2e.ps1 -Serial emulator-5554 -ApkPath "$env:SMOKELESS_QA_APK_PATH" -ApkSha256 $env:APK_SHA256 -ReportDirectory "$env:RUNNER_TEMP/smokeless-e2e"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: synthetic-android-smoke
+          path: ${{ runner.temp }}/smokeless-e2e
+          retention-days: 7

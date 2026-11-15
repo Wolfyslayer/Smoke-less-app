@@ -2,6 +2,8 @@
 
 ## Aktiv fas
 
+- Fas 31: `feat/phase-31-android-regression`, staplad på fas 30 PR #182 (529be8b validate/rules success). Läs PHASE_31_ANDROID_REGRESSION.md och PHASE_31_CHECKLIST.md. Offline-gästflöde för Maestro och PowerShell-körare begränsad till disponibel AVD SmokeLess_QA och Preview-APK/hash. Manuellt workflow behöver egen runner som INTE är skapad/verifierad. Inget Android E2E kördes. TypeScript, 344 ordinarie + 10 storage + 6 migration PASS lokalt. Status 2/8 och 19/32 tills senaste CI. Inget nytt native-buildbehov, inga byggen/installationer. Fortsätt kod enligt användarens beslut men markera inte nativegrindar eller roadmap färdig.
+
 - Fas 30: `feat/phase-30-release-polish`, staplad på fas 29 PR #181 (ecf8438 validate/rules/GitGuardian success). Läs PHASE_30_RELEASE_POLISH.md och PHASE_30_CHECKLIST.md. Säkra produktfel, polerade konto-/widgettexter, Android-notiskanal privat låsskärm och behörighetsordning. TypeScript + 342 tester + webbexport PASS. 2/8 och 19/32 tills senaste CI; därefter 8.1 kan verifieras. Inga byggen/publiceringar. Fas 30 endast JS; tidigare fas 29 kräver fortfarande native-build. Fysisk språk-/knapp-/notis-/kontoacceptans öppen.
 
 - Fas 29: `feat/phase-29-preview-ota`, staplad på fas 28 (#180). Main till e7194c6 med fulla planer 29–32 bevarad. Läs PHASE_29_PREVIEW_OTA.md och PHASE_29_CHECKLIST.md. TypeScript + 339 tester + webbexport PASS; 5/8 och 25/32 efter grön ecf8438 CI. Android-build JA men kör inte nu. Ingen OTA eller manifest publicerat. Preview-EAS-projekt och egen Firebase Android-app registrerade; EAS preview-miljö konfigurerad, inga GitHub-secrets ändrade.
