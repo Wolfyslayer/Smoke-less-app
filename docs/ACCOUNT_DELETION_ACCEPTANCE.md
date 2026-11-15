@@ -2,12 +2,15 @@
 
 Status 2026-11-15: klient, server och skydd finns i fas 25:s PR. **Avstängt som standard. Inte driftsatt eller nativt slutgodkänt.** Ingen verklig användare har raderats.
 
+Slutlig kodmilstolpe `1a413ad` har grön `validate` och `rules`. Säkerhetsjobbets steg för låst serverruntime, regeltester och verkliga callable-integrationer kördes och passerade i CI med Node 22. Lokalt verifierades 325 fall totalt. Dokumentationsändringar efter denna milstolpe kräver också grön senaste CI före nästa commit.
+
 ## Konfiguration som faktiskt hittats
 
 - `google-services.json` anger `smoke-less-75efa` och `com.smokeless.app`. Filens nyckelmaterial har inte ändrats eller checkats in.
 - Läsande Firebase-kontroll visar Firestore-plats `eur3`.
 - Cloud Functions-listning svarar 403 med `SERVICE_DISABLED` för `cloudfunctions.googleapis.com`. Driftsättning kan därför inte verifieras via listningen. API:t har inte aktiverats.
 - Koden anger nu `europe-west1` uttryckligen, både server och klient. Det är [Firebases rekommenderade närmaste region för eur3](https://firebase.google.com/docs/functions/locations), inte ett påstående att all Firebase-behandling sker i EU.
+- Driftsättning kräver enligt [Firebase-dokumentationen](https://firebase.google.com/docs/functions/get-started) Blaze-planen. Projektets aktuella betalplan har inte verifierats. Ingen betalplansändring, API-aktivering eller driftsättning har gjorts; detta är ett separat produktions-/kostnadsbeslut.
 - `.env.example` har `EXPO_PUBLIC_ACCOUNT_DELETION_ENABLED=false`. Nya kontrolläsningar/lyssnare är också flaggade, så befintlig synk inte kräver nya driftsatta kontrollrättigheter innan funktionen aktiveras. Lokala raderingsmarkörer skyddar alltid mot återuppladdning.
 
 ## Flöde och felgränser

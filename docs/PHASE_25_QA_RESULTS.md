@@ -32,6 +32,8 @@ Datum: 2026-11-15. Källbas för enhetsproven: `3f3d63e` (samma JS-korrigeringar
 
 Senaste lokala raderingsmilstolpe: TypeScript, 297 ordinarie tester (inklusive 21 servermockar), 10 storage, 6 migration, 9 regler och 3 integration = **325 fall**. Ingen fysisk radering, native-cacheacceptans, API-aktivering eller produktionsradering ingår i detta resultat. Releaseflaggan är avstängd.
 
+CI-verifiering: `1a413ad` har grön validate/rules. Jobbstegen visar att både regler och de tre callable-integrationerna faktiskt kördes och passerade med Node 22. Befintlig telefonprocess svarar efter JS-ändringarna utan ReactNativeJS-/AndroidRuntime-fel i det riktade loggutdraget; detta är ingen ersättning för de ej körda nativa raderingsfallen.
+
 ## Kvarvarande obligatoriska prov
 
 Alla nedan är **EJ KÖRDA**, inte godkända:

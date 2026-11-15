@@ -1121,6 +1121,8 @@ Efter grön validate/rules på `3f3d63e`: gästlagring skyddas mot tyst tom åte
 Kontoraderingens klientkedja är därefter implementerad bakom avstängd flagga: samtycke/färsk auth, pausad synk, beständig UID-spärr, serverkvitto före städning, skydd för sena writes, gäst/andra konton, omstart samt SDK-/PNG-/widgetstädning. Kontrolläsningar är flaggade för kompatibilitet med ännu ej verifierade produktionsregler. Tre verkliga lokala Auth/Firestore/Functions-test passerar; säkerhets-CI kör dem med Node 22. `ACCOUNT_DELETION_ACCEPTANCE.md` beskriver återstående nativa/produktionsgrindar. 297 ordinarie + 10 storage + 6 migration + 9 regler + 3 integration = 325 lokalt verifierade automatiska fall. Denna kod innebär inte att fysisk kontoradering 4.4 är klar.
 
 Användaren pekade på `C:\SL\google-services.json`. Läsande kontroll bekräftar projekt `smoke-less-75efa`, paket `com.smokeless.app`, Firestore `eur3` och avstängt Cloud Functions-API (`SERVICE_DISABLED`). Funktionen förbereds för närmaste region `europe-west1`; ingen hemlighet, API-aktivering, produktionsdriftsättning eller verklig radering är utförd.
+
+Kodcommit `1a413ad` har därefter verifierats grön i validate/rules, inklusive verkligt körda callable-integrationer med Node 22. Aktivering/driftsättning i projektet kräver separat produktionsbeslut; Firebase anger Blaze som driftsättningskrav. Aktuell betalplan är inte verifierad och har inte ändrats. Fasen är fortsatt 1/8 och 8/32; återstående fysiska/releasegrindar är inte avprickade med kodtester.
 **Status:** Pågår. 1/8 huvudpunkter (12,5 %) och 8/32 delpunkter (25 %) verifierade. Fysisk slutacceptans, radering och release är inte klara.
 
 1. [x] **Testplan (4/4)**
