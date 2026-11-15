@@ -97,13 +97,13 @@ export function AppSessionView({model}:{model:SessionModel}){
   return ()=>{cancelled=true;};
  },[ready,accountUser?.uid,syncStatus,model.data]);
 
- if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
+ if(loadError)return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',alignItems:'center',padding:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24),gap:16}}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></ScrollView>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
  // Wait for the first cloud read before deciding that onboarding is needed.
  if(!p && accountUser && syncStatus!=='Synkroniserad med Firestore') {
   const syncing=!syncStatus||syncStatus==='Synkroniserar…'||syncStatus==='Lokala data ändrades. Synkroniserar igen.';
-  return <View style={[s.root,{justifyContent:'center',paddingHorizontal:24}]}>
+  return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',paddingHorizontal:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24)}}>
    <View style={s.errorCard}>
     <View style={s.errorIcon}><CloudOff color={C.lime} size={30}/></View>
     <Text style={s.errorTitle}>{syncing?'Hämtar dina uppgifter…':'Vi kunde inte hämta dina uppgifter'}</Text>
@@ -112,7 +112,7 @@ export function AppSessionView({model}:{model:SessionModel}){
     <View style={s.safeRow}><ShieldCheck size={18} color={C.success}/><Text style={s.safeText}>Din sparade historik skrivs inte över.</Text></View>
     {!syncing?<><Pressable accessibilityRole="button" accessibilityState={{expanded:showSyncDetails}} onPress={()=>setShowSyncDetails(v=>!v)} style={s.detailsButton}><Text style={s.detailsText}>{showSyncDetails?'Dölj tekniska detaljer':'Visa tekniska detaljer'}</Text>{showSyncDetails?<ChevronUp size={16} color={C.muted}/>:<ChevronDown size={16} color={C.muted}/>}</Pressable>{showSyncDetails?<Text selectable style={s.technicalError}>{syncStatus}</Text>:null}</>:null}
    </View>
-  </View>;
+  </ScrollView>;
  }
  const authModal=<OnboardingAuthModal step={authPrompt}
  onEmail={()=>setAuthPrompt('email')}

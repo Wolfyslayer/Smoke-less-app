@@ -77,6 +77,16 @@ Inloggningslänken under onboarding hade fast 16 dp-padding utan `insets.bottom`
 - Dialoger och avbrytbekräftelser skyddas även vid vänster/höger systemkant. Onboardingens animerade textfönster kan växa på höjden. Kontots tillbaka- och återställningsknappar har minst 48 dp höjd.
 - Automatiska tester är källkodskontrakt, inte bevis på renderad tangentbords- eller textgeometri. Resterande datum- och skärmtest görs i fas 25.
 
+### Avstämning av övriga vyer och tillgänglighet
+
+Hem, Plan, Registrera, Statistik, Historik, Fördelar, Profil, Konto, Inställningar och Backup delar sessionsscrollen. Korten har inget generellt fast höjdtak. Smal layout hanteras med flex/wrap och scroll; bred layout behåller samma flöde. Kalenderpanel och delningsförhandsvisning har maxbredd. Inget generellt fontScale-tak eller avstängd textskalning införs.
+
+Historiks raderingsikon hade bara ikonens 20 dp som tryckyta och en generell etikett. Den får 48×48 dp och datum/tid som etikett. SOS intensitetsrader och Statistik periodval kan bryta rad med minsta tryckytor. Bottenflikarna kan bryta rad och har minst 56 dp bredd. SOS rubriker och Statistik rubriker får header-roll; andningsytan kan växa med innehållet. Backup-rubriker får krympa/radbrytas. Hem och Statistik stapeldiagram kan växa på höjden. Laddnings-/synkfel i sessionsroten görs scrollbara med topp-/botteninsets.
+
+Kontrastberäkning av opaka temafärger med relativ luminans ger: white/surface 16,57:1; muted/surface 7,09:1; dim/elevated 5,63:1; background/lime 17,18:1; danger/surface 6,98:1; success/surface 10,85:1. Det är en statisk kontroll av dessa färgpar, inte av alla överlagrade eller inaktiva tillstånd. Historik/Statistik har beskrivande tomlägen, kontot har valideringsfel och synkstatus, profilens export har laddnings-/felmeddelanden. Visuell kontrast och TalkBack kontrolleras i fas 25.
+
+Android Tillbaka: `AppSessionView` prioriterar överlägg före navigation. Varje aktiv native-modal har onRequestClose. Registrering och auth skyddar utkast med egen bekräftelse. SOS stoppas vid back och tabbyte via sessionsmodellen. Profilens förhandsvisning är inline i scrollen, inte en separat helskärmsmodal; systemdelningen ägs av Android. Tester skyddar explicit godkännande och inaktuella exportvärden. Ingen auth-, historik-, synk- eller datamodell ändras av UI-granskningen.
+
 **Granskade källor:** `app/_layout.tsx`, `src/components/AppSessionView.tsx`, `src/components/BottomNavigation.tsx`. Detta är en statisk granskning, inte en fysisk verifiering av kamerahål eller Androids navigeringslägen.
 
 - Rotlayouten omsluter `Stack` och intro-overlay med `SafeAreaProvider`. `StatusBar` har ljus ikonstil och döljs under den två sekunder långa introduktionen; appens vanliga innehåll ligger i en `flex:1`-rot.

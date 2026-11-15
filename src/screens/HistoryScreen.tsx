@@ -20,14 +20,14 @@ export function HistoryScreen({entries,sorted,onRemove}:Props){
      <Text style={styles.cardTitle}>{date(new Date(entry.at))}</Text>
      <Text style={styles.muted}>{new Date(entry.at).toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})}</Text>
     </View>
-    <Pressable accessibilityRole="button" accessibilityLabel="Ta bort" onPress={()=>onRemove(entry.id)}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`Ta bort registrering från ${date(new Date(entry.at))} klockan ${new Date(entry.at).toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})}`} accessibilityHint="Öppnar bekräftelse innan registreringen tas bort" onPress={()=>onRemove(entry.id)} style={styles.deleteAction}>
      <Trash2 color={C.danger} size={20}/>
     </Pressable>
    </View>)}
  </View>;
 }
 const styles=StyleSheet.create({
- screen:{gap:20},
+ screen:{gap:20},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
  card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:20,padding:17},
  inline:{flexDirection:'row',alignItems:'center',gap:14},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},

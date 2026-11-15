@@ -4,9 +4,9 @@
 
 - Fas 16.4, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/161 (öppen draft).
 - Branch: `feat/phase-16-4-ui-safe-area-audit`.
-- Senast verifierad fjärrcommit: `bf234a7`, båda obligatoriska CI gröna. Denna fils commit innehåller nästa milstolpe.
-- Verifierad checklista: `docs/PHASE_16_4_UI_SAFE_AREA.md`, oförändrade 8 huvudpunkter och 32 delpunkter. 2/8 huvudpunkter (25 %), 12/32 delpunkter (37,5 %). Nya ändringar räknas inte som verifierade innan CI.
-- GitHub `validate` och `rules` var gröna på `bf234a7`. Kontrollera båda på den nya committen efter push.
+- Senast verifierad fjärrcommit: `92073b6`, båda obligatoriska CI gröna. Denna fils commit innehåller nästa milstolpe.
+- Verifierad checklista: `docs/PHASE_16_4_UI_SAFE_AREA.md`, oförändrade 8 huvudpunkter och 32 delpunkter. 3/8 huvudpunkter (37,5 %), 19/32 delpunkter (59,375 %). Nya ändringar räknas inte som verifierade innan CI.
+- GitHub `validate` och `rules` var gröna på `92073b6`. Kontrollera båda på den nya committen efter push.
 
 ## Senaste milstolpe
 
@@ -17,6 +17,8 @@ Nästa milstolpe åtgärdar modalernas sidoinsets, Android-tangentbord i auth-mo
 ## Kvarstår och nästa steg
 
 Efter push kontrollerar AI själv båda obligatoriska CI på senaste PR-commit och fortsätter när de är gröna enligt användarens beslut 2026-11-15. Separat klartecken krävs inte mellan commits. Fortsätt med kvarvarande granskning och verifiering enligt faschecklistan. Dokumentera faktiska resultat i skärmmatrisen. Ingen fysisk Android-QA är utförd i detta arbetspass.
+
+Senaste kodpaketet förbättrar Historik (48 dp + unik etikett), SOS/Statistik/bottenflikar (radbrytbara val och tryckytor), Backup-rubriker, diagramhöjd och scrollbara sessionsfel. TypeScript och 143 ordinarie tester passerar. Nästa steg efter grön CI: slutavstämning av statiska punkter 2, 4, 5 och 6, därefter bevara senaste main/debug-keystore-pluginet och verifiera acceptans inför merge. Ingen fysisk verifiering ska bockas av.
 
 ## Risker och dokumentkonflikter
 

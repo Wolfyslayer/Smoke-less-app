@@ -104,3 +104,15 @@ test('bottom tabs and shared buttons preserve accessible touch targets',()=>{
  assert.match(nav,/accessibilityRole="tab" accessibilityLabel=\{item\.label\}/);
  assert.match(ui,/button:\{[^}]*minHeight:48/);
 });
+
+test('history deletion and dense selection rows preserve separate accessible targets',()=>{
+ const history=read('src/screens/HistoryScreen.tsx');
+ assert.match(history,/deleteAction:\{minWidth:48,minHeight:48/);
+ assert.match(history,/accessibilityLabel=\{`Ta bort registrering från/);
+ for(const path of ['src/screens/SOSScreen.tsx','src/screens/StatsScreen.tsx']){
+  const source=read(path);
+  assert.match(source,/segment:\{flexDirection:'row',flexWrap:'wrap'/);
+  assert.match(source,/segmentItem:\{[^}]*minHeight:48/);
+ }
+ assert.match(read('src/components/BottomNavigation.tsx'),/navItem:\{[^}]*minWidth:56/);
+});
