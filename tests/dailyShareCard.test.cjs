@@ -162,12 +162,9 @@ test('changed daily values invalidate an in-flight PNG export before share',()=>
  assert.match(profile,/setPngStatus\('idle'\);\s*setShareError\(false\);\s*\},\[todayCount,dailyGoal,fontScale\]\)/);
 });
 
-test('reminder settings support larger text and announce status changes without intrusive alerts',()=>{
- const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');
- assert.match(settings,/reminderStatus\?<Text accessibilityLiveRegion="polite"/);
- assert.match(settings,/fontWeight:'800',flexShrink:1/);
- assert.match(settings,/accessibilityHint="Ange timmar mellan 0 och 23"/);
- assert.match(settings,/accessibilityHint="Ange minuter mellan 0 och 59"/);
+test('reminder settings support larger text and polite status announcements',()=>{
+ const settings=fs.readFileSync('src/components/ReminderSettings.tsx','utf8');
+ assert.match(settings,/accessibilityLiveRegion="polite"/);assert.match(settings,/minHeight:48/);assert.match(settings,/minWidth:0/);assert.doesNotMatch(settings,/numberOfLines/);
 });
 
 test('home quick actions expose accessible labels and adapt to larger text',()=>{
@@ -223,10 +220,9 @@ test('approved share generation remains visible to error handler',()=>{
  assert.doesNotMatch(profile,/try\{\s*const approvedPath=pngPathRef\.current;\s*const approvedCounts=exportCountsRef\.current;\s*const approvedGeneration=/);
 });
 
-test('reminder settings explain disabled and web-only states on initial load',()=>{
- const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');
- assert.match(settings,/if\(v!=='true'\)setReminderStatus\('Påminnelser är avstängda\.'\)/);
- assert.match(settings,/else if\(Platform\.OS==='web'\)setReminderStatus\('Schemalagda påminnelser stöds bara i mobilappen\.'\)/);
+test('reminder settings explain inactive and web-only states on initial load',()=>{
+ const settings=fs.readFileSync('src/components/ReminderSettings.tsx','utf8');
+ assert.match(settings,/Platform.OS==='web'/);assert.match(settings,/result.active/);assert.match(settings,/service.read\(\)/);assert.match(settings,/setReady\(true\)/);
 });
 
 test('quit mode disables daily target adjustment controls rather than offering an ineffective action',()=>{
