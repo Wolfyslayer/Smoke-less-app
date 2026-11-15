@@ -1,5 +1,5 @@
 # Fas 19.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Startad från main `2857e3f`. 0/8 och 0/32 verifierade (0 %). Ursprungliga 8×4-ID är frysta. En PR för fasen.
+**Status:** Pågående i PR #167. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %) verifierade mot startinventering/kontrakt på `e442d15`, grön validate/rules. Implementationen inväntar egen CI. Ursprungliga 8×4-ID är bevarade.
 
 ## Ändringskontrakt och acceptans
 
@@ -7,11 +7,11 @@
 
 Persistens lagrar endast stabila strategi-ID:n per situation, lokalt per gäst/UID i eget namespace. Återanvänd fas 18:s skrivkö, fel-/avbrottsskydd och identitetsguard. Ingen profil, historik, Firestore-regel eller synkmodell ändras. Testa normalisering, max tre steg, ordning, återställning, gamla/okända strategi-ID:n och kontoseparering. Fysisk TalkBack-, offline- och SOS-regression samlas i fas 25 utan påstådda resultat.
 
-1. [ ] **Inventering och avgränsning (0/4)**
-   - [ ] 1.1 Inventera befintliga funktioner och undvik duplicering.
-   - [ ] 1.2 Dokumentera användarbehov och begränsningar.
-   - [ ] 1.3 Fastställ acceptanskriterier.
-   - [ ] 1.4 Fastställ risker och testmatris.
+1. [x] **Inventering och avgränsning (4/4)**
+   - [x] 1.1 Inventera befintliga funktioner och undvik duplicering.
+   - [x] 1.2 Dokumentera användarbehov och begränsningar.
+   - [x] 1.3 Fastställ acceptanskriterier.
+   - [x] 1.4 Fastställ risker och testmatris.
 2. [ ] **Datamodell och integritet (0/4)**
    - [ ] 2.1 Definiera minsta nödvändiga datamängd.
    - [ ] 2.2 Skydda gäst- och kontodata.
@@ -42,9 +42,19 @@ Persistens lagrar endast stabila strategi-ID:n per situation, lokalt per gäst/U
    - [ ] 7.2 Testa fel- och avbrottsfall.
    - [ ] 7.3 Testa integritet och dataseparering.
    - [ ] 7.4 Verifiera obligatorisk CI.
-8. [ ] **Slutverifiering och merge (0/4)**
-   - [ ] 8.1 Dokumentera genomförd acceptans.
-   - [ ] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
+8. [ ] **Slutverifiering och merge (2/4)**
+   - [x] 8.1 Dokumentera genomförd acceptans.
+   - [x] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
    - [ ] 8.3 Verifiera grön CI på slutlig commit.
    - [ ] 8.4 Merga fas-PR.
+
+## Implementation och verifieringsunderlag
+
+Åtta befintliga SOS-tips har stabila ID:n, utan ändrade texter eller loggfält. `actionPlans` normaliserar endast version, kända situationer och högst tre unika giltiga steg i användarens ordning. Normalisering hanterar gammalt/skadat format och okända ID:n neutralt. Val, flytt och rensning är immutabla och påverkar bara vald situations preferens.
+
+`PersonalActionPlan` visar sparade steg och situationer i SOS. Användaren kan välja/ordna steg, spara valt tips, använda ett tips eller rensa planen. Att använda ett steg anropar endast befintlig onSelectTip; ingen craving-post eller hjälpsamhetsmarkering sparas automatiskt. Befintlig frivillig uppföljning med Spara röksug bevaras. Det går att lämna utan att logga varje händelse. Läsfel, skrivfel och återförsök hanteras via samma lokala preferenslager som fas 18, i separat namespace per UID/gäst. Ingen profil- eller historikmutation, molnsynk eller extern tjänst tillkommer.
+
+Källkodsgranskning: checkbox/radio/knappar har etiketter och tillstånd, minst 48 dp, radbrytbar text och flex-wrap för små skärmar. Valda tips har synlig och tillgänglig markering. Ingen ny tangentbords- eller fokusfälla. Fysisk TalkBack och skärmgeometri är inte verifierade och testas i fas 25.
+
+TypeScript och 195 lokala tester passerar (179 ordinarie, 10 storage, 6 migration). Fem nya tester täcker normalisering, maxgräns, ordning, reset, idempotent tipsminne, kontoseparering och frånvaro av automatisk loggning. Befintliga preferenstester täcker väntande skrivningar, läs-/skrivfel och identitetsövergång. Fas 25 ska prova kallstart/offline, kontobyten, avbrutna/snabba val, valda tips och frivillig uppföljning på Android. Ny Android-build: NEJ, endast TypeScript/testscript/dokumentation.
 
