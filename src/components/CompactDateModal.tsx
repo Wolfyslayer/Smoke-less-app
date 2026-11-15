@@ -2,16 +2,19 @@ import React,{useEffect,useState} from 'react';
 import {Modal,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {C} from '../theme';
+import {dayKey,parseFutureQuitDate} from '../domain';
 
 type Props={visible:boolean;value:Date|null;onCancel:()=>void;onConfirm:(date:Date)=>void;title?:string};
 const pretty=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj stoppdatum'}:Props){
  const {width,fontScale}=useWindowDimensions();
  const insets=useSafeAreaInsets();
+ const valueTime=value?.getTime();
  const [chosen,setChosen]=useState<Date|null>(value);
  const [month,setMonth]=useState(new Date().getMonth());
  const [year,setYear]=useState(new Date().getFullYear());
- useEffect(()=>{if(!visible)return;const now=new Date();const initial=value&&value.getTime()>now.getTime()?value:now;setChosen(value&&value.getTime()>now.getTime()?value:null);setMonth(initial.getMonth());setYear(initial.getFullYear());},[visible,value]);
+ useEffect(()=>{if(!visible)return;const now=new Date();const valid=valueTime!==undefined?parseFutureQuitDate(dayKey(new Date(valueTime)),now):null;const initial=valid??now;setChosen(valid);setMonth(initial.getMonth());setYear(initial.getFullYear());},[visible,valueTime]);
+ const chosenValid=!!chosen&&!!parseFutureQuitDate(dayKey(chosen),new Date());
  const first=(new Date(year,month,1).getDay()+6)%7;
  const days=new Date(year,month+1,0).getDate();
  const today=new Date();today.setHours(0,0,0,0);
@@ -30,12 +33,12 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
    <View style={s.grid}>
     {!listDates&&['M','T','O','T','F','L','S'].map((label,i)=><View key={'week'+i} style={s.cell}><Text style={s.weekday}>{label}</Text></View>)}
     {!listDates&&Array.from({length:first},(_,i)=><View key={'empty'+i} style={s.cell}/>)}
-    {Array.from({length:days},(_,i)=>{const day=i+1;const date=new Date(year,month,day,12);const disabled=date.getTime()<=today.getTime();const selected=chosen?.getFullYear()===year&&chosen?.getMonth()===month&&chosen?.getDate()===day;return <View key={day} style={[s.cell,listDates&&s.listCell]}><Pressable accessibilityRole="button" accessibilityLabel={pretty(date)} accessibilityState={{selected,disabled}} disabled={disabled} onPress={()=>setChosen(date)} style={[s.day,selected&&s.selected]}><Text style={[s.dayText,disabled&&s.disabled,selected&&s.selectedText]}>{listDates?pretty(date):day}</Text></Pressable></View>})}
+    {Array.from({length:days},(_,i)=>{const day=i+1;const date=new Date(year,month,day,12);const disabled=new Date(year,month,day).getTime()<=today.getTime();const selected=chosen?.getFullYear()===year&&chosen?.getMonth()===month&&chosen?.getDate()===day;return <View key={day} style={[s.cell,listDates&&s.listCell]}><Pressable accessibilityRole="button" accessibilityLabel={pretty(date)} accessibilityState={{selected,disabled}} disabled={disabled} onPress={()=>setChosen(date)} style={[s.day,selected&&s.selected]}><Text style={[s.dayText,disabled&&s.disabled,selected&&s.selectedText]}>{listDates?pretty(date):day}</Text></Pressable></View>})}
    </View>
    <Text style={s.summary}>{chosen?'Valt: '+pretty(chosen):'Välj ett framtida datum'}</Text>
    <View style={s.actions}>
     <Pressable accessibilityRole="button" onPress={onCancel} style={s.secondary}><Text style={s.secondaryText}>Avbryt</Text></Pressable>
-    <Pressable accessibilityRole="button" accessibilityState={{disabled:!chosen}} disabled={!chosen} onPress={()=>{if(chosen)onConfirm(chosen);}} style={[s.primary,!chosen&&{opacity:.45}]}><Text style={s.primaryText}>Välj datum</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityState={{disabled:!chosenValid}} disabled={!chosenValid} onPress={()=>{if(chosen&&parseFutureQuitDate(dayKey(chosen),new Date()))onConfirm(chosen);}} style={[s.primary,!chosenValid&&{opacity:.45}]}><Text style={s.primaryText}>Välj datum</Text></Pressable>
    </View>
   </View></ScrollView></View>
  </Modal>;

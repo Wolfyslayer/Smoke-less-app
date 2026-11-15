@@ -1,18 +1,27 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {Target,CalendarDays,Minus,Plus} from 'lucide-react-native';
 import {C} from '../theme';
 import type {Profile} from '../domain';
 import {AppCard} from '../components/ui';
+import {dayKey} from '../domain';
+import {previewDailyTarget,type DailyTargetPreview,type PlanDatePolicy} from '../planTargetPreview';
 
 type Props={
  profile:Profile;goal:number;
  onChangeMode:(mode:'reduce'|'quit')=>void;
- onChangeDailyTarget:(value:number|null)=>void;
+ onChangeDailyTarget:(preview:DailyTargetPreview)=>void;
 };
 function Card({children,style}:{children:React.ReactNode;style?:React.ComponentProps<typeof AppCard>['style']}){return <AppCard style={style}>{children}</AppCard>}
 function Choice({title,subtitle,selected,onPress}:{title:string;subtitle:string;selected:boolean;onPress:()=>void}){return <Pressable accessibilityRole="radio" accessibilityLabel={title} accessibilityHint={subtitle} accessibilityState={{checked:selected}} onPress={onPress} style={[styles.choice,selected&&styles.selected]}><Text style={styles.cardTitle}>{title}</Text><Text style={styles.muted}>{subtitle}</Text></Pressable>}
 export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTarget}:Props){
+ const [draft,setDraft]=useState<{base:Profile;value:number}|null>(null);
+ const [policy,setPolicy]=useState<PlanDatePolicy>('keep');
+ const now=new Date();
+ const expired=!!draft?.base.plannedQuitAt&&dayKey(new Date(draft.base.plannedQuitAt))<=dayKey(now);
+ const preview=draft?previewDailyTarget(draft.base,draft.value,policy,now):null;
+ const stale=!!draft&&JSON.stringify(draft.base)!==JSON.stringify(p);
+ const propose=(value:number)=>{setDraft(current=>({base:current?.base??{...p},value}));};
  return <>
   <Card style={{gap:13,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
    <View style={styles.inline}><View style={styles.heroIcon}><Target size={24} color={C.lime}/></View><View style={{flex:1,minWidth:0,gap:4}}><Text accessibilityRole="header" style={styles.cardTitle}>Din personliga plan</Text><Text style={styles.muted}>Anpassa din resa, ett steg i taget.</Text></View></View>
@@ -25,11 +34,19 @@ export function SettingsPlanSection({profile:p,goal,onChangeMode,onChangeDailyTa
   <Card style={{gap:15,padding:18}}>
    <View style={styles.inline}><View style={styles.actionIcon}><CalendarDays size={20} color={C.lime}/></View><View style={{flex:1,minWidth:0,gap:3}}><Text accessibilityRole="header" style={styles.cardTitle}>Dagligt riktvärde</Text><Text style={styles.muted}>Ändra dagens antal om dina vanor förändras. Din framtida nedtrappning räknas om, men historiken behålls.</Text></View></View>
    <View style={styles.sectionRow}>
-    <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" accessibilityHint="Minskar riktvärdet med en cigarett" accessibilityState={{disabled:p.mode==='quit'||goal<=0}} disabled={p.mode==='quit'||goal<=0} style={[styles.stepper,(p.mode==='quit'||goal<=0)&&styles.disabled]} onPress={()=>onChangeDailyTarget(Math.max(0,(p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Minska dagligt mål" accessibilityHint="Förhandsvisar ett lägre riktvärde innan du bekräftar" accessibilityState={{disabled:p.mode==='quit'||(draft?.value??goal)<=0}} disabled={p.mode==='quit'||(draft?.value??goal)<=0} style={[styles.stepper,(p.mode==='quit'||(draft?.value??goal)<=0)&&styles.disabled]} onPress={()=>propose(Math.max(0,(draft?.value??p.dailyTargetOverride??goal)-1))}><Minus size={21} color={C.lime}/></Pressable>
     <View style={{alignItems:'center',gap:2,flexShrink:1,minWidth:90}}><Text accessibilityLabel={`Dagligt riktvärde: ${goal} cigaretter`} adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} style={styles.goal}>{goal}</Text><Text style={[styles.muted,{textAlign:'center'}]}>cigaretter per dag</Text></View>
-    <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" accessibilityHint="Ökar riktvärdet med en cigarett" accessibilityState={{disabled:p.mode==='quit'}} disabled={p.mode==='quit'} style={[styles.stepper,p.mode==='quit'&&styles.disabled]} onPress={()=>onChangeDailyTarget((p.dailyTargetOverride??goal)+1)}><Plus size={21} color={C.lime}/></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Öka dagligt mål" accessibilityHint="Förhandsvisar ett högre riktvärde innan du bekräftar" accessibilityState={{disabled:p.mode==='quit'}} disabled={p.mode==='quit'} style={[styles.stepper,p.mode==='quit'&&styles.disabled]} onPress={()=>propose((draft?.value??p.dailyTargetOverride??goal)+1)}><Plus size={21} color={C.lime}/></Pressable>
    </View>
    <Text style={styles.muted}>{p.mode==='quit'?'Vid rökstopp är dagsmålet alltid noll.':p.plannedQuitAt?'Ändringar anpassar nedtrappningen, men ditt stoppdatum ligger kvar.':'Ändringar blir ny utgångspunkt och den valda takten fortsätter.'}</Text>
+   {draft?<View style={{gap:12}}>
+    <Text accessibilityRole="header" style={styles.cardTitle}>Förhandsgranska nytt dagsmål: {draft.value}</Text>
+    {draft.base.plannedQuitAt?<><Choice title="Behåll valt stoppdatum" subtitle={expired?'Datumet har passerat. Välj automatisk omräkning eller avbryt.':'Det valda datumet ligger fast och framtida mål anpassas.'} selected={policy==='keep'} onPress={()=>setPolicy('keep')}/><Choice title="Räkna om stoppdatum automatiskt" subtitle="Det fasta datumet tas bort. Din sparade takt används från det nya dagsmålet." selected={policy==='automatic'} onPress={()=>setPolicy('automatic')}/></>:null}
+    {stale?<Text accessibilityRole="alert" style={styles.muted}>Planen har ändrats sedan förhandsvisningen. Avbryt och välj ditt mål igen.</Text>:null}
+    {preview?<><Text style={styles.muted}>{policy==='keep'&&draft.base.plannedQuitAt?'Behållet':'Beräknat'} stoppdatum: {preview.quitAt}. Din ursprungliga start, registreringar, röksug och avstämningar behålls.</Text>{preview.goals.map(row=><Text key={row.day} style={styles.muted}>{row.day}: högst {row.goal} cigaretter</Text>)}</>:<Text accessibilityRole="alert" style={styles.muted}>Det här valet kan inte sparas. Kontrollera datumvalet eller avbryt.</Text>}
+    <Pressable accessibilityRole="button" accessibilityLabel="Bekräfta nytt dagsmål" accessibilityState={{disabled:!preview||stale}} disabled={!preview||stale} style={[styles.choice,(!preview||stale)&&styles.disabled]} onPress={()=>{if(preview&&!stale){onChangeDailyTarget(preview);setDraft(null);}}}><Text style={styles.cardTitle}>Bekräfta nytt dagsmål</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Avbryt måländring" style={styles.choice} onPress={()=>{setDraft(null);setPolicy('keep');}}><Text style={styles.cardTitle}>Avbryt</Text></Pressable>
+   </View>:null}
 
   </Card>
  </>;
