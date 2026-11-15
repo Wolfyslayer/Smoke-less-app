@@ -1,3 +1,4 @@
+import {GettingStartedTip} from './GettingStartedTip';
 import {MaintenanceSupport} from './MaintenanceSupport';
 import {PersonalActionPlan} from './PersonalActionPlan';
 import {sosIdeas} from '../data/sosIdeas';
@@ -20,6 +21,7 @@ export function ProgressScreenRoutes({model}:{model:SessionModel}){
  const checkin=()=>setData(v=>confirmDailyCheckin(v,today,countOn(v.entries.filter(e=>Date.parse(e.at)<=Date.now()),today)));
  const journeyPanel=<PersonalJourney journey={model.journey} todayCount={todayCount} checked={data.checkins.some(c=>c.date===today&&c.complete)} compact={tab==='sos'} onPlan={()=>go('plan')} onSOS={()=>{startSos();go('sos');}} onCheckin={checkin}/>;
  return <>
+ {(['register','sos','plan','stats'] as const).map(id=>tab===id?<GettingStartedTip key={`${model.accountUser?.uid??'guest'}:${id}`} uid={model.accountUser?.uid??null} id={id}/>:null)}
  {tab==='home'?<HomeScreen key={model.accountUser?.uid??'guest'} maintenancePanel={model.journey.value.phase==='maintenance'?<MaintenanceSupport data={data} clock={clock} onSOS={()=>{startSos();go('sos');}} onCheckin={checkin} onSettings={()=>go('settings')}/>:undefined} journeyPanel={journeyPanel} uid={model.accountUser?.uid??null} clock={clock} data={data} goal={goal} todayCount={todayCount} duration={duration} weekly={weekly} today={today} onRegister={openRegister} onSOS={()=>{startSos();go('sos')}} onPlan={()=>go('plan')} onHistory={()=>go('history')} onStats={()=>go('stats')} onConfirmToday={checkin}/>:null}
  {tab==='register'?<RegisterScreen todayCount={todayCount} goal={goal} duration={duration} sorted={sorted} today={today} last={last} onOpenRegister={openRegister} onOpenHistory={()=>go('history')} onRemove={remove}/>:null}
  {tab==='plan'?<PlanScreen profile={p} goal={goal} todayReduction={todayReduction} confirmedDays={confirmedDays} withinDays={withinDays} planWeek={planWeek} clock={clock} onChangeProfile={changeProfile}/>:null}
