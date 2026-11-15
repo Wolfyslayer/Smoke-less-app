@@ -4,7 +4,7 @@ import {Wind} from 'lucide-react-native';
 import {C} from '../theme';
 
 type Idea={title:string;detail:string};
-type Props={
+type Props={journeyPanel?:React.ReactNode;
  breathScale:Animated.Value;breathing:boolean;breathSeconds:number;onToggleBreathing:()=>void;
  hapticsEnabled:boolean;onToggleHaptics:()=>void;
  sosIdeas:Idea[];sosTip:number;onNextTip:()=>void;onSelectTip:(index:number)=>void;
@@ -31,8 +31,9 @@ function Label({children}:{children:React.ReactNode}){return <Text style={styles
 function Heading({children}:{children:React.ReactNode}){return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
 function Button({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean}){return <Pressable accessibilityRole="button" onPress={onPress} style={[styles.button,secondary&&styles.buttonSecondary]}><Text style={[styles.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
 function Intensity({value,onChange,prefix}:{value:number|null;onChange:(n:number)=>void;prefix:string}){return <View style={styles.segment}>{[1,2,3,4,5].map(n=><Pressable key={n} accessibilityRole="button" accessibilityLabel={`${prefix} ${n} av 5`} accessibilityState={{selected:value===n}} onPress={()=>onChange(n)} style={[styles.segmentItem,value===n&&{backgroundColor:C.lime}]}><Text style={{color:value===n?C.background:C.white,fontWeight:'800'}}>{n}</Text></Pressable>)}</View>}
-export function SOSScreen({breathScale,breathing,breathSeconds,onToggleBreathing,hapticsEnabled,onToggleHaptics,sosIdeas,sosTip,onNextTip,onSelectTip,sosTimer,sosTimerActive,onToggleTimer,onResetTimer,sosStartIntensity,intensity,onStartIntensity,onIntensity,trigger,onTrigger,helpful,onHelpful,onSave}:Props){
+export function SOSScreen({journeyPanel,breathScale,breathing,breathSeconds,onToggleBreathing,hapticsEnabled,onToggleHaptics,sosIdeas,sosTip,onNextTip,onSelectTip,sosTimer,sosTimerActive,onToggleTimer,onResetTimer,sosStartIntensity,intensity,onStartIntensity,onIntensity,trigger,onTrigger,helpful,onHelpful,onSave}:Props){
  return <View style={styles.screen}>
+  {journeyPanel}
   <Card style={{alignItems:'center',gap:15,paddingVertical:22,backgroundColor:'#171D10',borderColor:'#425C29'}}>
    <Label>TA ETT ANDETAG I TAGET</Label>
    <Animated.View style={[styles.breathCircle,{transform:[{scale:breathScale.interpolate({inputRange:[0,1],outputRange:[0.82,1.12]})}]}]}><Wind size={42} color={C.lime}/><Text style={styles.cardTitle}>{!breathing?'Hitta ditt lugn':breathSeconds%12<4?'Andas in':breathSeconds%12<6?'Håll':'Andas ut'}</Text><Text style={styles.muted}>{breathing?(breathSeconds%12<4?'4 sekunder':breathSeconds%12<6?'2 sekunder':'6 sekunder'):'4 in · 2 håll · 6 ut'}</Text></Animated.View>

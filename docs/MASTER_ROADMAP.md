@@ -44,7 +44,7 @@
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
 | 16.7 | Fördjupad statistik och personliga trender | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #164, `1781333` |
 | 17.0 | Delningsbild som matchar dagens framsteg | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #165, `0fdd4b1` |
-| 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Startad; fast 8×4-checklista | docs/PHASE_18_JOURNEY.md |
+| 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Pågående; 1/8 och 6/32 verifierade, implementation inväntar CI | #166, docs/PHASE_18_JOURNEY.md |
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Planerad | — |
 | 20.0 | Långsiktigt rökfri och återfallsprevention | Planerad | — |
 | 21.0 | Evidensbaserat stöd, nikotinläkemedel och vårdvägar | Planerad | — |
