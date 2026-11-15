@@ -40,8 +40,8 @@
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
-| 16.5 | Personlig dashboard och anpassningsbar startsida | Klar för merge; 7/8 och 31/32 verifierade, fysisk QA i fas 25 | #162, docs/PHASE_16_5_DASHBOARD.md |
-| 16.6 | Flexiblare planering och långsiktig målanpassning | Planerad | — |
+| 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
+| 16.6 | Flexiblare planering och långsiktig målanpassning | Startad; fast 8×4-checklista | docs/PHASE_16_6_PLANNING.md |
 | 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Planerad | — |

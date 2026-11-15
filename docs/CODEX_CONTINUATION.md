@@ -1,7 +1,7 @@
 # Fortsättning – Smoke Less
 
-- Aktiv fas: **16.5 – personlig dashboard**, branch `feat/phase-16-5-personal-dashboard`, PR https://github.com/Wolfyslayer/Smoke-less-app/pull/162.
-- Bas: uppdaterad lokal main `07ff48c315f7d535da56f3053594f503cfd0bc00`.
+- Aktiv fas: **16.6 – flexiblare planering**, branch `feat/phase-16-6-flexible-planning`. Exakt en PR ska öppnas för fasen.
+- Bas: uppdaterad lokal main `a3c53e854f5e784d8a7fea1c2c40409c8aabddff`.
 - Fas 16.4 är avslutad och mergad i PR #161. `validate` och `rules` gröna på slutlig head `d19dd36`; 159 lokala tester och TypeScript godkända. 8/8 huvudpunkter och 32/32 delpunkter klara på kod-/test-/dokumentationsnivå. Fysisk Android-, BrowserStack- och TalkBack-QA återstår i fas 25.
 - Main:s debug-keystore-plugin och app.json-post har bevarats oförändrade. Inga hemligheter eller regler ändrades.
 
