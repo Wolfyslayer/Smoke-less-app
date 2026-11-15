@@ -1,0 +1,20 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript'),React=require('react'),{renderToStaticMarkup:render}=require('react-dom/server');
+function load(path,deps){const scope={exports:{},require:id=>{if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText,scope);return scope.exports;}
+const rn={View:'div',Text:'p',Pressable:'button',StyleSheet:{create:v=>v}},theme={C:{}},domain={dayKey:date=>date.toISOString().slice(0,10),savings:()=>0,nextReductionMilestone:()=>null};
+const artwork=({todayCount,dailyGoal})=>React.createElement('article',null,`progress ${todayCount}/${dailyGoal}`);
+function dashboard(cards){return load('src/components/DashboardOverview.tsx',{'react':React,'react-native':rn,'../domain':domain,'../theme':theme,'../hooks/useDashboardPreferences':{useDashboardPreferences:()=>({value:{cards},ready:true})},'./DashboardEditor':{DashboardEditor:()=>React.createElement('span',null,'editor'),dashboardCardLabels:{}}}).DashboardOverview;}
+const Home=load('src/screens/HomeScreen.tsx',{'react':React,'react-native':rn,'lucide-react-native':Object.fromEntries(['PlusCircle','Heart','ArrowUpRight'].map(key=>[key,()=>null])),'../theme':theme,'../domain':domain,'../components/DailyProgressShareArtwork':{DailyProgressShareArtwork:artwork},'../components/DashboardOverview':{DashboardOverview:dashboard(['goal','time','savings'])}}).HomeScreen;
+const props={uid:null,clock:Date.parse('2026-11-15T12:00:00Z'),today:'2026-11-15',data:{checkins:[],cravings:[]},goal:10,todayCount:0,duration:'',weekly:[],journeyPanel:React.createElement('p',null,'journey details')};
+test('first home render prioritizes progress and two actions while keeping detail collapsed',()=>{
+ const html=render(React.createElement(Home,props));assert.ok(html.indexOf('progress 0/10')<html.indexOf('Registrera'));assert.ok(html.includes('SOS · Jag är röksugen'));assert.ok(!html.includes('journey details'));assert.ok(!html.includes('editor'));assert.ok(!html.includes('Min logg'));assert.ok(!html.includes('Min plan'));assert.ok(html.includes('Bekräfta dagens registreringar'));
+});
+test('zero goal and exceeded goal preserve actual counts and supportive language',()=>{
+ for(const count of [0,3]){const html=render(React.createElement(Home,{...props,goal:0,todayCount:count}));assert.ok(html.includes(`progress ${count}/0`));if(count)assert.ok(html.includes('En svårare dag tar inte bort'));assert.ok(!html.includes('Bekräftat rökfri dag'));}
+});
+test('incomplete check-in remains actionable and maintenance does not duplicate check-in',()=>{
+ const incomplete=render(React.createElement(Home,{...props,data:{...props.data,checkins:[{date:props.today,complete:false,smokeFree:true}]}}));assert.ok(incomplete.includes('Bekräfta dagens registreringar'));
+ const maintained=render(React.createElement(Home,{...props,maintenancePanel:React.createElement('article',null,'maintenance check-in')}));assert.ok(maintained.includes('maintenance check-in'));assert.ok(!maintained.includes('progress '));assert.ok(!maintained.includes('Bekräfta dagens registreringar'));
+});
+test('dashboard renders selected goal before actions regardless of stored order, while respecting hidden goal',()=>{
+ for(const cards of [['savings','goal'],[]]){const Dashboard=dashboard(cards);const html=render(React.createElement(Dashboard,{...props,goalCard:React.createElement('article',null,'GOAL'),actions:React.createElement('button',null,'ACTION')}));assert.ok(html.includes('ACTION'));assert.equal(html.includes('GOAL'),cards.includes('goal'));if(cards.length)assert.ok(html.indexOf('GOAL')<html.indexOf('ACTION'));assert.ok(!html.includes('editor'));}
+});

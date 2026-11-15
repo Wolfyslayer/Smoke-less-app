@@ -180,7 +180,7 @@ test('home coach aggregates craving history in a single pass with trigger-specif
  const section=home.slice(home.indexOf(' const triggerCounts=new Map<string,number>();'),home.indexOf(' const encouragement='));
  assert.equal((section.match(/for\(const craving of data\.cravings\)/g)||[]).length,1);
  assert.match(section,/const helpfulByTrigger=new Map<string,Map<string,number>>\(\)/);
- assert.match(section,/if\(!Number\.isFinite\(date\.getTime\(\)\)\|\|dayKey\(date\)>today\)continue/);
+ assert.match(section,/if\(!Number\.isFinite\(date\.getTime\(\)\)\|\|date\.getTime\(\)>clock\|\|dayKey\(date\)>today\)continue/);
  assert.match(section,/const matchingStrategy=frequentTrigger\?topEntry\(helpfulByTrigger\.get\(frequentTrigger\[0\]\)/);
 });
 
