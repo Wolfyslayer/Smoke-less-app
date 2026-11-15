@@ -35,6 +35,9 @@ export function adjustReductionTarget(p:Profile,value:number|null,now:Date):Prof
  if(p.mode!=='reduce')return p;
  if(value===null)return {...p,dailyTargetOverride:null};
  if(!Number.isInteger(value)||value<0) return p;
+ // An expired fixed date must not produce startAt >= plannedQuitAt.
+ // Resuming automatic reduction is an explicit separate choice.
+ if(p.plannedQuitAt&&dayKey(new Date(p.plannedQuitAt))<=dayKey(now))return p;
  return {...p,startAt:now.toISOString(),originalStartAt:p.originalStartAt??p.startAt,planStartTarget:value,dailyTargetOverride:null};
 }
 /** Switch from a fixed quit date back to the saved gradual pace.

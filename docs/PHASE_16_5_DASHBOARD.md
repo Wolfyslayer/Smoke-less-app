@@ -1,5 +1,5 @@
 # Fas 16.5 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Klar för merge i PR #162. 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter (96,875 %) verifierade på kod-/automatisk test-/dokumentationsnivå med gröna `validate` och `rules` på `ee6fffd`. 8.4 inväntar faktisk merge. Ingen fysisk Android-QA har utförts. Checklistans ursprungliga ID och omfattning är frysta.
+**Status:** Mergad i PR #162, commit `a3c53e854f5e784d8a7fea1c2c40409c8aabddff`. 8/8 huvudpunkter och 32/32 delpunkter (100 %) verifierade på kod-/automatisk test-/dokumentationsnivå. Båda CI var gröna på slutlig head `3f10f12`. Ingen fysisk Android-QA har utförts; den återstår i fas 25. Checklistans ursprungliga ID och omfattning är bevarade.
 
 ## Inventering och avgränsning
 
@@ -44,11 +44,11 @@ Först verifieras normalisering, ordning, återställning och lagringsisolering.
    - [x] 7.2 Testa återställning.
    - [x] 7.3 Testa dataseparering.
    - [x] 7.4 Verifiera CI.
-8. [ ] **Avslut (3/4)**
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera standardval.
    - [x] 8.2 Samla enhets-QA till fas 25.
    - [x] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.4 Merga fas-PR.
 
 ## Implementationsmilstolpe
 

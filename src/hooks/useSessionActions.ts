@@ -1,8 +1,9 @@
 import {useState,type Dispatch,type SetStateAction} from 'react';
-import {adjustReductionTarget,type Data,type Profile} from '../domain';
+import {type Data,type Profile} from '../domain';
 import type {Tab} from './useSessionNavigation';
 import {removeCigaretteEntry} from '../utils/entryActions';
 import {updateProfile} from '../utils/profileActions';
+import {applyDailyTargetPreview,type DailyTargetPreview} from '../planTargetPreview';
 
 export function useSessionActions({setData,ask,setTab}:{
  setData:Dispatch<SetStateAction<Data>>;
@@ -13,6 +14,6 @@ export function useSessionActions({setData,ask,setTab}:{
  const remove=(id:string)=>ask('Ta bort registrering?','Registreringen tas bort från historiken.',()=>setData(v=>removeCigaretteEntry(v,id)));
  const go=(tab:Tab)=>setTab(tab);
  const changeProfile=(patch:Partial<Profile>)=>setData(v=>updateProfile(v,patch));
- const changeDailyTarget=(value:number|null)=>setData(v=>v.profile?{...v,profile:adjustReductionTarget(v.profile,value,new Date())}:v);
+ const changeDailyTarget=(preview:DailyTargetPreview)=>setData(v=>applyDailyTargetPreview(v,preview,new Date()));
  return {remove,go,changeProfile,changeDailyTarget,period,setPeriod};
 }

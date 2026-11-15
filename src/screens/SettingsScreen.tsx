@@ -10,7 +10,7 @@ import {SettingsPlanSection} from './SettingsPlanSection';
 
 type Props={
  profile:Profile;goal:number;data:Data;
- onChangeMode:(mode:'reduce'|'quit')=>void;onChangeDailyTarget:(value:number|null)=>void;
+ onChangeMode:(mode:'reduce'|'quit')=>void;onChangeDailyTarget:React.ComponentProps<typeof SettingsPlanSection>['onChangeDailyTarget'];
 };
 export function validReminderTime(hourText:string,minuteText:string){return /^[0-9]{1,2}$/.test(hourText)&&/^[0-9]{1,2}$/.test(minuteText)&&Number(hourText)<=23&&Number(minuteText)<=59}
 export function reminderStatusMessage(optedIn:boolean,permissionGranted:boolean,hasSavedId:boolean,hasScheduledId:boolean){if(!optedIn)return 'Påminnelser är avstängda.';if(!permissionGranted)return 'Notisbehörighet saknas. Tillåt notiser i telefonens inställningar och aktivera sedan påminnelsen igen.';return hasSavedId&&hasScheduledId?'Daglig påminnelse är schemalagd och notiser är tillåtna.':'Ingen aktiv påminnelse hittades. Tryck Aktivera påminnelse för att schemalägga.'}
