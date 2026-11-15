@@ -49,8 +49,8 @@
 | 20.0 | Långsiktigt rökfri och återfallsprevention | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #168, `7cb70a4` |
 | 21.0 | Evidensbaserat stod, nikotinlakemedel och vardvagar | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #169, `70a2295` |
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #170, `577558d` |
-| 23.0 | Förenklad startsida och tydlig informationshierarki | Startad; fast 8x4-checklista | docs/PHASE_23_HOME.md |
-| 24.0 | Lättbegriplig onboarding och vägledd användning | Planerad | — |
+| 23.0 | Förenklad startsida och tydlig informationshierarki | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #171, `3a05bfc` |
+| 24.0 | Lättbegriplig onboarding och vägledd användning | Startad; fast 8x4-checklista | docs/PHASE_24_ONBOARDING.md |
 | 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 
@@ -985,7 +985,7 @@ Inte utfört: faktisk leverans efter omstart, Androids tillstånd/batteriinstäl
 Visa valt dagskort först, följt av två tydliga åtgärder: Registrera och SOS. Ta bort duplicerade plan-/loggkort; destinationerna finns kvar i navigationen och i fördjupningen. Behåll dashboardens sparade val och ordning för övriga kort i en valbar utfällning. Dagskortet visas först när det är valt; dolt val respekteras. Anpassningsreglaget och övriga kort behöver inte fylla första skärmen. En kort stödtext och avstämning är kvar; resestöd, längre coach och återfallsstöd samlas bakom tydlig utfällning. Rökfri underhållsvy ersätter dagskort och ska inte dubblera avstämningen.
 
 Ingen historik, plan, auth eller lagringsmodell ändras. Granska nollmål, ny användare, över mål, ofullständig avstämning och underhållsläge. Fysisk skrollängd, maximal text och TalkBack verifieras i fas 25; kod- och renderstruktur provas nu. Inga native-beroenden.
-**Status:** Lokala kontroller passerar. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %); kodpunkter inväntar CI.
+**Status:** Mergad i PR #171 som `3a05bfc`, head `163a1eb` med grön validate/rules. 8/8 och 32/32 (100 %); fysisk QA kvar i fas 25.
 
 ## Genomförd acceptans
 
@@ -998,41 +998,41 @@ Faktiska React-renderingar med plattformsadapter verifierar ordning, kollapsade 
    - [x] 1.2 Identifiera information som konkurrerar om uppmärksamhet.
    - [x] 1.3 Definiera tre viktigaste förstagångsuppgifter.
    - [x] 1.4 Fastställ acceptanskriterier och avgränsning.
-2. [ ] **Informationshierarki (0/4)**
-   - [ ] 2.1 Definiera tydligt huvudfokus.
-   - [ ] 2.2 Flytta sekundär information till rätt vy.
-   - [ ] 2.3 Ta bort duplicerade navigationsvägar.
-   - [ ] 2.4 Behåll åtkomst till fördjupning.
-3. [ ] **Primära användarflöden (0/4)**
-   - [ ] 3.1 Gör registrering tydlig.
-   - [ ] 3.2 Gör SOS lätt att hitta.
-   - [ ] 3.3 Gör planval lätt att förstå.
-   - [ ] 3.4 Visa nästa relevanta steg.
-4. [ ] **Tillstånd och innehåll (0/4)**
-   - [ ] 4.1 Hantera helt ny användare.
-   - [ ] 4.2 Hantera tom historik och nollmål.
-   - [ ] 4.3 Hantera svår dag utan skuldbeläggning.
-   - [ ] 4.4 Använd korta begripliga svenska texter.
-5. [ ] **Visuell design (0/4)**
-   - [ ] 5.1 Använd konsekvent typografi.
-   - [ ] 5.2 Behåll tydlig knapphierarki.
-   - [ ] 5.3 Begränsa skroll och visuell täthet.
-   - [ ] 5.4 Granska olika skärmstorlekar.
-6. [ ] **Tillgänglighet och kontroll (0/4)**
-   - [ ] 6.1 Granska TalkBack-ordning.
-   - [ ] 6.2 Granska stora textstorlekar.
-   - [ ] 6.3 Granska tryckytor och kontrast.
-   - [ ] 6.4 Gör hjälp och tips frivilliga.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa huvudflöden och tillstånd.
-   - [ ] 7.2 Testa databevarande och gästläge.
-   - [ ] 7.3 Testa navigering och avbrott.
-   - [ ] 7.4 Verifiera CI på aktuell commit.
-8. [ ] **Avslut (2/4)**
+2. [x] **Informationshierarki (4/4)**
+   - [x] 2.1 Definiera tydligt huvudfokus.
+   - [x] 2.2 Flytta sekundär information till rätt vy.
+   - [x] 2.3 Ta bort duplicerade navigationsvägar.
+   - [x] 2.4 Behåll åtkomst till fördjupning.
+3. [x] **Primära användarflöden (4/4)**
+   - [x] 3.1 Gör registrering tydlig.
+   - [x] 3.2 Gör SOS lätt att hitta.
+   - [x] 3.3 Gör planval lätt att förstå.
+   - [x] 3.4 Visa nästa relevanta steg.
+4. [x] **Tillstånd och innehåll (4/4)**
+   - [x] 4.1 Hantera helt ny användare.
+   - [x] 4.2 Hantera tom historik och nollmål.
+   - [x] 4.3 Hantera svår dag utan skuldbeläggning.
+   - [x] 4.4 Använd korta begripliga svenska texter.
+5. [x] **Visuell design (4/4)**
+   - [x] 5.1 Använd konsekvent typografi.
+   - [x] 5.2 Behåll tydlig knapphierarki.
+   - [x] 5.3 Begränsa skroll och visuell täthet.
+   - [x] 5.4 Granska olika skärmstorlekar.
+6. [x] **Tillgänglighet och kontroll (4/4)**
+   - [x] 6.1 Granska TalkBack-ordning.
+   - [x] 6.2 Granska stora textstorlekar.
+   - [x] 6.3 Granska tryckytor och kontrast.
+   - [x] 6.4 Gör hjälp och tips frivilliga.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa huvudflöden och tillstånd.
+   - [x] 7.2 Testa databevarande och gästläge.
+   - [x] 7.3 Testa navigering och avbrott.
+   - [x] 7.4 Verifiera CI på aktuell commit.
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Flytta bred fysisk enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 24.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade.

@@ -2,10 +2,10 @@
 
 ## Aktuellt
 
-- Fas **23.0 – förenklad startsida**.
-- Branch `feat/phase-23-simpler-home`, från uppdaterad main `577558d`.
+- Fas **24.0 – onboarding och vägledning**.
+- Branch `feat/phase-24-guided-onboarding`, från uppdaterad main `3a05bfc`.
 - En PR öppnas för denna branch; hitta den på GitHub och skapa inte dubblett.
-- Fast checklista: `docs/PHASE_23_HOME.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
+- Fast checklista: `docs/PHASE_24_ONBOARDING.md`. 0/8 och 0/32 (0 %) verifierade. Implementation återstår.
 
 ## Senaste avslutade arbete
 
