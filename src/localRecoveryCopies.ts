@@ -1,6 +1,6 @@
 type RecoveryStorage={getAllKeys:()=>Promise<readonly string[]>;multiRemove:(keys:string[])=>Promise<unknown>};
 // Old versions wrote copies without an owner. Never infer an account from content.
-const isLegacyCopy=(key:string)=>/^smoke-less-pre-cloud-import-\d+-[a-z0-9]+$/.test(key);
+const isLegacyCopy=(key:string)=>/^smoke-less-pre-cloud-import-\d+-[a-z0-9]*$/.test(key);
 export async function listLegacyRecoveryCopies(storage:RecoveryStorage){
  return (await storage.getAllKeys()).filter(isLegacyCopy);
 }

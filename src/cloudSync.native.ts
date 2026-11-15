@@ -4,6 +4,10 @@ import type {Data,Profile} from './domain';
 import {isCloudData, userDocumentPath} from './cloudSchema';
 import {readCloudSnapshot} from './cloudRead.native';
 import {previewMerge,canUpdateObservedPlan} from './syncMerge';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {assertAccountWritable} from './accountDeletionSafety';
+import {recordServerDeletion} from './cloudDeletion.native';
+import {accountDeletionRemoteEnabled} from './accountDeletionConfig';
 
 // Only a profile successfully observed during this app session can be updated.
 // The remote document is rechecked inside a transaction before any write.
@@ -19,6 +23,7 @@ const fingerprint = (profile:Profile) => JSON.stringify(Object.fromEntries(Objec
  * Never overwrites a remote document or silently resurrects deletions.
  */
 export async function syncCloudData(uid: string, local: Data): Promise<Data> {
+  await assertAccountWritable(AsyncStorage,uid);
   const startedEpoch=accountEpoch;
   const assertUser = () => {
     if(startedEpoch!==accountEpoch) throw new Error('Kontosessionen ändrades. Synkronisering avbruten.');
@@ -109,10 +114,14 @@ export function subscribeCloudChanges(uid:string,onChange:()=>void,onError:(erro
  if(getAuth().currentUser?.uid!==uid)return ()=>{};
  const base=firestore().doc(userDocumentPath(uid));
  const stops:(()=>void)[]=[];
- let initial=4;
+ let initial=accountDeletionRemoteEnabled?5:4;
  const changed=()=>{if(initial>0){initial--;return;}if(getAuth().currentUser?.uid===uid)onChange();};
  const failed=(error:Error)=>{if(getAuth().currentUser?.uid===uid)onError(error);};
  try{
+  if(accountDeletionRemoteEnabled)stops.push(base.collection('control').doc('deletion').onSnapshot(snapshot=>{
+   if(snapshot.exists())void recordServerDeletion(uid,snapshot.data()?.state).catch(failed);
+   else changed();
+  },failed));
   stops.push(base.collection('settings').doc('plan').onSnapshot(changed,failed));
   for(const name of ['entries','cravings','checkins']){
    stops.push(base.collection(name).onSnapshot(changed,failed));

@@ -173,11 +173,9 @@ test('Google sign-in cannot initiate account deletion or bypass the logged-in se
  assert.match(linking,/auth\.currentUser\?\.uid!==expectedUid/);
  assert.doesNotMatch(linking,/deleteUser|firebaseSignOut|signInWithCredential/);
 });
-test('account deletion is not exposed as an enabled button in AccountScreen',()=>{
- const fs=require('node:fs'),path=require('node:path');
- const source=fs.readFileSync(path.join(__dirname,'../src/screens/AccountScreen.tsx'),'utf8');
- assert.match(source,/Säker kontoradering behöver färdigställas och testas innan funktionen kan aktiveras/);
- assert.doesNotMatch(source,/<Btn title="Radera konto"/);
+test('account deletion requires an explicit release feature flag and remains disabled by default',()=>{
+ const fs=require('node:fs');const ui=fs.readFileSync('src/screens/AccountScreen.tsx','utf8'),backend=fs.readFileSync('src/accountDeletionConfig.ts','utf8');
+ assert.match(ui,/deletionEnabled\?<><Text/);assert.match(ui,/onPress=\{onDeleteAccount\}/);assert.match(backend,/EXPO_PUBLIC_ACCOUNT_DELETION_ENABLED==='true'/);
 });
 
 test('offline, missing Play services and invalid OAuth config provide safe Swedish fallback',()=>{

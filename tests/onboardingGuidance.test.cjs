@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
-function load(path,deps={}){const scope={exports:{},Date,require:id=>{if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{fileName:path,compilerOptions:{jsx:ts.JsxEmit.React,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,scope);return scope.exports;}
+function load(path,deps={}){const scope={exports:{},Date,require:id=>{if(id==='./accountDeletionSafety')return load('src/accountDeletionSafety.ts');if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{fileName:path,compilerOptions:{jsx:ts.JsxEmit.React,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,scope);return scope.exports;}
 const {parseOnboardingNumbers:parse}=load('src/utils/onboardingValidation.ts'),{completeOnboarding:complete}=load('src/domain/onboarding.ts'),guidance=load('src/domain/gettingStarted.ts');
 const {createLocalPreferences:create}=load('src/localPreferences.ts');
 test('setup requires an explicit valid baseline and allows zero-price optional economy',()=>{

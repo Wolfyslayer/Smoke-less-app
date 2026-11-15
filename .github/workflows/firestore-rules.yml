@@ -31,7 +31,7 @@ jobs:
             exit 0
           fi
           files=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
-          if printf '%s\n' "$files" | grep -Eq '^(firestore\.rules$|firestore\.indexes\.json$|firebase\.json$|src/(cloudSchema|cloudSync|cloudSync\.native|cloudSync\.web)\.|src/hooks/useCloudSync\.|tests/firestore\.rules\.test\.cjs$|functions/|\.github/workflows/firestore-rules\.yml$)'; then
+          if printf '%s\n' "$files" | grep -Eq '^(firestore\.rules$|firestore\.indexes\.json$|firebase\.json$|src/(cloudSchema|cloudSync|cloudSync\.native|cloudSync\.web|cloudRead\.native)\.|src/hooks/useCloudSync\.|tests/firestore\.rules\.test\.cjs$|src/accountDeletion|src/cloudDeletion|src/hooks/useAccountDeletion\.|src/(accountStorage|accountMigration|localSessionStorage|localPreferences|dashboardPreferences|storage)\.|functions/|\.github/workflows/firestore-rules\.yml$)'; then
             echo "run_tests=true" >> "$GITHUB_OUTPUT"
           else
             echo "run_tests=false" >> "$GITHUB_OUTPUT"
@@ -66,3 +66,9 @@ jobs:
       - name: Execute rules tests against Firestore emulator
         if: steps.changes.outputs.run_tests == 'true'
         run: npx --yes firebase-tools emulators:exec --only firestore --project smokeless-rules-test "node --test tests/firestore.rules.test.cjs"
+      - name: Install locked account deletion runtime
+        if: steps.changes.outputs.run_tests == 'true'
+        run: npm ci --prefix functions --no-audit --no-fund
+      - name: Test callable deletion with isolated Auth, Firestore and Functions emulators
+        if: steps.changes.outputs.run_tests == 'true'
+        run: npx --yes firebase-tools emulators:exec --only auth,firestore,functions --project demo-smokeless-qa "node --test functions/accountDeletion.integration.cjs"

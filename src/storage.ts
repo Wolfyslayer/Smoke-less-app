@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {type Data,validateData} from './domain';
+import {writeAccountScoped} from './accountDeletionSafety';
 const KEY='smoke-less-v6';
 export async function load():Promise<Data>{
  let raw:string|null;
@@ -21,5 +22,5 @@ export async function backupBeforeCloudImport(value:Data,uid:string|null=null):P
  if(uid!==null&&!/^[A-Za-z0-9_-]{1,128}$/.test(uid))throw new Error('Ogiltigt konto-ID');
  const identity=uid===null?'guest':'account:'+uid;
  const key='smoke-less-pre-cloud-import:v2:'+identity+':'+Date.now()+'-'+Math.random().toString(36).slice(2);
- await AsyncStorage.setItem(key,JSON.stringify(value));return key;
+ await writeAccountScoped(AsyncStorage,uid,key,JSON.stringify(value));return key;
 }

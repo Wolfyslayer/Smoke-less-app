@@ -7,7 +7,7 @@ const ts=require('typescript');
 function loadModule(file,deps){
  const js=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  const exports={};
- vm.runInNewContext(js,{exports,require:id=>{if(!(id in deps))throw Error('Unexpected dependency '+id);return deps[id];}},{filename:file});
+ vm.runInNewContext(js,{exports,require:id=>{if(id==='./accountDeletionSafety')return loadModule('src/accountDeletionSafety.ts',{});if(!(id in deps))throw Error('Unexpected dependency '+id);return deps[id];}},{filename:file});
  return exports;
 }
 function setup(){

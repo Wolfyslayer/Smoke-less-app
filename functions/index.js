@@ -36,7 +36,7 @@ async function deleteCollection(db, collectionRef) {
 }
 
 exports.deleteMyAccount = onCall(
-  {maxInstances: 10, timeoutSeconds: 540, memory: '256MiB'},
+  {region: 'europe-west1', maxInstances: 10, timeoutSeconds: 540, memory: '256MiB'},
   async request => {
     const uid = request.auth?.uid;
     const authTime = Number(request.auth?.token?.auth_time);
@@ -108,7 +108,8 @@ exports.deleteMyAccount = onCall(
     } catch (error) {
       // Never remove the lock or report success on partial failure. Admin
       // recovery is required if auth deletion succeeded but final status fails.
-      console.error('Account deletion incomplete', {uid, error});
+      // Avoid account identifiers and provider error payloads in application logs.
+      console.error('Account deletion incomplete');
       throw new HttpsError('internal', 'Raderingen kunde inte bekräftas. Kontakta support.');
     }
   }

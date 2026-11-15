@@ -23,3 +23,5 @@ Arbetsunderlag kontrollerat 2026-11-15, **inte inskickad eller färdig deklarati
 ## Saknas före färdigställande
 
 Ansvarig utgivare, offentlig support-/integritetsadress, publicerad policy-URL, extern raderingsväg, behandlingsgrund, lagringsregioner/överföringar, logg-/backupretention, slutlig SDK-inventering och verifierad kontoradering. Ange även målgrupp, innehållsklassning och vald test-/lanseringskanal i Console. Inga påhittade organisationsuppgifter eller färdigmarkerade formulär.
+
+Teknisk precisering: `google-services.json` och läsande projektmetadata bekräftar `smoke-less-75efa`, `com.smokeless.app` och Firestore `eur3`. Detta fastställer inte alla regioner/överföringar för Authentication, support eller loggar. Cloud Functions-API:t är avstängt; framtida raderingsfunktion och klient förbereds för `europe-west1` men ingen driftsättning är verifierad. Klientens releaseflagga är avstängd tills `ACCOUNT_DELETION_ACCEPTANCE.md` passerat.

@@ -36,9 +36,9 @@
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
 | 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Mergad; Android-verifiering återstår i fas 17 | #156 |
-| 16.1 | Android-hemskärmswidgets | Planerad | — |
-| 16.2 | Google-inloggning med Firebase | Planerad | — |
-| 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
+| 16.1 | Android-hemskärmswidgets | Mergad; fysisk QA i fas 25 | #158, `e9ee298` |
+| 16.2 | Google-inloggning med Firebase | Mergad; fysisk QA i fas 25 | #159, `27d0e0f` |
+| 16.3 | Android-tillbakaknapp och navigations-UX | Mergad; fysisk QA i fas 25 | #160, `1811444` |
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
@@ -1117,6 +1117,10 @@ Officiella Play-källor kontrollerade 2026-11-15 i `PLAY_DATA_SAFETY_REVIEW.md`.
 Efter grön validate/rules på `3f3d63e`: gästlagring skyddas mot tyst tom återställning vid fel/skadad data, och Inställningar har bekräftad engångsstädning av exakta äldre omärkta backupnycklar. Inget har raderats på telefonen. 272 ordinarie tester + 10 storage + 6 migration + 9 emulatorfall = 297 verifierade automatiska fall; ny slutlig CI inväntas. Enhetsproven är nu kopplade till faktisk commit i QA-protokollet.
 
 **Användarbeslut:** Bygg inte mer nu; användaren ordnar bygge senare. QA-körning 43740485924 är cancelled. Ingen ny APK/release är verifierad. Fortsätt övrig utveckling och tester; beslutet pausar inte fasens övriga arbete.
+
+Kontoraderingens klientkedja är därefter implementerad bakom avstängd flagga: samtycke/färsk auth, pausad synk, beständig UID-spärr, serverkvitto före städning, skydd för sena writes, gäst/andra konton, omstart samt SDK-/PNG-/widgetstädning. Kontrolläsningar är flaggade för kompatibilitet med ännu ej verifierade produktionsregler. Tre verkliga lokala Auth/Firestore/Functions-test passerar; säkerhets-CI kör dem med Node 22. `ACCOUNT_DELETION_ACCEPTANCE.md` beskriver återstående nativa/produktionsgrindar. 297 ordinarie + 10 storage + 6 migration + 9 regler + 3 integration = 325 lokalt verifierade automatiska fall. Denna kod innebär inte att fysisk kontoradering 4.4 är klar.
+
+Användaren pekade på `C:\SL\google-services.json`. Läsande kontroll bekräftar projekt `smoke-less-75efa`, paket `com.smokeless.app`, Firestore `eur3` och avstängt Cloud Functions-API (`SERVICE_DISABLED`). Funktionen förbereds för närmaste region `europe-west1`; ingen hemlighet, API-aktivering, produktionsdriftsättning eller verklig radering är utförd.
 **Status:** Pågår. 1/8 huvudpunkter (12,5 %) och 8/32 delpunkter (25 %) verifierade. Fysisk slutacceptans, radering och release är inte klara.
 
 1. [x] **Testplan (4/4)**

@@ -28,6 +28,9 @@ Datum: 2026-11-15. Källbas för enhetsproven: `3f3d63e` (samma JS-korrigeringar
 | AUTO-02 | PASS | Nio Firestore-regeltester mot lokal emulator, projekt `smokeless-rules-test`. Anonym/annan användare, otillåtna fält, revisioner, hårdradering och raderingslås provas. Ingen produktionsdata används. |
 | AUTO-03 | PASS | 21 mockade server-/återhämtningstester: ordning, delvisa fel, färsk auth, okänd data, lease och återförsök. Inte en driftsatt klient/server-integration. |
 | BUILD-01 | AVBRUTET | Fristående QA-workflow 43740485924 är cancelled. Användaren har beslutat att själv ordna bygge senare. Starta inga ytterligare byggen nu; inget nytt APK-resultat har godkänts. |
+| AUTO-04 | PASS | Tre riktiga callable-integrationstest i Auth + Firestore + Functions, enbart `demo-smokeless-qa`: full egen radering med annat konto bevarat, nekad obehörig/UID-styrd begäran och stopp vid okänd nästlad data. Lokalt Node 24; CI verifierar Node 22. |
+
+Senaste lokala raderingsmilstolpe: TypeScript, 297 ordinarie tester (inklusive 21 servermockar), 10 storage, 6 migration, 9 regler och 3 integration = **325 fall**. Ingen fysisk radering, native-cacheacceptans, API-aktivering eller produktionsradering ingår i detta resultat. Releaseflaggan är avstängd.
 
 ## Kvarvarande obligatoriska prov
 

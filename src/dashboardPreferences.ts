@@ -1,3 +1,4 @@
+import {assertAccountWritable,writeAccountScoped} from './accountDeletionSafety';
 export const DASHBOARD_CARDS=['goal','time','savings','progress','cravings','milestone'] as const;
 export type DashboardCard=typeof DASHBOARD_CARDS[number];
 export type DashboardPreferences={version:1;cards:DashboardCard[]};
@@ -21,7 +22,7 @@ export function moveDashboardCard(value:DashboardPreferences,id:DashboardCard,di
 export function dashboardStorageKey(uid:string|null):string{
  return uid===null?'smokeless:dashboard:v1:guest':`smokeless:dashboard:v1:account:${encodeURIComponent(uid)}`;
 }
-type Storage={getItem:(key:string)=>Promise<string|null>;setItem:(key:string,value:string)=>Promise<void>};
+type Storage={getItem:(key:string)=>Promise<string|null>;setItem:(key:string,value:string)=>Promise<void>;removeItem?:(key:string)=>Promise<unknown>};
 /** A queue per identity prevents late writes from winning after rapid edits/remounts. */
 export function createDashboardStore(storage:Storage){
  const pending=new Map<string,Promise<unknown>>();
@@ -29,13 +30,14 @@ export function createDashboardStore(storage:Storage){
   async load(uid:string|null):Promise<DashboardPreferences>{
    const key=dashboardStorageKey(uid);
    await pending.get(key)?.catch(()=>{});
+   await assertAccountWritable(storage,uid);
    const raw=await storage.getItem(key);
    if(raw===null)return defaultDashboardPreferences();
    try{return normalizeDashboardPreferences(JSON.parse(raw));}catch{return defaultDashboardPreferences();}
   },
   save(uid:string|null,value:DashboardPreferences):Promise<void>{
    const key=dashboardStorageKey(uid),snapshot=JSON.stringify(normalizeDashboardPreferences(value));
-   const write=(pending.get(key)??Promise.resolve()).catch(()=>{}).then(()=>storage.setItem(key,snapshot));
+   const write=(pending.get(key)??Promise.resolve()).catch(()=>{}).then(()=>writeAccountScoped(storage,uid,key,snapshot));
    pending.set(key,write);
    void write.finally(()=>{if(pending.get(key)===write)pending.delete(key);}).catch(()=>{});
    return write;

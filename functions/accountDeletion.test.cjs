@@ -9,6 +9,7 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
   let authDeleted = false;
   let lock = lockState && {state: lockState, leaseUntilMs: missingLease ? undefined : activeLease ? Date.now() + 600000 : Date.now() - 1000};
   const events = [];
+  const logs = [];
   const COLLECTION_NAMES = ['entries', 'cravings', 'checkins', 'settings', 'control'];
   const lockRef = {
     async create(value) {
@@ -63,10 +64,10 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
   const context = {exports: {}, require: name => {
     if (!(name in modules)) throw Error('Unexpected dependency: ' + name);
     return modules[name];
-  }, console: {error() {}}};
+  }, console: {error(...args) {logs.push(args);}}};
   vm.runInNewContext(fs.readFileSync('functions/index.js', 'utf8'), context);
   const request = {auth: {uid: 'test-user', token: {auth_time: Math.floor(Date.now()/1000)}}, data: {}};
-  return {invoke: (overrides = {}) => context.exports.deleteMyAccount({...request, ...overrides}), events, get remaining() {return remaining;}, get authDeleted() {return authDeleted;}, get lock() {return lock;}};
+  return {invoke: (overrides = {}) => context.exports.deleteMyAccount({...request, ...overrides}), logs, events, get remaining() {return remaining;}, get authDeleted() {return authDeleted;}, get lock() {return lock;}};
 }
 
 test('deletes all documents before Auth and completes the lock', async () => {
@@ -80,6 +81,7 @@ test('failed Firestore batch keeps Auth and deletion lock intact', async () => {
   await assert.rejects(h.invoke(), error => error.code === 'internal');
   assert.equal(h.authDeleted, false);
   assert.equal(h.lock.state, 'deleting');
+  assert.deepEqual(h.logs,[['Account deletion incomplete']]);
 });
 test('retry resumes an interrupted deletion', async () => {
   const h = harness({lockState: 'deleting'});

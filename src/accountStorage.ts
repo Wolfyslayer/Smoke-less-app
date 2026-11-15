@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Data, EMPTY, validateData} from './domain';
+import {assertAccountWritable,writeAccountScoped} from './accountDeletionSafety';
 
 /**
  * Independent storage namespace for each authenticated account.
@@ -15,6 +16,7 @@ export function accountStorageKey(uid: string): string {
 }
 
 export async function loadAccountData(uid: string): Promise<Data> {
+  await assertAccountWritable(AsyncStorage,uid);
   const raw = await AsyncStorage.getItem(accountStorageKey(uid));
   if (raw === null) return {...EMPTY, entries: [], cravings: [], checkins: []};
   let parsed: unknown;
@@ -31,7 +33,7 @@ export async function loadAccountData(uid: string): Promise<Data> {
 
 export async function saveAccountData(uid: string, value: Data): Promise<void> {
   if (!validateData(value)) throw new Error('Kan inte spara ogiltig historik');
-  await AsyncStorage.setItem(accountStorageKey(uid), JSON.stringify(value));
+  await writeAccountScoped(AsyncStorage,uid,accountStorageKey(uid),JSON.stringify(value));
 }
 
 /**
@@ -44,6 +46,6 @@ export async function copyGuestDataToAccount(uid: string, guest: Data): Promise<
   if (!validateData(guest)) throw new Error('Ogiltig gästhistorik');
   if (await AsyncStorage.getItem(key) !== null) return 'already-exists';
   // AsyncStorage has no compare-and-swap; callers must serialize migrations per account.
-  await AsyncStorage.setItem(key, JSON.stringify(guest));
+  await writeAccountScoped(AsyncStorage,uid,key,JSON.stringify(guest));
   return 'copied';
 }

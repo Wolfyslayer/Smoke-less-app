@@ -1,6 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
 function setup(raw,failRead=false){let writes=0;const scope={exports:{},require:id=>{
  if(id==='@react-native-async-storage/async-storage')return {__esModule:true,default:{getItem:async()=>{if(failRead)throw Error('disk');return raw;},setItem:async()=>writes++}};
+ if(id==='./accountDeletionSafety'){const safety={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/accountDeletionSafety.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,safety);return safety.exports;}
  if(id==='./domain')return {validateData:v=>!!v&&v.profile===null&&Array.isArray(v.entries)&&Array.isArray(v.cravings)&&Array.isArray(v.checkins)};
  throw Error(id);
  }};vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/storage.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,scope);return {...scope.exports,writes:()=>writes};}

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {Data} from './domain';
 import {validateData} from './domain';
 import {accountStorageKey} from './accountStorage';
+import {writeAccountScoped} from './accountDeletionSafety';
 
 const BACKUP_PREFIX = 'smoke-less-v6-migration-backup:';
 export type MigrationResult =
@@ -33,12 +34,12 @@ export async function migrateGuestHistoryWithBackup(
   check();
   const backupKey = BACKUP_PREFIX + uid + ':' + Date.now() + ':' + Math.random().toString(36).slice(2);
   // Save a recovery snapshot BEFORE the destination account can change.
-  await AsyncStorage.setItem(backupKey, JSON.stringify(guest));
+  await writeAccountScoped(AsyncStorage,uid,backupKey,JSON.stringify(guest));
   check();
   // Guard against an account record appearing while the backup was written.
   if (await AsyncStorage.getItem(key) !== null) return {status: 'already-exists'};
   check();
-  await AsyncStorage.setItem(key, JSON.stringify(guest));
+  await writeAccountScoped(AsyncStorage,uid,key,JSON.stringify(guest));
   // A sign-out immediately after the write must not remove the saved copy.
   check();
   return {status: 'copied', backupKey};
