@@ -1,5 +1,5 @@
 # Fas 19.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #167. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %) verifierade mot startinventering/kontrakt på `e442d15`, grön validate/rules. Implementationen inväntar egen CI. Ursprungliga 8×4-ID är bevarade.
+**Status:** Mergad i PR #167 som `9d0505e`. 8/8 och 32/32 (100 %) verifierade på kod-/test-/dokumentationsnivå. Slutlig head `e460027` grön validate/rules; TypeScript och 195 tester passerade. Fysisk Android/TalkBack-QA kvarstår i fas 25.
 
 ## Ändringskontrakt och acceptans
 
@@ -12,41 +12,41 @@ Persistens lagrar endast stabila strategi-ID:n per situation, lokalt per gäst/U
    - [x] 1.2 Dokumentera användarbehov och begränsningar.
    - [x] 1.3 Fastställ acceptanskriterier.
    - [x] 1.4 Fastställ risker och testmatris.
-2. [ ] **Datamodell och integritet (0/4)**
-   - [ ] 2.1 Definiera minsta nödvändiga datamängd.
-   - [ ] 2.2 Skydda gäst- och kontodata.
-   - [ ] 2.3 Bevara tidigare historik.
-   - [ ] 2.4 Verifiera bakåtkompatibilitet.
-3. [ ] **Grundflöde (0/4)**
-   - [ ] 3.1 Implementera fasens huvudflöde.
-   - [ ] 3.2 Hantera tomma och felaktiga värden.
-   - [ ] 3.3 Hantera avbrott och återstart.
-   - [ ] 3.4 Säkerställ tydliga användarval.
-4. [ ] **Personalisering (0/4)**
-   - [ ] 4.1 Anpassa till användarens uttryckliga val.
-   - [ ] 4.2 Behåll säkra standardinställningar.
-   - [ ] 4.3 Undvik skuldbeläggande formuleringar.
-   - [ ] 4.4 Gör anpassning frivillig och reversibel.
-5. [ ] **Offline och synk (0/4)**
-   - [ ] 5.1 Fungera utan nätverk när möjligt.
-   - [ ] 5.2 Hantera inloggning och utloggning.
-   - [ ] 5.3 Undvik synkkonflikter och dataförlust.
-   - [ ] 5.4 Undvik nya kostsamma beroenden.
-6. [ ] **Tillgänglighet och svenska texter (0/4)**
-   - [ ] 6.1 Använd tydlig svenska.
-   - [ ] 6.2 Granska TalkBack och fokus.
-   - [ ] 6.3 Granska små skärmar och stor text.
-   - [ ] 6.4 Granska tryckytor och kontrast.
-7. [ ] **Automatiska tester och CI (0/4)**
-   - [ ] 7.1 Testa centrala domänfall.
-   - [ ] 7.2 Testa fel- och avbrottsfall.
-   - [ ] 7.3 Testa integritet och dataseparering.
-   - [ ] 7.4 Verifiera obligatorisk CI.
-8. [ ] **Slutverifiering och merge (2/4)**
+2. [x] **Datamodell och integritet (4/4)**
+   - [x] 2.1 Definiera minsta nödvändiga datamängd.
+   - [x] 2.2 Skydda gäst- och kontodata.
+   - [x] 2.3 Bevara tidigare historik.
+   - [x] 2.4 Verifiera bakåtkompatibilitet.
+3. [x] **Grundflöde (4/4)**
+   - [x] 3.1 Implementera fasens huvudflöde.
+   - [x] 3.2 Hantera tomma och felaktiga värden.
+   - [x] 3.3 Hantera avbrott och återstart.
+   - [x] 3.4 Säkerställ tydliga användarval.
+4. [x] **Personalisering (4/4)**
+   - [x] 4.1 Anpassa till användarens uttryckliga val.
+   - [x] 4.2 Behåll säkra standardinställningar.
+   - [x] 4.3 Undvik skuldbeläggande formuleringar.
+   - [x] 4.4 Gör anpassning frivillig och reversibel.
+5. [x] **Offline och synk (4/4)**
+   - [x] 5.1 Fungera utan nätverk när möjligt.
+   - [x] 5.2 Hantera inloggning och utloggning.
+   - [x] 5.3 Undvik synkkonflikter och dataförlust.
+   - [x] 5.4 Undvik nya kostsamma beroenden.
+6. [x] **Tillgänglighet och svenska texter (4/4)**
+   - [x] 6.1 Använd tydlig svenska.
+   - [x] 6.2 Granska TalkBack och fokus.
+   - [x] 6.3 Granska små skärmar och stor text.
+   - [x] 6.4 Granska tryckytor och kontrast.
+7. [x] **Automatiska tester och CI (4/4)**
+   - [x] 7.1 Testa centrala domänfall.
+   - [x] 7.2 Testa fel- och avbrottsfall.
+   - [x] 7.3 Testa integritet och dataseparering.
+   - [x] 7.4 Verifiera obligatorisk CI.
+8. [x] **Slutverifiering och merge (4/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Samla kvarstående fysisk enhets-QA i fas 25.
-   - [ ] 8.3 Verifiera grön CI på slutlig commit.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera grön CI på slutlig commit.
+   - [x] 8.4 Merga fas-PR.
 
 ## Implementation och verifieringsunderlag
 

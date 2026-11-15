@@ -2,10 +2,10 @@
 
 ## Aktuellt
 
-- Fas **19.0 – personliga handlingsplaner**.
-- Branch `feat/phase-19-personal-action-plans`, från uppdaterad main `2857e3f`.
-- Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/167.
-- Fast checklista: `docs/PHASE_19_ACTION_PLANS.md`. 1/8 (12,5 %) och 6/32 (18,75 %) verifierade på startcommit `e442d15` med grön CI. Implementation inväntar egen CI.
+- Fas **20.0 – långsiktigt stöd och underhåll**.
+- Branch `feat/phase-20-maintenance-support`, från uppdaterad main `9d0505e`.
+- En fas-PR öppnas för denna branch; hitta den på GitHub och skapa inte dubblett.
+- Fast checklista: `docs/PHASE_20_MAINTENANCE.md`. 0/8 och 0/32 verifierade (0 %). Implementation återstår.
 
 ## Senaste avslutade arbete
 
@@ -19,7 +19,7 @@ Tidigare faser: 16.4 PR #161 (`07ff48c`), 16.5 PR #162 (`a3c53e8`), 16.6 PR #163
 
 Implementerat gemensam modell och SVG-renderare i startsida, förhandsvisning och PNG. Bilden visar kvar av mål, mindre ring och samma stödtext. FontScale får kortet att växa/staplas och ogiltigförklarar gamla exporter. En statisk bildöversikt renderad från faktisk komponent finns i docs/assets/phase17-progress-review.png; visuell inspektion är utförd, men inte Android-export. TypeScript och 183 tester passerar lokalt.
 
-Fas 17 mergad i #165 (`0fdd4b1`); fas 18 mergad i #166 (`2857e3f`). Fas 19 har nu stabila SOS-ID:n, privata max-tre-stegsplaner per situation, ordning/reset och direkt tipsval utan automatisk loggning. TypeScript och 195 tester passerar lokalt. Nästa steg: verifiera implementations-CI, slutgranska persistens/avbrott/tillgänglighet och merga #167 när acceptansen är uppfylld. Fortsätt därefter direkt till fas 20 enligt roadmapen. Fysisk PNG/systemdelning och TalkBack ligger kvar i fas 25.
+Fas 17 mergad #165 (`0fdd4b1`), fas 18 #166 (`2857e3f`), fas 19 #167 (`9d0505e`), slutlig head `e460027` grön validate/rules. TypeScript och 195 tester passerade. Nästa steg: verifiera start-CI och implementera underhållskort i valt underhållsläge, frivillig uppföljning och veckovis alternativ till befintliga dagliga påminnelser. Återanvänd bekräftade rekord och SOS-planer utan automatisk nollställning. Fortsätt sedan genom roadmapen. Fysisk PNG/systemdelning och TalkBack kvarstår i fas 25.
 
 ## Regler och risker
 
