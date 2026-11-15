@@ -1,5 +1,5 @@
 # Fas 16.6 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Pågående i PR #163. 6/8 huvudpunkter (75 %) och 28/32 delpunkter (87,5 %) verifierade på kod-/automatisk test-/dokumentationsnivå med gröna validate/rules på `f4231c3`. Sista bekräftelsefeedbacken inväntar egen CI. Ingen fysisk Android-QA är utförd. Ursprunglig 8×4-checklista är bevarad.
+**Status:** Mergad i PR #163, commit `525b07ba970d528ddafabb295504b2c111e99c29`. 8/8 huvudpunkter och 32/32 delpunkter (100 %) verifierade på kod-/automatisk test-/dokumentationsnivå. Båda obligatoriska CI var gröna på slutlig head `93f283e`. Ingen fysisk Android-QA är utförd; den återstår i fas 25. Ursprunglig 8×4-checklista är bevarad. Äldre milstolpars väntande CI-noteringar nedan är historiska.
 
 ## Första inventering och ändringskontrakt
 
@@ -36,9 +36,9 @@ Bred fysisk kalender-, tangentbords-, TalkBack-, offline- och tvåenhets-QA öve
    - [x] 5.2 Hantera revisionskonflikter.
    - [x] 5.3 Hantera offlineändringar.
    - [x] 5.4 Hantera kontobyte.
-6. [ ] **UX (2/4)**
-   - [ ] 6.1 Visa begriplig bekräftelse.
-   - [ ] 6.2 Erbjud avbryt.
+6. [x] **UX (4/4)**
+   - [x] 6.1 Visa begriplig bekräftelse.
+   - [x] 6.2 Erbjud avbryt.
    - [x] 6.3 Visa stödjande texter.
    - [x] 6.4 Granska tillgänglighet.
 7. [x] **Tester (4/4)**
@@ -46,11 +46,11 @@ Bred fysisk kalender-, tangentbords-, TalkBack-, offline- och tvåenhets-QA öve
    - [x] 7.2 Testa datumgränser.
    - [x] 7.3 Testa konfliktfall.
    - [x] 7.4 Verifiera CI.
-8. [ ] **Avslut (2/4)**
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera ändringskontrakt.
    - [x] 8.2 Samla enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ## Implementationsmilstolpe
 
