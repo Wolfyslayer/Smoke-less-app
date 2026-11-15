@@ -1,4 +1,6 @@
-import React from 'react';
+import {buildPersonalTrends} from '../domain/personalTrends';
+import {PersonalTrends} from '../components/PersonalTrends';
+import React,{useMemo} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {C} from '../theme';
 import {calendarDaysInclusive,dayKey,savings,type Data} from '../domain';
@@ -12,9 +14,12 @@ function Heading({children}:{children:React.ReactNode}){return <Text accessibili
 function Stat({label,value}:{label:string;value:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
 function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessible accessibilityRole="text" accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter${n===0?". Ingen cigarett registrerad; eventuell rökfri bekräftelse visas separat.":""}`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
+ const minute=Math.floor(clock/60000);
+ const trends=useMemo(()=>buildPersonalTrends(data,clock),[data,minute]);
  const strategyOutcomes=new Map<string,{yes:number;no:number}>();
  for(const craving of data.cravings){
-  if(!craving.strategy||typeof craving.helpful!=='boolean'||new Date(craving.at).getTime()>clock)continue;
+  const at=new Date(craving.at).getTime();
+  if(!Number.isFinite(at)||!craving.strategy||typeof craving.helpful!=='boolean'||at>clock)continue;
   const result=strategyOutcomes.get(craving.strategy)??{yes:0,no:0};
   if(craving.helpful)result.yes++;else result.no++;
   strategyOutcomes.set(craving.strategy,result);
@@ -42,27 +47,26 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
  const baseline=data.profile?.baseline??0;
  const reductionPercent=baseline>0&&observedDays>0?Math.round((1-averagePerDay/baseline)*100):null;
  const planStartKey=startDate&&Number.isFinite(startDate.getTime())?dayKey(startDate):null;
- const confirmedKeys=new Set(data.checkins.filter(c=>planStartKey!==null&&c.complete&&c.smokeFree&&c.date>=planStartKey&&c.date<=todayKey).map(c=>c.date));
- let confirmedStreak=0;
- const cursor=new Date(clock);
- cursor.setHours(12,0,0,0);
- while(confirmedKeys.has(dayKey(cursor))){confirmedStreak++;cursor.setDate(cursor.getDate()-1)}
+ const confirmedStreak=trends.currentStreak;
  const milestoneDays=[1,3,7,14,30];
  const milestones=milestoneDays.map(days=>({days,reached:confirmedStreak>=days}));
  const nextMilestone=milestoneDays.find(days=>days>confirmedStreak);
  const totalSavings=savings(data,new Date(clock));
  const previousSavings=period===0?0:savings(data,new Date(periodStart(clock,period)-1));
  const selectedSavings=Math.max(0,totalSavings-previousSavings);
- const confirmedSmokeFreeDays=new Set(data.checkins.filter(c=>planStartKey!==null&&c.complete&&c.smokeFree&&c.date>=planStartKey&&c.date<=todayKey&&(startKey===null||c.date>=startKey)).map(c=>c.date)).size;
+ const confirmedSmokeFreeDays=trends.smokeFreeDays.filter(key=>planStartKey!==null&&key>=planStartKey&&(startKey===null||key>=startKey)).length;
+
  return <View style={styles.screen}>
+  <PersonalTrends trends={trends}/>
   <Card style={{padding:19,borderColor:'#425C29'}}><Label>REGISTRERINGAR</Label><Text style={styles.heroNumber}>{periodEntries.length}</Text><Text style={styles.muted}>{period===0?'Alla registreringar':'Kalenderdagar inklusive idag'}</Text></Card>
   <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" accessibilityState={{selected:period===v}} accessibilityLabel={`Visa statistik för ${label.toLowerCase()}`} key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.background:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
   <Heading>Cigaretter per dag</Heading><Card><Text style={styles.muted}>Diagrammet visar alltid de senaste sju dagarna, oavsett vald statistikperiod.</Text><Bars values={weekly} clock={clock}/><Text style={styles.muted}>De senaste sju kalenderdagarna, med antal registrerade cigaretter ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text></Card>
   <Text style={styles.muted}>Rökfria dagar räknas bara när dagen har bekräftats och ligger inom vald period. Dagar utan registrering räknas inte automatiskt som rökfria.</Text>
-  <View style={styles.grid}><Stat label="REGISTRERAT IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="UPPSKATTAT SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="UPPSKATTAT SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.length)}/><Stat label="REGISTRERAT SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
+  <View style={styles.grid}><Stat label="REGISTRERAT IDAG" value={String(todayCount)}/><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="UPPSKATTAT SPARAT TOTALT" value={data.profile?fmt(totalSavings)+" kr":"–"}/><Stat label="UPPSKATTAT SPARAT UNDER PERIODEN" value={data.profile?fmt(selectedSavings)+" kr":"–"}/><Stat label="TOTALT REGISTRERAT" value={String(data.entries.filter(e=>Number.isFinite(Date.parse(e.at))&&Date.parse(e.at)<=clock).length)}/><Stat label="REGISTRERAT SNITT PER DAG" value={observedDays>0?averagePerDay.toLocaleString("sv-SE",{maximumFractionDigits:1}):"–"}/><Stat label="MOT STARTNIVÅ" value={reductionPercent===null?"–":(reductionPercent>0?"+":"")+reductionPercent+" %"}/></View>
   <Text style={styles.muted}>{observedDays===0?"Ingen planhistorik ännu. Statistik visas när du har startat en plan.":`Genomsnittet bygger på ${entriesDuringPlan.length} registreringar under ${observedDays} kalenderdagar sedan planens ursprungliga start inom vald period. Tidigare registreringar bevaras men räknas inte in i planens genomsnitt. Dagar utan registrering ingår men bevisar inte rökfrihet. Positiv procentsats betyder färre registrerade cigaretter än din angivna startnivå.`}</Text>
   <Card style={{gap:10}}><Heading>Så räknas din besparing</Heading>{data.profile?<><Text style={styles.muted}>Din angivna startnivå: {data.profile.baseline} cigaretter per dag.</Text><Text style={styles.muted}>Ditt angivna paketpris: {fmt(data.profile.packPrice)} kr för {data.profile.packSize} cigaretter (cirka {(data.profile.packPrice/data.profile.packSize).toLocaleString("sv-SE",{maximumFractionDigits:2})} kr per cigarett).</Text><Text style={styles.muted}>Uppskattningen jämför startnivån med registrerade cigaretter sedan planens ursprungliga start. Den är inte ett kvitto på faktiska inköp eller pengar på kontot.</Text></>:<Text style={styles.muted}>Starta en plan och ange din tidigare förbrukning samt paketpris för att se en uppskattning.</Text>}<Text style={styles.muted}>Periodens besparing är skillnaden mellan den totala uppskattningen vid periodens början och nu. Den kan vara 0 kr även om du registrerat färre cigaretter vissa dagar.</Text></Card>
   <Heading>Dina milstolpar</Heading>
+  <Text style={styles.muted}>Följden gäller till och med {trends.streakEnd}. En ännu inte avstämd dag räknas inte som rökfri.</Text>
   <Card style={{gap:12}}><Text style={styles.muted}>Din nuvarande följd av bekräftat rökfria dagar: {confirmedStreak}. Endast dagar du själv har bekräftat räknas. Detta är personliga framsteg, inte medicinska bedömningar.</Text><Text style={styles.cardTitle}>{nextMilestone===undefined?'Alla listade milstolpar är uppnådda!':confirmedStreak===0?'Första milstolpen: en bekräftat rökfri dag.':`${nextMilestone-confirmedStreak} ${nextMilestone-confirmedStreak===1?'dag':'dagar'} kvar till nästa milstolpe på ${nextMilestone} dagar.`}</Text><Text style={styles.muted}>En avbruten följd tar inte bort tidigare framsteg. Du kan fortsätta i din egen takt.</Text>
    {milestones.map(m=><View key={m.days} accessible accessibilityRole="text" accessibilityLabel={`${m.days} ${m.days===1?"dag":"dagar"} i följd: ${m.reached?"uppnått":"inte ännu"}`} style={styles.sectionRow}><Text style={styles.cardTitle}>{m.days} {m.days===1?'dag':'dagar'} i följd</Text><Text style={{color:m.reached?C.lime:C.dim,fontWeight:'700'}}>{m.reached?'Uppnått':'Inte ännu'}</Text></View>)}
    <Text style={styles.muted}>Att minska antalet cigaretter kan vara ett steg mot att sluta helt. Att sluta röka minskar hälsorisker över tid, men återhämtning och upplevda förändringar varierar mellan personer. Milstolparna ovan bygger på dina egna avstämningar och säger inte hur din kropp mår.</Text>

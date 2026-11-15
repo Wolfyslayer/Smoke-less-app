@@ -4,8 +4,8 @@
 
 - Aktiv fas **16.7 – fördjupad statistik och personliga trender**.
 - Branch `feat/phase-16-7-personal-trends`, från uppdaterad lokal main `525b07ba970d528ddafabb295504b2c111e99c29`.
-- En ny fas-PR öppnas med denna dokumentationsmilstolpe. Hitta den via branchen på GitHub; skapa inte en till.
-- Fast checklista: `docs/PHASE_16_7_TRENDS.md`, 0/8 huvudpunkter och 0/32 delpunkter verifierade (0 %). Implementation återstår.
+- Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/164. Skapa inte en till.
+- Fast checklista: `docs/PHASE_16_7_TRENDS.md`, 1/8 huvudpunkter och 4/32 delpunkter verifierade (12,5 %). Startcommit `60b1030` har båda obligatoriska CI gröna. Implementationspaketet inväntar egen CI.
 
 ## Avslutat i detta arbetspass
 
@@ -15,7 +15,9 @@
 
 ## Nästa steg
 
-Kontrollera CI på 16.7:s startcommit och fortsätt i samma PR. Inventera befintlig statistik och bygg rena kalenderperiodsaggregat före UI. Definiera vecka/månad, jämförbara perioder och hantering av saknad data. Noll registreringar får inte tolkas som bekräftad rökfrihet. Följ checklistans 32 ursprungliga delpunkter och testa datumgränser/DST, ofullständiga perioder och framtida data.
+Implementerat kalenderjämförelser för avslutade veckor/månader, täckning, dagsgenomsnitt, röksug, bekräftade rekord och kända planmål. Saknade dagar får inte rökfrihetsstatus. Planmål före senaste planstart anges som saknade. StatsScreen:s gamla milstolpar delar ny beräkning. Dashboardens antal exkluderar framtida poster utan att radera eller dölja dem från Historik. Tunga nya aggregat och dashboardmått memoiseras per dataändring/minut.
+
+TypeScript och 182 tester godkända lokalt: 166 ordinarie, 10 storage, 6 migration. Nio nya trendtester täcker kalender/DST/årsskifte, täckning, olika månadslängder, luckor/motsägelser, framtida data, ändrade planer/nollmål, 20 000 poster och samordning med dashboard. Nästa steg: invänta båda CI på implementationscommitten, granska presentation och definitionskontrakt och stäm av återstående fasta checklistan före acceptans/merge. Fysisk TalkBack/Android/offline-QA är inte genomförd.
 
 ## Regler och kvarstående risker
 

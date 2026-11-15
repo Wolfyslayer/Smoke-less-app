@@ -42,7 +42,7 @@
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
-| 16.7 | Fördjupad statistik och personliga trender | Startad; fast 8×4-checklista, implementation återstår | docs/PHASE_16_7_TRENDS.md |
+| 16.7 | Fördjupad statistik och personliga trender | Pågående; 1/8 och 4/32 verifierade, implementation inväntar CI | #164, docs/PHASE_16_7_TRENDS.md |
 | 17.0 | Delningsbild som matchar dagens framsteg | Planerad | — |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Planerad | — |
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Planerad | — |

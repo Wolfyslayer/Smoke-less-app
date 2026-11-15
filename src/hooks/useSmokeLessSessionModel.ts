@@ -1,4 +1,4 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {useLiveClock} from './useLiveClock';
 import {useCloudSync} from './useCloudSync';
 import {useLocalSession} from './useLocalSession';
@@ -34,7 +34,7 @@ export function useSmokeLessSessionModel(sessionUser:AccountUser|null,verifyCurr
  const dataRef=useRef(data);dataRef.current=data;
  const {syncStatus,retrySync}=useCloudSync({data,setData,dataRef,ready:sessionReady,sessionUser,migrationBusy,cloudPreviewBusy,verifyCurrentUid});
 
-  const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=getDashboardMetrics(data,clock);
+  const {p,today,todayCount,goal,sorted,last,duration,planWeek,confirmedDays,withinDays,todayReduction,recentCravings,cravingTriggers,cigaretteTriggers,weekly}=useMemo(()=>getDashboardMetrics(data,clock),[data,Math.floor(clock/60000)]);
  
  const {remove,go:goToTab,changeProfile,changeDailyTarget,period,setPeriod}=useSessionActions({setData,ask,setTab});
  const go=(next:typeof tab)=>{if(tab==='sos'&&next!=='sos')stopSos();goToTab(next);};
