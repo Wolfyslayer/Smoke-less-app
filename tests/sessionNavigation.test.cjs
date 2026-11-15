@@ -82,6 +82,19 @@ test('calendar dates use their whole cell without overlapping adjacent dates',()
  assert.match(source,/day:\{width:'100%',minHeight:48/);
  assert.match(source,/accessibilityLabel=\{pretty\(date\)\}/);
  assert.match(source,/accessibilityState=\{\{selected,disabled\}\}/);
+ assert.match(source,/listDates=\(size-34\)\/7<48\|\|fontScale>1\.3/);
+ assert.match(source,/listCell:\{width:'100%'\}/);
+ assert.match(source,/listDates\?pretty\(date\):day/);
+});
+
+test('account actions remain tappable with keyboard and calendar headings can wrap',()=>{
+ const session=read('src/components/AppSessionView.tsx');
+ const auth=read('src/components/OnboardingAuthModal.tsx');
+ const dates=read('src/components/CompactDateModal.tsx');
+ assert.match(session,/<ScrollView key=\{tab\} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag"/);
+ assert.match(auth,/behavior=\{Platform\.OS==='ios'\?'padding':'height'\}/);
+ assert.match(dates,/month:\{flex:1,textAlign:'center'/);
+ assert.match(dates,/actions:\{flexDirection:'row',flexWrap:'wrap'/);
 });
 
 test('bottom tabs and shared buttons preserve accessible touch targets',()=>{

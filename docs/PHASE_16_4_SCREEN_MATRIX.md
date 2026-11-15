@@ -69,6 +69,14 @@ Efter att PR #161 skapades uppdaterades `main` med en extra `./plugins/withCusto
 
 Inloggningslänken under onboarding hade fast 16 dp-padding utan `insets.bottom`; login före onboarding hade fast 40 dp-bottenpadding. Båda använder nu det största av sin befintliga marginal och systemets botteninset. Huvudflikar och bottennavigation tar även hänsyn till vänster/höger systeminsets. Huvudflikarnas ScrollView får inget extra botteninset eftersom navigationen är ett separat syskon som redan äger detta. Källkodstest skyddar fördelningen. Fysisk kontroll av gestfält, treknappsnavigering och kamerahål återstår i fas 25; punkt 2 räknas inte automatiskt klar genom denna ändring.
 
+### Tangentbord och modalbredd – kompletterande åtgärder
+
+- Konto och Inställningar ligger i sessionsscrollen. Den tillåter nu knapptryck med öppet tangentbord (`handled`) och stänger tangentbordet vid drag. Expo-konfigurationens standard är `adjustResize` enligt installerad config-plugin; inga native-inställningar ändras. Onboardingens scroll har redan `handled`. Fältens fokus ägs av TextInput utan fördröjda auto-focus-anrop.
+- Onboarding-inloggningens separata Modal får explicit Android-beteende `height` i KeyboardAvoidingView. Datumväljare och bekräftelser innehåller inga textfält; deras scroll och knappar tar emot tryck. Enhetstest av tangentbordets öppning, sista fältet, scroll, bekräftelse och återgång till fält återstår i fas 25.
+- Datumväljaren räknar nu bort sidoinsets. Om sju kolumner skulle ge mindre än 48 dp per datum, eller textskalan överstiger 1,3, visas datum som fullbreddsrader med fullständiga datumetiketter. Månadsrubriken kan radbrytas mellan de två navigationsknapparna och åtgärdsknapparna kan bryta rad. Inga överlappande hitSlop-ytor används.
+- Dialoger och avbrytbekräftelser skyddas även vid vänster/höger systemkant. Onboardingens animerade textfönster kan växa på höjden. Kontots tillbaka- och återställningsknappar har minst 48 dp höjd.
+- Automatiska tester är källkodskontrakt, inte bevis på renderad tangentbords- eller textgeometri. Resterande datum- och skärmtest görs i fas 25.
+
 **Granskade källor:** `app/_layout.tsx`, `src/components/AppSessionView.tsx`, `src/components/BottomNavigation.tsx`. Detta är en statisk granskning, inte en fysisk verifiering av kamerahål eller Androids navigeringslägen.
 
 - Rotlayouten omsluter `Stack` och intro-overlay med `SafeAreaProvider`. `StatusBar` har ljus ikonstil och döljs under den två sekunder långa introduktionen; appens vanliga innehåll ligger i en `flex:1`-rot.

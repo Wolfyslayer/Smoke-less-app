@@ -24,8 +24,8 @@ Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och ut
 ## CI-grind och användarens klartecken
 1. Gör nästa meningsfulla ändring på den aktiva fasens branch och dokumentera vad den löser.
 2. Kontrollera att tester/CI körs på **senaste commit**. Rapportera korrekt status; påstå aldrig att tester är gröna innan de faktiskt är det.
-3. **Vänta på att användaren säger att kontrollerna är gröna** innan du fortsätter till nästa punkt eller commit. Om de är röda, åtgärda felet i **samma PR**.
-4. När användaren bekräftar grönt: fortsätt automatiskt med nästa kvarvarande punkt i **samma fas och PR**. Fråga inte om nytt godkännande för varje rutinmässigt steg.
+3. **Beslut 2026-11-15:** AI kontrollerar själv båda obligatoriska CI-kontrollerna på senaste PR-commit och fortsätter när de är gröna. Separat klartecken från användaren krävs inte mellan commits. Om CI är röd, åtgärda felet i **samma PR**.
+4. När AI har verifierat grönt: fortsätt automatiskt med nästa kvarvarande punkt i **samma fas och PR**. Fråga inte om nytt godkännande för varje rutinmässigt steg.
 5. **Efter varje commit ska AI kontrollera om en ny Android-build krävs**. Granska särskilt ändringar i `package.json` och lockfil, Expo-plugins, `app.json`, `android/`, Firebase-konfiguration, Android-behörigheter, appikon, splash och andra nativa resurser. Rapportera alltid **Ny Android-build: JA/NEJ**, kort motivering och, vid JA, vilka bygg- och installationskommandon användaren ska köra. Vid osäkerhet: redovisa osäkerheten och rekommendera verifierande build. Enbart server-, test- och dokumentationsändringar kräver normalt ingen ny native build. JavaScript-/TypeScript-ändringar kan normalt testas genom omladdning av utvecklingsappen men behöver fortfarande funktionstestas. Fysiska testresultat får aldrig hittas på.
 
 ## Obligatorisk rapport i chatten efter VARJE commit

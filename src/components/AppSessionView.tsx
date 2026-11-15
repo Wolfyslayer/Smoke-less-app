@@ -144,7 +144,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  <View style={{flex:1}}><AppSessionOnboarding model={model} onCompleted={()=>{completedOnboardingRef.current=true;}}/>{!accountUser?<Pressable accessibilityRole="button" onPress={()=>setShowLogin(true)} style={{padding:16,paddingBottom:Math.max(insets.bottom,16),paddingLeft:Math.max(insets.left,16),paddingRight:Math.max(insets.right,16),minHeight:48,alignItems:'center',backgroundColor:C.background}}><Text style={{color:C.lime,fontWeight:'800'}}>Har du redan ett konto? Logga in</Text></Pressable>:null}</View>}
  <AppSessionOverlays model={model}/></View>;
  if(authPrompt!==null && !accountUser)return <View style={s.root}><AppSessionOnboarding model={model}/><AppSessionOverlays model={model}/>{authModal}</View>;
- return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingLeft:Math.max(insets.left,20),paddingRight:Math.max(insets.right,20),paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
+ return <View style={s.root}><ScrollView key={tab} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={{paddingLeft:Math.max(insets.left,20),paddingRight:Math.max(insets.right,20),paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
  <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
  {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  <AppScreenRouter model={model}/>

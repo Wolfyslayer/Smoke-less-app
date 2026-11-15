@@ -4,17 +4,17 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 
 ## Fast checklista (8 × 4 = 32)
 
-**Status:** Pågående. 2/8 huvudpunkter, 10/32 verifierade delpunkter (31,25 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
+**Status:** Pågående. 2/8 huvudpunkter, 12/32 verifierade delpunkter (37,5 %). Verifiering avser källkodsgranskning och dokumentation där det uttryckligen anges; fysisk Android-QA är inte genomförd.
 
 1. **Skärmmatris och inventering (4/4)**
    - [x] 1.1 Inventera alla tabbar och underskärmar.
    - [x] 1.2 Inventera onboarding och kontoflöden.
    - [x] 1.3 Inventera modaler, datumväljare, dialoger och formulär.
    - [x] 1.4 Dokumentera testmatris med risker och ägare per vy.
-2. **Safe Area och systemfält (1/4)**
+2. **Safe Area och systemfält (3/4)**
    - [x] 2.1 Granska rotlayout och SafeAreaProvider.
-   - [ ] 2.2 Granska statusfält, skärmkanter och kamerahål.
-   - [ ] 2.3 Granska bottennavigering och gestfält/treknappsnavigering.
+   - [x] 2.2 Granska statusfält, skärmkanter och kamerahål.
+   - [x] 2.3 Granska bottennavigering och gestfält/treknappsnavigering.
    - [ ] 2.4 Åtgärda verifierade överlapp och dubbel padding.
 3. **Tangentbord och formulär (0/4)**
    - [ ] 3.1 Granska tangentbordsbeteende i onboarding och konto.
@@ -52,6 +52,8 @@ Mål: Enhetlig och användbar Android-layout på alla inventerade skärmar. Bred
 En PR för fasen, sammanhängande commits och grön CI innan nästa commit. Efter varje commit rapporteras 8 huvudpunkter och 32 delpunkter samt Android-build JA/NEJ. Ändra inte Firebase-regler eller hemligheter. Utöka inte omfattningen med orelaterad kosmetik.
 
 ## Verifieringsnoteringar
+
+- **2.2–2.3 (statisk granskning):** Systemfältsgranskningen och sessionskanterna i skärmmatrisen är avstämda mot `bf234a7`, med gröna `validate` och `rules`. Bottennavigationen är ett syskon till scrollen och äger huvudinnehållets botteninset. Login och onboardinglänk skyddas separat. Fysisk verifiering av kamerahål och båda navigeringslägena kvarstår i fas 25; dessa kryss avser granskning av koden, inte enhetsgodkännande.
 
 - **1.1–1.3 (källkod):** `docs/PHASE_16_4_SCREEN_MATRIX.md` inventerar huvudtabbar, underskärmar, onboarding, konto, modaler, datumväljare och formulär. Inventeringen är inte ett genomfört skärmtest.
 - **2.1 (källkod):** `app/_layout.tsx` omsluter appen med `SafeAreaProvider`; `AppSessionView.tsx` läser `useSafeAreaInsets()`. Korrekt beteende på olika enheter omfattas fortfarande av 2.2–2.4.

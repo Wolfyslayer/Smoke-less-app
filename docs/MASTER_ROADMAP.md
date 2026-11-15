@@ -39,7 +39,7 @@
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
-| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Pågående; 2/8 huvudpunkter, 10/32 delpunkter verifierade | #161 |
+| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Pågående; 2/8 huvudpunkter, 12/32 delpunkter verifierade | #161 |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Planerad | — |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Planerad | — |
 | 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
