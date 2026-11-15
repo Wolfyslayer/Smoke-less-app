@@ -65,6 +65,10 @@ Efter att PR #161 skapades uppdaterades `main` med en extra `./plugins/withCusto
 
 ## Safe Area – statisk genomgång av systemfält (16.4, punkt 2.2)
 
+### Komplettering: sessionskanter
+
+Inloggningslänken under onboarding hade fast 16 dp-padding utan `insets.bottom`; login före onboarding hade fast 40 dp-bottenpadding. Båda använder nu det största av sin befintliga marginal och systemets botteninset. Huvudflikar och bottennavigation tar även hänsyn till vänster/höger systeminsets. Huvudflikarnas ScrollView får inget extra botteninset eftersom navigationen är ett separat syskon som redan äger detta. Källkodstest skyddar fördelningen. Fysisk kontroll av gestfält, treknappsnavigering och kamerahål återstår i fas 25; punkt 2 räknas inte automatiskt klar genom denna ändring.
+
 **Granskade källor:** `app/_layout.tsx`, `src/components/AppSessionView.tsx`, `src/components/BottomNavigation.tsx`. Detta är en statisk granskning, inte en fysisk verifiering av kamerahål eller Androids navigeringslägen.
 
 - Rotlayouten omsluter `Stack` och intro-overlay med `SafeAreaProvider`. `StatusBar` har ljus ikonstil och döljs under den två sekunder långa introduktionen; appens vanliga innehåll ligger i en `flex:1`-rot.

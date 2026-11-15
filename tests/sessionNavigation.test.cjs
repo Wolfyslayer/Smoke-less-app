@@ -4,6 +4,18 @@ const fs=require('node:fs');
 
 const read=path=>fs.readFileSync(path,'utf8');
 
+test('session safe areas protect login footer without doubling main bottom insets',()=>{
+ const session=read('src/components/AppSessionView.tsx');
+ const nav=read('src/components/BottomNavigation.tsx');
+ assert.match(session,/paddingBottom:Math\.max\(insets\.bottom,40\)/);
+ assert.match(session,/paddingBottom:Math\.max\(insets\.bottom,16\)/);
+ assert.match(session,/paddingLeft:Math\.max\(insets\.left,20\),paddingRight:Math\.max\(insets\.right,20\)/);
+ assert.match(nav,/paddingBottom:Math\.max\(insets\.bottom,10\),paddingLeft:Math\.max\(insets\.left,5\),paddingRight:Math\.max\(insets\.right,5\)/);
+ const main=session.slice(session.indexOf('return <View style={s.root}><ScrollView key={tab}'));
+ assert.match(main,/paddingBottom:32/);
+ assert.doesNotMatch(main,/paddingBottom:Math\.max\(insets\.bottom/);
+});
+
 test('session navigation tracks previous tabs and avoids duplicate history entries',()=>{
  const source=read('src/hooks/useSessionNavigation.ts');
  assert.match(source,/if\(next===currentRef\.current\)return/);

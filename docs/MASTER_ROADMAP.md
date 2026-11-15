@@ -39,7 +39,7 @@
 | 16.1 | Android-hemskärmswidgets | Planerad | — |
 | 16.2 | Google-inloggning med Firebase | Planerad | — |
 | 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
-| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Planerad | — |
+| 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Pågående; 2/8 huvudpunkter, 10/32 delpunkter verifierade | #161 |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Planerad | — |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Planerad | — |
 | 16.7 | Fördjupad statistik och personliga trender | Planerad | — |
@@ -510,6 +510,8 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
    - [ ] 8.4 Merga fas-PR.
 
 ### Fas 16.4 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
+
+**Aktuell statuskorrigering:** PR #161 är aktiv. Verifierad fast checklista finns i `docs/PHASE_16_4_UI_SAFE_AREA.md`: 2/8 huvudpunkter (25 %), 10/32 delpunkter (31,25 %). Nedanstående äldre plantext skiljer sig i delpunkternas ordalydelse och är historisk, inte en andra aktiv checklista. Behåll ID och antal i den aktiva fasfilen. Se `docs/CODEX_CONTINUATION.md` för senaste arbete och CI-grind.
 **Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
 1. [ ] **Fast skärminventering (0/4)**
