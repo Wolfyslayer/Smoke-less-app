@@ -46,7 +46,7 @@
 | 17.0 | Delningsbild som matchar dagens framsteg | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #165, `0fdd4b1` |
 | 18.0 | Personlig rökstoppsresa och rätt stöd i rätt fas | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #166, `2857e3f` |
 | 19.0 | Röksug i stunden och personliga handlingsplaner | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #167, `9d0505e` |
-| 20.0 | Långsiktigt rökfri och återfallsprevention | Startad; fast 8×4-checklista | docs/PHASE_20_MAINTENANCE.md |
+| 20.0 | Långsiktigt rökfri och återfallsprevention | Pågående; 1/8 och 6/32 verifierade, implementation inväntar CI | #168, docs/PHASE_20_MAINTENANCE.md |
 | 21.0 | Evidensbaserat stöd, nikotinläkemedel och vårdvägar | Planerad | — |
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Planerad | — |
 | 23.0 | Förenklad startsida och tydlig informationshierarki | Planerad | — |
