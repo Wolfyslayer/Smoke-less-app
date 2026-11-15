@@ -2,28 +2,28 @@
 
 ## Aktuellt
 
-- Aktiv fas **16.7 – fördjupad statistik och personliga trender**.
-- Branch `feat/phase-16-7-personal-trends`, från uppdaterad lokal main `525b07ba970d528ddafabb295504b2c111e99c29`.
-- Aktiv PR: https://github.com/Wolfyslayer/Smoke-less-app/pull/164. Skapa inte en till.
-- Fast checklista: `docs/PHASE_16_7_TRENDS.md`, 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter verifierade (96,875 %). Implementationscommit `6248bb5` har båda obligatoriska CI gröna. Slutdokumentationen behöver egen grön CI före merge.
+- Fas **17.0 – delningsbild som matchar dagens framsteg**.
+- Branch `feat/phase-17-share-progress-card`, från uppdaterad lokal main `1781333a1689ae7c163a0b7bf484bee01b3d5338`.
+- Exakt en ny fas-PR öppnas med denna dokumentationsmilstolpe. Hitta den via branchen; skapa inte en till.
+- Fast checklista: `docs/PHASE_17_SHARE_PROGRESS.md`. 0/8 huvudpunkter och 0/32 delpunkter verifierade (0 %). Implementation återstår.
 
-## Avslutat i detta arbetspass
+## Senaste avslutade arbete
 
-- **16.4:** PR #161 mergad som `07ff48c`. 8/8 och 32/32 på kod-/test-/dokumentationsnivå. Safe Area, responsiva modaler, större tryckytor, datumlista vid smal skärm/stor text och tillgänglighet granskade. Main:s debug-keystore-plugin och app.json bevarade identiska med main.
-- **16.5:** PR #162 mergad som `a3c53e8`. 8/8 och 32/32 på samma verifieringsnivå. Dashboardkort kan väljas, ordnas och återställas; lokal lagring skiljer gäst från konto, hanterar skrivköer/fel och rör inte historik. Slutlig head `3f10f12` hade grön validate/rules.
-- **16.6:** PR #163 mergad som `525b07b`. 8/8 och 32/32 på samma verifieringsnivå. Mål-/datumförhandsvisning med bekräftelse, fast/automatiskt datum, skydd för passerade datum och inaktuella profiler/dagar. Kalendern kräver framtida datum och nollställer inte urval vid nya Date-instanser från klocktick. Slutlig head `93f283e` hade grön validate/rules. TypeScript och 173 tester passerade lokalt (157 ordinarie, 10 storage, 6 migration).
+Fas **16.7** mergad i PR #164 som `1781333`. Slutlig head `34055f4` hade båda obligatoriska CI gröna. 8/8 huvudpunkter och 32/32 delpunkter klara på kod-/test-/dokumentationsnivå. TypeScript och 182 tester godkända lokalt (166 ordinarie, 10 storage, 6 migration).
 
-## Nästa steg
+Kalenderjämförelser visar avslutade veckor/månader, avstämningstäckning, registrerade dagsgenomsnitt och röksug. Saknad data räknas inte som bekräftad rökfrihet. Rekord kräver bekräftade dagar utan cigarettposter; motstridig data nekas. Planmål före senaste planstart anges som saknade. Dashboard och äldre milstolpar är samordnade. Nya aggregat och dashboardmått memoiseras per dataändring/minut. Historik och molnsynk är oförändrade.
 
-Implementerat kalenderjämförelser för avslutade veckor/månader, täckning, dagsgenomsnitt, röksug, bekräftade rekord och kända planmål. Saknade dagar får inte rökfrihetsstatus. Planmål före senaste planstart anges som saknade. StatsScreen:s gamla milstolpar delar ny beräkning. Dashboardens antal exkluderar framtida poster utan att radera eller dölja dem från Historik. Tunga nya aggregat och dashboardmått memoiseras per dataändring/minut.
+Tidigare faser: 16.4 PR #161 (`07ff48c`), 16.5 PR #162 (`a3c53e8`), 16.6 PR #163 (`525b07b`) mergade med grön CI. Main:s debug-keystore-plugin och app.json har bevarats.
 
-TypeScript och 182 tester godkända lokalt: 166 ordinarie, 10 storage, 6 migration. Nio nya trendtester täcker kalender/DST/årsskifte, täckning, olika månadslängder, luckor/motsägelser, framtida data, ändrade planer/nollmål, 20 000 poster och samordning med dashboard. Nästa steg: invänta båda CI på slutdokumentationscommitten och merga #164 med kontrollerad head-SHA när båda är gröna. Därefter uppdatera faktisk fasstatus och fortsätt till 17.0 enligt roadmapen. Fysisk TalkBack/Android/offline-QA är inte genomförd.
+## Nästa konkreta steg
 
-## Regler och kvarstående risker
+Kontrollera båda CI på fas 17:s startcommit och fortsätt i samma PR. Inventera startsidans faktiska framstegskort och befintlig SVG/PNG-export. Skapa en gemensam presentationsmodell för kvar av mål, använd procent och stödtext; återanvänd den i startsida, förhandsvisning och PNG. Bevara uttryckligt godkännande, känslig-data-gräns och befintliga skydd mot föråldrade exportsvar. Dokumentera visuell jämförelse utan att påstå fysisk Android-delning.
 
-- Användarbeslut 2026-11-15: AI kontrollerar själv båda obligatoriska CI på senaste PR-head och fortsätter när de är gröna; separat klartecken behövs inte mellan commits. Röd CI rättas i samma PR.
-- Bred fysisk Android-, BrowserStack-, TalkBack-, offline- och tvåenhets-QA är inte utförd och kvarstår i fas 25. Statiska UI-kontrakt är inte renderade enhetstester.
-- Ingen ny Android-build krävs för genomförda UI-/TypeScript-ändringar eller denna dokumentationsmilstolpe. Inga nya beroenden, regler, hemligheter eller native-konfigurationer infördes jämfört med main.
-- EAS Update hör till en separat senare PR utan automatisk produktionspublicering. Börja inte nästa roadmapfas innan aktiv fas är korrekt avslutad.
+## Regler och risker
 
-Läs AGENTS.md, AI_WORKFLOW.md, roadmap och aktiv fasplan. Kontrollera arbetskatalog, PR-head och CI innan du återupptar.
+- Användaren har beslutat 2026-11-15 att AI själv kontrollerar båda obligatoriska CI på senaste PR-head och fortsätter när de är gröna; separat klartecken behövs inte mellan commits. Röd CI rättas i samma PR.
+- Fysisk Android-, BrowserStack-, TalkBack-, offline-, tvåenhets- och PNG/systemdelnings-QA återstår i fas 25. Statiska kontrakt ersätter inte dessa tester.
+- **Ny Android-build: NEJ** för genomförd 16.7 och denna dokumentationsmilstolpe. Inga nya native-beroenden eller inställningar, regler eller hemligheter införda.
+- EAS Update ska ha en separat senare PR enligt roadmapen, utan automatisk produktionspublicering.
+
+Läs AGENTS.md, AI_WORKFLOW.md, roadmap och aktiv fasplan. Kontrollera arbetskatalog, faktisk PR-head och CI innan återupptagning. Bevara lokala ändringar och avsluta aktiv fas före nästa roadmapfas.

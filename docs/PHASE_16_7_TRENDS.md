@@ -1,5 +1,5 @@
 # Fas 16.7 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Klar för merge i PR #164. 7/8 huvudpunkter (87,5 %) och 31/32 delpunkter (96,875 %) verifierade på kod-/automatisk test-/dokumentationsnivå med grön validate/rules på `6248bb5`. 8.4 inväntar faktisk merge. Ursprunglig 8×4-checklista är bevarad; fysisk Android/TalkBack-QA är inte utförd.
+**Status:** Mergad i PR #164 som `1781333a1689ae7c163a0b7bf484bee01b3d5338`. 8/8 huvudpunkter och 32/32 delpunkter (100 %) verifierade på kod-/automatisk test-/dokumentationsnivå. Slutlig head `34055f4` hade grön validate/rules. Ursprunglig 8×4-checklista är bevarad; fysisk Android/TalkBack-QA är inte utförd och kvarstår i fas 25.
 
 ## Nästa konkreta arbete
 
@@ -42,11 +42,11 @@ Förändra inte historik, planmodell, synk eller Firestore-regler. Återanvänd 
    - [x] 7.2 Testa saknade data.
    - [x] 7.3 Testa datumgränser.
    - [x] 7.4 Verifiera CI.
-8. [ ] **Avslut (3/4)**
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera statistikdefinitioner.
    - [x] 8.2 Samla enhets-QA till fas 25.
    - [x] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.4 Merga fas-PR.
 
 ## Inventering, definitioner och genomförande
 
