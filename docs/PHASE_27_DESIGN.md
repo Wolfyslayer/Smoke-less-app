@@ -16,9 +16,15 @@ Gemensamma komponenter: AppCard/AppButton i ui, ScreenHeader, BottomNavigation, 
 
 ## Designriktning
 
+**Korrigering efter användarens granskning:** Första milstolpen var främst temastöd. Den var inte en genomgripande redesign, och tidigare formulering om färdig UI-implementation var för stark. Layoutgranskning och användarens visuella acceptans är fortsatt öppna.
+
+Den nya strukturella omarbetningen ersätter sidans upprepade introblock med ett separat varumärkesfält och större sidrubrik. Hem får ett centrerat dagskort, kompakta snabbhandlingar och en synlig översiktsrad som respekterar valda dashboardkort. Navigationen ligger i en rundad separat docka med framhävd registreringsikon. Profilens genvägar samlas i en listgrupp; registreringens antal och senaste registrering ligger i en gemensam översikt. Planens mål och SOS-andning får egna kompositioner. Statistik visar periodöversikten före valbar fördjupning.
+
+Före och efter för dagskortet, samma testvärden 3/10 och samma ljusa palett: [före](phase27/progress-before-light.png), [efter](phase27/progress-after-light.png). Även [mörkt](phase27/progress-after-dark.png) och [stor text](phase27/progress-after-dark-large.png) är exporterade direkt från SVG-komponenten och visuellt inspekterade. Dessa bilder är renderade komponentprov, inte skärmbilder från en Android-build.
+
 Ljust tema: varm grågrön sidyta, vita kort och djupgrön primär handling. Mörkt tema: djup skogsgrön sidyta, lätt separerade gröna kort och ljusgrön primär handling. Typografi och information ska bära hierarkin; undvik ytterligare dekorativa kort eller fler steg i kärnflöden.
 
-`src/themeTokens.ts` fastställer semantiska paletter, spacing 4/8/12/16/24/32, kort 24, kontroller 14, minsta tryckyta 48 och innehållsbredd högst 640. Normaltext börjar vid 16. Alla tidigare C-konsumenter är nu migrerade till reaktiv kontext och cachade stilfabriker. Äldre färgnamn är kompatibilitetsalias till semantiska roller; ingen fast C-palett exporteras längre. Se `PHASE_27_QA.md` för faktisk verifieringsgräns.
+`src/themeTokens.ts` fastställer semantiska paletter, spacing 4/8/12/16/24/32, kort 28, kapselkontroller 28, minsta tryckyta 48 och innehållsbredd högst 640. Normaltext börjar vid 16. Alla tidigare C-konsumenter är nu migrerade till reaktiv kontext och cachade stilfabriker. Äldre färgnamn är kompatibilitetsalias till semantiska roller; ingen fast C-palett exporteras längre. Se `PHASE_27_QA.md` för faktisk verifieringsgräns.
 
 ## Referensvyer och acceptans
 

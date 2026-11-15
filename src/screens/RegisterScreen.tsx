@@ -17,13 +17,13 @@ export function RegisterScreen({todayCount,goal,duration,sorted,today,last,onOpe
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 
  return <View style={styles.screen}>
-  <View style={[styles.card,{alignItems:'center',gap:15,paddingVertical:35,borderColor:C.border}]}>
+  <View style={styles.registerHero}><View style={styles.registerOverview}><View style={{flex:1,gap:8}}>
    <Text style={styles.label}>REGISTRERADE IDAG</Text>
    <Text style={[styles.heroNumber,{fontSize:76}]}>{todayCount}</Text>
    <View><Text style={styles.muted}>Dagens riktvärde: {goal}</Text></View>
-   <View style={{width:'100%'}}><Button title="+ Registrera cigarett" onPress={onOpenRegister}/></View>
+   </View><View style={styles.lastRegistration}><Clock size={22} color={C.accent}/><Text style={styles.label}>SENASTE CIGARETTEN</Text><Text style={styles.statValue}>{duration||'Ingen ännu'}</Text></View></View>
+   <Button title="+ Registrera cigarett" onPress={onOpenRegister}/>
   </View>
-  <View style={styles.card}><Text style={styles.label}>SENASTE CIGARETTEN</Text><Text style={styles.statValue}>{duration}</Text></View>
   <View style={styles.sectionRow}><Text accessibilityRole="header" style={[styles.heading,{flexShrink:1}]}>Dagens historik</Text><Pressable accessibilityRole="button" accessibilityLabel="Visa alla registreringar" accessibilityHint="Öppnar din fullständiga historik" onPress={onOpenHistory} style={styles.historyLink}><Text style={styles.link}>Visa alla</Text></Pressable></View>
   {sorted.filter(e=>dayKey(new Date(e.at))===today).slice(0,10).map(e=><View key={e.id} style={[styles.card,styles.inline]}>
    <Clock size={19} color={C.lime}/>
@@ -34,7 +34,7 @@ export function RegisterScreen({todayCount,goal,duration,sorted,today,last,onOpe
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:24,padding:17},
+ screen:{gap:24},registerHero:{backgroundColor:C.surface,borderRadius:28,padding:22,gap:24},registerOverview:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',gap:20},lastRegistration:{flex:1,minWidth:110,gap:10,paddingLeft:18,borderLeftWidth:1,borderLeftColor:C.border},card:{backgroundColor:C.surface,borderRadius:22,padding:18},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},
  statValue:{fontSize:26,fontWeight:'800',color:C.white},

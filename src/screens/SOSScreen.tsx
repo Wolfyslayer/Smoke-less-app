@@ -48,7 +48,9 @@ export function SOSScreen({journeyPanel,breathScale,breathing,breathSeconds,onTo
  return <View style={styles.screen}>
   <Card style={{alignItems:'center',gap:15,paddingVertical:22,backgroundColor:C.accentSubtle,borderColor:C.border}}>
    <Label>TA ETT ANDETAG I TAGET</Label>
+   <Text accessibilityRole="header" style={styles.calmTitle}>Ge suget en paus.</Text>
    <Animated.View style={[styles.breathCircle,{transform:[{scale:breathScale.interpolate({inputRange:[0,1],outputRange:[0.82,1.12]})}]}]}><Wind size={42} color={C.lime}/><Text style={styles.cardTitle}>{!breathing?'Hitta ditt lugn':breathSeconds%12<4?'Andas in':breathSeconds%12<6?'Håll':'Andas ut'}</Text><Text style={styles.muted}>{breathing?(breathSeconds%12<4?'4 sekunder':breathSeconds%12<6?'2 sekunder':'6 sekunder'):'4 in · 2 håll · 6 ut'}</Text></Animated.View>
+   <View style={styles.breathTimeline}>{[['Andas in','4 sek'],['Håll','2 sek'],['Andas ut','6 sek']].map(([title,time],index)=><View key={title} style={[styles.breathStep,breathing&&(breathSeconds%12<4?0:breathSeconds%12<6?1:2)===index&&{backgroundColor:C.surface}]}><Text style={{color:C.accent,fontSize:11,fontWeight:'800'}}>0{index+1}</Text><Text style={{color:C.text,fontSize:14,fontWeight:'700'}}>{title}</Text><Text style={{color:C.muted,fontSize:12}}>{time}</Text></View>)}</View>
    <Text style={[styles.subhead,{textAlign:'center'}]}>Du behöver inte bestämma något just nu.</Text>
    <View style={{width:'100%'}}><Button title={breathing?'Avsluta övning':'Starta andningsövning'} onPress={onToggleBreathing}/><Pressable accessibilityRole="switch" accessibilityLabel="Vibration under andningsövningen" accessibilityState={{checked:hapticsEnabled}} onPress={onToggleHaptics} style={[styles.sectionRow,{paddingVertical:8}]}><Text style={styles.muted}>Diskreta vibrationer</Text><Text style={{color:C.lime,fontWeight:'800'}}>{hapticsEnabled?'På':'Av'}</Text></Pressable></View>
   </Card>
@@ -66,11 +68,11 @@ export function SOSScreen({journeyPanel,breathScale,breathing,breathSeconds,onTo
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderRadius:24,borderWidth:1,borderColor:C.border,padding:17,gap:8},
+ screen:{gap:24},calmTitle:{fontSize:29,fontWeight:'600',color:C.text,textAlign:'center',letterSpacing:-.8},breathTimeline:{flexDirection:'row',flexWrap:'wrap',gap:6,width:'100%'},breathStep:{flex:1,minWidth:78,padding:10,borderRadius:16,gap:5,alignItems:'center'},card:{backgroundColor:C.surface,borderRadius:28,padding:22,gap:14},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},subhead:{fontSize:16,fontWeight:'700',color:C.white},
  statValue:{fontSize:26,fontWeight:'800',color:C.white},muted:{fontSize:15,lineHeight:23,color:C.dim},
- breathCircle:{width:'100%',maxWidth:205,minHeight:205,padding:12,borderRadius:103,backgroundColor:C.limeSoft,borderWidth:2,borderColor:C.lime,alignItems:'center',justifyContent:'center',gap:9},
+ breathCircle:{width:'100%',maxWidth:176,minHeight:176,padding:12,borderRadius:88,backgroundColor:C.surface,borderWidth:1,borderColor:C.accent,alignItems:'center',justifyContent:'center',gap:9},
  sectionRow:{minHeight:48,flexWrap:'wrap',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
  segment:{flexDirection:'row',flexWrap:'wrap',gap:5,padding:5,backgroundColor:C.elevated,borderRadius:15},segmentItem:{flex:1,minWidth:48,minHeight:48,justifyContent:'center',paddingVertical:11,borderRadius:11,alignItems:'center'},
  button:{paddingVertical:12,backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14,marginTop:5},buttonSecondary:{backgroundColor:C.soft},

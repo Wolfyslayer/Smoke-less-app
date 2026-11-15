@@ -107,6 +107,18 @@ test('shared card geometry grows for large text and keeps the message below the 
  assert.match(profile,/\[todayCount,dailyGoal,fontScale,themeName\]/);
 });
 
+test('centered hero keeps its number inside the ring and stacks statistics before the footer for large text',()=>{
+ const {progressCardLayout}=context.exports;
+ for(const scale of [1,1.3,2,2.5,3.2])for(const [todayCount,dailyGoal] of [[0,0],[3,10],[15,10],[900000,1000000]]){
+  const layout=progressCardLayout(buildDailyShareCard({todayCount,dailyGoal}),scale);
+  assert.ok(layout.numberY-layout.numberSize>=layout.ringY-layout.ringRadius);
+  assert.ok(layout.numberY<=layout.ringY+layout.ringRadius);
+  assert.ok(layout.statsY>layout.captionY);
+  assert.ok(layout.messageY-13*layout.scale>layout.statsY+(layout.stacked?73:18)*layout.scale);
+  assert.equal(layout.stacked,scale>1.3);
+ }
+});
+
 test('starting a new image clears an earlier sharing error and guards synchronous render errors',()=>{
  const profile=fs.readFileSync('src/screens/ProfileScreen.tsx','utf8');
  assert.match(profile,/setPngStatus\('rendering'\);\s*setShareError\(false\);/);
@@ -170,7 +182,8 @@ test('reminder settings support larger text and polite status announcements',()=
 test('home quick actions expose accessible labels and adapt to larger text',()=>{
  const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
  assert.match(home,/function Tile\([\s\S]*?accessibilityRole="button" accessibilityLabel=\{title\}/);
- assert.match(home,/style=\{\[styles\.tileText,\{flexShrink:1\},featured&&\{color:C\.onAccent\}\]\}>\{title\}/);
+ assert.match(home,/style=\{\[styles\.tileText,featured&&\{color:C\.onAccent\}\]\}/);
+ assert.match(home,/tileText:\{[^}]*color:C\.white[^}]*\}/);
  assert.match(home,/accessibilityRole="header" style=\{\[styles\.heading,\{flexShrink:1\}\]\}>Din utveckling/);
  assert.match(home,/accessibilityLabel="Visa mer statistik om din utveckling"/);
 });

@@ -18,5 +18,5 @@ test('new recovery copies remain scoped to guest or the exact account without ch
  await assert.rejects(backup(data,'user/a'),/Ogiltigt/);assert.equal(values.get('legacy-copy'),'keep');assert.equal(values.size,4);
 });
 test('home and SOS do not repeat introductory cards above their primary content',()=>{
- const ui=fs.readFileSync('src/components/AppSessionView.tsx','utf8');assert.match(ui,/\(\['plan','register','stats','history','benefits'\] as Tab\[\]\)\.includes\(tab\)\?<SectionIntroCard/);
+ const ui=fs.readFileSync('src/components/AppSessionView.tsx','utf8');assert.doesNotMatch(ui,/<SectionIntroCard/);assert.match(ui,/<ScreenHeader/);assert.match(ui,/<AppScreenRouter/);
 });

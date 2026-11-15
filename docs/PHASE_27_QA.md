@@ -2,6 +2,18 @@
 
 ## Implementerat
 
+### Efter användarens återkoppling om för liten layoutförändring
+
+Den tidigare leveransen etablerade främst teman. Nu är även kompositionen ändrad: centrerad progressring med separat statistikrad; nytt sidhuvud; navigationsdocka; kompakta Registrera/SOS-handlingar; valda dashboardvärden synliga utan att öppna editorn; grupperad profillista; samlad registreringsöversikt; nytt planmålblock och SOS-andningssteg. Statistikens långa trender är valbar fördjupning efter periodöversikten. Dubbla introduktionskort har tagits bort ur sidflödet.
+
+317 ordinarie tester och TypeScript passerar efter ändringarna. Webbexport passerar. Det inkluderar nya geometriinvarianter för ring, nummer, statistik och fottext vid textskala 1–3,2, samt att sammanfattningen respekterar användarens valda kort. Tidigare datalagrings-/migrationstester påverkas inte av denna layoutändring. Inga native-beroenden eller Firebase-/lagringsflöden ändras.
+
+Faktiska SVG-exporter med syntetiska värden 3/10 finns i `docs/phase27/`. Före/efter använder samma palett för att isolera layoutförändringen. Ljust/mörkt och textskala 2 har visuellt inspekterats som rasteriserade komponenter. Fulla skärmar, tangentbord, navdocka och TalkBack har fortfarande inte granskats visuellt på Android. Detta godkänner inte 3.4, 6.1–6.4 eller 7.4.
+
+Ny Android-build: **NEJ för denna commit**, eftersom den bara ändrar JS/TS-layout. Tidigare behov av build för `userInterfaceStyle: automatic` kvarstår. Inget Android-bygge har startats.
+
+### Tidigare verifierad temagrund
+
 - Ljust, Mörkt och System i Inställningar, System som standard. En enhetslokal preferens (`smokeless:appearance:v1`) används; inga kontonycklar, historik, Firestore-regler eller serverfunktioner ändras.
 - Reaktiv kontext över hela appen. Stilfabriker cachas per palett och delas mellan komponentinstanser. Temabyte ändrar inte sessionsnyckeln. Alla tidigare C-konsumenter är migrerade till hooks; inga hårdkodade hexytor återstår i src:s TSX-filer.
 - Startup, rootbakgrund, statusfält, delnings-SVG, dialoger, datumval, onboarding och kontoflöden använder temat. SystemUI-bakgrund uppdateras. Appkonfigurationens userInterfaceStyle är automatic; Androids faktiska systemnavigation kräver ny build och enhetskontroll.

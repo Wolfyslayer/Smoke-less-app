@@ -1,6 +1,6 @@
 ### Fas 27.0 – fast planerad checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Funktionell temamigrering och kodtester genomförda. 3/8 huvudpunkter (37,5 %), 24/32 delpunkter (75 %) efter grön senaste CI; aktuell push måste verifieras före nästa commit. Åtta fysiska/visuella leveranspunkter är öppna. Se `PHASE_27_QA.md`.
+**Status:** Temagrund och strukturell layoutomarbetning implementerade; visuell slutacceptans är öppen. 3/8 huvudpunkter (37,5 %), 24/32 delpunkter (75 %) efter grön senaste CI; aktuell push måste verifieras före nästa commit. Åtta fysiska/visuella leveranspunkter är öppna. Se `PHASE_27_QA.md`.
 
 1. [x] **Designgranskning och riktning (4/4)**
    - [x] 1.1 Inventera samtliga skärmar och gemensamma UI-komponenter.

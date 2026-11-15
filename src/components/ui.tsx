@@ -18,12 +18,12 @@ export function AppButton({title,onPress,secondary=false,disabled=false,secondar
  </Pressable>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- card:{backgroundColor:C.surface,borderRadius:designTokens.radius.card,padding:designTokens.spacing.lg,borderWidth:1,borderColor:C.border,gap:designTokens.spacing.md},
+ card:{backgroundColor:C.surface,borderRadius:designTokens.radius.card,padding:designTokens.spacing.xl,gap:designTokens.spacing.lg},
  elevated:{backgroundColor:C.elevated},
- button:{backgroundColor:C.lime,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},
+ button:{backgroundColor:C.lime,paddingHorizontal:24,paddingVertical:17,borderRadius:designTokens.radius.control,alignItems:'center',justifyContent:'center',minHeight:56},
  pressed:{opacity:.8},
  disabled:{opacity:.5},
- secondaryElevated:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
+ secondaryElevated:{backgroundColor:C.elevated},
  secondarySoft:{backgroundColor:C.soft},
  buttonText:{color:C.onAccent,fontWeight:'800',fontSize:16,textAlign:'center',flexShrink:1},
  secondaryText:{color:C.white},

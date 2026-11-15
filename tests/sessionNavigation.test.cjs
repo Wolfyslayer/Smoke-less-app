@@ -102,7 +102,7 @@ test('bottom tabs and shared buttons preserve accessible touch targets',()=>{
  const ui=read('src/components/ui.tsx');
  const target=nav.match(/navItem:\{[^}]*minHeight:(\d+)/);assert.ok(target&&Number(target[1])>=48);
  assert.match(nav,/accessibilityRole="tab" accessibilityLabel=\{item\.label\}/);
- assert.match(ui,/button:\{[^}]*minHeight:48/);
+ const button=ui.match(/button:\{[^}]*minHeight:(\d+)/);assert.ok(button&&Number(button[1])>=48);
 });
 
 test('history deletion and dense selection rows preserve separate accessible targets',()=>{

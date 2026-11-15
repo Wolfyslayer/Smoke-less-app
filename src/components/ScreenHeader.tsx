@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import {UserRound,ArrowLeft} from 'lucide-react-native';
+import {UserRound,ArrowLeft,Leaf} from 'lucide-react-native';
 import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 export type ScreenTab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings'|'backup';
 const title:Record<ScreenTab,string>={home:'Ett steg i taget',plan:'Din plan',register:'Registrera',stats:'Din utveckling',profile:'Min profil',account:'Mitt konto',sos:'Hantera röksug',history:'Din logg',benefits:'Dina framsteg',settings:'Inställningar',backup:'Kontosynk'};
@@ -10,16 +10,19 @@ export function ScreenHeader({tab,clock,onNavigate}:{tab:ScreenTab;clock:number;
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 
  const isPrimary=primaryTabs.includes(tab);
- return <View style={styles.container}><View style={styles.textColumn}><Label>{tab==='home'?(new Date(clock).getHours()<11?'GOD MORGON':new Date(clock).getHours()<17?'GOD EFTERMIDDAG':'GOD KVÄLL'):'SMOKE LESS'}</Label><Text accessibilityRole="header" style={styles.title}>{title[tab]}</Text><Text style={styles.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':tab==='account'?'Inloggning och kontosäkerhet.':tab==='backup'?'Spara och återställ din historik.':'Ett steg i taget.'}</Text></View><Pressable accessibilityRole="button" accessibilityLabel={isPrimary?'Öppna min profil':'Tillbaka till startsidan'} accessibilityHint={isPrimary?'Visar din profil och dina inställningar':'Återgår till startsidan'} onPress={()=>onNavigate(isPrimary?'profile':'home')} style={styles.avatar}>{isPrimary?<UserRound size={22} color={C.lime}/>:<ArrowLeft size={22} color={C.lime}/>}</Pressable></View>;
+ return <View style={styles.container}>
+  <View style={styles.brandRow}><View style={styles.brand}><Leaf color={C.accent} size={19}/><Label>SMOKE LESS</Label></View><Pressable accessibilityRole="button" accessibilityLabel={isPrimary?'Öppna min profil':'Tillbaka till startsidan'} accessibilityHint={isPrimary?'Visar din profil och dina inställningar':'Återgår till startsidan'} onPress={()=>onNavigate(isPrimary?'profile':'home')} style={styles.avatar}>{isPrimary?<UserRound size={21} color={C.text}/>:<ArrowLeft size={21} color={C.text}/>}</Pressable></View>
+  <View style={styles.textColumn}><Text accessibilityRole="header" style={[styles.title,tab==='home'&&styles.homeTitle]}>{tab==='home'?'Din dag, din takt.':title[tab]}</Text><Text style={styles.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':tab==='account'?'Inloggning och kontosäkerhet.':tab==='backup'?'Din historik, synkad mellan dina enheter.':'Ett steg i taget.'}</Text></View>
+ </View>;
 }
 function Label({children}:{children:React.ReactNode}){
  const styles=useThemeStyles(createStyles);
 return <Text style={styles.eyebrow}>{children}</Text>}
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- container:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
+ container:{gap:20,paddingBottom:4},brandRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:16},brand:{flexDirection:'row',alignItems:'center',gap:8},
  textColumn:{flex:1,flexShrink:1,minWidth:0,gap:7},
  eyebrow:{fontSize:11,color:C.muted,fontWeight:'800',letterSpacing:1.7},
- title:{fontSize:26,fontWeight:'900',letterSpacing:-1,color:C.white,flexShrink:1},
+ title:{fontSize:34,fontWeight:'700',letterSpacing:-1.2,color:C.text,flexShrink:1},homeTitle:{fontSize:36},
  muted:{fontSize:15,color:C.muted,lineHeight:23},
- avatar:{flexShrink:0,width:48,height:48,borderRadius:13,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'}
+ avatar:{flexShrink:0,width:48,height:48,borderRadius:24,borderWidth:1,borderColor:C.border,backgroundColor:C.surface,alignItems:'center',justifyContent:'center'}
 });

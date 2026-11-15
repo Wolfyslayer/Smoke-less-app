@@ -18,3 +18,7 @@ test('incomplete check-in remains actionable and maintenance does not duplicate 
 test('dashboard renders selected goal before actions regardless of stored order, while respecting hidden goal',()=>{
  for(const cards of [['savings','goal'],[]]){const Dashboard=dashboard(cards);const html=render(React.createElement(Dashboard,{...props,goalCard:React.createElement('article',null,'GOAL'),actions:React.createElement('button',null,'ACTION')}));assert.ok(html.includes('ACTION'));assert.equal(html.includes('GOAL'),cards.includes('goal'));if(cards.length)assert.ok(html.indexOf('GOAL')<html.indexOf('ACTION'));assert.ok(!html.includes('editor'));}
 });
+
+test('compact overview shows only the selected summary cards without opening customization',()=>{
+ for(const cards of [['goal','time','savings'],['goal']]){const Dashboard=dashboard(cards);const html=render(React.createElement(Dashboard,{...props,goalCard:React.createElement('article',null,'GOAL'),actions:React.createElement('button',null,'ACTION')}));assert.equal(html.includes('Sedan senaste registrering'),cards.includes('time'));assert.equal(html.includes('Uppskattat sparat'),cards.includes('savings'));assert.ok(html.includes('Anpassa'));assert.ok(!html.includes('editor'));assert.ok(html.indexOf('GOAL')<html.indexOf('ACTION'));}
+});

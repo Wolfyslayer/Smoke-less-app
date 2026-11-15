@@ -13,7 +13,7 @@ export const themePalettes:Readonly<Record<ThemeName,Readonly<ThemePalette>>>={
 };
 export const designTokens={
  spacing:{xs:4,sm:8,md:12,lg:16,xl:24,xxl:32},
- radius:{control:14,card:24,dialog:28,pill:999},
+ radius:{control:28,card:28,dialog:32,pill:999},
  type:{caption:12,body:16,label:14,title:24,hero:40},
  layout:{minTouchTarget:48,contentMaxWidth:640},
 } as const;
