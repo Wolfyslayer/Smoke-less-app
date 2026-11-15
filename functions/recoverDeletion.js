@@ -6,14 +6,26 @@ const {getFirestore, FieldValue} = require('firebase-admin/firestore');
 const {getAuth} = require('firebase-admin/auth');
 
 async function main() {
-  const uid = process.argv[2];
-  const confirm = process.argv[3];
-  if (!uid || !/^[A-Za-z0-9_-]{1,128}$/.test(uid)) {
-    throw new Error('Usage: node recoverDeletion.js <uid> [--confirm-completed]');
+  const [uid, projectFlag, projectId, confirm, ...extra] = process.argv.slice(2);
+  if (!uid || !/^[A-Za-z0-9_-]{1,128}$/.test(uid) || projectFlag !== '--project' ||
+      !projectId || !/^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(projectId) || extra.length) {
+    throw new Error('Usage: node recoverDeletion.js <uid> --project <project-id> [--confirm-completed]');
   }
   if (confirm && confirm !== '--confirm-completed') throw new Error('Unknown argument');
-  if (!getApps().length) initializeApp();
-  const db = getFirestore();
+  // Never infer the project from a developer's ambient credentials or CLI state.
+  // Refuse mixed emulator/production configuration before opening any database.
+  const firestoreHost = process.env.FIRESTORE_EMULATOR_HOST;
+  const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
+  if (projectId.startsWith('demo-')) {
+    const local = host => /^(localhost|127\.0\.0\.1):[0-9]{1,5}$/.test(host || '');
+    if (!local(firestoreHost) || !local(authHost)) throw new Error('Demo recovery requires both local emulators');
+  } else if (firestoreHost || authHost) {
+    throw new Error('Production recovery refuses emulator environment variables');
+  }
+  const existing = getApps().find(app => app.name === 'deletion-recovery');
+  if (existing && existing.options.projectId !== projectId) throw new Error('Recovery app project mismatch');
+  const app = existing || initializeApp({projectId}, 'deletion-recovery');
+  const db = getFirestore(app);
   const lock = db.doc(`users/${uid}/control/deletion`);
   const snapshot = await lock.get();
   if (!snapshot.exists || snapshot.get('state') !== 'deleting') {
@@ -21,7 +33,7 @@ async function main() {
   }
   let authExists = true;
   try {
-    await getAuth().getUser(uid);
+    await getAuth(app).getUser(uid);
   } catch (error) {
     if (error.code !== 'auth/user-not-found') throw error;
     authExists = false;
@@ -39,7 +51,8 @@ async function main() {
   const controlSnapshot = await db.collection(`users/${uid}/control`).limit(2).get();
   const unexpectedControlDocuments = controlSnapshot.docs.filter(doc => doc.id !== 'deletion').map(doc => doc.id);
   const hasData = Object.values(counts).some(Boolean);
-  console.log(JSON.stringify({uid, authExists, collectionsWithRemainingData: Object.keys(counts).filter(k => counts[k]), parentDocumentExists: parentSnapshot.exists, unknownCollections, unexpectedControlDocuments, action: confirm ? 'verify-and-finalize' : 'dry-run'}, null, 2));
+  // Keep identifiers and unexpected path names out of shareable diagnostics.
+  console.log(JSON.stringify({projectId, authExists, collectionsWithRemainingData: Object.keys(counts).filter(k => counts[k]), parentDocumentExists: parentSnapshot.exists, unknownCollectionCount: unknownCollections.length, unexpectedControlDocumentCount: unexpectedControlDocuments.length, action: confirm ? 'verify-and-finalize' : 'dry-run'}, null, 2));
   if (!confirm) return;
   if (authExists || hasData || parentSnapshot.exists || unknownCollections.length || unexpectedControlDocuments.length) {
     throw new Error('Cannot finalize: Auth user, parent document, unknown collections or user data still exists. Escalate for manual investigation.');
@@ -49,9 +62,13 @@ async function main() {
     if (!current.exists || current.get('state') !== 'deleting') {
       throw new Error('Deletion state changed; refusing to finalize');
     }
+    const leaseUntil = current.get('leaseUntilMs');
+    if (typeof leaseUntil !== 'number' || !Number.isFinite(leaseUntil) || leaseUntil > Date.now()) {
+      throw new Error('Deletion lease is active or invalid; refusing to finalize');
+    }
     tx.update(lock, {state: 'completed', completedAt: FieldValue.serverTimestamp(), recoveredByAdmin: true});
   });
   console.log('Finalized deletion lock. No user documents or Auth records were modified.');
 }
-if (require.main === module) main().catch(error => {console.error(error.message); process.exitCode = 1;});
+if (require.main === module) main().catch(() => {console.error('Recovery failed; verify arguments, project, credentials, deletion lease and remaining data privately.'); process.exitCode = 1;});
 module.exports = {main};

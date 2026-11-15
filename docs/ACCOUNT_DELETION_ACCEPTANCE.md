@@ -33,6 +33,8 @@ Efter bekräftelse städas kontots lokala data/preferenser/kopior, Firestore-cac
 
 Driftsatt serverprov med syntetiska konton: se [körprotokoll](ACCOUNT_DELETION_DEPLOYMENT.md). Det kompletterar emulatorfallen och ersätter inte nativ acceptans.
 
+Administrativ reservväg: [support och återhämtning](SUPPORT_AND_RECOVERY.md). `recoverDeletion.js` kräver nu uttryckligt projekt, nekar blandad emulator-/produktionsmiljö och vägrar slutföra ett aktivt eller ogiltigt lease. Diagnostik utelämnar UID och okända sökvägsnamn. Elva automatiska återhämtningstest passerar; fyra nya fall ger totalt 301 ordinarie enhetstest. Operatörsansvar och nativ återhämtningsövning är fortfarande öppna.
+
 ## Fortfarande obligatoriskt före påslag
 
 1. Behåll grön senaste CI och dokumenterad driftgranskning. Serverdriftsättning, regler och positiva/negativa serverprov är nu verifierade enligt nedan. Full IAM-/retentionsgranskning och återhämtningsansvar återstår.
