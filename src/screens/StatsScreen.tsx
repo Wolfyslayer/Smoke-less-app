@@ -8,7 +8,7 @@ const fmt=(n:number)=>new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).f
 const periodStart=(clock:number,days:number)=>{const d=new Date(clock);d.setHours(0,0,0,0);d.setDate(d.getDate()-(days-1));return d.getTime()};
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
-function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
+function Heading({children}:{children:React.ReactNode}){return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
 function Stat({label,value}:{label:string;value:string}){return <Card style={{flex:1,minWidth:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
 function Bars({values,clock}:{values:number[];clock:number}){const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessible accessibilityRole="text" accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter${n===0?". Ingen cigarett registrerad; eventuell rökfri bekräftelse visas separat.":""}`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
@@ -88,7 +88,7 @@ const styles=StyleSheet.create({
  screen:{gap:20},card:{backgroundColor:C.elevated,borderRadius:20,borderWidth:1,borderColor:C.border,padding:17,gap:8},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
- muted:{fontSize:13,lineHeight:19,color:C.dim},grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
- segment:{flexDirection:'row',gap:5,padding:5,backgroundColor:C.elevated,borderRadius:15},segmentItem:{flex:1,paddingVertical:11,borderRadius:11,alignItems:'center'},
- bars:{height:120,flexDirection:'row',alignItems:'flex-end',gap:8},progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
+ muted:{fontSize:13,lineHeight:19,color:C.dim},grid:{flexDirection:'row',flexWrap:'wrap',gap:10},sectionRow:{flexWrap:'wrap',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
+ segment:{flexDirection:'row',flexWrap:'wrap',gap:5,padding:5,backgroundColor:C.elevated,borderRadius:15},segmentItem:{flex:1,minWidth:96,minHeight:48,justifyContent:'center',paddingVertical:11,borderRadius:11,alignItems:'center'},
+ bars:{minHeight:120,flexDirection:'row',alignItems:'flex-end',gap:8},progressTrack:{height:9,borderRadius:5,backgroundColor:C.soft,overflow:'hidden'},progressFill:{height:'100%',backgroundColor:C.lime,borderRadius:5},
 });

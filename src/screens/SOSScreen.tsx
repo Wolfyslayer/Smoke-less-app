@@ -28,7 +28,7 @@ const suggestedTips:Record<string,string[]>={
 };
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
-function Heading({children}:{children:React.ReactNode}){return <Text style={styles.heading}>{children}</Text>}
+function Heading({children}:{children:React.ReactNode}){return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
 function Button({title,onPress,secondary=false}:{title:string;onPress:()=>void;secondary?:boolean}){return <Pressable accessibilityRole="button" onPress={onPress} style={[styles.button,secondary&&styles.buttonSecondary]}><Text style={[styles.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
 function Intensity({value,onChange,prefix}:{value:number|null;onChange:(n:number)=>void;prefix:string}){return <View style={styles.segment}>{[1,2,3,4,5].map(n=><Pressable key={n} accessibilityRole="button" accessibilityLabel={`${prefix} ${n} av 5`} accessibilityState={{selected:value===n}} onPress={()=>onChange(n)} style={[styles.segmentItem,value===n&&{backgroundColor:C.lime}]}><Text style={{color:value===n?C.background:C.white,fontWeight:'800'}}>{n}</Text></Pressable>)}</View>}
 export function SOSScreen({breathScale,breathing,breathSeconds,onToggleBreathing,hapticsEnabled,onToggleHaptics,sosIdeas,sosTip,onNextTip,onSelectTip,sosTimer,sosTimerActive,onToggleTimer,onResetTimer,sosStartIntensity,intensity,onStartIntensity,onIntensity,trigger,onTrigger,helpful,onHelpful,onSave}:Props){
@@ -56,9 +56,9 @@ const styles=StyleSheet.create({
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heading:{fontSize:19,fontWeight:'800',color:C.white},
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},subhead:{fontSize:16,fontWeight:'700',color:C.white},
  statValue:{fontSize:26,fontWeight:'800',color:C.white},muted:{fontSize:13,lineHeight:19,color:C.dim},
- breathCircle:{width:205,height:205,borderRadius:103,backgroundColor:C.limeSoft,borderWidth:2,borderColor:C.lime,alignItems:'center',justifyContent:'center',gap:9},
- sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
- segment:{flexDirection:'row',gap:5,padding:5,backgroundColor:C.elevated,borderRadius:15},segmentItem:{flex:1,paddingVertical:11,borderRadius:11,alignItems:'center'},
- button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14,marginTop:5},buttonSecondary:{backgroundColor:C.soft},
+ breathCircle:{width:'100%',maxWidth:205,minHeight:205,padding:12,borderRadius:103,backgroundColor:C.limeSoft,borderWidth:2,borderColor:C.lime,alignItems:'center',justifyContent:'center',gap:9},
+ sectionRow:{minHeight:48,flexWrap:'wrap',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
+ segment:{flexDirection:'row',flexWrap:'wrap',gap:5,padding:5,backgroundColor:C.elevated,borderRadius:15},segmentItem:{flex:1,minWidth:48,minHeight:48,justifyContent:'center',paddingVertical:11,borderRadius:11,alignItems:'center'},
+ button:{paddingVertical:12,backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14,marginTop:5},buttonSecondary:{backgroundColor:C.soft},
  buttonText:{fontWeight:'800',color:C.background,fontSize:14},choice:{padding:17,borderRadius:16,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},selected:{borderColor:C.lime,backgroundColor:C.limeSoft},
 });

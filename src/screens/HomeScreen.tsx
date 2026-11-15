@@ -82,7 +82,7 @@ const styles=StyleSheet.create({
  grid:{flexDirection:'row',flexWrap:'wrap',gap:10},inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
  tile:{width:'46%',flexGrow:1,minWidth:0,minHeight:105,borderRadius:18,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:15,gap:12},
  tileIcon:{width:39,height:39,borderRadius:12,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},tileText:{color:C.white,fontWeight:'800',fontSize:14},
- bars:{height:120,flexDirection:'row',alignItems:'flex-end',gap:8},ringText:{color:C.white,fontSize:19,fontWeight:'800'},
+ bars:{minHeight:120,flexDirection:'row',alignItems:'flex-end',gap:8},ringText:{color:C.white,fontSize:19,fontWeight:'800'},
  recoveryLink:{minHeight:48,justifyContent:"center",paddingVertical:10},
  button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14},buttonText:{fontWeight:'800',color:C.background,fontSize:14},
 });

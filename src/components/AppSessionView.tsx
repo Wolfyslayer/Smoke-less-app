@@ -97,13 +97,13 @@ export function AppSessionView({model}:{model:SessionModel}){
   return ()=>{cancelled=true;};
  },[ready,accountUser?.uid,syncStatus,model.data]);
 
- if(loadError)return <View style={[s.root,{justifyContent:'center',alignItems:'center',padding:24,gap:16}]}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></View>;
+ if(loadError)return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',alignItems:'center',padding:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24),gap:16}}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></ScrollView>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
  // Wait for the first cloud read before deciding that onboarding is needed.
  if(!p && accountUser && syncStatus!=='Synkroniserad med Firestore') {
   const syncing=!syncStatus||syncStatus==='Synkroniserar…'||syncStatus==='Lokala data ändrades. Synkroniserar igen.';
-  return <View style={[s.root,{justifyContent:'center',paddingHorizontal:24}]}>
+  return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',paddingHorizontal:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24)}}>
    <View style={s.errorCard}>
     <View style={s.errorIcon}><CloudOff color={C.lime} size={30}/></View>
     <Text style={s.errorTitle}>{syncing?'Hämtar dina uppgifter…':'Vi kunde inte hämta dina uppgifter'}</Text>
@@ -112,7 +112,7 @@ export function AppSessionView({model}:{model:SessionModel}){
     <View style={s.safeRow}><ShieldCheck size={18} color={C.success}/><Text style={s.safeText}>Din sparade historik skrivs inte över.</Text></View>
     {!syncing?<><Pressable accessibilityRole="button" accessibilityState={{expanded:showSyncDetails}} onPress={()=>setShowSyncDetails(v=>!v)} style={s.detailsButton}><Text style={s.detailsText}>{showSyncDetails?'Dölj tekniska detaljer':'Visa tekniska detaljer'}</Text>{showSyncDetails?<ChevronUp size={16} color={C.muted}/>:<ChevronDown size={16} color={C.muted}/>}</Pressable>{showSyncDetails?<Text selectable style={s.technicalError}>{syncStatus}</Text>:null}</>:null}
    </View>
-  </View>;
+  </ScrollView>;
  }
  const authModal=<OnboardingAuthModal step={authPrompt}
  onEmail={()=>setAuthPrompt('email')}
@@ -128,11 +128,11 @@ export function AppSessionView({model}:{model:SessionModel}){
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
   <TextInput accessibilityLabel="Lösenord" autoCapitalize="none" autoComplete={model.accountMode==='signup'?'new-password':'current-password'} secureTextEntry placeholder="Lösenord" placeholderTextColor={C.dim} value={model.accountPassword} onChangeText={model.setAccountPassword} style={s.input}/>
   <Pressable accessibilityRole="button" disabled={model.accountBusy||!model.accountEmail.includes('@')||model.accountPassword.length<6} onPress={()=>model.accountAction(model.accountMode,'onboarding')} style={[s.loginButton,{opacity:model.accountBusy||!model.accountEmail.includes('@')||model.accountPassword.length<6?.5:1}]}><Text style={{fontWeight:'900',color:C.background}}>{model.accountBusy?'Vänta…':model.accountMode==='signup'?'Skapa konto':'Logga in'}</Text></Pressable>
-  <Pressable accessibilityRole="button" onPress={()=>model.setAccountMode(model.accountMode==='signup'?'login':'signup')} style={{minHeight:44,justifyContent:'center',alignItems:'center'}}><Text style={{color:C.lime,fontWeight:'800'}}>{model.accountMode==='signup'?'Jag har redan ett konto':'Skapa ett nytt konto'}</Text></Pressable>
+  <Pressable accessibilityRole="button" onPress={()=>model.setAccountMode(model.accountMode==='signup'?'login':'signup')} style={{minHeight:48,justifyContent:'center',alignItems:'center'}}><Text style={{color:C.lime,fontWeight:'800'}}>{model.accountMode==='signup'?'Jag har redan ett konto':'Skapa ett nytt konto'}</Text></Pressable>
  </View>}/>;
  if(!p)return <View style={s.root}>{showLogin && !accountUser?
- <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal:24,paddingTop:Math.max(insets.top,30)+36,paddingBottom:40,gap:18}}>
- <Pressable accessibilityRole="button" onPress={leaveLogin}><Text style={{color:C.lime,fontWeight:'800'}}>‹ Tillbaka till onboarding</Text></Pressable>
+ <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingLeft:Math.max(insets.left,24),paddingRight:Math.max(insets.right,24),paddingTop:Math.max(insets.top,30)+36,paddingBottom:Math.max(insets.bottom,40),gap:18}}>
+ <Pressable accessibilityRole="button" onPress={leaveLogin} style={{minHeight:48,justifyContent:'center',alignSelf:'flex-start'}}><Text style={{color:C.lime,fontWeight:'800'}}>‹ Tillbaka till onboarding</Text></Pressable>
  <Text style={{fontSize:32,fontWeight:'900',color:C.white}}>Välkommen tillbaka</Text>
  <Text style={{color:C.muted,lineHeight:22}}>Logga in för att hämta din sparade plan och historik utan att göra om onboarding.</Text>
  <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="E-postadress" placeholderTextColor={C.dim} value={model.accountEmail} onChangeText={model.setAccountEmail} style={s.input}/>
@@ -141,10 +141,10 @@ export function AppSessionView({model}:{model:SessionModel}){
  <Pressable accessibilityRole="button" accessibilityLabel="Fortsätt med Google" accessibilityState={{disabled:model.accountBusy||!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()}} disabled={model.accountBusy||!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()} onPress={()=>{void model.googleAccountAction(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID??'','onboarding')}} style={[s.loginButton,{backgroundColor:C.surface,borderWidth:1,borderColor:C.border,opacity:!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()?.5:1}]}><Text style={{fontWeight:'800',color:C.white}}>{model.accountBusy?'Vänta…':'Fortsätt med Google'}</Text></Pressable>
  {!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim()?<Text style={{color:C.muted}}>Google-inloggning är inte konfigurerad i den här appversionen. Använd e-post tills vidare.</Text>:null}
  </ScrollView>:
- <View style={{flex:1}}><AppSessionOnboarding model={model} onCompleted={()=>{completedOnboardingRef.current=true;}}/>{!accountUser?<Pressable accessibilityRole="button" onPress={()=>setShowLogin(true)} style={{padding:16,alignItems:'center',backgroundColor:C.background}}><Text style={{color:C.lime,fontWeight:'800'}}>Har du redan ett konto? Logga in</Text></Pressable>:null}</View>}
+ <View style={{flex:1}}><AppSessionOnboarding model={model} onCompleted={()=>{completedOnboardingRef.current=true;}}/>{!accountUser?<Pressable accessibilityRole="button" onPress={()=>setShowLogin(true)} style={{padding:16,paddingBottom:Math.max(insets.bottom,16),paddingLeft:Math.max(insets.left,16),paddingRight:Math.max(insets.right,16),minHeight:48,alignItems:'center',backgroundColor:C.background}}><Text style={{color:C.lime,fontWeight:'800'}}>Har du redan ett konto? Logga in</Text></Pressable>:null}</View>}
  <AppSessionOverlays model={model}/></View>;
  if(authPrompt!==null && !accountUser)return <View style={s.root}><AppSessionOnboarding model={model}/><AppSessionOverlays model={model}/>{authModal}</View>;
- return <View style={s.root}><ScrollView key={tab} contentContainerStyle={{paddingHorizontal:20,paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
+ return <View style={s.root}><ScrollView key={tab} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={{paddingLeft:Math.max(insets.left,20),paddingRight:Math.max(insets.right,20),paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
  <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
  {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  <AppScreenRouter model={model}/>
@@ -152,4 +152,4 @@ export function AppSessionView({model}:{model:SessionModel}){
  {authModal}
  </View>
 }
-const s=StyleSheet.create({errorCard:{backgroundColor:C.surface,borderColor:C.border,borderWidth:1,borderRadius:28,padding:26,alignItems:'center',gap:18},errorIcon:{width:68,height:68,borderRadius:22,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},errorTitle:{color:C.white,fontSize:23,fontWeight:'900',textAlign:'center',lineHeight:30},errorDescription:{color:C.muted,fontSize:15,lineHeight:23,textAlign:'center'},errorButton:{backgroundColor:C.lime,borderRadius:16,paddingVertical:16,paddingHorizontal:28,alignItems:'center',alignSelf:'stretch'},errorButtonText:{color:C.background,fontSize:16,fontWeight:'900'},safeRow:{flexDirection:'row',alignItems:'center',gap:8},safeText:{color:C.success,fontSize:12,flexShrink:1},detailsButton:{flexDirection:'row',alignItems:'center',gap:8,padding:8},detailsText:{color:C.muted,fontSize:13,fontWeight:'700'},technicalError:{color:C.dim,fontSize:12,lineHeight:18,backgroundColor:C.elevated,borderRadius:12,padding:12,alignSelf:'stretch'},root:{flex:1,backgroundColor:C.background},input:{backgroundColor:C.surface,color:C.white,borderColor:C.border,borderWidth:1,borderRadius:14,padding:14,minHeight:50},loginButton:{backgroundColor:C.lime,borderRadius:14,minHeight:50,alignItems:'center',justifyContent:'center'}});
+const s=StyleSheet.create({errorCard:{backgroundColor:C.surface,borderColor:C.border,borderWidth:1,borderRadius:28,padding:26,alignItems:'center',gap:18},errorIcon:{width:68,height:68,borderRadius:22,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},errorTitle:{color:C.white,fontSize:23,fontWeight:'900',textAlign:'center',lineHeight:30},errorDescription:{color:C.muted,fontSize:15,lineHeight:23,textAlign:'center'},errorButton:{backgroundColor:C.lime,borderRadius:16,paddingVertical:16,paddingHorizontal:28,alignItems:'center',alignSelf:'stretch'},errorButtonText:{color:C.background,fontSize:16,fontWeight:'900'},safeRow:{flexDirection:'row',alignItems:'center',gap:8},safeText:{color:C.success,fontSize:12,flexShrink:1},detailsButton:{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,padding:8},detailsText:{color:C.muted,fontSize:13,fontWeight:'700'},technicalError:{color:C.dim,fontSize:12,lineHeight:18,backgroundColor:C.elevated,borderRadius:12,padding:12,alignSelf:'stretch'},root:{flex:1,backgroundColor:C.background},input:{backgroundColor:C.surface,color:C.white,borderColor:C.border,borderWidth:1,borderRadius:14,padding:14,minHeight:50},loginButton:{backgroundColor:C.lime,borderRadius:14,minHeight:50,alignItems:'center',justifyContent:'center'}});

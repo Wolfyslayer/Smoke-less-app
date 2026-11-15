@@ -29,7 +29,7 @@ export function BackupScreen({accountEmail,syncStatus,onGuestReset,onOpenAccount
 const s=StyleSheet.create({
  screen:{gap:20},back:{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',minHeight:48,paddingVertical:10,paddingHorizontal:8},
  link:{color:C.lime,fontSize:13,fontWeight:'800'},heading:{flexDirection:'row',alignItems:'center',gap:10},
- title:{fontSize:23,fontWeight:'900',color:C.white},cardTitle:{fontSize:17,fontWeight:'800',color:C.white},
+ title:{flexShrink:1,fontSize:23,fontWeight:'900',color:C.white},cardTitle:{flexShrink:1,fontSize:17,fontWeight:'800',color:C.white},
  muted:{fontSize:13,color:C.muted,lineHeight:20},card:{gap:13,padding:18},
  
 });
