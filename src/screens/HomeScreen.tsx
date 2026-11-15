@@ -6,11 +6,11 @@ import {PlusCircle,Heart,Target,History,ArrowUpRight} from 'lucide-react-native'
 import {C} from '../theme';
 import {dayKey,type Data} from '../domain';
 
-type Props={journeyPanel?:React.ReactNode;uid:string|null;clock:number;data:Data;goal:number;todayCount:number;duration:string;weekly:number[];today:string;onRegister:()=>void;onSOS:()=>void;onPlan:()=>void;onHistory:()=>void;onStats:()=>void;onConfirmToday:()=>void};
+type Props={maintenancePanel?:React.ReactNode;journeyPanel?:React.ReactNode;uid:string|null;clock:number;data:Data;goal:number;todayCount:number;duration:string;weekly:number[];today:string;onRegister:()=>void;onSOS:()=>void;onPlan:()=>void;onHistory:()=>void;onStats:()=>void;onConfirmToday:()=>void};
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
 function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
 function Tile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.tile,featured&&{backgroundColor:C.limeSoft,borderColor:'#5C6B24'}]}><View style={styles.tileIcon}><Icon color={C.lime} size={23}/></View><Text style={[styles.tileText,{flexShrink:1}]}>{title}</Text><ArrowUpRight color={C.dim} size={16} style={{position:'absolute',right:15,top:17}}/></Pressable>}
-export function HomeScreen({journeyPanel,uid,clock,data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
+export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
  const checkin=data.checkins.find(x=>x.date===today);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
  const previousDays=new Set(data.checkins.filter(x=>x.date<today&&x.complete).map(x=>x.date)).size;
@@ -46,7 +46,7 @@ export function HomeScreen({journeyPanel,uid,clock,data,goal,todayCount,duration
  return <View style={styles.screen}>
   {journeyPanel}
   <View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/><Tile icon={Target} title="Min plan" onPress={onPlan}/><Tile icon={History} title="Min logg" onPress={onHistory}/></View>
-  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} goalCard={<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
+  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} goalCard={maintenancePanel??<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
   <Card><Text accessibilityRole="header" style={styles.label}>DAGENS UPPMUNTRAN</Text><Text style={styles.cardTitle}>{encouragement}</Text><Text style={styles.muted}>Du bestämmer din takt. Små steg räknas också.</Text></Card>
   {bestStrategy?<Card style={{gap:9}}>
    <Text style={styles.label}>DIN PERSONLIGA COACH</Text>

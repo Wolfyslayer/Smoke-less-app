@@ -197,7 +197,7 @@ test('home statistics and daily check-in actions have clear labels and minimum t
 
 test('home progress hero remains readable with large system fonts and narrow screens',()=>{
  const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
- assert.match(home,/goalCard=\{<DailyProgressShareArtwork todayCount=\{todayCount\} dailyGoal=\{goal\}\/>\}/);
+ assert.match(home,/goalCard=\{maintenancePanel\?\?<DailyProgressShareArtwork todayCount=\{todayCount\} dailyGoal=\{goal\}\/>\}/);
  const {progressCardLayout}=context.exports;
  const card=buildDailyShareCard({todayCount:3,dailyGoal:10});
  assert.ok(progressCardLayout(card,3).height>progressCardLayout(card,1).height);
