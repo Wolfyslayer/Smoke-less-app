@@ -1,0 +1,8 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {assertReleaseReady}=require('../scripts/check-apk-release-readiness.cjs');
+const policy=require('../config/apkReleaseReadiness.json');
+const candidate={commit:'a'.repeat(40),sha256:'b'.repeat(64),certificateSha256:'c'.repeat(64),build:3,runtime:'native-fingerprint',applicationId:'com.smokeless.app.preview'};
+function accepted(){return {...policy,publicReleaseApproved:true,privacyPolicyApproved:true,supportAndDeletionRouteVerified:true,nativeAccountDeletionVerified:true,twoDeviceDataProtectionVerified:true,androidAccessibilityRegressionVerified:true,retentionAndRecoveryApproved:true,candidate:{...candidate}};}
+test('repository policy blocks public launch until actual acceptance and approval',()=>{assert.throws(()=>assertReleaseReady(policy,candidate));assert.doesNotThrow(()=>assertReleaseReady(accepted(),candidate));});
+test('every open safety or launch gate blocks distribution',()=>{for(const key of Object.keys(accepted()).filter(k=>accepted()[k]===true))for(const value of [false,'true',null])assert.throws(()=>assertReleaseReady({...accepted(),[key]:value},candidate));});
+test('approval cannot be reused for another commit, APK, certificate, runtime or package',()=>{for(const patch of [{commit:'d'.repeat(40)},{sha256:'d'.repeat(64)},{certificateSha256:'d'.repeat(64)},{build:4},{runtime:'changed'},{applicationId:'com.smokeless.app'},{build:NaN},{commit:''}])assert.throws(()=>assertReleaseReady(accepted(),{...candidate,...patch}));assert.throws(()=>assertReleaseReady({...accepted(),candidate:null},candidate));});

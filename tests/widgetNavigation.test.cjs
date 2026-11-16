@@ -9,7 +9,8 @@ test('widget deep link resolves to the Expo Router home route without a registra
  const layout=fs.readFileSync('app/_layout.tsx','utf8');
  assert.equal(app.expo.scheme,'smokeless');
  assert.ok(app.expo.plugins.includes('expo-router'));
- assert.ok(provider.includes('Uri.parse("smokeless://")'));
+ assert.ok(provider.includes('Uri.parse("${scheme}://")'));
+ assert.ok(provider.includes("const scheme=config.scheme||'smokeless'"));
  assert.ok(provider.includes('setPackage(context.packageName)'));
  assert.ok(provider.includes('views.setOnClickPendingIntent(R.id.smoke_less_widget_root, pending)'));
  assert.ok(index.includes("import SmokeLess from '../src/SmokeLess'"));

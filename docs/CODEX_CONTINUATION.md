@@ -1,6 +1,11 @@
+**Aktuell fas 29-utökning 2026-11-16:** Befintlig PR #181 utökas med manuellt EAS APK → verifierad GitHub Release → schema-2-manifest (SHA-256/certifikat/datum/versionsnoteringar). OTA kräver publicerad matchande native-fingerprint. Inga molnbyggen eller publiceringar körda. Lokal Preview/Google-login/sida vid sida är verifierade från senare fas; full release-/OTA-/synkacceptans och EAS-credentials återstår. Fast 8×4-checklista bevaras i PHASE_29_CHECKLIST.md; senaste PR-status gäller. Senare UI på fas 32 bevaras och ska inte ersättas med en äldre fas-snapshot.
+
 # Fortsättning – Smoke Less
 
 ## Aktiv fas
+
+- Aktivt återbesök i fas 29, befintlig PR #181. 3e04d30 har grön validate/rules/GitGuardian. GitHub Releases med faktisk APK-verifiering, schema-2-manifest och OTA-fingerprintgrind implementerade. TypeScript + 344 tester PASS. Verifierat 6/8 och 28/32; EAS-credentials, verklig OTA/releaseuppgradering, samlad synk/dataseparation och slutlig PR kvarstår. GitHub saknar environment preview (listat endast firebase-production/github-pages); EXPO_TOKEN kräver användarens kontohantering. Kör ingen publicering innan konfiguration och uttryckligt beslut. Senare UI bevarat på fas 32 och telefonen.
+- Användaren godkänner tillfälligt gemensam Firebase smoke-less-75efa. Google/SHA och lokal fristående sida-vid-sida-installation verifierade i senare fas; detta är inte full serverdataseparation eller EAS-signering. Behåll synlig kontovarning och syntetiska QA-konton. Ingen roadmap/slutmerge markeras färdig av kodmilstolpen.
 
 - Senaste styrning: rätta fyrkantig navmarkering, använd egna bekräftelsemodaler och fortsätt sedan självständigt genom de nya faserna på main. UI-fix i fas 28: rund indikator/klippt tryckyta, sista Alert.alert ersatt med ConfirmationDialog, tester för avbryt/dubbeltryck och alla flikval. 325 ordinarie tester lokalt PASS. Main har nu faser 29–32; läs deras fulla krav före fasstart och bevara öppna native-/publiceringsgrindar. Inga Android-byggen startas enligt tidigare beslut.
 

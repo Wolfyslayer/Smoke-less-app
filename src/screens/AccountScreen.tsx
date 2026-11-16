@@ -1,4 +1,5 @@
 import React from 'react';
+import Constants from 'expo-constants';
 import {Pressable,Text,TextInput,View,StyleSheet} from 'react-native';
 import {ChevronRight,UserRound,Shield} from 'lucide-react-native';
 import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
@@ -25,6 +26,7 @@ export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,email
  const C=useThemeColors(); const s=useThemeStyles(createS);
 
  return <View style={{gap:20}}>
+ {Constants.expoConfig?.extra?.previewUsesSharedFirebase?<Text accessibilityRole="alert" style={s.muted}>Det här är Preview. Inloggning använder samma kontomiljö som din ordinarie app. Använd ett separat testkonto om du vill undvika att ändra din vanliga historik.</Text>:null}
 
  <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka" accessibilityHint="Återgår till föregående vy" onPress={()=>onBack()} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka</Text></Pressable>
  <Card style={{gap:12,padding:19,backgroundColor:C.accentSubtle,borderColor:C.border}}>

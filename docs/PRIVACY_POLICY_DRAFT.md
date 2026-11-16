@@ -41,3 +41,9 @@ Användaren ska få tydlig information om hur data kan begäras ut, rättas och 
 - [ ] Publicera en tillgänglig URL och länka den från appen och butikssidan.
 
 Detta dokument är ett arbetsutkast, inte juridisk rådgivning.
+
+## Preview-uppdateringar (utkast, fas 29)
+
+Den separata Preview-appen kan kontakta Expo för kompatibla appuppdateringar och GitHub för ett versionsmanifest. Kontroller skickar tekniska uppdateringsuppgifter, exempelvis appens runtime och kanal; tjänsterna tar också emot nätverkstrafikens IP-adress. Röklogg, konto-ID och historik bifogas inte av vår uppdateringsklient. Nedladdning kräver ett aktivt val. Produktionsappens fjärruppdateringar är avstängda. Leverantörernas faktiska behandling och slutlig policy måste granskas inför offentlig release.
+
+Preview använder tills vidare samma Firebase-projekt enligt ägarens beslut. Ett konto har därför samma serverlagrade historik i båda apparna. Använd syntetiska testkonton för QA.

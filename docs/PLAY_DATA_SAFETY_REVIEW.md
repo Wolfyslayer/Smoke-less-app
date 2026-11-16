@@ -25,3 +25,9 @@ Arbetsunderlag kontrollerat 2026-11-15, **inte inskickad eller färdig deklarati
 Ansvarig utgivare, offentlig support-/integritetsadress, publicerad policy-URL, extern raderingsväg, behandlingsgrund, lagringsregioner/överföringar, logg-/backupretention, slutlig SDK-inventering och verifierad kontoradering. Ange även målgrupp, innehållsklassning och vald test-/lanseringskanal i Console. Inga påhittade organisationsuppgifter eller färdigmarkerade formulär.
 
 Teknisk precisering: `google-services.json` och projektmetadata bekräftar `smoke-less-75efa`, `com.smokeless.app` och Firestore `eur3`. Detta fastställer inte alla regioner/överföringar för Authentication, support eller loggar. Raderingsfunktionen är nu driftsatt i `europe-west1` och serverprov med två nya syntetiska konton passerar enligt `ACCOUNT_DELETION_DEPLOYMENT.md`. Klientens releaseflagga är avstängd tills `ACCOUNT_DELETION_ACCEPTANCE.md` passerat. Support-/återhämtningsrutin finns i `SUPPORT_AND_RECOVERY.md`; ansvarig, offentlig kontakt och retention är inte fastställda.
+
+## Tillägg fas 29: Preview
+
+Preview har Expo Updates och läser ett GitHub-versionsmanifest. Inga loggar, konton eller historik bifogas av uppdateringsklienten. Teknisk runtime-/kanalmetadata och vanlig nätverksmetadata behandlas av tjänsterna. Production har fjärruppdatering avstängd. Granska leverantörernas behandling och den faktiska releasekonfigurationen före slutlig Play-deklaration; detta är ingen verifierad eller inskickad deklaration.
+
+Tillfälligt gemensam Firebase är uttryckligen godkänd av ägaren. Separat paketnamn isolerar inte serverkonton. Riktad acceptans använder syntetiska konton och får inte ändra verklig historik.

@@ -1,5 +1,7 @@
 import {SettingsSection} from '../components/SettingsSection';
 import {AppearanceSettings} from '../components/AppearanceSettings';
+import {PreviewUpdateSettings} from '../components/PreviewUpdateSettings';
+import Constants from 'expo-constants';
 import React,{useEffect,useState} from 'react';
 import {ReminderSettings} from '../components/ReminderSettings';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
@@ -36,6 +38,7 @@ export function SettingsScreen({data}:Props){
  };
 
  return <View style={styles.screen}>
+  {Constants.expoConfig?.extra?.appVariant==='preview'?<SettingsSection title="Sök efter uppdateringar" description="Appuppdateringar och nya Preview-versioner"><PreviewUpdateSettings/></SettingsSection>:null}
   <SettingsSection title="Utseende" description="Ljust, mörkt eller systemtema"><AppearanceSettings/></SettingsSection>
 
   <SettingsSection title="Android-widget" description="Välj vad som visas på hemskärmen">
