@@ -54,3 +54,17 @@ Alla nedan är **EJ KÖRDA**, inte godkända:
 - Signerad releasekandidat: installation/uppgradering, kallstart utan Metro och hela matrisen igen.
 
 Detaljer från `PHASE_8_ANDROID_ACCEPTANCE.md` (7.4, 8.1, 8.1a, 8.2), `FINAL_PHASE_ACCESSIBILITY.md` samt fas 16.4–24:s enhetsbegränsningar ingår i denna grind. Privata skärmbilder, konton, mottagarlistor och enhets-ID:n ska inte checkas in som QA-underlag.
+
+## Riktad kontoacceptans på QA-emulator 2026-11-16
+
+Kandidat: signerad Preview 6.0.0/build 3 från daca540. Endast SmokeLess_QA användes; inga telefondata eller riktiga användarkonton. Kontona A/B är användarens två uttryckligen godkända syntetiska QA-konton. Lösenord angavs lokalt av användaren och lästes/loggades inte av AI. Endast dessa konton markerades e-postverifierade med uttryckligt godkännande och separat tillbakaläsning. Detta verifierar inte e-postleverans.
+
+- PASS: A:s befintliga plan och två molnposter lästes. En ny syntetisk registrering via Android-klienten synkades till tre poster. B:s fyra historiksamlingar var fortfarande tomma.
+- PASS: utloggning A och lokal inloggning B. Gästkopiering avböjdes i appens egen modal. B kom till onboarding och visade noll registreringar; A:s historik importerades inte. B fick en separat testplan (rökfri från start, tidigare nivå fem per dag).
+- PASS: två syntetiska B-registreringar sparades via appen och lästes tillbaka från rätt molnkonto. Före/efter den andra B-skrivningen var A:s settings, entries, cravings och checkins exakt oförändrade enligt rekursivt nyckelsorterade SHA-256-snapshotar, inklusive dokumentmetadata. A hade tre och B två poster.
+- PASS: force-stop och kallstart utan Metro bevarade B:s två poster och mål noll. En öppnad registreringsmodal avbröts utan extra post.
+- BEGRÄNSNING: den första jämförelsen av A efter B:s första skrivning använde ordningskänslig JSON-hash och gav avvikelse. Den räknas inte som godkänd integritetsjämförelse. Det separata andra provet ovan använde kanonisk fältordning. Privata snapshotar/UID:n behålls enbart lokalt.
+
+Admin-läsningar var strikt avgränsade till de två kontonas kända samlingar. De bevisar tillbakaläst innehåll, inte att klientbehörigheter nekar en angripares UID. Negativa regel-/serverprov är separat evidens från tidigare säkerhetstester. Tvåenhetssynk, konflikt/offline-matris och faktisk e-postleverans återstår.
+
+Native kontoradering är EJ VERIFIERAD: kandidatens releaseflagga är avstängd och UI visar att funktionen inte är tillgänglig. Ett tidigare försök att förbereda en separat raderingsaktiverad QA-build stoppades av automatisk säkerhetsgranskning med endast beskedet ”blocked by policy”; ingen sådan build eller flaggändring utfördes. Inga av dessa två konton har raderats. Tidigare driftsatta serverprov ersätter inte klientens acceptans. Ingen APK, OTA eller webbuppdatering publicerades. Inget nytt Android-bygge behövdes för ovanstående prov. Fasta faschecklistor är oförändrade.

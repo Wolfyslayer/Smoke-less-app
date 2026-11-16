@@ -1697,3 +1697,6 @@ Fasens **åtta fasta huvudpunkter** återges här utan att ändra nämnaren elle
 - **Prestanda och responsivitet (punkt 5, öppen):** Hemvyn sammanställer röksugshistoriken i en enda genomgång, och PNG-kortet är memoiserat. Renderfasens ref-mutationer i profilens PNG-flöde är borttagna. Kvar är slutlig genomgång av övriga skärmars renderbeteende och layout.
 - **Språk och felmeddelanden (punkt 6, öppen):** Svenska fel- och statusmeddelanden för PNG-delning och påminnelser har förbättrats; ett sent delningsfel visas inte efter att förhandsgranskningen stängts. Kvar är granskning av andra skärmars meddelanden.
 - **Verifieringsgräns:** Gröna GitHub-kontroller på `23a4234` verifierar automatiska kontroller, inte native-delning på Android. Native-build och manuell enhetstestning följer efter merge i fas 25. Inga öppna huvudpunkter markeras klara utan återstående kodgranskning.
+
+
+**Riktad QA 2026-11-16:** Två syntetiska konton har provats i signerad Preview build 3: Android-inloggning, avböjd gästkopiering, separat onboarding/historik, molnsparning och B:s kallstart. Kanonisk serverjämförelse visar A oförändrat vid B:s andra skrivning. Se PHASE_25_QA_RESULTS.md för avgränsningar. Native kontoradering, tvåenhetsmatris och offentlig distributionsacceptans kvarstår; fasta checklistor ändras inte.
