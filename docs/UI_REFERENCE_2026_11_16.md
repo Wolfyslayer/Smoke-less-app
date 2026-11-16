@@ -26,6 +26,8 @@ Bildens livstids-/lungfunktionspåståenden, privata låsskärmsstatistik och et
 
 ## Verifiering
 
-TypeScript och 353 ordinarie tester PASS före push. Samtliga vyer renderas i båda teman i den befintliga renderingssviten. Ett nytt beteendetest går igenom samtliga statistikflikar och verifierar att data inte muteras. Kontrastkontroller omfattar text på samtliga ytor och fyllda handlingar. Geometritester täcker stora systemtypsnitt, nollmål, överskridet mål och stora tal. Navigations-/konto-/delningsregressioner behålls.
+TypeScript och 354 ordinarie tester PASS före push. Samtliga vyer renderas i båda teman i den befintliga renderingssviten. Ett nytt beteendetest går igenom samtliga statistikflikar och verifierar att data inte muteras. Kontrastkontroller omfattar text på samtliga ytor och fyllda handlingar. Geometritester täcker stora systemtypsnitt, nollmål, överskridet mål och stora tal. Navigations-/konto-/delningsregressioner behålls.
 
 Detta är kod- och renderingskontroller, inte slutlig visuell acceptans av varje Android-vy. Lokal Preview-APK byggs för faktisk mobilgranskning; inga byggen i molnet eller OTA-/produktionspubliceringar ingår. Native-konfigurationen är oförändrad, så ny native-runtime krävs inte av designkoden. En uppdaterad fristående APK behövs för att få den nya inbyggda JS-bundlen till mobilen. Behåll signering/inloggning/historik med `adb install -r`. Utförda enhetsresultat noteras i PR efter körning; TalkBack och full enhetsmatris är fortfarande öppna i fas 25.
+
+Slutputsning: profilhuvudets knapp öppnar Appinställningar och sekundära sidhuvuden behåller tidigare Tillbaka-handler. Ett nytt beteendetest verifierar destinationerna. Genererade filer under artifacts undantas nu både från EAS-arkiv och TypeScript-källkodskontroll; verklig appkod är fortsatt strikt kontrollerad. Statistikvyns blandade radslut normaliserades.

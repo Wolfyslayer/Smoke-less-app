@@ -98,6 +98,14 @@ test('selected bottom tabs use a round indicator without a filled selection rect
  for(const name of ['light','dark'])for(const tab of ['home','plan','register','stats','profile']){capturedViews=[];capturedActions=[];themed(name,React.createElement(BottomNavigation,{tab,onNavigate:()=>{}}));const selected=capturedActions.filter(action=>action.state?.selected);assert.equal(selected.length,1);const dots=capturedViews.filter(v=>v.id.startsWith('bottom-nav-indicator-'));assert.equal(dots.filter(v=>v.style.backgroundColor===palettes[name].accent).length,1);assert(dots.every(v=>v.style.borderRadius>=v.style.width/2&&v.style.width===v.style.height));for(const icon of capturedViews.filter(v=>v.id.startsWith('bottom-nav-icon-'))){assert(icon.style.borderRadius>=Math.min(icon.style.width,icon.style.height)/2);if(!icon.id.endsWith('register'))assert.equal(icon.style.backgroundColor,undefined);}capturedViews=null;capturedActions=null;}
 });
 
+test('compact reference header buttons retain working destinations and back behavior',()=>{
+ const {ScreenHeader}=load('src/components/ScreenHeader.tsx');
+ for(const [tab,label,destination] of [['home','Öppna appinställningar','settings'],['profile','Öppna appinställningar','settings'],['plan','Öppna min profil','profile']]){
+  const calls=[];capturedActions=[];themed('dark',React.createElement(ScreenHeader,{tab,clock:Date.parse('2026-11-16T12:00:00Z'),onNavigate:value=>calls.push(value)}));assert.deepEqual(calls,[]);const action=capturedActions.find(a=>a.label===label);assert(action);action.onPress();assert.deepEqual(calls,[destination]);
+ }
+ let back=0;capturedActions=[];themed('light',React.createElement(ScreenHeader,{tab:'settings',clock:0,onNavigate:()=>assert.fail('Back should use the existing history'),onBack:()=>back++}));capturedActions.find(a=>a.label==='Tillbaka').onPress();assert.equal(back,1);capturedActions=null;
+});
+
 
 test('reference statistics tabs reveal the existing data sections without modifying history',()=>{
  const {StatsScreen}=load('src/screens/StatsScreen.tsx');
