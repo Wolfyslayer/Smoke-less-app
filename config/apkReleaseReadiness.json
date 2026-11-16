@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "distribution": "github-releases-and-website",
+  "website": "https://wolfyslayer.online",
+  "publicReleaseApproved": false,
+  "candidate": null,
+  "privacyPolicyApproved": false,
+  "supportAndDeletionRouteVerified": false,
+  "nativeAccountDeletionVerified": false,
+  "twoDeviceDataProtectionVerified": false,
+  "androidAccessibilityRegressionVerified": false,
+  "retentionAndRecoveryApproved": false
+}
