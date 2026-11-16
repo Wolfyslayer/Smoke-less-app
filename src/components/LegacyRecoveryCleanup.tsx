@@ -23,4 +23,4 @@ export function LegacyRecoveryCleanup(){
   {message&&count!==0?<Pressable accessibilityRole="button" disabled={busy} onPress={read} style={s.button}><Text style={s.link}>Kontrollera igen</Text></Pressable>:null}
  </View><ConfirmationDialog dialog={dialog} onClose={()=>setDialog(null)}/></>;
 }
-const createS=(C:ThemeColors)=>StyleSheet.create({card:{gap:12,padding:18,borderRadius:24,borderWidth:1,borderColor:C.border,backgroundColor:C.surface},title:{fontSize:17,fontWeight:'800',color:C.white},text:{fontSize:14,lineHeight:21,color:C.dim},button:{minHeight:48,padding:12,justifyContent:'center'},link:{fontSize:14,fontWeight:'700',color:C.lime}});
+const createS=(C:ThemeColors)=>StyleSheet.create({card:{gap:12,padding:18,borderRadius:16,borderWidth:1,borderColor:C.border,backgroundColor:C.surface},title:{fontSize:17,fontWeight:'800',color:C.white},text:{fontSize:14,lineHeight:21,color:C.dim},button:{minHeight:48,padding:12,justifyContent:'center'},link:{fontSize:14,fontWeight:'700',color:C.lime}});

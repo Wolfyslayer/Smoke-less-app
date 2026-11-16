@@ -40,5 +40,6 @@ export function progressCardLayout(card:DailyShareCard,fontScale=1){
  const statsY=captionEnd+38*scale;
  const messageY=statsY+(stacked?113:58)*scale;
  const height=messageY+Math.max(1,lines.length)*20*scale+20;
- return {width:340,height,scale,stacked,numberSize,titleY,titleLines,numberY,captionY,captionLines,ringRadius,ringY,statsY,messageY,lines};
+ if(!stacked){const compactMessageY=187;return {width:340,height:compactMessageY+Math.max(1,lines.length)*20*scale+16,scale,stacked,horizontal:true,numberSize:Math.min(44*scale,54,82/(main.length*.62)),titleY:30,titleLines,numberY:108,captionY:129,captionLines:['kvar'],ringRadius:54,ringY:107,statsY:86,messageY:compactMessageY,lines};}
+ return {width:340,height,scale,stacked,horizontal:false,numberSize,titleY,titleLines,numberY,captionY,captionLines,ringRadius,ringY,statsY,messageY,lines};
 }

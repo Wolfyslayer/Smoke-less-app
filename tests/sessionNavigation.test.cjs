@@ -9,10 +9,10 @@ test('session safe areas protect login footer without doubling main bottom inset
  const nav=read('src/components/BottomNavigation.tsx');
  assert.match(session,/paddingBottom:Math\.max\(insets\.bottom,40\)/);
  assert.match(session,/paddingBottom:Math\.max\(insets\.bottom,16\)/);
- assert.match(session,/paddingLeft:Math\.max\(insets\.left,20\),paddingRight:Math\.max\(insets\.right,20\)/);
- assert.match(nav,/paddingBottom:Math\.max\(insets\.bottom,10\),paddingLeft:Math\.max\(insets\.left,8\),paddingRight:Math\.max\(insets\.right,8\)/);
+ assert.match(session,/paddingLeft:Math\.max\(insets\.left,16\),paddingRight:Math\.max\(insets\.right,16\)/);
+ assert.match(nav,/paddingBottom:Math\.max\(insets\.bottom,4\),paddingLeft:Math\.max\(insets\.left,4\),paddingRight:Math\.max\(insets\.right,4\)/);
  const main=session.slice(session.indexOf('return <View style={s.root}><ScrollView key={tab}'));
- assert.match(main,/paddingBottom:32/);
+ assert.match(main,/paddingBottom:24/);
  assert.doesNotMatch(main,/paddingBottom:Math\.max\(insets\.bottom/);
 });
 

@@ -1,5 +1,7 @@
 # Smoke Less – masterplan för utveckling och lansering
 
+**Aktuell UI-beställning 2026-11-16:** Användaren vill anpassa alla vyer stegvis efter sin bildreferens. Se UI_REFERENCE_2026_11_16.md. Petrol/mint, kompaktare gemensamt UI, nytt Hem/sidhuvud/navigation, statistikflikar, profil/tema/onboarding och sekundära vyer är kodanpassade. 353 tester och TypeScript PASS; aktuell push och fysisk visuell granskning återstår. Befintliga dataflöden bevaras. Lokal APK-leverans är godkänd; ingen molnbyggnad/publicering.
+
 **Aktuellt användartillägg 2026-11-16:** Riktiga switchar för påminnelser/tysta tider/widgetvisning/SOS-vibration och tre nya launcher-widgetar (Kompakt dag, Registrera, SOS), i befintlig fas 32/PR #184. Se `SETTINGS_WIDGETS_2026_11_16.md`. 352 tester och TypeScript PASS lokalt; aktuell push kräver egen grön validate/rules. Ny Android-build JA; lokal build och uppdateringsinstallation är nu godkända. Tidigare 4fe43b9 byggdes/installerades lokalt och användaren bekräftade Google-inloggning efter Preview-SHA/OAuth-rättning. Inga hemligheter, regler eller kontodata ändras i detta tillägg. Fast 8×4-checklista bevaras.
 
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.

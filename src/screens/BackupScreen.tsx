@@ -34,7 +34,7 @@ export function BackupScreen({accountEmail,syncStatus,onGuestReset,onOpenAccount
  </View>;
 }
 const createS=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:20},back:{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',minHeight:48,paddingVertical:10,paddingHorizontal:8},
+ screen:{gap:16},back:{flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',minHeight:48,paddingVertical:10,paddingHorizontal:8},
  link:{color:C.lime,fontSize:15,fontWeight:'800'},heading:{flexDirection:'row',alignItems:'center',gap:10},
  title:{flexShrink:1,fontSize:23,fontWeight:'900',color:C.white},cardTitle:{flexShrink:1,fontSize:17,fontWeight:'800',color:C.white},
  muted:{fontSize:15,color:C.muted,lineHeight:23},card:{gap:13,padding:18},

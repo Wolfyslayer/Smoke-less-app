@@ -17,7 +17,7 @@ export function ConfirmationDialog({dialog,onClose}:{dialog:ConfirmationDialogSt
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
  dialogOverlay:{flex:1,backgroundColor:'rgba(0,0,0,.72)'},
  scrollContent:{flexGrow:1,justifyContent:'center',paddingHorizontal:24},
- dialog:{backgroundColor:C.surface,borderRadius:26,padding:24,gap:14,borderWidth:1,borderColor:C.border},
+ dialog:{backgroundColor:C.surface,borderRadius:16,padding:24,gap:14,borderWidth:1,borderColor:C.border},
  title:{fontSize:21,fontWeight:'800',color:C.text,flexShrink:1},
  hint:{fontSize:14,color:C.textMuted,lineHeight:21}
 });

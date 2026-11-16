@@ -24,7 +24,7 @@ export function EvidenceSupport(){
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
  section:{gap:12},heading:{fontSize:19,fontWeight:'800',color:C.white},
- card:{gap:8,backgroundColor:C.elevated,borderRadius:24,borderWidth:1,borderColor:C.border,padding:17},
+ card:{gap:8,backgroundColor:C.elevated,borderRadius:16,borderWidth:1,borderColor:C.border,padding:17},
  title:{fontSize:16,fontWeight:'800',color:C.white},body:{color:C.dim,fontSize:14,lineHeight:21},
  choice:{minHeight:48,padding:12,justifyContent:'center',borderRadius:12,borderWidth:1,borderColor:C.border},
  selected:{borderColor:C.lime,backgroundColor:C.limeSoft},link:{color:C.lime,fontSize:15,fontWeight:'700'},

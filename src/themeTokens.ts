@@ -5,15 +5,15 @@ export type ThemePalette={
  background:string;surface:string;elevated:string;soft:string;
  accent:string;accentPressed:string;accentSubtle:string;onAccent:string;
  text:string;textMuted:string;textSecondary:string;border:string;
- success:string;warning:string;danger:string;
+ success:string;warning:string;danger:string;scenerySun:string;
 };
 export const themePalettes:Readonly<Record<ThemeName,Readonly<ThemePalette>>>={
- light:{background:'#F5F7F3',surface:'#FFFFFF',elevated:'#EDF2E9',soft:'#E4EBDD',accent:'#28613C',accentPressed:'#1D4B2D',accentSubtle:'#E0EFDF',onAccent:'#FFFFFF',text:'#17241B',textMuted:'#4C5F50',textSecondary:'#58685B',border:'#CAD5C7',success:'#256440',warning:'#795400',danger:'#AF2934'},
- dark:{background:'#0D1511',surface:'#16221B',elevated:'#203027',soft:'#293B30',accent:'#BCE892',accentPressed:'#A5D379',accentSubtle:'#283E23',onAccent:'#14210F',text:'#F0F5EC',textMuted:'#B2C3B3',textSecondary:'#A4B6A5',border:'#3E5545',success:'#92DAB0',warning:'#F2C96D',danger:'#FF9B9F'},
+ light:{background:'#F1F8F7',surface:'#FFFFFF',elevated:'#E8F3F1',soft:'#DEEEEA',accent:'#007D62',accentPressed:'#00634F',accentSubtle:'#DAF0E9',onAccent:'#FFFFFF',text:'#082B32',textMuted:'#3A5D63',textSecondary:'#44666B',border:'#B8D6D0',success:'#006C51',warning:'#795000',danger:'#B32D35',scenerySun:'#FFC491'},
+ dark:{background:'#00151B',surface:'#05282D',elevated:'#0A3339',soft:'#103F43',accent:'#35EDAC',accentPressed:'#20CF95',accentSubtle:'#083E35',onAccent:'#00291E',text:'#F2FCF9',textMuted:'#B4D0D1',textSecondary:'#A6C6C8',border:'#205259',success:'#58E8AB',warning:'#FFD18A',danger:'#FFA0A5',scenerySun:'#FFC491'},
 };
 export const designTokens={
  spacing:{xs:4,sm:8,md:12,lg:16,xl:24,xxl:32},
- radius:{control:28,card:28,dialog:32,pill:999},
+ radius:{control:14,card:16,dialog:24,pill:999},
  type:{caption:12,body:16,label:14,title:24,hero:40},
  layout:{minTouchTarget:48,contentMaxWidth:640},
 } as const;
