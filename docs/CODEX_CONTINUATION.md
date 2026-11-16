@@ -1,3 +1,5 @@
+**Aktuell fas 29-utökning 2026-11-16:** Befintlig PR #181 utökas med manuellt EAS APK → verifierad GitHub Release → schema-2-manifest (SHA-256/certifikat/datum/versionsnoteringar). OTA kräver publicerad matchande native-fingerprint. Inga molnbyggen eller publiceringar körda. Lokal Preview/Google-login/sida vid sida är verifierade från senare fas; full release-/OTA-/synkacceptans och EAS-credentials återstår. Fast 8×4-checklista bevaras i PHASE_29_CHECKLIST.md; senaste PR-status gäller. Senare UI på fas 32 bevaras och ska inte ersättas med en äldre fas-snapshot.
+
 # Fortsättning – Smoke Less
 
 ## Aktiv fas

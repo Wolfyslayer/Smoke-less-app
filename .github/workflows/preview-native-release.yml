@@ -1,0 +1,82 @@
+name: Native Preview Release (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: Optional finished EAS Preview build UUID from this exact commit (reuse avoids a new build)
+        type: string
+        required: false
+      release_notes:
+        description: User-facing Swedish release notes (public)
+        type: string
+        required: true
+      confirm_release:
+        description: Publish verified APK publicly; a new EAS build uses quota and may incur plan charges
+        type: boolean
+        default: false
+        required: true
+permissions:
+  contents: read
+  checks: read
+concurrency:
+  group: preview-native-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: inputs.confirm_release == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: preview
+    permissions:
+      contents: write
+      checks: read
+    env:
+      APP_VARIANT: preview
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      PREVIEW_GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.PREVIEW_GOOGLE_SERVICES_JSON_BASE64 }}
+      PREVIEW_CERTIFICATE_SHA256: ${{ vars.PREVIEW_CERTIFICATE_SHA256 }}
+      PREVIEW_BUILD_ID: ${{ inputs.build_id }}
+      RELEASE_NOTES: ${{ inputs.release_notes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require latest green CI and configured signing identity before using build quota
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/require-green-ci.cjs
+          node -e "if(!/^[a-f0-9]{64}$/i.test((process.env.PREVIEW_CERTIFICATE_SHA256||'').replace(/:/g,''))||!process.env.EXPO_TOKEN||!process.env.RELEASE_NOTES?.trim()||process.env.RELEASE_NOTES.length>4000)process.exit(1)"
+          node -e "if(process.env.PREVIEW_BUILD_ID&&!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(process.env.PREVIEW_BUILD_ID))process.exit(1)"
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/prepare-preview-firebase.cjs
+      - run: npm run typecheck && npm test
+      - run: npm install --global eas-cli@27.3.0 --no-audit --no-fund
+      - name: Build standalone Preview APK or reuse the selected finished build
+        run: |
+          if [ -z "$PREVIEW_BUILD_ID" ]; then
+            eas build --platform android --profile preview --non-interactive --wait --json > "$RUNNER_TEMP/build-result.json"
+            PREVIEW_BUILD_ID=$(node -e "const r=require(process.env.RUNNER_TEMP+'/build-result.json');const b=Array.isArray(r)?r[0]:r;if(!b?.id)process.exit(1);console.log(b.id)")
+          fi
+          eas build:view "$PREVIEW_BUILD_ID" --json > "$RUNNER_TEMP/preview-build.json"
+          node scripts/publish-preview-manifest.cjs "$RUNNER_TEMP/preview-build.json" "$RUNNER_TEMP/build-metadata.json"
+      - name: Download the verified EAS artifact without authentication in the app
+        run: |
+          APK_URL=$(node -e "console.log(require(process.env.RUNNER_TEMP+'/build-metadata.json').apkUrl)")
+          curl --fail --location --proto '=https' --proto-redir '=https' --max-redirs 5 --max-time 600 --max-filesize 629145600 "$APK_URL" --output "$RUNNER_TEMP/preview.apk"
+      - uses: android-actions/setup-android@v3
+      - name: Verify actual APK certificate, package, build, runtime, project and channel
+        run: |
+          sdkmanager 'build-tools;37.0.0'
+          export AAPT="$ANDROID_HOME/build-tools/37.0.0/aapt"
+          export APKSIGNER="$ANDROID_HOME/build-tools/37.0.0/apksigner"
+          node scripts/verify-preview-apk.cjs "$RUNNER_TEMP/preview-build.json" "$RUNNER_TEMP/preview.apk" "$RUNNER_TEMP/verified.json"
+          node scripts/create-preview-release.cjs "$RUNNER_TEMP/verified.json" "$RUNNER_TEMP/preview.json"
+      - name: Publish verified assets to GitHub Releases and advance the manifest last
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/publish-preview-release.cjs "$RUNNER_TEMP/preview.json" "$RUNNER_TEMP/preview.apk"

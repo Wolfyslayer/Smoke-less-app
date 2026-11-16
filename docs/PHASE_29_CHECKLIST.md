@@ -12,11 +12,11 @@
    - [x] 2.2 Skapa fristående APK-profil för Preview utan Metro-beroende.
    - [x] 2.3 Behåll separat development-profil och säkra produktionsprofilen.
    - [ ] 2.4 Säkerställ reproducerbar Android-build och hantering av credentials.
-3. **Separat Preview-app (2/4)**
+3. **Separat Preview-app (4/4)**
    - [x] 3.1 Ge Preview eget Android application ID och tydligt namn.
    - [x] 3.2 Separera Preview-konfiguration utan att bryta produktion.
-   - [ ] 3.3 Säkerställ kompatibel Firebase/Google-inloggning för Preview.
-   - [ ] 3.4 Verifiera installation sida vid sida med produktionsappen.
+   - [x] 3.3 Säkerställ kompatibel Firebase/Google-inloggning för Preview.
+   - [x] 3.4 Verifiera installation sida vid sida med produktionsappen.
 4. **EAS Update och kanaler (4/4)**
    - [x] 4.1 Installera och konfigurera `expo-updates` kompatibelt med SDK.
    - [x] 4.2 Konfigurera `preview`-kanal och separat produktionskanal.
@@ -37,8 +37,8 @@
    - [x] 7.2 Testa skydd mot fel kanal, fel miljö, felaktig native-version och opålitliga uppdateringslänkar.
    - [ ] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
    - [x] 7.4 Dokumentera installations- och uppdateringskommandon för Windows.
-8. **Android-acceptans och leverans (0/4)**
-   - [ ] 8.1 Installera fristående Preview APK utan dev-server.
+8. **Android-acceptans och leverans (1/4)**
+   - [x] 8.1 Installera fristående Preview APK utan dev-server.
    - [ ] 8.2 Verifiera verklig Preview OTA-uppdatering samt native-uppdateringsnotis och APK-installation på Android.
    - [ ] 8.3 Verifiera Firebase, Google-inloggning, widgets, synk och dataseparation.
    - [ ] 8.4 Slutför fasens PR efter verifierad CI och dokumenterad acceptans.

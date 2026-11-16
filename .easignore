@@ -3,6 +3,7 @@ node_modules/
 .expo/
 .tmp/
 dist/
+artifacts/
 android/
 ios/
 .env

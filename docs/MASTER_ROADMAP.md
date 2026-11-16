@@ -1,3 +1,5 @@
+**Aktuell fas 29-utökning 2026-11-16:** Befintlig PR #181 utökas med manuellt EAS APK → verifierad GitHub Release → schema-2-manifest (SHA-256/certifikat/datum/versionsnoteringar). OTA kräver publicerad matchande native-fingerprint. Inga molnbyggen eller publiceringar körda. Lokal Preview/Google-login/sida vid sida är verifierade från senare fas; full release-/OTA-/synkacceptans och EAS-credentials återstår. Fast 8×4-checklista bevaras i PHASE_29_CHECKLIST.md; senaste PR-status gäller. Senare UI på fas 32 bevaras och ska inte ersättas med en äldre fas-snapshot.
+
 # Smoke Less – masterplan för utveckling och lansering
 
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.
