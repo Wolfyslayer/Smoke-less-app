@@ -1,5 +1,7 @@
 # Smoke Less – masterplan för utveckling och lansering
 
+**Riktad raderings-QA 2026-11-16:** I befintlig fas 25/PR #173 har en separat Android-debugapp med enbart lokala Firebase-demoemulatorer verifierat egen kontoradering och automatisk processomstart via **Starta om appen**. Andra kontots moln-/lokalhistorik och gästhistorik bevarades exakt. Verkliga omstarts-/återhämtningsfel rättades med regressionstester. Se ACCOUNT_DELETION_LOCAL_QA.md. Ingen publik flagga, Preview-APK, OTA eller webbdistribution aktiverades. Full matris och ny fristående kandidat är fortfarande öppna; fasta checklistor markeras inte färdiga av detta riktade prov.
+
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.
 
 ## Teststrategi beslutad 2026-11-04

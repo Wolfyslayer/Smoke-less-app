@@ -25,6 +25,7 @@
       ],
       "./plugins/withAndroidConfigChanges",
       "./plugins/withSmokeLessWidget",
+      "./plugins/withAccountDeletionLifecycle",
       "./plugins/withCustomDebugKeystore"
     ],
     "web": {

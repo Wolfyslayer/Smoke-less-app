@@ -1,0 +1,1 @@
+export function localDeletionQa(input:{enabled:unknown;development:boolean;packageId:unknown;firebaseProject:unknown}):null|{project:string;auth:string;firestoreHost:string;firestorePort:number;deletionUrl:string};

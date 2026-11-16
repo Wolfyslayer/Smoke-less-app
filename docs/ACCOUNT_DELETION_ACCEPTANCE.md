@@ -1,5 +1,9 @@
 # Kontoradering – konkret acceptans före aktivering
 
+Aktuellt QA-arbete 2026-11-16: separat lokal demo/debug-app förbereds enligt [ACCOUNT_DELETION_LOCAL_QA.md](ACCOUNT_DELETION_LOCAL_QA.md). Den ansluter aldrig till det delade Firebase-projektet och ändrar inte den publika aktiveringsflaggan. Native acceptans är fortfarande öppen tills faktiska resultat finns.
+
+Riktat native-resultat 2026-11-16: egen radering och **Starta om appen** har nu verifierats med nya lokala demo-konton. Knappen öppnade automatiskt samma QA-paket i ny process. A:s Auth/molnhistorik/lokala cache är borttagna, completed-lås/tombstone kvar; B:s molndata/lokala cache och gästhistorik är oförändrade. Resetflaggan hölls fram till verklig processomstart. Se det fullständiga protokollet i ACCOUNT_DELETION_LOCAL_QA.md. Detta stänger inte tvåenhets-/offline-/återhämtningsmatrisen och ersätter inte en ny fristående kandidat med den nya native-modulen. Publik aktivering är fortsatt avstängd.
+
 Status 2026-11-15: klient, server och skydd finns i fas 25:s PR. **Servern är driftsatt och provad med två nya syntetiska konton. Appflaggan är avstängd; nativ slutacceptans återstår.** Inga befintliga användarkonton eller verklig telefonhistorik har raderats.
 
 Slutlig kodmilstolpe `1a413ad` har grön `validate` och `rules`. Säkerhetsjobbets steg för låst serverruntime, regeltester och verkliga callable-integrationer kördes och passerade i CI med Node 22. Lokalt verifierades 325 fall totalt. Dokumentationsändringar efter denna milstolpe kräver också grön senaste CI före nästa commit.

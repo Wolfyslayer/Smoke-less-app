@@ -6,11 +6,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import {clearWidgetPrivacy} from './widgets/widgetPreferences';
 import {accountDeletionRemoteEnabled as deletionEnabled} from './accountDeletionConfig';
+import {localDeletionQaConfig} from './accountDeletionQa';
+import {markDeletionRestart,deletionRestartRequired,assertDeletionLifecycleAvailable} from './accountDeletionLifecycle';
+export {restartDeletedApp} from './accountDeletionLifecycle';
 
 // Remains off until deployment and isolated end-to-end acceptance are verified.
 export {deletionEnabled};
 const cacheResetKey='smokeless:deletion-cache-reset-required';
 export async function recentDeletionToken(uid:string){
+ assertDeletionLifecycleAvailable();
  const user=getAuth().currentUser;
  if(!user||user.uid!==uid)throw new DeletionError('Logga in på nytt innan du raderar kontot.');
  let result;
@@ -30,19 +34,22 @@ export async function refreshDeletionReceipt(uid:string):Promise<'pending'|'conf
 }
 export async function requestAccountDeletion(token:string):Promise<unknown>{
  if(!deletionEnabled)throw new DeletionError('Kontoradering är inte aktiverad i den här versionen.');
+ assertDeletionLifecycleAvailable();
  const project=getApp().options.projectId;
  const region=process.env.EXPO_PUBLIC_ACCOUNT_DELETION_REGION||'europe-west1';
  if(!project||!/^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(project)||!/^[a-z]+(?:-[a-z0-9]+)+$/.test(region))throw new DeletionError('Kontoraderingens server är inte konfigurerad.');
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),60000);
  try{
-  const response=await fetch(`https://${region}-${project}.cloudfunctions.net/deleteMyAccount`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({data:{}}),signal:controller.signal});
+  const response=await fetch(localDeletionQaConfig?.deletionUrl??`https://${region}-${project}.cloudfunctions.net/deleteMyAccount`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({data:{}}),signal:controller.signal});
   const payload=await response.json() as {result?:unknown;error?:unknown};
   if(!response.ok||payload.error)throw new DeletionError('Serverns radering kunde inte bekräftas. Försök igen med färsk inloggning. Om problemet kvarstår behövs support.');
   return payload.result;
  }finally{clearTimeout(timer);}
 }
 export async function finalizeDeletedDevice(uid:string,currentUid:()=>string|null){
+ assertDeletionLifecycleAvailable();
  await AsyncStorage.setItem(cacheResetKey,'true');
+ await markDeletionRestart();
  await firestore().terminate();
  await firestore().clearPersistence();
  if(currentUid()===uid)await clearWidgetPrivacy();
@@ -52,9 +59,16 @@ export async function finalizeDeletedDevice(uid:string,currentUid:()=>string|nul
  if(currentUid()===uid)await signOut(getAuth());
  // Keep the reset flag until a fresh app process verifies cache cleanup before sync.
 }
-export async function finishDeletionCacheReset(){
- if(await AsyncStorage.getItem(cacheResetKey)!=='true')return;
+export async function finishDeletionCacheReset():Promise<'ready'|'restart-required'>{
+ if(await AsyncStorage.getItem(cacheResetKey)!=='true')return 'ready';
+ if(await deletionRestartRequired())return 'restart-required';
  try{await firestore().clearPersistence();}
- catch{throw new DeletionError('Stäng appen helt och öppna den igen för att slutföra säker städning.');}
+ catch{
+  // A JS reload or interrupted cleanup can leave an active SDK in this process.
+  // Preserve the durable flag and offer a real restart, never resume account work.
+  await markDeletionRestart();
+  return 'restart-required';
+ }
  await AsyncStorage.removeItem(cacheResetKey);
+ return 'ready';
 }

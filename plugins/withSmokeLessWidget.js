@@ -3,9 +3,9 @@ const fs=require('node:fs');
 const path=require('node:path');
 module.exports=function withSmokeLessWidget(config){
  const packageName=config.android?.package||'com.smokeless.app';
- if(!/^com\.smokeless\.app(?:\.preview)?$/.test(packageName))throw Error('Unsupported widget application package');
+ if(!/^com\.smokeless\.app(?:\.(?:preview|deletionqa))?$/.test(packageName))throw Error('Unsupported widget application package');
  const providerName=packageName+'.SmokeLessWidgetProvider';
- const displayName=packageName.endsWith('.preview')?'Smoke Less Preview':'Smoke Less';
+ const displayName=packageName.endsWith('.deletionqa')?'Smoke Less Deletion QA':packageName.endsWith('.preview')?'Smoke Less Preview':'Smoke Less';
  const variants=[
   {provider:providerName,resource:'smoke_less_widget_info',label:displayName},
   {provider:packageName+'.SmokeLessCompactWidgetProvider',resource:'smoke_less_compact_widget_info',label:displayName+' · Kompakt dag'},
@@ -13,7 +13,7 @@ module.exports=function withSmokeLessWidget(config){
   {provider:packageName+'.SmokeLessSosWidgetProvider',resource:'smoke_less_sos_widget_info',label:displayName+' · SOS'},
  ];
  const scheme=config.scheme||'smokeless';
- if(!['smokeless','smokeless-preview'].includes(scheme))throw Error('Unsupported widget URI scheme');
+ if(!['smokeless','smokeless-preview','smokeless-deletionqa'].includes(scheme))throw Error('Unsupported widget URI scheme');
  config=withAndroidManifest(config,c=>{
   const app=c.modResults.manifest.application?.[0];
   if(!app)throw Error('Missing Android application manifest');
