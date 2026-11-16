@@ -1,6 +1,6 @@
 ### Fas 29.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Kodmilstolpe verifierad lokalt; senaste CI väntar. 4/8 huvudpunkter (50 %), 24/32 delpunkter (75 %). Ingen Android-build eller publicering körd.
+**Verifierad status på 3e04d30:** validate/rules/GitGuardian success. 6/8 huvudpunkter (75 %), 28/32 delpunkter (87,5 %). Ny dokumentationshead behöver egen grön CI. Lokal fristående Preview, Google-login och sida vid sida verifierade från senare fas; ingen EAS-/Release-/OTA-publicering körd.
 
 1. **Inventering och riskbedömning (4/4)**
    - [x] 1.1 Inventera Expo SDK, config-plugins, Android-build och befintlig CI.
@@ -32,10 +32,10 @@
    - [x] 6.2 Skydda tokens, hemligheter och kanalval.
    - [x] 6.3 Undvik native-build vid rena JS-/asset-ändringar.
    - [x] 6.4 Dokumentera hur Codex använder arbetsflödet utan oavsiktlig release.
-7. **Automatiska tester och dokumentation (3/4)**
+7. **Automatiska tester och dokumentation (4/4 på 3e04d30)**
    - [x] 7.1 Testa app-ID, kanaler, profiler och runtime-konfiguration.
    - [x] 7.2 Testa skydd mot fel kanal, fel miljö, felaktig native-version och opålitliga uppdateringslänkar.
-   - [ ] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
+   - [x] 7.3 Verifiera TypeScript, regressioner och båda CI-kontrollerna.
    - [x] 7.4 Dokumentera installations- och uppdateringskommandon för Windows.
 8. **Android-acceptans och leverans (1/4)**
    - [x] 8.1 Installera fristående Preview APK utan dev-server.
@@ -43,4 +43,4 @@
    - [ ] 8.3 Verifiera Firebase, Google-inloggning, widgets, synk och dataseparation.
    - [ ] 8.4 Slutför fasens PR efter verifierad CI och dokumenterad acceptans.
 
-Verifiering: TypeScript och 339 ordinarie tester PASS; webbexport PASS. 7.3 inväntar senaste validate/rules. Öppna native-punkter är inte ersatta med mocktester. Se PHASE_29_PREVIEW_OTA.md för konfiguration, delad Firebase, credentials och Windows-kommandon.
+Verifiering: TypeScript och 344 ordinarie tester PASS, YAML för manuella workflows parsad, faktisk lokal APK läst med aapt/apksigner. Lokal Preview från senare fas innehåller fas 29 och är installerad utan Metro/rensning bredvid ordinarie app; användaren bekräftade Google-login. 2.4 (EAS-credentials/reproducerbarhet), 8.2 (verklig OTA/Release-uppgradering), 8.3 (samlad synk/widget/dataseparation) och 8.4 (slutlig PR) är öppna. Inga mocktester ersätter dessa grindar. Senaste CI-status hålls i PR. Se PHASE_29_PREVIEW_OTA.md.

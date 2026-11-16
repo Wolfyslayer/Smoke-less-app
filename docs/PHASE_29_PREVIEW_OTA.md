@@ -37,15 +37,21 @@ Kommandona är underlag, inte redan utförda publiceringar. Kontrollera kvot, k�
 ```powershell
 $env:APP_VARIANT='preview'
 eas project:info
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 eas credentials --platform android
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 # Välj/återanvänd befintlig Preview-nyckel. Visa inte privata uppgifter i loggar.
 eas build --platform android --profile preview --non-interactive --wait --json > "$env:TEMP\preview-build-result.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 # Läs ID i resultatet och ersätt UUID nedan:
 eas build:view 'UUID' --json > "$env:TEMP\preview-build.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 node scripts/publish-preview-manifest.cjs "$env:TEMP\preview-build.json" "$env:TEMP\preview-build-metadata.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 # Hämta ENDAST apkUrl från den verifierade metadatafilen till $env:TEMP\preview.apk.
 $apkMetadata=Get-Content "$env:TEMP\preview-build-metadata.json" -Raw | ConvertFrom-Json
 curl.exe --fail --location --proto '=https' --proto-redir '=https' --max-redirs 5 --max-time 600 --max-filesize 629145600 $apkMetadata.apkUrl --output "$env:TEMP\preview.apk"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 $env:AAPT="$env:LOCALAPPDATA\Android\Sdk\build-tools\37.0.0\aapt.exe"
 $env:APKSIGNER="$env:LOCALAPPDATA\Android\Sdk\build-tools\37.0.0\apksigner.bat"
@@ -53,23 +59,31 @@ $env:PREVIEW_CERTIFICATE_SHA256='VERIFIERAT_BEFINTLIGT_CERTIFIKATS_SHA256'
 $env:GITHUB_REPOSITORY='Wolfyslayer/Smoke-less-app'
 $env:GITHUB_SHA=(git rev-parse HEAD).Trim()
 $env:GITHUB_TOKEN=gh auth token
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 node scripts/require-green-ci.cjs
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 node scripts/verify-preview-apk.cjs "$env:TEMP\preview-build.json" "$env:TEMP\preview.apk" "$env:TEMP\preview-verified.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 $env:RELEASE_NOTES='Godkända svenska versionsnoteringar'
 node scripts/create-preview-release.cjs "$env:TEMP\preview-verified.json" "$env:TEMP\preview.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 # Separat uttryckligt publiceringsbeslut krävs innan nästa kommando körs:
 node scripts/publish-preview-release.cjs "$env:TEMP\preview.json" "$env:TEMP\preview.apk"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 Remove-Item Env:\GITHUB_TOKEN
 # Uppgradering på ansluten telefon efter verifiering:
 adb install -r "$env:TEMP\preview.apk"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 ```
 
 När workflows finns på default branch och environment är konfigurerat:
 
 ```powershell
 gh workflow run preview-native-release.yml --ref 'GODKÄND_BRANCH' -f build_id='FÄRDIGT_BUILD_UUID' -f release_notes='Godkända svenska versionsnoteringar' -f confirm_release=true
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 # Utelämna build_id för ett nytt EAS-bygge; detta använder kvot.
 gh workflow run preview-ota.yml --ref 'GODKÄND_BRANCH' -f message='Godkänd kompatibel Preview-uppdatering'
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 ```
 
 CLI-OTA efter samma grön-CI-/runtime-kontroller:
@@ -78,10 +92,14 @@ CLI-OTA efter samma grön-CI-/runtime-kontroller:
 $env:APP_VARIANT='preview'
 $env:SMOKELESS_PREVIEW_OTA='true'
 eas fingerprint:generate --platform android --environment preview --non-interactive --json > "$env:TEMP\preview-fingerprint.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 curl.exe --fail --proto '=https' --max-time 30 --max-filesize 16384 'https://raw.githubusercontent.com/Wolfyslayer/Smoke-less-app/preview-release/releases/preview.json' --output "$env:TEMP\published-preview.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 node scripts/require-preview-runtime.cjs "$env:TEMP\preview-fingerprint.json" "$env:TEMP\published-preview.json"
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 # Bara efter lyckade kontroller och godkänd publicering:
 eas update --platform android --channel preview --environment preview --non-interactive --message 'Godkänd Preview-uppdatering'
+if ($LASTEXITCODE -ne 0) { throw 'Kommandot misslyckades; avbryt och utred innan nästa steg.' }
 ```
 
 ## Kostnader och verifieringsgräns
@@ -92,4 +110,4 @@ Källor: https://docs.expo.dev/build/building-on-ci/ ; https://docs.expo.dev/eas
 
 **Ny Android-build:** Ingen ny native-konfiguration i detta tillägg. Uppdaterad APK eller kompatibel OTA behövs för den nya klienten; releasekedjan behöver en verklig EAS-build/signatur-/uppgraderingsacceptans. Använd inte en fas-29-build för att oavsiktligt ersätta senare UI. Verklig OTA, native-notis/installation via release, full synk/dataseparation och slutlig merge återstår.
 
-Verifiering av utökningen: TypeScript och 344 ordinarie tester PASS. YAML för båda manuella workflows parsad med js-yaml. Faktisk befintlig lokal APK inspekterad med aapt/apksigner inklusive native fingerprint och kanal. Publicerarens checksum-felgren verifierad med isolerade mockanrop: ingen publicering/pointer-skrivning vid fel. GitHub environment-listning gav 404; varken environment, secrets eller behörighet kan därför betraktas som verifierade. Senaste CI kontrolleras efter push.
+Verifiering av utökningen: TypeScript och 344 ordinarie tester PASS. YAML för båda manuella workflows parsad med js-yaml. Faktisk befintlig lokal APK inspekterad med aapt/apksigner inklusive native fingerprint och kanal. Publicerarens checksum-felgren verifierad med isolerade mockanrop: ingen publicering/pointer-skrivning vid fel. Direkt environment/secrets-listning gav 404; övergripande environment-listning bekräftade endast firebase-production/github-pages, alltså saknas preview. Inga secrets eller signeringscredentials ändrade. 3e04d30 har grön validate/rules/GitGuardian; ny dokumentationshead kontrolleras separat efter push.
