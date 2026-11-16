@@ -2,10 +2,10 @@ name: Firestore rules emulator
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, 'feat/phase-*']
   workflow_dispatch:
 concurrency:
-  group: firestore-rules-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: firestore-rules-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   rules:
