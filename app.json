@@ -5,10 +5,12 @@
     "scheme": "smokeless",
     "version": "6.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "plugins": [
       "expo-router",
       "expo-dev-client",
+      "expo-sharing",
+      "expo-status-bar",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "@react-native-google-signin/google-signin",
@@ -40,7 +42,7 @@
         "foregroundImage": "./assets/branding/adaptive-icon-foreground.png",
         "backgroundImage": "./assets/branding/adaptive-icon-background.png"
       },
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [
         "POST_NOTIFICATIONS"
       ]

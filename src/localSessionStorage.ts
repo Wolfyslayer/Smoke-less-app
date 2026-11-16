@@ -5,6 +5,7 @@ import {loadAccountData, saveAccountData, accountStorageKey} from './accountStor
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {migrateGuestHistoryWithBackup, type MigrationResult} from './accountMigration';
 import {previewGuestMerge} from './guestMerge';
+import {writeAccountScoped} from './accountDeletionSafety';
 
 export type LocalSession = {kind: 'guest'} | {kind: 'account'; uid: string};
 export type SessionSnapshot = {session: LocalSession; data: Data};
@@ -95,7 +96,7 @@ export class LocalSessionStorage {
       if (preview.conflicts.length) throw new Error('Motstridiga registreringar finns. Ingen historik har ändrats.');
       if (verifyUid() !== uid) throw new Error('Kontot ändrades.');
       const backup = 'smoke-less-v6-migration-backup:' + uid + ':' + Date.now();
-      await AsyncStorage.setItem(backup, JSON.stringify(current));
+      await writeAccountScoped(AsyncStorage,uid,backup,JSON.stringify(current));
       if (verifyUid() !== uid) throw new Error('Kontot ändrades.');
       if (JSON.stringify(await loadAccountData(uid)) !== JSON.stringify(current))
         throw new Error('Kontohistoriken ändrades. Försök igen.');
@@ -123,6 +124,9 @@ export class LocalSessionStorage {
   getSnapshot(): SessionSnapshot | null {
     return this.current;
   }
+
+  /** Deletion waits for earlier local work without deleting any data itself. */
+  async flush():Promise<void> {await this.enqueue(async()=>{});}
 
   /** Blocks new operations; queued operations reject before touching storage. */
   dispose(): void {

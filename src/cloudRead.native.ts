@@ -3,6 +3,8 @@ import {getAuth} from '@react-native-firebase/auth';
 import type {Data} from './domain';
 import {isCloudProfile, isCloudEntry, isCloudCraving, isCloudCheckin, userDocumentPath} from './cloudSchema';
 import {previewMerge, type MergePreview} from './syncMerge';
+import {recordServerDeletion} from './cloudDeletion.native';
+import {accountDeletionRemoteEnabled} from './accountDeletionConfig';
 
 type CloudMeta = {schemaVersion: number; revision: number; deleted: boolean};
 type CloudSnapshot = {data: Data; hasTombstones: boolean};
@@ -26,6 +28,10 @@ export async function readCloudSnapshot(uid: string): Promise<CloudSnapshot> {
   // directly. Keep reads isolated from any cloud write path.
   const db=await readStage('initiera databasen',async()=>firestore());
   const base=await readStage('skapa användarreferens',async()=>db.doc(userDocumentPath(uid)));
+  if(accountDeletionRemoteEnabled){
+   const deletion=await readStage('kontrollera kontoradering',()=>base.collection('control').doc('deletion').get({source:'server'}));
+   if(deletion.exists())await recordServerDeletion(uid,deletion.data()?.state);
+  }
   const plan=await readStage('läsa sparad plan',()=>base.collection('settings').doc('plan').get());
   const entries=await readStage('läsa cigaretthistorik',()=>base.collection('entries').get());
   const cravings=await readStage('läsa röksug',()=>base.collection('cravings').get());

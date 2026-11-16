@@ -29,7 +29,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   manifestMod(manifest);
   // Expo prebuild may rerun config plugins: never duplicate receivers or permissions.
   manifestMod(manifest);
-  assert.equal(manifest.modResults.manifest.application[0].receiver.length,1);
+  assert.equal(manifest.modResults.manifest.application[0].receiver.length,4);
   assert.equal(manifest.modResults.manifest['uses-permission'].filter(p=>p.$['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED').length,1);
   const receiver=manifest.modResults.manifest.application[0].receiver[0];
   const actions=receiver['intent-filter'][0].action.map(item=>item.$['android:name']);
@@ -55,7 +55,13 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));
   assert.ok(provider.includes('onUpdate(context, manager, ids)'));
   assert.match(provider,/!valid -> "Öppna appen för dagens framsteg"/);
-  assert.ok(provider.includes('val summary = when {\n    !valid ->'), 'Kotlin when branches must use real newlines');
+  assert.ok(provider.includes('val summary = when {\n    kind == "register" ->'), 'Kotlin when branches must use real newlines');
+  for(const [providerClass,resource] of [['SmokeLessCompactWidgetProvider','compact'],['SmokeLessRegisterWidgetProvider','register'],['SmokeLessSosWidgetProvider','sos']]){
+   assert(manifest.modResults.manifest.application[0].receiver.some(r=>r.$['android:name']==='com.smokeless.app.'+providerClass));
+   assert(provider.includes('class '+providerClass+' : SmokeLessWidgetProvider()'));
+   assert(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_'+resource+'_widget_info.xml')));
+   assert(bridge.includes(providerClass+'()'),'privacy clearing must refresh every provider');
+  }
   assert.ok(!provider.includes('\\n'), 'generated Kotlin must not contain literal escaped newlines');
 
   assert.match(bridge,/MODE_PRIVATE/);
@@ -74,4 +80,10 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
    assert.ok(xml.includes('android:textColor="#FFFFFF"'),'summary must keep high-contrast text');
   }
  }finally{fs.rmSync(root,{recursive:true,force:true})}
+});
+
+test('Preview widget code, namespace and launcher scheme stay inside the Preview application',async()=>{
+ const javaDir=path.join('C:/preview-widget-qa/android','app/src/main/java/com/smokeless/app/preview');const files=new Map([[path.join(javaDir,'MainApplication.kt'),'package com.smokeless.app.preview\nclass MainApplication { val packages = PackageList(this).packages.apply { } }']]);let manifestMod,dangerousMod;
+ const context={module:{exports:{}},exports:{},require:id=>{if(id==='expo/config-plugins')return {withAndroidManifest:(c,fn)=>{manifestMod=fn;return c},withDangerousMod:(c,[,fn])=>{dangerousMod=fn;return c}};if(id==='node:path')return path;if(id==='node:fs')return {mkdirSync(){},existsSync:p=>files.has(p),readFileSync:p=>{assert(files.has(p),p);return files.get(p)},writeFileSync:(p,text)=>files.set(p,text)};throw Error(id);}};
+ vm.runInNewContext(fs.readFileSync('plugins/withSmokeLessWidget.js','utf8'),context);context.module.exports({android:{package:'com.smokeless.app.preview'},scheme:'smokeless-preview'});const manifest={modResults:{manifest:{application:[{receiver:[]}]}}};manifestMod(manifest);assert.equal(manifest.modResults.manifest.application[0].receiver[0].$['android:name'],'com.smokeless.app.preview.SmokeLessWidgetProvider');await dangerousMod({modRequest:{platformProjectRoot:'C:/preview-widget-qa/android'}});const provider=files.get(path.join(javaDir,'SmokeLessWidgetProvider.kt'));assert(provider.includes('package com.smokeless.app.preview'));assert(provider.includes('Uri.parse("smokeless-preview://")'));assert(files.get(path.join(javaDir,'MainApplication.kt')).includes('add(SmokeLessWidgetPackage())'));
 });

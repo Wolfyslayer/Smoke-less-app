@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {Clock,Trash2} from 'lucide-react-native';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import {dayKey,type Cigarette} from '../domain';
 
 type Props={
@@ -9,17 +9,21 @@ type Props={
  last:Cigarette|undefined;onOpenRegister:()=>void;onOpenHistory:()=>void;onRemove:(id:string)=>void;
 };
 function Button({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
  return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={({pressed})=>[styles.button,secondary&&styles.buttonSecondary,(pressed||disabled)&&{opacity:disabled?.4:.8}]}><Text style={[styles.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>;
 }
 export function RegisterScreen({todayCount,goal,duration,sorted,today,last,onOpenRegister,onOpenHistory,onRemove}:Props){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
  return <View style={styles.screen}>
-  <View style={[styles.card,{alignItems:'center',gap:15,paddingVertical:35,borderColor:'#425C29'}]}>
+  <View style={styles.registerHero}><View style={styles.registerOverview}><View style={{flex:1,minWidth:120,gap:8}}>
    <Text style={styles.label}>REGISTRERADE IDAG</Text>
-   <Text style={[styles.heroNumber,{fontSize:76}]}>{todayCount}</Text>
+   <Text style={[styles.heroNumber,{fontSize:40}]}>{todayCount}</Text>
    <View><Text style={styles.muted}>Dagens riktvärde: {goal}</Text></View>
-   <View style={{width:'100%'}}><Button title="+ Registrera cigarett" onPress={onOpenRegister}/></View>
+   </View><View style={styles.lastRegistration}><Clock size={22} color={C.accent}/><Text style={styles.label}>SENASTE CIGARETTEN</Text><Text style={styles.statValue}>{duration||'Ingen ännu'}</Text></View></View>
+   <Button title="+ Registrera cigarett" onPress={onOpenRegister}/>
   </View>
-  <View style={styles.card}><Text style={styles.label}>SENASTE CIGARETTEN</Text><Text style={styles.statValue}>{duration}</Text></View>
   <View style={styles.sectionRow}><Text accessibilityRole="header" style={[styles.heading,{flexShrink:1}]}>Dagens historik</Text><Pressable accessibilityRole="button" accessibilityLabel="Visa alla registreringar" accessibilityHint="Öppnar din fullständiga historik" onPress={onOpenHistory} style={styles.historyLink}><Text style={styles.link}>Visa alla</Text></Pressable></View>
   {sorted.filter(e=>dayKey(new Date(e.at))===today).slice(0,10).map(e=><View key={e.id} style={[styles.card,styles.inline]}>
    <Clock size={19} color={C.lime}/>
@@ -29,15 +33,15 @@ export function RegisterScreen({todayCount,goal,duration,sorted,today,last,onOpe
   <Button title="Ångra senaste registreringen" secondary disabled={!last} onPress={()=>last&&onRemove(last.id)}/>
  </View>;
 }
-const styles=StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:20,padding:17},
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ screen:{gap:16},registerHero:{backgroundColor:C.surface,borderRadius:16,padding:16,gap:24},registerOverview:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',gap:20},lastRegistration:{flex:1,minWidth:110,gap:10,paddingLeft:18,borderLeftWidth:1,borderLeftColor:C.border},card:{backgroundColor:C.surface,borderRadius:22,padding:18},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},
- heroNumber:{fontSize:48,fontWeight:'900',color:C.white},
- statValue:{fontSize:26,fontWeight:'800',color:C.white},
- muted:{fontSize:13,lineHeight:19,color:C.dim},
+ heroNumber:{fontSize:40,fontWeight:'900',color:C.white},
+ statValue:{fontSize:20,fontWeight:'800',color:C.white},
+ muted:{fontSize:15,lineHeight:23,color:C.dim},
  sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8},historyLink:{minHeight:48,justifyContent:'center',paddingHorizontal:8},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
- heading:{fontSize:19,fontWeight:'800',color:C.white},link:{color:C.lime,fontSize:13,fontWeight:'700'},
+ heading:{fontSize:19,fontWeight:'800',color:C.white},link:{color:C.lime,fontSize:15,fontWeight:'700'},
  inline:{flexDirection:'row',alignItems:'center',gap:14},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14},
- buttonSecondary:{backgroundColor:C.soft},buttonText:{fontWeight:'800',color:C.background,fontSize:14,textAlign:'center',flexShrink:1},
+ buttonSecondary:{backgroundColor:C.soft},buttonText:{fontWeight:'800',color:C.onAccent,fontSize:14,textAlign:'center',flexShrink:1},
 });

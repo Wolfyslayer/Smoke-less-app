@@ -1,12 +1,16 @@
+import {Coins,Clock,Wind} from 'lucide-react-native';
 import React,{useEffect,useMemo,useState} from 'react';
-import {Pressable,StyleSheet,Text,View} from 'react-native';
+import {Pressable,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {dayKey,nextReductionMilestone,savings,type Data} from '../domain';
 import {useDashboardPreferences} from '../hooks/useDashboardPreferences';
 import {DashboardEditor,dashboardCardLabels} from './DashboardEditor';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 
 type Props={actions?:React.ReactNode;uid:string|null;data:Data;clock:number;duration:string;weekly:number[];goalCard:React.ReactNode};
 export function DashboardOverview({actions,uid,data,clock,duration,weekly,goalCard}:Props){
+ const s=useThemeStyles(createS);
+ const C=useThemeColors(),{fontScale}=useWindowDimensions();
+
  const [expanded,setExpanded]=useState(false);
  useEffect(()=>setExpanded(false),[uid]);
  const preferences=useDashboardPreferences(uid);
@@ -17,8 +21,9 @@ export function DashboardOverview({actions,uid,data,clock,duration,weekly,goalCa
  const milestone=useMemo(()=>data.profile?nextReductionMilestone(data.profile,new Date(clock)):null,[data.profile,today]);
  return <View style={s.container}>
   {preferences.value.cards.includes('goal')?goalCard:null}
+  <View style={s.summaryHeader}><Text accessibilityRole="header" style={s.title}>Din överblick</Text><Pressable accessibilityRole="button" accessibilityLabel={expanded?'Dölj min översikt':'Min översikt och anpassning'} accessibilityState={{expanded}} onPress={()=>setExpanded(v=>!v)} style={s.toggle}><Text style={s.link}>{expanded?'Stäng':'Anpassa'}</Text></Pressable></View>
+  {!expanded?<View style={s.summaryGrid}>{preferences.value.cards.filter(id=>['time','savings','cravings'].includes(id)).map(id=><View key={id} style={[s.summaryItem,{minWidth:fontScale>1.3?150:88}]}>{id==='time'?<Clock size={20} color={C.accent}/>:id==='savings'?<Coins size={20} color={C.accent}/>:<Wind size={20} color={C.accent}/>}<Text style={s.summaryValue}>{id==='time'?(duration||'–'):id==='savings'?new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(saved)+' kr':String(cravingCount)}</Text><Text style={s.muted}>{id==='time'?'Sedan senaste registrering':id==='savings'?'Uppskattat sparat':'Röksug registrerade idag'}</Text></View>)}</View>:null}
   {actions}
-  <Pressable accessibilityRole="button" accessibilityState={{expanded}} onPress={()=>setExpanded(v=>!v)} style={s.toggle}><Text style={s.muted}>{expanded?'Dölj min översikt':'Min översikt och anpassning'}</Text></Pressable>
   {expanded?<View style={s.container}>
   <DashboardEditor value={preferences.value} ready={preferences.ready} error={preferences.error} onChange={preferences.update}/>
   {preferences.value.cards.length===0?<Text style={s.muted}>Dina översiktskort är dolda. Välj Anpassa startsidan för att visa dem igen.</Text>:null}
@@ -33,4 +38,4 @@ export function DashboardOverview({actions,uid,data,clock,duration,weekly,goalCa
   </View>:null}
  </View>;
 }
-const s=StyleSheet.create({container:{gap:16},toggle:{minHeight:48,paddingVertical:12,justifyContent:'center'},card:{gap:10,padding:17,borderRadius:20,borderWidth:1,borderColor:C.border,backgroundColor:C.elevated},title:{color:C.white,fontSize:17,fontWeight:'800'},value:{color:C.white,fontSize:21,fontWeight:'800',flexShrink:1},muted:{color:C.muted,fontSize:13,lineHeight:20},week:{flexDirection:'row',flexWrap:'wrap',gap:8},day:{minWidth:48,flexGrow:1,alignItems:'center',paddingVertical:8}});
+const createS=(C:ThemeColors)=>StyleSheet.create({container:{gap:16},summaryHeader:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:8},link:{color:C.accent,fontSize:14,fontWeight:'700'},summaryGrid:{flexDirection:'row',flexWrap:'wrap',gap:8},summaryItem:{flex:1,minWidth:88,padding:12,borderWidth:1,borderColor:C.border,borderRadius:14,backgroundColor:C.surface,gap:6},summaryValue:{fontSize:20,fontWeight:'700',color:C.text,flexShrink:1},toggle:{minHeight:48,paddingVertical:12,justifyContent:'center'},card:{gap:12,padding:16,borderRadius:16,backgroundColor:C.surface,borderWidth:1,borderColor:C.border},title:{color:C.white,fontSize:20,fontWeight:'700'},value:{color:C.white,fontSize:28,fontWeight:'700',flexShrink:1},muted:{color:C.muted,fontSize:14,lineHeight:21},week:{flexDirection:'row',flexWrap:'wrap',gap:8},day:{minWidth:48,flexGrow:1,alignItems:'center',paddingVertical:8}});

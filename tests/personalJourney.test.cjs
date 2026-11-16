@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
-function load(path){const context={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,context);return context.exports;}
+function load(path){const context={exports:{},require:id=>{if(id==='./accountDeletionSafety')return load('src/accountDeletionSafety.ts');throw Error(id);}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,context);return context.exports;}
 const {normalizeJourney:normalize,journeySupport:support,JOURNEY_PHASES:phases}=load('src/domain/personalJourney.ts');
 const {createLocalPreferences:create}=load('src/localPreferences.ts');
 const plain=v=>JSON.parse(JSON.stringify(v));

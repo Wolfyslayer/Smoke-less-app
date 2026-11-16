@@ -2,11 +2,13 @@ import React from 'react';
 import {StyleSheet,Text,View} from 'react-native';
 import {House,Target,PlusCircle,ChartColumn,History,Heart,Leaf} from 'lucide-react-native';
 import {AppCard} from './ui';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 
 type IntroTab='home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits';
 export function SectionIntroCard({tab}:{tab:IntroTab}){
- return <AppCard style={{gap:13,padding:18,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
+ return <AppCard style={{gap:13,padding:18,backgroundColor:C.accentSubtle,borderColor:C.border}}>
  <View style={{flexDirection:'row',alignItems:'center',gap:13}}>
   <View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}>
    {tab==='home'?<House size={24} color={C.lime}/>:tab==='plan'?<Target size={24} color={C.lime}/>:tab==='register'?<PlusCircle size={24} color={C.lime}/>:tab==='stats'?<ChartColumn size={24} color={C.lime}/>:tab==='history'?<History size={24} color={C.lime}/>:tab==='sos'?<Heart size={24} color={C.lime}/>:<Leaf size={24} color={C.lime}/>}
@@ -18,7 +20,7 @@ export function SectionIntroCard({tab}:{tab:IntroTab}){
  </View>
  </AppCard>;
 }
-const styles=StyleSheet.create({
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
- muted:{fontSize:13,color:C.muted,lineHeight:20}
+ muted:{fontSize:15,color:C.muted,lineHeight:23}
 });

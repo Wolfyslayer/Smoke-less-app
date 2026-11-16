@@ -1,33 +1,42 @@
 import React from 'react';
+import Constants from 'expo-constants';
 import {Pressable,Text,TextInput,View,StyleSheet} from 'react-native';
 import {ChevronRight,UserRound,Shield} from 'lucide-react-native';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 
 type AccountUser={email?:string|null};
 type Props={
+ deletionEnabled:boolean;onDeleteAccount:()=>void;
  accountUser:AccountUser|null;emailVerified:boolean;verificationBusy:boolean;accountBusy:boolean;
- syncStatus:string;cloudPreviewResult:string|null;cloudPreviewBusy:boolean;migrationBusy:boolean;
+ cloudPreviewBusy:boolean;migrationBusy:boolean;
  accountMode:'login'|'signup';accountEmail:string;accountPassword:string;
- onBack:()=>void;onVerification:(action:'send'|'refresh')=>void;onGuestMigration:()=>void;
- onCloudPreview:()=>void;onCloudImport:()=>void;onEmailChange:(value:string)=>void;
+ onBack:()=>void;onVerification:(action:'send'|'refresh')=>void;
+ onEmailChange:(value:string)=>void;
  onPasswordChange:(value:string)=>void;onAccountAction:(action:'login'|'signup'|'reset'|'logout')=>void;
- googleConfigured:boolean;onGoogleSignIn:()=>void;onLinkGoogle:()=>void;onToggleAccountMode:()=>void;onPasswordReset:()=>void;onInspectCloud:()=>void;onOpenSettings:()=>void;
+ googleConfigured:boolean;onGoogleSignIn:()=>void;onLinkGoogle:()=>void;onToggleAccountMode:()=>void;onPasswordReset:()=>void;onOpenData:()=>void;
 };
 const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
-function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
-export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
- return <View style={{gap:20}}>
+function Card({children,style}:{children:React.ReactNode;style?:any}){
+ const s=useThemeStyles(createS);
+return <View style={[s.card,style]}>{children}</View>}
+function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){
+ const C=useThemeColors(); const s=useThemeStyles(createS);
+return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
+export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,emailVerified,verificationBusy,accountBusy,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onOpenData}:Props){
+ const C=useThemeColors(); const s=useThemeStyles(createS);
 
- <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={()=>onBack()} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
- <Card style={{gap:12,padding:19,backgroundColor:'#1B2416',borderColor:'#425C29'}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:13}}><View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={25} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountUser?'Ditt Smoke Less-konto':'Skydda din resa'}</Text><Text style={s.muted}>{accountUser?.email||'Logga in eller skapa ett konto för molnsäkerhetskopiering.'}</Text></View></View>
+ return <View style={{gap:20}}>
+ {Constants.expoConfig?.extra?.previewUsesSharedFirebase?<Text accessibilityRole="alert" style={s.muted}>Det här är Preview. Inloggning använder samma kontomiljö som din ordinarie app. Använd ett separat testkonto om du vill undvika att ändra din vanliga historik.</Text>:null}
+
+ <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka" accessibilityHint="Återgår till föregående vy" onPress={()=>onBack()} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka</Text></Pressable>
+ <Card style={{gap:12,padding:19,backgroundColor:C.accentSubtle,borderColor:C.border}}>
+  <View style={{flexDirection:'row',alignItems:'center',gap:13}}><View style={{width:48,height:48,borderRadius:15,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'}}><UserRound size={25} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountUser?'Ditt Smoke Less-konto':'Skydda din resa'}</Text><Text style={s.muted}>{accountUser?.email||'Logga in eller skapa ett konto för kontosynk.'}</Text></View></View>
  </Card>
   {accountUser?<Card style={{gap:13,padding:18}}>
-  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Molnsäkerhetskopia</Text><Text style={s.muted}>Automatisk Firestore-synkronisering</Text></View></View>
+  <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>Kontouppgifter</Text><Text style={s.muted}>E-post och inloggningssätt</Text></View></View>
   <View style={{gap:9,padding:13,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border}}>
    <Text style={s.cardTitle} accessibilityRole="header">E-postverifiering</Text>
-   <Text style={{color:emailVerified?C.lime:'#E7B967',fontSize:13,fontWeight:'800'}}>{emailVerified?'✓ Verifierad e-postadress':'E-postadressen är inte verifierad'}</Text>
+   <Text style={{color:emailVerified?C.lime:C.warning,fontSize:15,fontWeight:'800'}}>{emailVerified?'✓ Verifierad e-postadress':'E-postadressen är inte verifierad'}</Text>
    {!emailVerified?<><Text style={s.muted}>Verifiera din e-postadress för att skydda åtkomsten till ditt konto. Öppna länken i mejlet och kontrollera sedan status här.</Text><Btn title={verificationBusy?'Vänta…':'Skicka verifieringsmejl'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('send')}/><Btn title={verificationBusy?'Kontrollerar…':'Kontrollera verifiering'} secondary disabled={verificationBusy||accountBusy} onPress={()=>onVerification('refresh')}/></>:null}
   </View>
   <View style={{gap:9,padding:13,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border}}>
@@ -37,11 +46,6 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
    <Btn title={accountBusy?'Vänta…':'Koppla Google till mitt konto'} secondary disabled={accountBusy||!googleConfigured||!accountPassword} onPress={onLinkGoogle}/>
    {!googleConfigured?<Text style={s.muted}>Google-inloggning är inte konfigurerad i den här appversionen.</Text>:null}
   </View>
-  <Text style={s.muted} accessibilityLiveRegion="polite">{syncStatus||'Din historik synkroniseras automatiskt när appen öppnas och när du gör ändringar. Vid konflikt skyddas dina befintliga data.'}</Text>
-  {cloudPreviewResult?<Text style={s.muted} accessibilityLiveRegion="polite">{cloudPreviewResult}</Text>:null}
-  <Btn title={migrationBusy?'Kopierar gästhistorik…':'Kopiera gästhistorik till kontot'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onGuestMigration}/>
-  <Btn title={cloudPreviewBusy?'Läser molndata…':'Förhandsgranska molndata'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onCloudPreview}/>
-  <Btn title={cloudPreviewBusy?'Vänta…':'Importera molnhistorik (med bekräftelse)'} secondary disabled={migrationBusy||cloudPreviewBusy||accountBusy} onPress={onCloudImport}/>
  </Card>:<Card style={{gap:14,padding:18}}>
   <View style={{flexDirection:'row',alignItems:'center',gap:12}}><View style={s.actionIcon}><Shield size={22} color={C.lime}/></View><View style={{flex:1,gap:4}}><Text style={s.cardTitle}>{accountMode==='login'?'Välkommen tillbaka':'Skapa ditt konto'}</Text><Text style={s.muted}>Spara din resa tryggt med molnsäkerhetskopiering.</Text></View></View>
   <TextInput accessibilityLabel="E-postadress" autoCapitalize="none" keyboardType="email-address" autoComplete="email" placeholder="E-postadress" placeholderTextColor={C.dim} value={accountEmail} onChangeText={onEmailChange} style={s.input}/>
@@ -51,7 +55,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!validEmail(accountEmail)||!accountPassword||(accountMode==='signup'&&accountPassword.length<6)} onPress={()=>onAccountAction(accountMode)}/>
   <Text style={[s.muted,{textAlign:'center'}]}>eller</Text>
   <Btn title={accountBusy?'Vänta…':'Fortsätt med Google'} secondary disabled={accountBusy||!googleConfigured} onPress={onGoogleSignIn}/>
-  {!googleConfigured?<Text style={s.muted} accessibilityLiveRegion="polite">Google-inloggning är inte konfigurerad i den här appversionen. Använd e-post och lösenord tills en uppdaterad Android-build finns.</Text>:null}
+  {!googleConfigured?<Text style={s.muted} accessibilityLiveRegion="polite">Google-inloggning är inte tillgänglig just nu. Du kan använda e-post och lösenord.</Text>:null}
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
   <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" accessibilityState={{disabled:accountBusy||!validEmail(accountEmail)}} style={{minHeight:48,justifyContent:"center",paddingVertical:5,alignSelf:'center',opacity:accountBusy||!validEmail(accountEmail)?0.5:1}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}
@@ -61,12 +65,11 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <Btn title={accountBusy?'Skickar…':'Skicka länk för lösenordsbyte'} secondary disabled={accountBusy||!accountUser.email} onPress={onPasswordReset}/>
   <View style={{height:1,backgroundColor:C.border}}/>
   <Text style={s.cardTitle} accessibilityRole="header">Radera data och konto</Text>
-  <Btn title={cloudPreviewBusy?'Kontrollerar…':'Kontrollera vad som finns i molnet'} secondary disabled={cloudPreviewBusy||migrationBusy||accountBusy} onPress={onInspectCloud}/>
-  <Text style={s.muted}>Att radera lokal historik, molnhistorik och Firebase-kontot är olika åtgärder. Säker kontoradering behöver färdigställas och testas innan funktionen kan aktiveras. Din inloggade historik synkroniseras automatiskt med Firebase; i gästläge sparas historiken bara på enheten.</Text>
-  <Btn title="Visa historik och synkronisering" secondary onPress={()=>onOpenSettings()}/>
+  {deletionEnabled?<><Text style={s.muted}>Radera ditt konto och tillhörande kontohistorik permanent. Gästhistorik och andra kontons aktiva historik behålls. Logga in på nytt först; läs bekräftelsen innan du fortsätter.</Text><Btn title="Radera konto och kontohistorik" secondary disabled={accountBusy||migrationBusy||cloudPreviewBusy} onPress={onDeleteAccount}/></>:<Text style={s.muted}>Kontoradering är inte tillgänglig just nu. Kontohistorik synkroniseras med molnet. Gästhistorik finns bara på enheten.</Text>}
+  <Btn title="Visa historik och synkronisering" secondary onPress={()=>onOpenData()}/>
  </Card>:null}
- {!accountUser?<Card style={{gap:10,padding:17,borderColor:'#9D793E',backgroundColor:'#272218'}}>
-  <Text style={[s.cardTitle,{color:'#E7B967'}]}>⚠️ Skydda din historik</Text>
+ {!accountUser?<Card style={{gap:10,padding:17,borderColor:C.warning,backgroundColor:C.surface}}>
+  <Text style={[s.cardTitle,{color:C.warning}]}>⚠️ Skydda din historik</Text>
   <Text style={s.muted}>Utan konto lagras din historik bara på den här enheten. Den kan försvinna om du avinstallerar appen eller byter telefon.</Text>
  </Card>:<Card style={{gap:9,padding:16}}>
   <Text style={s.cardTitle}>Kontohantering</Text><Text style={s.muted}>Du kan logga ut utan att radera din lokala gästhistorik.</Text>
@@ -74,14 +77,14 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
  </Card>}
  </View>;
 }
-const s=StyleSheet.create({
- card:{backgroundColor:C.surface,borderRadius:20,padding:15,borderWidth:1,borderColor:C.border,gap:9},
+const createS=(C:ThemeColors)=>StyleSheet.create({
+ card:{backgroundColor:C.surface,borderRadius:16,padding:15,borderWidth:1,borderColor:C.border,gap:9},
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
- muted:{fontSize:13,color:C.muted,lineHeight:20},
+ muted:{fontSize:15,color:C.muted,lineHeight:23},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
- link:{color:C.lime,fontSize:13,fontWeight:'800'},
+ link:{color:C.lime,fontSize:15,fontWeight:'800'},
  input:{backgroundColor:C.elevated,borderRadius:14,borderWidth:1,borderColor:C.border,color:C.white,padding:12,fontSize:15,minHeight:48},
  button:{backgroundColor:C.lime,padding:13,borderRadius:14,alignItems:'center',justifyContent:'center',minHeight:48},
  buttonSecondary:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},
- buttonText:{color:C.background,fontWeight:'900',fontSize:15},
+ buttonText:{color:C.onAccent,fontWeight:'900',fontSize:15},
 });

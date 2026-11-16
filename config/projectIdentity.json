@@ -1,0 +1,5 @@
+{
+  "owner": "wolfyslayer",
+  "production": {"projectId": "907de979-5731-4822-9bcc-36867eb0cf27", "package": "com.smokeless.app", "firebaseProject": "smoke-less-75efa"},
+  "preview": {"projectId": "d5fcc1ea-eec7-440e-b3b9-ac3f37febd9f", "package": "com.smokeless.app.preview", "firebaseProject": "smoke-less-75efa", "sharedFirebaseApproved": true}
+}

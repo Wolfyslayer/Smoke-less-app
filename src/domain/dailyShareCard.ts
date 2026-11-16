@@ -19,12 +19,10 @@ export function buildDailyShareCard(input:DailyShareProgress):DailyShareCard{
 export function progressCardLayout(card:DailyShareCard,fontScale=1){
  const scale=Number.isFinite(fontScale)?Math.max(1,fontScale):1;
  const stacked=scale>1.3;
- const main=`${card.remaining} / ${card.dailyGoal}`;
- const numberSize=Math.min(48*scale,(stacked?300:176)/(main.length*.62));
+ const main=String(card.remaining);
+ const numberSize=Math.min(64*scale,80*Math.min(scale,1.7),160/(main.length*.62));
  const titleY=22+11*scale;
  const titleLines=stacked?['DAGENS','FRAMSTEG']:['DAGENS FRAMSTEG'];
- const numberY=titleY+(titleLines.length-1)*16*scale+20+numberSize;
- const captionY=numberY+24*scale;
  const maxCharacters=Math.max(8,Math.floor(300/(13*scale*.58)));
  const wrap=(text:string)=>{const lines:string[]=[];
  for(const word of text.split(' ')){
@@ -33,11 +31,15 @@ export function progressCardLayout(card:DailyShareCard,fontScale=1){
   else lines[last]+=' '+word;
  }
  return lines;};
- const lines=wrap(card.message),captionLines=wrap('cigaretter kvar idag');
+ const lines=wrap(card.message),captionLines=wrap(card.dailyGoal===0?'målet är en rökfri dag':'kvar av dagsmålet');
+ const ringRadius=64*Math.min(scale,1.7);
+ const ringY=titleY+(titleLines.length-1)*16*scale+ringRadius+22;
+ const numberY=ringY+numberSize*.34;
+ const captionY=ringY+ringRadius+26*scale;
  const captionEnd=captionY+(captionLines.length-1)*20*scale;
- const ringRadius=46*(stacked?Math.min(scale,2.5):1);
- const ringY=stacked?captionEnd+ringRadius+26:Math.max(94,captionEnd-35);
- const messageY=Math.max(captionEnd+28,ringY+ringRadius+20+13*scale);
+ const statsY=captionEnd+38*scale;
+ const messageY=statsY+(stacked?113:58)*scale;
  const height=messageY+Math.max(1,lines.length)*20*scale+20;
- return {width:340,height,scale,stacked,numberSize,titleY,titleLines,numberY,captionY,captionLines,ringRadius,ringY,messageY,lines};
+ if(!stacked){const compactMessageY=187;return {width:340,height:compactMessageY+Math.max(1,lines.length)*20*scale+16,scale,stacked,horizontal:true,numberSize:Math.min(44*scale,54,82/(main.length*.62)),titleY:30,titleLines,numberY:108,captionY:129,captionLines:['kvar'],ringRadius:54,ringY:107,statsY:86,messageY:compactMessageY,lines};}
+ return {width:340,height,scale,stacked,horizontal:false,numberSize,titleY,titleLines,numberY,captionY,captionLines,ringRadius,ringY,statsY,messageY,lines};
 }

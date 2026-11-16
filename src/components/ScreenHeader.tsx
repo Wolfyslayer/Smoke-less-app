@@ -1,21 +1,22 @@
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import {UserRound,ArrowLeft} from 'lucide-react-native';
-import {C} from '../theme';
-export type ScreenTab='home'|'plan'|'register'|'stats'|'profile'|'account'|'sos'|'history'|'benefits'|'settings'|'backup';
-const title:Record<ScreenTab,string>={home:'Din resa börjar här',plan:'Din plan',register:'Registrera',stats:'Din utveckling',profile:'Min profil',account:'Mitt konto',sos:'Hantera röksug',history:'Din logg',benefits:'Dina framsteg',settings:'Inställningar',backup:'Säkerhetskopiering'};
-const primaryTabs=['home','plan','register','stats','profile'];
-const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
-export function ScreenHeader({tab,clock,onNavigate}:{tab:ScreenTab;clock:number;onNavigate:(tab:ScreenTab)=>void}){
- const isPrimary=primaryTabs.includes(tab);
- return <View style={styles.container}><View style={styles.textColumn}><Label>{tab==='home'?(new Date(clock).getHours()<11?'GOD MORGON':new Date(clock).getHours()<17?'GOD EFTERMIDDAG':'GOD KVÄLL'):'SMOKE LESS'}</Label><Text accessibilityRole="header" style={styles.title}>{title[tab]}</Text><Text style={styles.muted}>{tab==='home'?date(new Date(clock)):tab==='profile'?'Din resa, dina inställningar.':tab==='account'?'Inloggning och kontosäkerhet.':tab==='backup'?'Spara och återställ din historik.':'Ett steg i taget.'}</Text></View><Pressable accessibilityRole="button" accessibilityLabel={isPrimary?'Öppna min profil':'Tillbaka till startsidan'} accessibilityHint={isPrimary?'Visar din profil och dina inställningar':'Återgår till startsidan'} onPress={()=>onNavigate(isPrimary?'profile':'home')} style={styles.avatar}>{isPrimary?<UserRound size={22} color={C.lime}/>:<ArrowLeft size={22} color={C.lime}/>}</Pressable></View>;
+import {UserRound,ArrowLeft,Leaf,Target,PlusCircle,ChartColumn,Bell,Settings} from 'lucide-react-native';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
+import {JourneyLandscape} from './JourneyLandscape';
+import {BrandMark} from './BrandMark';
+import type {Tab} from '../hooks/useSessionNavigation';
+export type ScreenTab=Tab;
+const titles:Record<Tab,string>={home:'Smoke Less',plan:'Min plan',register:'Registrera',stats:'Statistik',profile:'Profil',account:'Mitt konto',sos:'SOS – Jag är röksugen',history:'Historik',benefits:'Kunskap och stöd',settings:'Appinställningar',backup:'Data och synkronisering',journey:'Min rökstoppsresa',about:'Om Smoke Less','plan-settings':'Anpassa min plan'};
+const subtitles:Partial<Record<Tab,string>>={home:'Din väg till ett rökfritt liv',plan:'Din personliga rökstoppsplan',register:'Följ dina registreringar',stats:'Följ din utveckling över tid',profile:'Ditt konto, din data och dina inställningar',sos:'Stöd när röksuget kommer',settings:'Anpassa Smoke Less efter dig'};
+const primary=['home','plan','register','stats','profile'];
+export function ScreenHeader({tab,clock,onNavigate,onBack}:{tab:Tab;clock:number;onNavigate:(tab:Tab)=>void;onBack?:()=>void}){
+ const C=useThemeColors(),s=useThemeStyles(createStyles),isPrimary=primary.includes(tab);
+ const opensSettings=tab==='home'||tab==='profile';
+ const Icon=tab==='plan'?Target:tab==='register'?PlusCircle:tab==='stats'?ChartColumn:tab==='profile'?UserRound:Leaf;
+ return <View style={s.container}><View style={s.row}>
+  {isPrimary?<View style={s.brandIcon}>{tab==='home'?<BrandMark size={32}/>:<Icon size={27} color={C.accent}/>}</View>:<Pressable accessibilityRole="button" accessibilityLabel="Tillbaka" onPress={()=>{if(onBack)onBack();else onNavigate('home');}} style={s.back}><ArrowLeft size={23} color={C.text}/></Pressable>}
+  <View style={{flex:1,minWidth:0,gap:3}}><Text accessibilityRole="header" style={s.title}>{titles[tab]}</Text><Text style={s.subtitle}>{subtitles[tab]??'Ett steg i taget, i din takt.'}</Text></View>
+  <Pressable accessibilityRole="button" accessibilityLabel={opensSettings?'Öppna appinställningar':'Öppna min profil'} onPress={()=>onNavigate(opensSettings?'settings':'profile')} style={s.action}>{tab==='home'?<Bell size={21} color={C.text}/>:tab==='profile'?<Settings size={21} color={C.text}/>:<UserRound size={21} color={C.text}/>}</Pressable>
+ </View>{tab==='home'?<View style={s.welcome}><JourneyLandscape/><View style={{gap:5,padding:16}}><Text accessibilityRole="header" style={s.greeting}>Hej igen!</Text><Text style={s.encouragement}>Varje liten förändring räknas.</Text><Text style={s.date}>{new Date(clock).toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'})}</Text></View></View>:null}</View>;
 }
-function Label({children}:{children:React.ReactNode}){return <Text style={styles.eyebrow}>{children}</Text>}
-const styles=StyleSheet.create({
- container:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
- textColumn:{flex:1,flexShrink:1,minWidth:0,gap:7},
- eyebrow:{fontSize:11,color:C.muted,fontWeight:'800',letterSpacing:1.7},
- title:{fontSize:26,fontWeight:'900',letterSpacing:-1,color:C.white,flexShrink:1},
- muted:{fontSize:13,color:C.muted,lineHeight:20},
- avatar:{flexShrink:0,width:48,height:48,borderRadius:13,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'}
-});
+const createStyles=(C:ThemeColors)=>StyleSheet.create({container:{gap:14},row:{flexDirection:'row',alignItems:'center',gap:10},brandIcon:{width:34,alignItems:'center'},back:{width:48,height:48,alignItems:'center',justifyContent:'center'},title:{fontSize:20,fontWeight:'800',color:C.text,flexShrink:1},subtitle:{fontSize:12,lineHeight:17,color:C.textMuted},action:{width:48,height:48,borderRadius:24,borderWidth:1,borderColor:C.border,backgroundColor:C.surface,alignItems:'center',justifyContent:'center'},welcome:{minHeight:120,overflow:'hidden',borderRadius:16,borderWidth:1,borderColor:C.border,justifyContent:'center'},greeting:{fontSize:26,fontWeight:'800',color:C.text},encouragement:{fontSize:14,color:C.text},date:{fontSize:12,color:C.textMuted,marginTop:3}});

@@ -1,15 +1,17 @@
 import React from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {CalendarDays,Trash2} from 'lucide-react-native';
-import {C} from '../theme';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import type {Cigarette} from '../domain';
 
 type Props={entries:Cigarette[];sorted:Cigarette[];onRemove:(id:string)=>void};
 const date=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 
 export function HistoryScreen({entries,sorted,onRemove}:Props){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+
  return <View style={styles.screen}>
-  <View style={[styles.card,{padding:19,borderColor:'#425C29'}]}>
+  <View style={[styles.card,{padding:19,borderColor:C.border}]}>
    <Text style={styles.label}>REGISTRERINGAR TOTALT</Text>
    <Text style={styles.heroNumber}>{entries.length}</Text>
   </View>
@@ -26,12 +28,12 @@ export function HistoryScreen({entries,sorted,onRemove}:Props){
    </View>)}
  </View>;
 }
-const styles=StyleSheet.create({
- screen:{gap:20},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
- card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:20,padding:17},
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ screen:{gap:16},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
+ card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:16,padding:17},
  inline:{flexDirection:'row',alignItems:'center',gap:14},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},
- muted:{fontSize:13,lineHeight:19,color:C.dim},
+ muted:{fontSize:15,lineHeight:23,color:C.dim},
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
 });

@@ -2,10 +2,12 @@ import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {JOURNEY_PHASES,journeyLabels,journeySupport} from '../domain/personalJourney';
 import type {usePersonalJourney} from '../hooks/usePersonalJourney';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 
 type Props={journey:ReturnType<typeof usePersonalJourney>;todayCount:number;checked:boolean;onPlan:()=>void;onSOS:()=>void;onCheckin:()=>void;compact?:boolean};
 export function PersonalJourney({journey,todayCount,checked,onPlan,onSOS,onCheckin,compact=false}:Props){
+ const s=useThemeStyles(createS);
+
  const [editing,setEditing]=useState(false);
  const support=journeySupport(journey.value.phase,todayCount,checked);
  return <View style={s.card}>
@@ -17,4 +19,4 @@ export function PersonalJourney({journey,todayCount,checked,onPlan,onSOS,onCheck
   {editing?<><Text style={s.text}>Du väljer själv. Detta beskriver vilket stöd du vill ha, inte ett verifierat hälsotillstånd. Valet sparas bara på den här enheten för ditt konto eller gästläge.</Text>{[null,...JOURNEY_PHASES].map(phase=><Pressable key={phase??'none'} accessibilityRole="radio" accessibilityState={{checked:journey.value.phase===phase,disabled:!journey.ready}} disabled={!journey.ready} style={s.button} onPress={()=>journey.update({version:1,phase})}><Text style={s.action}>{journey.value.phase===phase?'✓ ':''}{phase?journeyLabels[phase]:'Ingen fasanpassning'}</Text></Pressable>)}</>:null}
  </View>;
 }
-const s=StyleSheet.create({card:{gap:10,padding:17,borderRadius:20,borderWidth:1,borderColor:C.border,backgroundColor:C.surface},title:{color:C.white,fontSize:17,fontWeight:'800'},text:{color:C.muted,fontSize:13,lineHeight:21},button:{minHeight:48,padding:12,justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},action:{color:C.lime,fontWeight:'800',flexShrink:1}});
+const createS=(C:ThemeColors)=>StyleSheet.create({card:{gap:10,padding:17,borderRadius:16,borderWidth:1,borderColor:C.border,backgroundColor:C.surface},title:{color:C.white,fontSize:17,fontWeight:'800'},text:{color:C.muted,fontSize:15,lineHeight:21},button:{minHeight:48,padding:12,justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},action:{color:C.lime,fontWeight:'800',flexShrink:1}});

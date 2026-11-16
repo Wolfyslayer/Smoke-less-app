@@ -2,15 +2,24 @@ import {DailyProgressShareArtwork} from '../components/DailyProgressShareArtwork
 import {DashboardOverview} from '../components/DashboardOverview';
 import React,{useState} from 'react';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
-import {PlusCircle,Heart,ArrowUpRight} from 'lucide-react-native';
-import {C} from '../theme';
+import {PlusCircle,LifeBuoy,ArrowUpRight} from 'lucide-react-native';
+import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
 import {dayKey,type Data} from '../domain';
 
 type Props={maintenancePanel?:React.ReactNode;journeyPanel?:React.ReactNode;uid:string|null;clock:number;data:Data;goal:number;todayCount:number;duration:string;weekly:number[];today:string;onRegister:()=>void;onSOS:()=>void;onPlan:()=>void;onHistory:()=>void;onStats:()=>void;onConfirmToday:()=>void};
-function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[styles.card,style]}>{children}</View>}
-function Label({children}:{children:React.ReactNode}){return <Text style={styles.label}>{children}</Text>}
-function Tile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.tile,featured&&{backgroundColor:C.limeSoft,borderColor:'#5C6B24'}]}><View style={styles.tileIcon}><Icon color={C.lime} size={23}/></View><Text style={[styles.tileText,{flexShrink:1}]}>{title}</Text><ArrowUpRight color={C.dim} size={16} style={{position:'absolute',right:15,top:17}}/></Pressable>}
+function Card({children,style}:{children:React.ReactNode;style?:any}){
+ const styles=useThemeStyles(createStyles);
+return <View style={[styles.card,style]}>{children}</View>}
+function Label({children}:{children:React.ReactNode}){
+ const styles=useThemeStyles(createStyles);
+return <Text style={styles.label}>{children}</Text>}
+function Tile({icon:Icon,title,onPress,featured=false}:{icon:any;title:string;onPress:()=>void;featured?:boolean}){
+ const C=useThemeColors(); const styles=useThemeStyles(createStyles);
+return <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={({pressed})=>[styles.tile,featured&&styles.primaryTile,pressed&&{opacity:.85}]}><Icon color={featured?C.onAccent:C.background} size={24}/><View style={{flex:1,gap:3}}><Text style={[styles.tileText,{color:featured?C.onAccent:C.background}]}>{title}</Text><Text style={{color:featured?C.onAccent:C.background,fontSize:12,flexShrink:1}}>{featured?'Öppna registreringen':'Andning och stöd direkt'}</Text></View></Pressable>}
 export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,todayCount,duration,weekly,today,onRegister,onSOS,onPlan,onHistory,onStats,onConfirmToday}:Props){
+ const C=useThemeColors();
+ const styles=useThemeStyles(createStyles);
+
  const [supportOpen,setSupportOpen]=useState(false);
  const checkin=data.checkins.find(x=>x.date===today&&x.complete);
  const setback=todayCount>goal||(goal===0&&todayCount>0);
@@ -45,7 +54,7 @@ export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,to
      ?'Ta dagen i din egen takt. Registrera det som händer och ge dig själv utrymme att lyckas.'
      :'Du följer dina vanor steg för steg. Varje registrering hjälper dig framåt.';
  return <View style={styles.screen}>
-  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} actions={<View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={Heart} title="SOS · Jag är röksugen" onPress={onSOS}/></View>} goalCard={maintenancePanel??<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
+  <DashboardOverview uid={uid} clock={clock} data={data} duration={duration} weekly={weekly} actions={<View style={styles.grid}><Tile icon={PlusCircle} title="Registrera" featured onPress={onRegister}/><Tile icon={LifeBuoy} title="SOS · Jag är röksugen" onPress={onSOS}/></View>} goalCard={maintenancePanel??<DailyProgressShareArtwork todayCount={todayCount} dailyGoal={goal}/>}/>
   <Text style={styles.muted}>{encouragement}</Text>
   <Pressable accessibilityRole="button" accessibilityState={{expanded:supportOpen}} onPress={()=>setSupportOpen(v=>!v)} style={styles.recoveryLink}><Text style={styles.link}>{supportOpen?'Dölj stöd och fördjupning':'Stöd och fördjupning'}</Text></Pressable>
   {supportOpen?<View style={{gap:16}}>
@@ -57,7 +66,7 @@ export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,to
    <Text style={styles.muted}>Tipset väljs utifrån de strategier du själv markerat som hjälpsamma i SOS. Om flera passar visas den du markerat flest gånger. Uppgifterna används här i appen, även utan konto. Tipset är varken en förutsägelse eller en medicinsk rekommendation.</Text>
    <Pressable accessibilityRole="button" accessibilityLabel="Öppna SOS-stöd från din personliga coach" accessibilityHint="Öppnar övningar och strategier vid röksug utan att ändra tidigare registreringar" onPress={onSOS} style={styles.recoveryLink}><Text style={styles.link}>Öppna SOS-stöd</Text></Pressable>
   </Card>:null}
-  {setback?<Card style={{gap:12,borderColor:'#65513A'}}>
+  {setback?<Card style={{gap:12,borderColor:C.warning}}>
    <Label>FORTSÄTT EFTER EN SVÅR STUND</Label>
    <Text accessibilityRole="header" style={styles.cardTitle}>Du behöver inte börja om</Text>
    <Text style={styles.muted}>{previousDays>0?`Du har gjort ${previousDays} tidigare ${previousDays===1?"daglig avstämning":"dagliga avstämningar"}. Din historik finns kvar.`:"Även om du inte har några tidigare dagliga avstämningar kan du fortsätta härifrån."} Du behöver inte göra om dagens registreringar eller börja om planen.</Text>
@@ -76,15 +85,15 @@ export function HomeScreen({maintenancePanel,journeyPanel,uid,clock,data,goal,to
   {!maintenancePanel?<Card><Label>DAGLIG AVSTÄMNING</Label><Text style={styles.cardTitle}>{checkin?'Dagen är avstämd':'Har du registrerat alla dagens cigaretter?'}</Text>{!checkin?<Pressable accessibilityRole="button" accessibilityLabel="Bekräfta dagens registreringar" accessibilityHint="Markerar dagens registreringar som avstämda" onPress={onConfirmToday} style={styles.button}><Text style={styles.buttonText}>Bekräfta dagens registreringar</Text></Pressable>:<Text style={styles.muted}>{checkin.smokeFree?'Bekräftat rökfri dag':'Registreringarna är bekräftade'}</Text>}</Card>:null}
  </View>;
 }
-const styles=StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:20,padding:17,gap:8},
+const createStyles=(C:ThemeColors)=>StyleSheet.create({
+ screen:{gap:16},card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:16,padding:17,gap:8},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},heroNumber:{fontSize:48,fontWeight:'900',color:C.white},
- muted:{fontSize:13,lineHeight:19,color:C.dim},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
- heading:{fontSize:19,fontWeight:'800',color:C.white},link:{color:C.lime,fontSize:13,fontWeight:'700'},
- grid:{flexDirection:'row',flexWrap:'wrap',gap:10},inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
- tile:{width:'46%',flexGrow:1,minWidth:0,minHeight:105,borderRadius:18,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,padding:15,gap:12},
+ muted:{fontSize:15,lineHeight:23,color:C.dim},statValue:{fontSize:26,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
+ heading:{fontSize:19,fontWeight:'800',color:C.white},link:{color:C.lime,fontSize:15,fontWeight:'700'},
+ grid:{flexDirection:'column',gap:8},inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
+ tile:{minHeight:56,borderRadius:14,backgroundColor:C.danger,padding:12,gap:12,flexDirection:'row',alignItems:'center'},primaryTile:{minHeight:48,backgroundColor:C.accent},
  tileIcon:{width:39,height:39,borderRadius:12,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},tileText:{color:C.white,fontWeight:'800',fontSize:14},
  bars:{minHeight:120,flexDirection:'row',alignItems:'flex-end',gap:8},ringText:{color:C.white,fontSize:19,fontWeight:'800'},
  recoveryLink:{minHeight:48,justifyContent:"center",paddingVertical:10},
- button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14},buttonText:{fontWeight:'800',color:C.background,fontSize:14},
+ button:{backgroundColor:C.lime,borderRadius:14,minHeight:49,alignItems:'center',justifyContent:'center',paddingHorizontal:14},buttonText:{fontWeight:'800',color:C.onAccent,fontSize:14},
 });

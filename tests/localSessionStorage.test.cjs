@@ -11,6 +11,7 @@ function loadModule(file, dependencies) {
   const exports = {};
   vm.runInNewContext(js, {
     exports, require: (id) => {
+      if(id==='./accountDeletionSafety')return loadModule('src/accountDeletionSafety.ts',{});
       if (!(id in dependencies)) throw new Error('Unexpected dependency: ' + id);
       return dependencies[id];
     },

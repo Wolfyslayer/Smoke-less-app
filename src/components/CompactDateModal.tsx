@@ -1,12 +1,17 @@
+import {useReducedMotion} from '../hooks/useReducedMotion';
 import React,{useEffect,useState} from 'react';
 import {Modal,Pressable,ScrollView,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {C} from '../theme';
+import {useThemeStyles,type ThemeColors} from '../theme';
 import {dayKey,parseFutureQuitDate} from '../domain';
 
 type Props={visible:boolean;value:Date|null;onCancel:()=>void;onConfirm:(date:Date)=>void;title?:string};
 const pretty=(d:Date)=>d.toLocaleDateString('sv-SE',{day:'numeric',month:'long',year:'numeric'});
 export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj stoppdatum'}:Props){
+ const reducedMotion=useReducedMotion();
+
+ const s=useThemeStyles(createS);
+
  const {width,fontScale}=useWindowDimensions();
  const insets=useSafeAreaInsets();
  const valueTime=value?.getTime();
@@ -22,7 +27,7 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
  const size=Math.min(Math.max(width-Math.max(insets.left,16)-Math.max(insets.right,16),0),400);
  const listDates=(size-34)/7<48||fontScale>1.3;
  // The entire calendar cell is tappable; never overlap adjacent dates on narrow screens.
- return <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} accessibilityViewIsModal>
+ return <Modal visible={visible} transparent animationType={reducedMotion?'none':'fade'} onRequestClose={onCancel} accessibilityViewIsModal>
   <View style={s.backdrop}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[s.scrollContent,{paddingTop:Math.max(insets.top,16),paddingBottom:Math.max(insets.bottom,16),paddingLeft:Math.max(insets.left,16),paddingRight:Math.max(insets.right,16)}]}><View style={[s.panel,{width:size}]}>
    <Text accessibilityRole="header" style={s.title}>{title}</Text>
    <View style={s.nav}>
@@ -43,7 +48,7 @@ export function CompactDateModal({visible,value,onCancel,onConfirm,title='Välj 
   </View></ScrollView></View>
  </Modal>;
 }
-const s=StyleSheet.create({
+const createS=(C:ThemeColors)=>StyleSheet.create({
  backdrop:{flex:1,backgroundColor:'rgba(0,0,0,0.72)'},
  scrollContent:{flexGrow:1,alignItems:'center',justifyContent:'center',paddingHorizontal:16},
  panel:{backgroundColor:C.surface,borderColor:C.border,borderWidth:1,borderRadius:22,padding:16,gap:12},
@@ -60,11 +65,11 @@ const s=StyleSheet.create({
  dayText:{textAlign:'center',padding:4,fontSize:14,color:C.white},
  disabled:{color:C.dim,opacity:.45},
  selected:{backgroundColor:C.lime},
- selectedText:{color:C.background,fontWeight:'900'},
- summary:{fontSize:13,color:C.muted,textAlign:'center'},
+ selectedText:{color:C.onAccent,fontWeight:'900'},
+ summary:{fontSize:15,color:C.muted,textAlign:'center'},
  actions:{flexDirection:'row',flexWrap:'wrap',gap:10},
  secondary:{flex:1,minWidth:96,padding:8,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.elevated},
  secondaryText:{color:C.white,fontWeight:'800'},
  primary:{flex:1,minWidth:96,padding:8,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:12,backgroundColor:C.lime},
- primaryText:{color:C.background,fontWeight:'900'}
+ primaryText:{color:C.onAccent,fontWeight:'900'}
 });

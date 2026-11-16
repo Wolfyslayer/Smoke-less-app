@@ -1,4 +1,5 @@
 import {useRef,useState,type Dispatch,type SetStateAction} from 'react';
+import {userMessage} from '../userMessage.cjs';
 import {Platform} from 'react-native';
 import type {Data,Mode} from '../domain';
 import {parseBackupData} from '../utils/backupValidation';
@@ -42,7 +43,7 @@ export function useSettingsFlow({data,setData,ask,showMessage}:{
      setData(value);
     },
    );
-  }catch(error){showMessage('Ogiltig säkerhetskopia',error instanceof SyntaxError?'Texten är inte giltig JSON. Kontrollera att hela säkerhetskopian har kopierats.':error instanceof Error?error.message:'Kontrollera säkerhetskopians innehåll.')}
+  }catch(error){showMessage('Ogiltig säkerhetskopia',error instanceof SyntaxError?'Texten är inte giltig JSON. Kontrollera att hela säkerhetskopian har kopierats.':userMessage(error,'Kontrollera säkerhetskopians innehåll.'))}
  };
  return {backup,setBackup,onChangeMode,onExportBackup,onRestoreBackup};
 }

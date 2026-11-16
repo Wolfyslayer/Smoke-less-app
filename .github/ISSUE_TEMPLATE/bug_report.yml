@@ -1,0 +1,45 @@
+name: Felrapport utan personuppgifter
+description: Rapportera ett reproducerbart tekniskt fel i Smoke Less.
+title: "[Fel] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Den här rapporten blir offentlig. Lägg inte in namn, e-post, kontots UID, hälsodata, historik, lösenord, token eller osanerade loggar/skärmbilder.
+        Konto- och raderingsärenden ska hanteras privat via appens publicerade supportväg när den finns. GitHub är inte en begäransväg för kontoradering.
+  - type: input
+    id: version
+    attributes:
+      label: Appversion och build
+      placeholder: "Exempel: 6.0.0, buildnummer eller testad commit"
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android-version och telefonmodell
+      description: Ange inte serienummer eller annat unikt enhets-ID.
+    validations:
+      required: true
+  - type: dropdown
+    id: session
+    attributes:
+      label: Läge när felet inträffade
+      options:
+        - Gästläge
+        - Inloggat konto
+        - Vet inte
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steg för att återskapa felet
+      description: Använd påhittade exempel och beskriv om nätverket var tillgängligt.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Förväntat och faktiskt resultat
+      description: Beskriv vad som hände utan att klistra in personlig historik.
+    validations:
+      required: true
