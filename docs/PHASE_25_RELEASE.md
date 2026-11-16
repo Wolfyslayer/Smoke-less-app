@@ -1,4 +1,4 @@
-**Aktuellt beslut 2026-11-16:** GitHub Releases och wolfyslayer.online ?r distributionsv?gen. Google Play och butiksmaterial ?r uppskjutna. Samma 8?4-ID och verifieringsniv? bevaras. config/apkReleaseReadiness.json h?ller lanseringen st?ngd; scripts/check-apk-release-readiness.cjs binder framtida godk?nnande till exakt APK/hash/certifikat/runtime/k?llcommit. Alla s?kerhets- och manuella grindar m?ste vara verifierade. Ingen build, OTA eller offentlig publicering ?r godk?nd nu. Anv?ndaren tar personuppgifts-/supportansvar; offentligt namn, bevakad kontakt och supportretention ?terst?r att bekr?fta. Historiska k?rnoteringar nedan ?r inte nya acceptansresultat.
+**Aktuellt beslut 2026-11-16:** GitHub Releases och wolfyslayer.online är distributionsvägen. Google Play och butiksmaterial är uppskjutna. Samma 8×4-ID och verifieringsnivå bevaras. config/apkReleaseReadiness.json håller lanseringen stängd; godkännande binds till exakt APK/hash/certifikat/runtime/källcommit. Alla säkerhets- och manuella grindar måste vara verifierade. Ingen build, OTA eller offentlig publicering är godkänd nu. Användaren tar personuppgifts-/supportansvar; offentligt namn, bevakad kontakt och supportretention återstår. Historiska körnoteringar nedan är inte nya acceptansresultat.
 
 # Fas 25.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
@@ -60,9 +60,9 @@ Nästa driftmilstolpe: återhämtningsverktyget kräver uttryckligt projekt och 
    - [ ] 5.4 Åtgärda blockerande säkerhetsfel.
 6. [ ] **APK-information och integritet (1/4)**
    - [ ] 6.1 Färdigställ integritetspolicy.
-   - [ ] 6.2 Färdigställ Data safety.
-   - [ ] 6.3 Färdigställ butikstexter och skärmbilder.
-   - [x] 6.4 Fastst?ll APK-distributionsvillkor och uppskjuten Play-avgr?nsning.
+   - [ ] 6.2 Färdigställ datalagrings-, support- och raderingsinformation.
+   - [ ] 6.3 Färdigställ APK-installationshjälp och verifierad releaseinformation.
+   - [x] 6.4 Fastställ APK-distributionsvillkor och uppskjuten Play-avgränsning.
 7. [ ] **Release (0/4)**
    - [ ] 7.1 Bygg signerad release.
    - [ ] 7.2 Verifiera release på Android.

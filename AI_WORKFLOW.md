@@ -1,4 +1,4 @@
-**G?llande distributionsbeslut 2026-11-16:** Forts?tt i befintliga PR #173/#181/#182 mot GitHub Releases och wolfyslayer.online. Google Play f?rbereds inte nu; ?ldre Play-h?nvisningar ?r historik. Starta ingen Android-build, OTA eller offentlig release utan nytt uttryckligt godk?nnande. Bevara senare UI, main och signerings-/raderingsskydd.
+**Gällande distributionsbeslut 2026-11-16:** Fortsätt i befintliga PR #173/#181/#182 mot GitHub Releases och wolfyslayer.online. Google Play förbereds inte nu; äldre Play-hänvisningar är historik. Starta ingen Android-build, OTA eller offentlig release utan nytt uttryckligt godkännande. Bevara senare UI, main och signerings-/raderingsskydd.
 
 # AI_WORKFLOW.md – obligatoriskt arbetsflöde för Smoke Less
 
