@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import {clearWidgetPrivacy} from './widgets/widgetPreferences';
 import {accountDeletionRemoteEnabled as deletionEnabled} from './accountDeletionConfig';
+import {localDeletionQaConfig} from './accountDeletionQa';
 
 // Remains off until deployment and isolated end-to-end acceptance are verified.
 export {deletionEnabled};
@@ -35,7 +36,7 @@ export async function requestAccountDeletion(token:string):Promise<unknown>{
  if(!project||!/^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(project)||!/^[a-z]+(?:-[a-z0-9]+)+$/.test(region))throw new DeletionError('Kontoraderingens server är inte konfigurerad.');
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),60000);
  try{
-  const response=await fetch(`https://${region}-${project}.cloudfunctions.net/deleteMyAccount`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({data:{}}),signal:controller.signal});
+  const response=await fetch(localDeletionQaConfig?.deletionUrl??`https://${region}-${project}.cloudfunctions.net/deleteMyAccount`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({data:{}}),signal:controller.signal});
   const payload=await response.json() as {result?:unknown;error?:unknown};
   if(!response.ok||payload.error)throw new DeletionError('Serverns radering kunde inte bekräftas. Försök igen med färsk inloggning. Om problemet kvarstår behövs support.');
   return payload.result;

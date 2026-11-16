@@ -1,4 +1,5 @@
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,sendPasswordResetEmail,signOut as firebaseSignOut,sendEmailVerification as firebaseSendEmailVerification,reload,GoogleAuthProvider,EmailAuthProvider,reauthenticateWithCredential,linkWithCredential,signInWithCredential} from '@react-native-firebase/auth';
+import './accountDeletionQa';
 export type AccountUser={uid:string;email:string|null;emailVerified:boolean};
 const client=()=>getAuth();
 export function observeUser(callback:(user:AccountUser|null)=>void){return onAuthStateChanged(client(),user=>callback(user?{uid:user.uid,email:user.email,emailVerified:user.emailVerified}:null))}
