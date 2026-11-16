@@ -4,6 +4,7 @@ artifacts/
 .expo/
 .tmp/
 dist/
+artifacts/
 android/
 ios/
 .env

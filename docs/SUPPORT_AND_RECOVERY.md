@@ -47,3 +47,9 @@ Använd samma fas-PR för verifierade korrigeringar och kräv gröna validate/ru
 - Beslutade svarstider, gallring av ärenden och åtkomstgranskning.
 - Inventerade logg-/backupretentioner och policy för säkerhetstombstones. Sju dagars Artifact Registry-städning gäller funktionsbilder, inte användardata eller loggar.
 - Återhämtningsövning med isolerade testkonton, nativ klient och två enheter samt faktisk releaseacceptans.
+
+## Bekräftat supportbeslut 2026-11-16
+
+Simon är personuppgifts- och supportansvarig. contact@wolfyslayer.online är aktiv och bevakad enligt hans uttryckliga bekräftelse. Avslutade supportärenden ska gallras efter 30 dagar från avslutsdatum, inklusive ärendets bilagor. Registrera avslutsdatum och gallringsdatum i privat behörighetsstyrd ärendehantering. Begär inte lösenord, token eller detaljerad hälsodata via e-post. Bekräftelsen ersätter inte säker identifiering av den som begär kontoradering.
+
+Beslutet är dokumenterat; automatisk gallring, e-postleverantörens kopior/backup och faktisk operativ rutin är inte verifierade. Tiden gäller inte övrig appdata, molnloggar eller permanenta raderingslås. Ersättare, svarstider, åtkomstgranskning och nativ återhämtningsövning återstår. Ingen ny e-post skickades och inga supportärenden eller konton raderades.

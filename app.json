@@ -42,7 +42,7 @@
         "foregroundImage": "./assets/branding/adaptive-icon-foreground.png",
         "backgroundImage": "./assets/branding/adaptive-icon-background.png"
       },
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "POST_NOTIFICATIONS"
       ]

@@ -24,16 +24,28 @@ Android-kanalen `smokeless-reminders-v1`, **Frivilliga påminnelser**, skapas f�
 
 ## Releasegrind
 
-Production-profilen har ordinarie paket/projekt, store-distribution, ingen development-client och fjärruppdateringar avstängda. Preview har eget paket/projekt/kanal. Det gemensamma Firebase-projektet är ett uttryckligt tillfälligt ägarbeslut; serverkonton är inte isolerade. Produktionsdata får därför inte användas för testskrivningar.
+Production-profilen har ordinarie paket/projekt, intern APK-distribution, ingen development-client och fjärruppdateringar avstängda. Preview har eget paket/projekt/kanal. Det gemensamma Firebase-projektet är ett uttryckligt tillfälligt ägarbeslut; serverkonton är inte isolerade. Produktionsdata får därför inte användas för testskrivningar.
 
-Blockerande före offentlig release: verifierad signering/SHA och Google-inloggning, riktig fristående build, konto-/raderingsacceptans, databevarande, notiser/widget/offline, fysisk tillgänglighet, ansvarig/kontakt och publicerad integritetspolicy samt riktiga butiksskärmbilder. Kontoraderingsflaggan är fortsatt avstängd. Aktivera den inte för att klara en checklista. Slutlig Play Data safety är inte godkänd eller inskickad.
+Blockerande före offentlig release: verifierad signering/SHA och Google-inloggning, riktig fristående build, konto-/raderingsacceptans, databevarande, notiser/widget/offline, fysisk tillgänglighet, ansvarig/kontakt och publicerad integritetspolicy samt korrekt webb-/installationsinformation. Kontoraderingsflaggan är fortsatt avstängd. Aktivera den inte för att klara en checklista. Play Data safety och butiksmaterial är uppskjutna och förbereds inte nu.
 
 Versionering: `eas.json` använder fjärrhanterade buildnummer; produktversionen kommer från appkonfigurationen. Behåll samma signeringsgrund vid uppgraderingar. Fingerprint avgränsar kompatibla Preview-OTA; native-moduler, plugins och app-ID kräver ny build. Se `PHASE_29_PREVIEW_OTA.md` för Windows-kommandon och återställning. Rollback får inte återställa raderade konton eller kringgå raderingslås.
 
-Releaseunderlag finns i `GOOGLE_PLAY_LISTING_DRAFT.md`, `PRIVACY_POLICY_DRAFT.md`, `PLAY_DATA_SAFETY_REVIEW.md` och fas 25:s acceptansdokument. De är arbetsutkast. Ingen produktion, butik eller OTA har publicerats här.
+Aktuellt releaseunderlag är fas 25:s acceptansdokument, PRIVACY_POLICY_DRAFT.md och PHASE_29_PREVIEW_OTA.md. Äldre Play-dokument är historiska framtidsunderlag, inte aktuella arbetskrav. Ingen APK, webbändring eller OTA har publicerats här.
 
 ## Verifiering
 
 TypeScript och 342 ordinarie tester PASS lokalt. Nya tester täcker felredigering, sekretess, begriplig Google-fallback, Android-kanal/behörighetsordning och synkstatusens två navigationsgrindar. Befintliga tester täcker modalbekräftelser, avbryt/dubbeltryck, teman, reminder-serialisering och negativa uppdateringsfall. Kodtester bevisar inte fysisk knappfunktion eller visuell acceptans.
 
 Ny Android-build för enbart fas 30: **NEJ**, endast JS/texter och befintligt notis-API ändras. Det öppna native-buildbehovet från fas 29 kvarstår. Ingen build startas enligt användarens beslut.
+
+## Aktuellt APK-beslut och verifiering 2026-11-16
+
+Main 2782933 och fas 25/29 är inlästa i befintlig PR #182. Dubbla roadmapplaner har ersatts med samma fasta faschecklistor; aktuellt distributionsbeslut bevaras. Production-profilen producerar nu en fristående APK med intern distribution, inte AAB/store. Ingen submit-konfiguration eller Play-publicering tillkommer. Detta är en profiländring som behöver nytt uttryckligt bygggodkännande innan en kandidat kan verifieras.
+
+Om-vyn har fungerande, fasta länkar till webbplatsens /support och /privacy, med begriplig återhämtningsbar feltext om webbläsaren inte öppnas. Inga användaruppgifter eller sökparametrar skickas. Länkarna säger inte att policyn är färdig eller att kontoradering redan är tillgänglig. Support och integritet är fortfarande releaseblockerare tills operatör, policy och raderingsväg är verifierade. Användaren tar ansvar; offentligt namn, bevakad mailbox och supportretention återstår.
+
+Den nya fas 25-grinden anropas av fas 29-publiceraren före GitHub-skrivningar. Metadata för webb och app kommer från samma kandidat. Webbplatsen är kontrollerad med HTTP 200 och spärrad APK-länk (available:false). Dess separata manuella synkflöde måste kopplas till verifierad website-preview.json före lansering. Inga webbändringar eller offentliga publiceringar är gjorda här.
+
+Kontoraderingens releaseflagga förblir avstängd; inga verkliga konton/testposter, Firestore-regler, Firebase-konfigurationer eller signeringsnycklar ändras i denna commit. Native/tvåenhetsradering, full Android-regression, notisinteraktion, TalkBack/stor text, verklig APK-uppgradering/OTA samt webbnedladdning återstår. Ingen fas slutgodkänns eller mergas på grund av endast dessa kodtester.
+
+Ny Android-build: JA för att verifiera den ändrade fristående Production-APK-profilen och nya inbyggda klientkoden, men STARTAS INTE. Underlag efter nytt uttryckligt beslut: APP_VARIANT=production och eas build --platform android --profile production (verifiera ordinarie apps befintliga signering först). Första offentliga Preview-kandidaten använder preview-profilen och befintlig verifierad Preview-signering; installera aldrig en annan nyckel över befintlig app och rensa inte data för att kringgå fel.

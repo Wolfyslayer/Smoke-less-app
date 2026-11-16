@@ -1,12 +1,12 @@
 # Smoke Less – integritetspolicy (UTKAST, ej publiceringsklar)
 
-**Status:** Tekniskt uppdaterat i fas 25, 2026-11-15. Inte publiceringsklart. Se `PLAY_DATA_SAFETY_REVIEW.md` och `PHASE_25_SECURITY_REVIEW.md`. Kontakt, tjänstekonfiguration, retention och fungerande radering återstår.
+**Status:** Arbetsutkast för APK-/webbdistribution, uppdaterat 2026-11-16. Simon och bevakad kontakt är bekräftade. Supportärenden sparas i 30 dagar efter avslut. Övrig tjänstekonfiguration, retention och fungerande radering måste fortfarande verifieras; policyn är inte slutgodkänd. Se PHASE_25_SECURITY_REVIEW.md. Google Play förbereds inte nu.
 
 ## App och ansvarig
 Smoke Less är en app för att följa rökvanor, nedtrappning och rökstopp.
 
-**Ansvarig utgivare/personuppgiftsansvarig:** [FYLL I]
-**Kontakt för integritetsfrågor:** [FYLL I]
+**Ansvarig utgivare/personuppgiftsansvarig:** Simon
+**Kontakt för integritetsfrågor:** contact@wolfyslayer.online (aktiv och bevakad enligt ansvarigs bekräftelse 2026-11-16)
 **Senast uppdaterad:** [FYLL I VID PUBLICERING]
 
 ## Uppgifter som kan behandlas
@@ -30,6 +30,12 @@ Serverfunktionen och granskade Firestore-regler är driftsatta och verifierade m
 ## Rättigheter, radering och support
 Användaren ska få tydlig information om hur data kan begäras ut, rättas och raderas samt hur ett konto avslutas. **Blockerande inför publicering:** kontrollera faktiskt fungerande radering av lokal data, molnhistorik och Firebase-konto samt att synkronisering inte återställer raderade uppgifter. Ange en fungerande kontaktväg och svarsrutin.
 
+## Supportärenden
+
+Simon ansvarar för supporten på contact@wolfyslayer.online. Avslutade supportärenden ska gallras 30 dagar efter att ärendet avslutats. Det är ett fastställt beslut, inte bevis på automatiserad gallring i e-postsystemet. Rutinen måste omfatta ärendet och dess bilagor; faktisk hantering av leverantörens kopior och säkerhetskopior behöver verifieras. Be inte användare skicka lösenord, inloggningskoder, token eller detaljerad hälsodata via e-post. Kontakt innebär inte automatisk kontoradering; kontoägarskap måste verifieras separat.
+
+De 30 dagarna avser endast avslutade supportärenden. De gäller inte automatiskt kontohistorik, Firebase-loggar, återställningskopior eller säkerhetstombstones.
+
 ## Innan publicering – obligatorisk verifiering
 - [ ] Fyll i ansvarig, kontaktuppgifter och datum.
 - [ ] Bekräfta faktiska kategorier av insamlade uppgifter och rättslig grund.
@@ -37,8 +43,8 @@ Användaren ska få tydlig information om hur data kan begäras ut, rättas och 
 - [ ] Bekräfta lagringstider och gallringsrutiner.
 - [ ] Verifiera fungerande radering av konto, moln- och lokal historik.
 - [ ] Kontrollera appbehörigheter, notiser och eventuell telemetri.
-- [ ] Stäm av formuläret **Data safety** i Google Play med faktisk behandling.
-- [ ] Publicera en tillgänglig URL och länka den från appen och butikssidan.
+- Google Play Data safety och butiksmaterial är uppskjutna till eventuell framtida Play-fas.
+- [ ] Publicera en tillgänglig URL och länka den från appen och webbplatsen.
 
 Detta dokument är ett arbetsutkast, inte juridisk rådgivning.
 

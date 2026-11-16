@@ -17,8 +17,9 @@ export function createPreviewUpdateService(deps:Dependencies){
    const at=deps.now();let otaAvailable=false,nativeRelease:NativePreviewRelease|null=null;
    if(ota.status==='fulfilled')otaAvailable=ota.value.isAvailable||ota.value.isRollBackToEmbedded===true;
    if(native.status==='fulfilled')nativeRelease=parseNativePreviewRelease(native.value,deps.info,at);
-   const failed=ota.status==='rejected'&&native.status==='rejected';
-   update({status:failed?'error':'ready',lastCheck:at,otaAvailable,nativeRelease,message:failed?'Kunde inte söka efter uppdateringar. Kontrollera anslutningen och försök igen.':otaAvailable?'En appuppdatering finns att hämta.':nativeRelease?'En ny Preview-version finns att installera.':ota.status==='rejected'||native.status==='rejected'?'Kontrollen kunde bara slutföras delvis. Försök igen senare.':'Ingen ny uppdatering hittades.'});
+   const nativeFailed=native.status==='rejected'||(native.status==='fulfilled'&&native.value!=null&&!nativeRelease&&!(typeof native.value==='object'&&Number.isSafeInteger((native.value as {build?:number}).build)&&(native.value as {build:number}).build<=deps.info.build));
+   const failed=ota.status==='rejected'&&nativeFailed;
+   update({status:failed?'error':'ready',lastCheck:at,otaAvailable,nativeRelease,message:failed?'Kunde inte söka efter uppdateringar. Kontrollera anslutningen och försök igen.':otaAvailable?'En appuppdatering finns att hämta.':nativeRelease?'En ny Preview-version finns att installera.':ota.status==='rejected'||nativeFailed?'Kontrollen kunde bara slutföras delvis. Försök igen senare.':'Ingen ny uppdatering hittades.'});
    await deps.storage.setItem(UPDATE_CHECK_KEY,String(at)).catch(()=>{});
   })().finally(()=>{inFlight=null;});return inFlight;
  };

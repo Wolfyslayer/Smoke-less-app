@@ -1,10 +1,10 @@
 name: Validate Smoke Less 6
 on:
   push:
-    branches: [main, feat/smoke-less-6-rebuild]
+    branches: [main, feat/smoke-less-6-rebuild, 'feat/phase-*']
   pull_request:
 concurrency:
-  group: validate-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: validate-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   validate:
