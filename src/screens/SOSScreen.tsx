@@ -1,4 +1,5 @@
 import React,{useState} from 'react';
+import {SettingsSwitch} from '../components/SettingsSwitch';
 import {Animated,Pressable,StyleSheet,Text,View} from 'react-native';
 import {Wind} from 'lucide-react-native';
 import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
@@ -52,7 +53,7 @@ export function SOSScreen({journeyPanel,breathScale,breathing,breathSeconds,onTo
    <Animated.View style={[styles.breathCircle,{transform:[{scale:breathScale.interpolate({inputRange:[0,1],outputRange:[0.82,1.12]})}]}]}><Wind size={42} color={C.lime}/><Text style={styles.cardTitle}>{!breathing?'Hitta ditt lugn':breathSeconds%12<4?'Andas in':breathSeconds%12<6?'Håll':'Andas ut'}</Text><Text style={styles.muted}>{breathing?(breathSeconds%12<4?'4 sekunder':breathSeconds%12<6?'2 sekunder':'6 sekunder'):'4 in · 2 håll · 6 ut'}</Text></Animated.View>
    <View style={styles.breathTimeline}>{[['Andas in','4 sek'],['Håll','2 sek'],['Andas ut','6 sek']].map(([title,time],index)=><View key={title} style={[styles.breathStep,breathing&&(breathSeconds%12<4?0:breathSeconds%12<6?1:2)===index&&{backgroundColor:C.surface}]}><Text style={{color:C.accent,fontSize:11,fontWeight:'800'}}>0{index+1}</Text><Text style={{color:C.text,fontSize:14,fontWeight:'700'}}>{title}</Text><Text style={{color:C.muted,fontSize:12}}>{time}</Text></View>)}</View>
    <Text style={[styles.subhead,{textAlign:'center'}]}>Du behöver inte bestämma något just nu.</Text>
-   <View style={{width:'100%'}}><Button title={breathing?'Avsluta övning':'Starta andningsövning'} onPress={onToggleBreathing}/><Pressable accessibilityRole="switch" accessibilityLabel="Vibration under andningsövningen" accessibilityState={{checked:hapticsEnabled}} onPress={onToggleHaptics} style={[styles.sectionRow,{paddingVertical:8}]}><Text style={styles.muted}>Diskreta vibrationer</Text><Text style={{color:C.lime,fontWeight:'800'}}>{hapticsEnabled?'På':'Av'}</Text></Pressable></View>
+   <View style={{width:'100%'}}><Button title={breathing?'Avsluta övning':'Starta andningsövning'} onPress={onToggleBreathing}/><SettingsSwitch label="Vibration under andningsövningen" value={hapticsEnabled} onValueChange={()=>onToggleHaptics()}/></View>
   </Card>
   <Heading>Ta dig igenom röksuget</Heading>
   <Card style={{gap:9}}><Label>DIN PLAN JUST NU</Label><Text style={styles.cardTitle}>Tre små steg</Text><Text style={styles.muted}>1. Lägg undan cigaretterna och stanna där du är en stund.</Text><Text style={styles.muted}>2. Andas lugnt eller starta tvåminuterspausen ovan.</Text><Text style={styles.muted}>3. Välj ett konkret tips nedan och känn efter igen. Om det känns svårt kan du kontakta någon du litar på.</Text></Card>

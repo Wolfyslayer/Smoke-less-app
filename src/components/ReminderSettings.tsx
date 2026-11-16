@@ -2,6 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {Platform,Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
+import {SettingsSwitch} from './SettingsSwitch';
 import {createReminderService} from '../reminderService';
 import {ReminderError,reminderDefaults,type ReminderSettings as Settings} from '../domain/reminders';
 import {useThemeStyles,type ThemeColors} from '../theme';
@@ -25,9 +26,9 @@ export function ReminderSettings(){
  const read=()=>run(async()=>{const result=await service.read();if(!mounted.current)return;setSettings(result.settings);setTimes(timeTexts(result.settings));setReady(true);setStatus(Platform.OS==='web'?'Schemalagda påminnelser stöds bara i mobilappen.':result.active?`${result.active} schemalagda påminnelser hittades. Leverans kräver telefonens notisbehörighet.`:'Inga aktiva påminnelser. Välj och aktivera om du vill.');});
  useEffect(()=>{void read();},[]);
  const changed=()=>setStatus('Ändringarna är inte aktiverade. Spara och aktivera för att ersätta tidigare påminnelser, eller stäng av alla.');
- const toggle=(key:'checkin'|'risk'|'quiet')=>{setSettings(v=>({...v,[key]:!v[key]}));changed();};
+ const toggle=(key:'checkin'|'risk'|'quiet',value:boolean)=>{setSettings(v=>({...v,[key]:value}));changed();};
  const field=(key:typeof timeFields[number],label:string)=><TextInput accessibilityLabel={label} editable={ready&&!busy} keyboardType="number-pad" maxLength={2} value={times[key]} onChangeText={value=>{setTimes(v=>({...v,[key]:value}));changed();}} style={styles.input}/>;
- const switchButton=(key:'checkin'|'risk'|'quiet',label:string)=><Pressable accessibilityRole="switch" accessibilityState={{checked:settings[key],disabled:!ready||busy}} disabled={!ready||busy} onPress={()=>toggle(key)} style={styles.button}><Text style={styles.text}>{label}: {settings[key]?'på':'av'}</Text></Pressable>;
+ const switchButton=(key:'checkin'|'risk'|'quiet',label:string)=><SettingsSwitch label={label} value={settings[key]} disabled={!ready||busy} onValueChange={value=>toggle(key,value)}/>;
  const activate=()=>run(async()=>{
   if(!ready)return;
   if(timeFields.some(key=>!/^\d{1,2}$/.test(times[key])))throw new ReminderError('Ange timmar 0–23 och minuter 0–59.');

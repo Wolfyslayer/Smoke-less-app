@@ -2,7 +2,7 @@ const {test}=require('node:test');const assert=require('node:assert/strict');con
 let width=360,fontScale=1,capturedActions=null,capturedViews=null;
 const flat=style=>Object.assign({},...[typeof style==='function'?style({pressed:false}):style].flat(Infinity).filter(Boolean));
 const element=tag=>function Element({children,style,accessibilityRole,accessibilityLabel,accessibilityState,accessible,...props}){if(capturedActions&&tag==='button')capturedActions.push({label:accessibilityLabel,children,onPress:props.onPress,disabled:props.disabled,state:accessibilityState});if(capturedViews&&props.testID)capturedViews.push({id:props.testID,style:flat(style)});return React.createElement(tag,{style:flat(style),role:accessibilityRole,'aria-label':accessibilityLabel,...(tag==='button'?{disabled:props.disabled}:{}),...(props.fill?{fill:props.fill}:{}),...(props.stroke?{stroke:props.stroke}:{})},children);};
-const rn={View:element('div'),Text:element('span'),Pressable:element('button'),ScrollView:element('section'),Modal:({visible,children})=>visible?children:null,StyleSheet:{create:s=>s},useWindowDimensions:()=>({width,height:900,fontScale}),ActivityIndicator:element('span')};
+const rn={Switch:element('input'),View:element('div'),Text:element('span'),Pressable:element('button'),ScrollView:element('section'),Modal:({visible,children})=>visible?children:null,StyleSheet:{create:s=>s},useWindowDimensions:()=>({width,height:900,fontScale}),ActivityIndicator:element('span')};
 const svg={__esModule:true,default:element('svg'),Circle:element('circle'),Rect:element('rect'),Text:element('text'),TSpan:element('tspan')};
 const cache=new Map();
 function load(file){

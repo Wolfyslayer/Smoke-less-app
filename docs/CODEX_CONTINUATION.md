@@ -1,5 +1,7 @@
 # Fortsättning – Smoke Less
 
+**Aktuellt användartillägg 2026-11-16:** Riktiga switchar för påminnelser/tysta tider/widgetvisning/SOS-vibration och tre nya launcher-widgetar (Kompakt dag, Registrera, SOS), i befintlig fas 32/PR #184. Se `SETTINGS_WIDGETS_2026_11_16.md`. 352 tester och TypeScript PASS lokalt; aktuell push kräver egen grön validate/rules. Ny Android-build JA; lokal build och uppdateringsinstallation är nu godkända. Tidigare 4fe43b9 byggdes/installerades lokalt och användaren bekräftade Google-inloggning efter Preview-SHA/OAuth-rättning. Inga hemligheter, regler eller kontodata ändras i detta tillägg. Fast 8×4-checklista bevaras.
+
 ## Aktiv fas
 
 - PR #184 är aktiv för fas 32. 3801bdb har grön validate/rules/GitGuardian; rules körde riktiga isolerade Auth/Firestore/Functions-emulatorer (steg 9–12 success), inte en skip. Därefter säker felpresentation även för lokal läsning/sparning och äldre återställningshandler; TypeScript + 19 riktade tester PASS. Status 6/8 och 28/32 före nya senaste CI, därefter 8.3 kan ge 29/32. Återstår 5.1/5.2 faktisk profilering/åtgärd och 8.4 slutgodkänd PR; tidigare native-/releasegrindar kvarstår. Inga nya faser på main e7194c6 vid senaste kontroll.

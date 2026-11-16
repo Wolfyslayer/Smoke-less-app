@@ -29,7 +29,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   manifestMod(manifest);
   // Expo prebuild may rerun config plugins: never duplicate receivers or permissions.
   manifestMod(manifest);
-  assert.equal(manifest.modResults.manifest.application[0].receiver.length,1);
+  assert.equal(manifest.modResults.manifest.application[0].receiver.length,4);
   assert.equal(manifest.modResults.manifest['uses-permission'].filter(p=>p.$['android:name']==='android.permission.RECEIVE_BOOT_COMPLETED').length,1);
   const receiver=manifest.modResults.manifest.application[0].receiver[0];
   const actions=receiver['intent-filter'][0].action.map(item=>item.$['android:name']);
@@ -55,7 +55,13 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   assert.ok(provider.includes('Intent.ACTION_TIMEZONE_CHANGED'));
   assert.ok(provider.includes('onUpdate(context, manager, ids)'));
   assert.match(provider,/!valid -> "Öppna appen för dagens framsteg"/);
-  assert.ok(provider.includes('val summary = when {\n    !valid ->'), 'Kotlin when branches must use real newlines');
+  assert.ok(provider.includes('val summary = when {\n    kind == "register" ->'), 'Kotlin when branches must use real newlines');
+  for(const [providerClass,resource] of [['SmokeLessCompactWidgetProvider','compact'],['SmokeLessRegisterWidgetProvider','register'],['SmokeLessSosWidgetProvider','sos']]){
+   assert(manifest.modResults.manifest.application[0].receiver.some(r=>r.$['android:name']==='com.smokeless.app.'+providerClass));
+   assert(provider.includes('class '+providerClass+' : SmokeLessWidgetProvider()'));
+   assert(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_'+resource+'_widget_info.xml')));
+   assert(bridge.includes(providerClass+'()'),'privacy clearing must refresh every provider');
+  }
   assert.ok(!provider.includes('\\n'), 'generated Kotlin must not contain literal escaped newlines');
 
   assert.match(bridge,/MODE_PRIVATE/);

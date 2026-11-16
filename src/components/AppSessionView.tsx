@@ -1,4 +1,5 @@
 import {AccountDeletionStatus} from './AccountDeletionStatus';
+import {useWidgetNavigation} from '../hooks/useWidgetNavigation';
 import React,{useEffect,useRef,useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {validateData} from '../domain';
@@ -27,6 +28,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  const completedOnboardingRef=useRef(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus,syncPhase}=model;
+ useWidgetNavigation(ready&&!!p&&model.deletion.ready&&!loadError&&!showLogin&&authPrompt===null&&!model.dialog&&!model.registerOpen,go);
  useEffect(()=>{if(!model.deletion.ready){model.setDialog(null);model.setRegisterOpen(false);}},[model.deletion.ready]);
  const leaveLogin=()=>{
   if(model.accountEmail.trim()||model.accountPassword){

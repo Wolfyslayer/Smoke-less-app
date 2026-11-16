@@ -17,7 +17,7 @@ test('presentation never reflects SDK messages, credentials, storage keys or unk
 test('Android reminder channel is created only on explicit activation and before permission',async()=>{
  let adapter;const calls=[];
  const notifications={AndroidImportance:{DEFAULT:3},AndroidNotificationVisibility:{PRIVATE:0},SchedulableTriggerInputTypes:{DAILY:'daily',WEEKLY:'weekly'},setNotificationChannelAsync:async(id,value)=>calls.push(['channel',id,value]),getPermissionsAsync:async()=>{calls.push(['read']);return {granted:false}},requestPermissionsAsync:async()=>{calls.push(['request']);return {granted:true}},scheduleNotificationAsync:async value=>calls.push(['schedule',value])};
- const deps={react:{},'react-native':{Platform:{OS:'android'}},'@react-native-async-storage/async-storage':{},'expo-notifications':notifications,'../reminderService':{createReminderService:(_,n)=>{adapter=n;return {}}},'../domain/reminders':{},'../theme':{}};
+ const deps={react:{},'react-native':{Platform:{OS:'android'}},'./SettingsSwitch':{},'@react-native-async-storage/async-storage':{},'expo-notifications':notifications,'../reminderService':{createReminderService:(_,n)=>{adapter=n;return {}}},'../domain/reminders':{},'../theme':{}};
  const context={exports:{},require:id=>{assert(id in deps,id);return deps[id]}};
  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/components/ReminderSettings.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React}}).outputText,context);
  assert.equal(calls.length,0);
