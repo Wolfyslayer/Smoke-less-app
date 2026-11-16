@@ -113,7 +113,8 @@ test('reference statistics tabs reveal the existing data sections without modify
  const props={data,clock:Date.parse('2026-11-15T12:00:00Z'),period:7,weekly:[0,0,0,0,0,0,0],todayCount:0,recentCravingsCount:0,cravingTriggers:[],cigaretteTriggers:[],onPeriodChange:()=>assert.fail('Rendering or switching sections must not change the period')};
  const draw=()=>{controlledIndex=0;capturedActions=[];return themed('dark',React.createElement(StatsScreen,props));};
  try{
-  controlledStates=[];let html=draw();assert(html.includes('Cigaretter per dag'));assert(!html.includes('Så räknas din besparing'));
+  controlledStates=[];let html=draw();assert(html.includes('Cigaretter per dag'));assert(!html.includes('Så räknas din besparing'));assert(!html.includes('Diagrammet visar alltid'));
+  capturedActions.find(a=>a.label==='Om diagrammet').onPress();html=draw();assert(html.includes('Diagrammet visar alltid'));capturedActions.find(a=>a.label==='Om diagrammet').onPress();html=draw();assert(!html.includes('Diagrammet visar alltid'));
   for(const [label,expected] of [['Hälsa','Din hälsa, i din takt'],['Ekonomi','Så räknas din besparing'],['Historik','Strategier som hjälpt dig'],['Översikt','Cigaretter per dag']]){const action=capturedActions.find(a=>a.label===label);assert(action,label);action.onPress();html=draw();assert(html.includes(expected),label);assert.equal(capturedActions.filter(a=>a.state?.selected&&['Översikt','Hälsa','Ekonomi','Historik'].includes(a.label)).length,1);}
   assert.equal(JSON.stringify(data),before);
  }finally{controlledStates=null;capturedActions=null;}

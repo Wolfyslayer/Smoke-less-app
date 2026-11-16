@@ -6,6 +6,7 @@ function dashboard(cards){return load('src/components/DashboardOverview.tsx',{'r
 const Home=load('src/screens/HomeScreen.tsx',{'react':React,'react-native':rn,'lucide-react-native':Object.fromEntries(['PlusCircle','LifeBuoy','ArrowUpRight'].map(key=>[key,()=>null])),'../theme':theme,'../domain':domain,'../components/DailyProgressShareArtwork':{DailyProgressShareArtwork:artwork},'../components/DashboardOverview':{DashboardOverview:dashboard(['goal','time','savings'])}}).HomeScreen;
 const props={uid:null,clock:Date.parse('2026-11-15T12:00:00Z'),today:'2026-11-15',data:{checkins:[],cravings:[]},goal:10,todayCount:0,duration:'',weekly:[],journeyPanel:React.createElement('p',null,'journey details')};
 test('first home render prioritizes progress and two actions while keeping detail collapsed',()=>{
+ const rendered=render(React.createElement(Home,props));assert.equal((rendered.match(/Öppna registreringen/g)||[]).length,1);assert.equal((rendered.match(/Andning och stöd direkt/g)||[]).length,1);
  const html=render(React.createElement(Home,props));assert.ok(html.indexOf('progress 0/10')<html.indexOf('Registrera'));assert.ok(html.includes('SOS · Jag är röksugen'));assert.ok(!html.includes('journey details'));assert.ok(!html.includes('editor'));assert.ok(!html.includes('Min logg'));assert.ok(!html.includes('Min plan'));assert.ok(html.includes('Bekräfta dagens registreringar'));
 });
 test('zero goal and exceeded goal preserve actual counts and supportive language',()=>{

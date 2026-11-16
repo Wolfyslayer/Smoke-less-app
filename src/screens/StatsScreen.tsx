@@ -1,5 +1,6 @@
 import {buildPersonalTrends} from '../domain/personalTrends';
 import {PersonalTrends} from '../components/PersonalTrends';
+import {Info} from 'lucide-react-native';
 import React,{useMemo,useState} from 'react';
 import {Pressable,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {useThemeColors,useThemeStyles,type ThemeColors} from '../theme';
@@ -17,16 +18,17 @@ return <Text style={styles.label}>{children}</Text>}
 function Heading({children}:{children:React.ReactNode}){
  const styles=useThemeStyles(createStyles);
 return <Text accessibilityRole="header" style={styles.heading}>{children}</Text>}
-function Stat({label,value}:{label:string;value:string}){
+function Stat({label,value,compact=false}:{label:string;value:string;compact?:boolean}){
  const styles=useThemeStyles(createStyles);
  const {fontScale}=useWindowDimensions();
-return <Card style={{flex:1,minWidth:fontScale>1.3?150:88,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
+return <Card style={{flex:1,minWidth:fontScale>1.3?150:compact?88:135,gap:8}}><Label>{label}</Label><Text style={styles.statValue}>{value}</Text></Card>}
 function Bars({values,clock}:{values:number[];clock:number}){
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 const max=Math.max(1,...values);return <View style={styles.bars}>{values.map((n,i)=>{const d=new Date(clock);d.setHours(12,0,0,0);d.setDate(d.getDate()-(values.length-1-i));const label=['S','M','T','O','T','F','L'][d.getDay()];return <View key={i} accessible accessibilityRole="text" accessibilityLabel={`${dayKey(d)}: ${n} registrerade cigaretter${n===0?". Ingen cigarett registrerad; eventuell rökfri bekräftelse visas separat.":""}`} style={{flex:1,alignItems:'center',justifyContent:'flex-end',gap:6}}><Text style={{color:C.white,fontSize:12,fontWeight:'700'}}>{n}</Text><View style={{height:70,width:'100%',justifyContent:'flex-end',alignItems:'center'}}><View style={{height:Math.max(3,n/max*66),width:'68%',borderRadius:7,backgroundColor:n?C.lime:C.soft}}/></View><Text style={{color:C.dim,fontSize:11}}>{label}</Text></View>})}</View>}
 export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,recentCravingsCount,cravingTriggers,cigaretteTriggers}:Props){
  const [showTrends,setShowTrends]=useState(false);
  const [section,setSection]=useState<'overview'|'health'|'economy'|'history'>('overview');
+ const [showChartInfo,setShowChartInfo]=useState(false);
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 
  const minute=Math.floor(clock/60000);
@@ -76,9 +78,9 @@ export function StatsScreen({data,period,onPeriodChange,clock,weekly,todayCount,
   <View style={styles.segment}>{([['Idag',1],['7 dagar',7],['30 dagar',30],['Totalt',0]] as const).map(([label,v])=><Pressable accessibilityRole="button" accessibilityState={{selected:period===v}} accessibilityLabel={`Visa statistik för ${label.toLowerCase()}`} key={label} onPress={()=>onPeriodChange(v)} style={[styles.segmentItem,period===v&&{backgroundColor:C.lime}]}><Text style={{color:period===v?C.onAccent:C.muted,fontWeight:'700',fontSize:12}}>{label}</Text></Pressable>)}</View>
 
   {section==='overview'?<>
-  <Heading>Cigaretter per dag</Heading><Card><Text style={styles.muted}>Diagrammet visar alltid de senaste sju dagarna, oavsett vald statistikperiod.</Text><Bars values={weekly} clock={clock}/><Text style={styles.muted}>De senaste sju kalenderdagarna, med antal registrerade cigaretter ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text></Card>
+  <Heading>Cigaretter per dag</Heading><Card><View style={styles.sectionRow}><Text style={styles.muted}>Senaste sju dagarna</Text><Pressable accessibilityRole="button" accessibilityLabel="Om diagrammet" accessibilityState={{expanded:showChartInfo}} onPress={()=>setShowChartInfo(value=>!value)} style={{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'}}><Info size={20} color={C.accent}/></Pressable></View><Bars values={weekly} clock={clock}/>{showChartInfo?<Text style={styles.muted}>Diagrammet visar alltid de senaste sju dagarna, oavsett vald statistikperiod. Antalet registrerade cigaretter står ovanför varje stapel. En tom stapel innebär inte automatiskt en rökfri dag.</Text>:null}</Card>
 
-  <View style={styles.grid}><Stat label="BEKRÄFTAT RÖKFRIA DAGAR" value={String(confirmedSmokeFreeDays)}/><Stat label="UPPSKATTAT SPARAT" value={data.profile?fmt(totalSavings)+' kr':'–'}/><Stat label="REGISTRERAT IDAG" value={String(todayCount)}/></View>
+  <View style={styles.grid}><Stat compact label="Rökfria dagar" value={String(confirmedSmokeFreeDays)}/><Stat compact label="Uppskattat sparat" value={data.profile?fmt(totalSavings)+' kr':'–'}/><Stat compact label="Idag" value={String(todayCount)}/></View>
   <Text style={styles.muted}>Rökfria dagar bygger på dina bekräftade avstämningar. Noll registreringar räknas inte automatiskt som en rökfri dag.</Text>
   <Pressable accessibilityRole="button" onPress={()=>setSection('health')} style={styles.trendsToggle}><Text style={styles.cardTitle}>Din utveckling och dina milstolpar</Text><Text style={{color:C.accent}}>›</Text></Pressable>
   </>:null}

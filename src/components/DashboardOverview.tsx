@@ -21,7 +21,6 @@ export function DashboardOverview({actions,uid,data,clock,duration,weekly,goalCa
  const milestone=useMemo(()=>data.profile?nextReductionMilestone(data.profile,new Date(clock)):null,[data.profile,today]);
  return <View style={s.container}>
   {preferences.value.cards.includes('goal')?goalCard:null}
-  {actions}
   <View style={s.summaryHeader}><Text accessibilityRole="header" style={s.title}>Din överblick</Text><Pressable accessibilityRole="button" accessibilityLabel={expanded?'Dölj min översikt':'Min översikt och anpassning'} accessibilityState={{expanded}} onPress={()=>setExpanded(v=>!v)} style={s.toggle}><Text style={s.link}>{expanded?'Stäng':'Anpassa'}</Text></Pressable></View>
   {!expanded?<View style={s.summaryGrid}>{preferences.value.cards.filter(id=>['time','savings','cravings'].includes(id)).map(id=><View key={id} style={[s.summaryItem,{minWidth:fontScale>1.3?150:88}]}>{id==='time'?<Clock size={20} color={C.accent}/>:id==='savings'?<Coins size={20} color={C.accent}/>:<Wind size={20} color={C.accent}/>}<Text style={s.summaryValue}>{id==='time'?(duration||'–'):id==='savings'?new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(saved)+' kr':String(cravingCount)}</Text><Text style={s.muted}>{id==='time'?'Sedan senaste registrering':id==='savings'?'Uppskattat sparat':'Röksug registrerade idag'}</Text></View>)}</View>:null}
   {actions}
