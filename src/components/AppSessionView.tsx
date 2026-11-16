@@ -28,7 +28,8 @@ export function AppSessionView({model}:{model:SessionModel}){
  const completedOnboardingRef=useRef(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus,syncPhase}=model;
- useWidgetNavigation(ready&&!!p&&model.deletion.ready&&!loadError&&!showLogin&&authPrompt===null&&!model.dialog&&!model.registerOpen,go);
+ const widgetNavigationReady=ready&&!!p&&model.deletion.ready&&!loadError&&!showLogin&&authPrompt===null&&!model.dialog&&!model.registerOpen&&!model.accountBusy&&!model.migrationBusy&&!model.cloudPreviewBusy&&(tab!=='account'||(!model.accountEmail.trim()&&!model.accountPassword));
+ useWidgetNavigation(widgetNavigationReady,go);
  useEffect(()=>{if(!model.deletion.ready){model.setDialog(null);model.setRegisterOpen(false);}},[model.deletion.ready]);
  const leaveLogin=()=>{
   if(model.accountEmail.trim()||model.accountPassword){
