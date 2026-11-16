@@ -15,6 +15,11 @@ on:
         type: boolean
         default: false
         required: true
+      confirm_build:
+        description: Start a new EAS build using quota (does not authorize public release)
+        type: boolean
+        default: false
+        required: true
 permissions:
   contents: read
   checks: read
@@ -23,7 +28,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   release:
-    if: inputs.confirm_release == true
+    if: inputs.confirm_release == true || inputs.confirm_build == true
     runs-on: ubuntu-latest
     timeout-minutes: 90
     environment: preview
@@ -37,6 +42,8 @@ jobs:
       PREVIEW_CERTIFICATE_SHA256: ${{ vars.PREVIEW_CERTIFICATE_SHA256 }}
       PREVIEW_BUILD_ID: ${{ inputs.build_id }}
       RELEASE_NOTES: ${{ inputs.release_notes }}
+      APK_RELEASE_ACCEPTANCE_JSON: ${{ vars.APK_RELEASE_ACCEPTANCE_JSON }}
+      PUBLISH_RELEASE: ${{ inputs.confirm_release }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,6 +59,7 @@ jobs:
           node scripts/require-green-ci.cjs
           node -e "if(!/^[a-f0-9]{64}$/i.test((process.env.PREVIEW_CERTIFICATE_SHA256||'').replace(/:/g,''))||!process.env.EXPO_TOKEN||!process.env.RELEASE_NOTES?.trim()||process.env.RELEASE_NOTES.length>4000)process.exit(1)"
           node -e "if(process.env.PREVIEW_BUILD_ID&&!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(process.env.PREVIEW_BUILD_ID))process.exit(1)"
+          node -e "if(process.env.PUBLISH_RELEASE==='true'&&(!process.env.PREVIEW_BUILD_ID||!process.env.APK_RELEASE_ACCEPTANCE_JSON))process.exit(1)"
       - run: npm ci --no-audit --no-fund
       - run: node scripts/prepare-preview-firebase.cjs
       - run: npm run typecheck && npm test
@@ -77,6 +85,7 @@ jobs:
           node scripts/verify-preview-apk.cjs "$RUNNER_TEMP/preview-build.json" "$RUNNER_TEMP/preview.apk" "$RUNNER_TEMP/verified.json"
           node scripts/create-preview-release.cjs "$RUNNER_TEMP/verified.json" "$RUNNER_TEMP/preview.json"
       - name: Publish verified assets to GitHub Releases and advance the manifest last
+        if: inputs.confirm_release == true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/publish-preview-release.cjs "$RUNNER_TEMP/preview.json" "$RUNNER_TEMP/preview.apk"

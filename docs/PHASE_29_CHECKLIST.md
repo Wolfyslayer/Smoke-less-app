@@ -39,7 +39,7 @@
    - [x] 7.4 Dokumentera installations- och uppdateringskommandon för Windows.
 8. **Android-acceptans och leverans (1/4)**
    - [x] 8.1 Installera fristående Preview APK utan dev-server.
-   - [ ] 8.2 Verifiera verklig Preview OTA-uppdatering samt native-uppdateringsnotis och APK-installation på Android.
+   - [ ] 8.2 Verifiera verklig Preview OTA, native-uppgradering och korrekt nedladdning från GitHub Releases och webbplatsen.
    - [ ] 8.3 Verifiera Firebase, Google-inloggning, widgets, synk och dataseparation.
    - [ ] 8.4 Slutför fasens PR efter verifierad CI och dokumenterad acceptans.
 

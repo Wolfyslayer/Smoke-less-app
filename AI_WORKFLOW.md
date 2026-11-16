@@ -1,3 +1,5 @@
+**Gällande distributionsbeslut 2026-11-16:** Fortsätt i befintliga PR #173/#181/#182 mot GitHub Releases och wolfyslayer.online. Google Play förbereds inte nu; äldre Play-hänvisningar är historik. Starta ingen Android-build, OTA eller offentlig release utan nytt uttryckligt godkännande. Bevara senare UI, main och signerings-/raderingsskydd.
+
 # AI_WORKFLOW.md – obligatoriskt arbetsflöde för Smoke Less
 
 Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Läs också `docs/MASTER_ROADMAP.md`, aktuell fasplan, PR-beskrivning och senaste CI-status. Masterplanen anger fasernas ordning och omfattning; den aktiva PR:ns fasta checklista anger verifierad framdrift. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.

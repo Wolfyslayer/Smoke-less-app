@@ -28,7 +28,7 @@ test('failed GitHub upload checksum leaves release draft and never advances the 
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'smokeless-release-test-')),apk=path.join(dir,'preview.apk'),file=path.join(dir,'preview.json');
  fs.writeFileSync(apk,'disposable non-APK test bytes');
  const manifest=releaseManifest(verifyEvidence(build,evidence,'b'.repeat(64)),'Preview');manifest.sha256=crypto.createHash('sha256').update(fs.readFileSync(apk)).digest('hex');fs.writeFileSync(file,JSON.stringify(manifest));
- const originalFetch=global.fetch,originalArgs=process.argv,keys=['GITHUB_REPOSITORY','GITHUB_SHA','GITHUB_TOKEN'],originalEnv=keys.map(k=>process.env[k]),requests=[];
+ const originalFetch=global.fetch,originalArgs=process.argv,keys=['GITHUB_REPOSITORY','GITHUB_SHA','GITHUB_TOKEN','APK_RELEASE_ACCEPTANCE_JSON'],originalEnv=keys.map(k=>process.env[k]),requests=[];
  try{
   Object.assign(process.env,{GITHUB_REPOSITORY:'Wolfyslayer/Smoke-less-app',GITHUB_SHA:'a'.repeat(40),GITHUB_TOKEN:'test-only-placeholder'});process.argv=['node','script',file,apk];
   global.fetch=async(url,options={})=>{
@@ -40,9 +40,20 @@ test('failed GitHub upload checksum leaves release draft and never advances the 
    if(url.startsWith('https://uploads.github.com/'))return response(201,{size:options.body.length,digest:'sha256:incorrect'});
    throw Error('Unexpected publication request');
   };
+  delete process.env.APK_RELEASE_ACCEPTANCE_JSON;
   await assert.rejects(require('../scripts/publish-preview-release.cjs').main());
+  assert.equal(requests.length,0,'unapproved releases must not perform any GitHub operation');
+  process.env.APK_RELEASE_ACCEPTANCE_JSON=JSON.stringify({...require('../config/apkReleaseReadiness.json'),publicReleaseApproved:true,privacyPolicyApproved:true,supportAndDeletionRouteVerified:true,nativeAccountDeletionVerified:true,twoDeviceDataProtectionVerified:true,androidAccessibilityRegressionVerified:true,retentionAndRecoveryApproved:true,candidate:{commit:'a'.repeat(40),sha256:manifest.sha256,certificateSha256:manifest.certificateSha256,build:manifest.build,runtime:manifest.runtime,applicationId:manifest.applicationId}});
+  await assert.rejects(require('../scripts/publish-preview-release.cjs').main());
+  assert.equal(requests.filter(r=>r.url.startsWith('https://uploads.github.com/')).length,1);
   assert.equal(requests.filter(r=>r.method==='PATCH'||r.method==='PUT').length,0);
  }finally{
   global.fetch=originalFetch;process.argv=originalArgs;keys.forEach((k,i)=>{if(originalEnv[i]===undefined)delete process.env[k];else process.env[k]=originalEnv[i]});fs.unlinkSync(apk);fs.unlinkSync(file);fs.rmdirSync(dir);
  }
+});
+test('website receives the same verified candidate metadata, never operator-invented version/runtime',()=>{
+ const {websiteManifest}=require('../scripts/website-preview-manifest.cjs');
+ const release=releaseManifest(verifyEvidence(build,evidence,'b'.repeat(64)),'Preview');
+ const web=websiteManifest(release);assert.equal(web.available,true);assert.equal(web.versionCode,release.build);assert.equal(web.runtimeVersion,release.runtime);assert.equal(web.downloadUrl,release.apkUrl);assert.equal(web.sha256,release.sha256);assert.equal(web.packageName,release.applicationId);
+ for(const patch of [{build:12},{applicationId:identity.production.package},{channel:'production'},{projectId:identity.production.projectId},{runtime:''},{sha256:'bad'},{certificateSha256:''},{publishedAt:null},{schemaVersion:1},{releaseNotes:''},{apkUrl:'https://evil.test/app.apk'}])assert.throws(()=>websiteManifest({...release,...patch}));
 });
