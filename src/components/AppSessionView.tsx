@@ -100,8 +100,8 @@ export function AppSessionView({model}:{model:SessionModel}){
   return ()=>{cancelled=true;};
  },[ready,accountUser?.uid,syncStatus,model.data]);
 
- if(loadError)return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',alignItems:'center',padding:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24),gap:16}}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></ScrollView>;
  if(!model.deletion.ready)return <AccountDeletionStatus deletion={model.deletion}/>;
+ if(loadError)return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',alignItems:'center',padding:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24),gap:16}}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></ScrollView>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
  // Wait for the first cloud read before deciding that onboarding is needed.

@@ -1,5 +1,7 @@
 # Fortsättning – Smoke Less
 
+**Radering/automatisk omstart 2026-11-16:** Arbetet finns i befintlig PR #173, utvecklingsworktree C:\SL-phase25-review. Separat disponibel C:\SL-deletion-qa (eget com.smokeless.app.deletionqa, endast lokal demo-smokeless-qa) har verifierat radering via egen modal, korrekt cache-/kontoisolering och knappen Starta om appen med automatisk återstart i nytt PID. Native livscykelmodul och intern hjälpprocess behövs i nästa fristående APK; ingen publik flagga eller stabil signering ändrad. Detaljer och verkliga begränsningar finns i ACCOUNT_DELETION_LOCAL_QA.md. Skydda befintlig Preview build 3 och dess releaseutkast; det innehåller inte denna nya native-modul. Full tvåenhets-/offline-/releaseacceptans är öppen. Metro måste ha filbevakning under ändrad QA-kod: CI=true serverade gamla grafer och gav ett korrekt fail-closed versionsstopp. Raderingsåterhämtningen har nu prioritet över spärrad kontocaches läsfel. Inga lösenord/UID:n ska checkas in; lokala QA-hemligheter finns endast Windows-DPAPI-skyddade i privat temporär katalog.
+
 ## Aktiv fas
 
 - Fas **25.0 – slutlig QA, säkerhet och release**, branch `feat/phase-25-release-readiness`, PR #173. Bas main `d606126`.

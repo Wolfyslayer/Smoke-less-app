@@ -7,13 +7,14 @@ import * as FileSystem from 'expo-file-system/legacy';
 import {clearWidgetPrivacy} from './widgets/widgetPreferences';
 import {accountDeletionRemoteEnabled as deletionEnabled} from './accountDeletionConfig';
 import {localDeletionQaConfig} from './accountDeletionQa';
-import {markDeletionRestart,deletionRestartRequired} from './accountDeletionLifecycle';
-export {closeDeletedApp} from './accountDeletionLifecycle';
+import {markDeletionRestart,deletionRestartRequired,assertDeletionLifecycleAvailable} from './accountDeletionLifecycle';
+export {restartDeletedApp} from './accountDeletionLifecycle';
 
 // Remains off until deployment and isolated end-to-end acceptance are verified.
 export {deletionEnabled};
 const cacheResetKey='smokeless:deletion-cache-reset-required';
 export async function recentDeletionToken(uid:string){
+ assertDeletionLifecycleAvailable();
  const user=getAuth().currentUser;
  if(!user||user.uid!==uid)throw new DeletionError('Logga in på nytt innan du raderar kontot.');
  let result;
@@ -33,6 +34,7 @@ export async function refreshDeletionReceipt(uid:string):Promise<'pending'|'conf
 }
 export async function requestAccountDeletion(token:string):Promise<unknown>{
  if(!deletionEnabled)throw new DeletionError('Kontoradering är inte aktiverad i den här versionen.');
+ assertDeletionLifecycleAvailable();
  const project=getApp().options.projectId;
  const region=process.env.EXPO_PUBLIC_ACCOUNT_DELETION_REGION||'europe-west1';
  if(!project||!/^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(project)||!/^[a-z]+(?:-[a-z0-9]+)+$/.test(region))throw new DeletionError('Kontoraderingens server är inte konfigurerad.');
@@ -45,6 +47,7 @@ export async function requestAccountDeletion(token:string):Promise<unknown>{
  }finally{clearTimeout(timer);}
 }
 export async function finalizeDeletedDevice(uid:string,currentUid:()=>string|null){
+ assertDeletionLifecycleAvailable();
  await AsyncStorage.setItem(cacheResetKey,'true');
  await markDeletionRestart();
  await firestore().terminate();
@@ -60,7 +63,12 @@ export async function finishDeletionCacheReset():Promise<'ready'|'restart-requir
  if(await AsyncStorage.getItem(cacheResetKey)!=='true')return 'ready';
  if(await deletionRestartRequired())return 'restart-required';
  try{await firestore().clearPersistence();}
- catch{throw new DeletionError('Stäng appen helt och öppna den igen för att slutföra säker städning.');}
+ catch{
+  // A JS reload or interrupted cleanup can leave an active SDK in this process.
+  // Preserve the durable flag and offer a real restart, never resume account work.
+  await markDeletionRestart();
+  return 'restart-required';
+ }
  await AsyncStorage.removeItem(cacheResetKey);
  return 'ready';
 }
