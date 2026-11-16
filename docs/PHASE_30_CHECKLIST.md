@@ -36,7 +36,7 @@
    - [x] 7.1 Lägg till tester som upptäcker debug-/Preview-UI i Production.
    - [x] 7.2 Lägg till relevanta notis-, text- och navigationsregressionstester.
    - [x] 7.3 Dokumentera versionering, signering, OTA/native-gräns och rollback.
-   - [x] 7.4 Förbered release-checklista och Play Store-underlag utan publicering.
+   - [x] 7.4 Förbered APK-releasechecklista, webbdistribution och installationsunderlag utan publicering.
 8. **Verifiering och överlämning (0/4)**
    - [ ] 8.1 Kör TypeScript, relevanta tester och båda obligatoriska CI-kontrollerna.
    - [ ] 8.2 Verifiera fristående Preview och release-liknande Android-build på enhet.
