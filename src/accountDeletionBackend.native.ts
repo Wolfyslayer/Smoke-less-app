@@ -7,6 +7,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import {clearWidgetPrivacy} from './widgets/widgetPreferences';
 import {accountDeletionRemoteEnabled as deletionEnabled} from './accountDeletionConfig';
 import {localDeletionQaConfig} from './accountDeletionQa';
+import {markDeletionRestart,deletionRestartRequired} from './accountDeletionLifecycle';
+export {closeDeletedApp} from './accountDeletionLifecycle';
 
 // Remains off until deployment and isolated end-to-end acceptance are verified.
 export {deletionEnabled};
@@ -44,6 +46,7 @@ export async function requestAccountDeletion(token:string):Promise<unknown>{
 }
 export async function finalizeDeletedDevice(uid:string,currentUid:()=>string|null){
  await AsyncStorage.setItem(cacheResetKey,'true');
+ await markDeletionRestart();
  await firestore().terminate();
  await firestore().clearPersistence();
  if(currentUid()===uid)await clearWidgetPrivacy();
@@ -53,9 +56,11 @@ export async function finalizeDeletedDevice(uid:string,currentUid:()=>string|nul
  if(currentUid()===uid)await signOut(getAuth());
  // Keep the reset flag until a fresh app process verifies cache cleanup before sync.
 }
-export async function finishDeletionCacheReset(){
- if(await AsyncStorage.getItem(cacheResetKey)!=='true')return;
+export async function finishDeletionCacheReset():Promise<'ready'|'restart-required'>{
+ if(await AsyncStorage.getItem(cacheResetKey)!=='true')return 'ready';
+ if(await deletionRestartRequired())return 'restart-required';
  try{await firestore().clearPersistence();}
  catch{throw new DeletionError('Stäng appen helt och öppna den igen för att slutföra säker städning.');}
  await AsyncStorage.removeItem(cacheResetKey);
+ return 'ready';
 }

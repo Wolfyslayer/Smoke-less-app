@@ -28,7 +28,10 @@ export function useAccountDeletion(props:Props){
   setState({phase:'loading',uid:props.uid,message:'',confirmed:false});
   void(async()=>{
    try{
-    await backend.finishDeletionCacheReset();
+    if(await backend.finishDeletionCacheReset()==='restart-required'){
+     if(current&&active.current){restartRequired.current=true;setState({phase:'restart',uid:null,message:'Stäng appen med knappen nedan och öppna den igen för att slutföra säker städning.',confirmed:false});}
+     return;
+    }
     const recovery=await AsyncStorage.getItem(recoveryKey);
     const recoveredState=recovery?await localDeletionState(AsyncStorage,recovery):null;
     if(recovery&&!recoveredState)await AsyncStorage.removeItem(recoveryKey);
@@ -78,5 +81,6 @@ export function useAccountDeletion(props:Props){
   catch{if(active.current)setState(v=>({...v,message:'Kunde inte logga ut. Försök igen.'}));}
   finally{busy.current=false;}
  };
- return {state,ready:state.phase==='idle',enabled:backend.deletionEnabled,request,retry:()=>{if(state.uid)void run(state.uid);},leaveForGuest:()=>void leaveForGuest()};
+ const closeApp=async()=>{try{await backend.closeDeletedApp();}catch(error){if(active.current)setState(v=>({...v,message:error instanceof DeletionError?error.message:'Stäng appen helt i Androids appinställningar och öppna den igen.'}));}};
+ return {state,ready:state.phase==='idle',enabled:backend.deletionEnabled,request,retry:()=>{if(state.uid)void run(state.uid);},leaveForGuest:()=>void leaveForGuest(),closeApp:()=>void closeApp()};
 }
