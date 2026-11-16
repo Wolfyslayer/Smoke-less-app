@@ -35,8 +35,9 @@ test('failed GitHub upload checksum leaves release draft and never advances the 
    requests.push({url,method:options.method||'GET'});
    const response=(status,data)=>({ok:status>=200&&status<300,status,json:async()=>data});
    if(url==='https://api.github.com/repos/Wolfyslayer/Smoke-less-app')return response(200,{private:false});
-   if(url.includes('/contents/')||url.includes('/releases/tags/'))return response(404,{});
-   if(url.endsWith('/releases')&&options.method==='POST'){assert.equal(JSON.parse(options.body).draft,true);return response(201,{id:123});}
+   if(url.includes('/contents/')||url.includes('/releases/tags/')||url.includes('/git/ref/tags/'))return response(404,{});
+   if(url.endsWith('/releases')&&options.method==='POST'){assert.equal(JSON.parse(options.body).draft,true);return response(201,{id:123,...JSON.parse(options.body)});}
+   if(url.includes('/releases/123/assets?'))return response(200,[]);
    if(url.startsWith('https://uploads.github.com/'))return response(201,{size:options.body.length,digest:'sha256:incorrect'});
    throw Error('Unexpected publication request');
   };

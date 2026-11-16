@@ -1,5 +1,15 @@
 # Fas 29 – GitHub Releases och Expo EAS Update
 
+## Verifierat releaseutkast och säkert återförsök 2026-11-16
+
+Befintligt GitHub-utkast `preview-build-3` (release-ID 447343964) är kompletterat, fortfarande draft/prerelease. Källan är låst till `daca540cbbaa161f348d57239755e1d2e02d8e65`, inte en flyttbar branch. APK-filen heter nu `SmokeLess-Preview-3.apk`; samma oförändrade bytes har SHA-256 `b991a142c341014d8dc94556790c58608ef5777d34765a57422e8931c6535137`. Signatur, paket, build 3, runtime, kanal och projekt lästes åter ur APK:n med aapt/apksigner. Manifesten `preview.json`, `website-preview.json` och APK-kontrollsumman finns i utkastet. Tillbakaläsning verifierade exakt fyra förväntade filnamn, storlekar och GitHub-digests mot de lokala filerna. Ingen offentlig release, webbuppdatering, OTA eller ny Android-build utfördes.
+
+Kandidaten kommer från lokal Gradle, inte EAS. Inget EAS-build-ID eller molnbyggbevis har skapats för den. Lokal granskningskopia finns i `artifacts/preview-build-3-draft-review`; versionsnoteringar/datum är förberedda metadata, inte bevis på publicering. Publiceringsdatum bör slutgranskas vid lanseringsbeslutet; ändrade metadata kräver ny digestkontroll.
+
+Publiceringsskriptet kan nu återuppta ett befintligt exakt matchande utkast. Samma obligatoriska lanseringsattest kontrolleras före alla GitHub-anrop. Utkastet måste vara draft/prerelease med exakt tagg och full käll-SHA. Befintliga filer måste matcha bytesens digest och storlek; dubbletter, främmande filer eller annan källa avbryter utan ersättning/radering. Endast saknade filer läggs till. Samtliga filer och eventuell redan skapad tagg läses om före publicering; publicerad respons måste också matcha innan appens pointer avanceras. Tagg och full käll-SHA skickas uttryckligen vid slutlig PATCH, eftersom ändring av ett otaggat GitHub-utkast annars kan ge en genererad `untagged-*`-tagg. Annoterade/främmande taggar avvisas för manuell granskning.
+
+Riktade tester täcker återförsök, främmande källa, ändrade/duplicerade filer och manipulation mellan uppladdning och slutkontroll. Nätverket är mockat; testernas publiceringsmeddelanden är inte riktiga releaser. Webbplatsens fem isolerade tester kördes med den verkliga kandidatens APK-bytes, inklusive avvisad ändrad nedladdning. Detta verifierar inte en publik länk. Syntetisk Android-kontosynk har dessutom provats från senare fas enligt PHASE_25_QA_RESULTS.md. Native radering, tvåenhets-/tillgänglighetsmatris och faktisk offentlig nedladdning är fortfarande öppna; fasta checklistans nämnare/status ändras inte.
+
 ## Aktuellt beslut och avgränsning (2026-11-16)
 
 Arbetet fortsätter i befintlig PR #181, `feat/phase-29-preview-ota`. Senare UI-/widgetarbete ligger kvar på fas 30–32:s branches och rullas inte tillbaka på mobilen. Ingen EAS-molnbyggnad, OTA eller publik release har startats av denna utökning. Lokal Preview från senare fas är redan byggd och installerad; användaren har bekräftat Google-inloggning. Separat vanlig app finns kvar och historiken har bevarats vid `adb install -r`.
