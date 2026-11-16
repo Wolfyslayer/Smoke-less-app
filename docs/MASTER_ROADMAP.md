@@ -51,12 +51,12 @@
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #170, `577558d` |
 | 23.0 | Förenklad startsida och tydlig informationshierarki | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #171, `3a05bfc` |
 | 24.0 | Lättbegriplig onboarding och vägledd användning | Startad; fast 8x4-checklista | docs/PHASE_24_ONBOARDING.md |
-| 25.0 | Slutlig Android-QA, säkerhet och Google Play-lansering | Planerad | — |
+| 25.0 | Slutlig Android-QA, säkerhet och releasegrind för APK-distribution | Pågår i PR #173; slutacceptans återstår | #173 |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 | 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Planerad; start först efter fas 25 och enligt fas 26-prioritering | — |
 | 28.0 | Profil, kontohantering och organiserade inställningar | Planerad; efter fas 27 | — |
-| 29.0 | Fristående Preview APK och OTA-uppdateringar med Expo EAS | Planerad; efter fas 28, tidigare endast efter uttryckligt beslut | — |
-| 30.0 | Release Polish och Production Readiness | Planerad; slutpolering efter fas 29, release sker endast på användarens beslut | — |
+| 29.0 | Fristående Preview APK, GitHub Releases och OTA via EAS | Pågår i PR #181; riktig APK och publicering ej verifierade | #181 |
+| 30.0 | Release Polish och beredskap för GitHub-/webbdistribution | Pågår i PR #182; offentlig release kräver uttryckligt beslut | #182 |
 | 31.0 | Automatiserade Android-flödestester och regressionsskydd | Planerad; efter fas 30, inga onödiga native-byggen | — |
 | 32.0 | Arkitektur, kodhälsa och långsiktigt underhåll | Planerad; efter fas 31 | — |
 
@@ -361,15 +361,29 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - Kontrollera framåt-/bakåtnavigering, bevarande av inmatning, stora texter, TalkBack, tangentbord och Safe Area.
 **Acceptans:** En förstagångsanvändare kan slutföra onboarding och göra sin första registrering utan att behöva förstå alla appens funktioner. Ingen kontoregistrering krävs.
 
-## Fas 25.0 – Slutlig QA, säkerhet, integritet och Google Play-lansering
+## Distributionsbeslut 2026-11-16 – webbplats och GitHub först
+
+**Aktuellt användarbeslut:** Smoke Less ska **inte publiceras på Google Play för tillfället**. Första distributionsvägen är en verifierad, fristående och signerad Android-APK via **GitHub Releases**, med nedladdning och releaseinformation på **wolfyslayer.online**. Expo EAS får användas för byggen och kompatibla Preview-OTA-uppdateringar; Expo-länkar är inte den avsedda publika APK-katalogen. Inga releaser eller OTA-publiceringar startas utan uttryckligt godkännande.
+
+Detta beslut **ersätter äldre Google Play- och Expo-distributionsformuleringar** i fas 25, 29 och 30, inklusive deras historiska checklistor, men **ändrar inte deras verifierade delpunktsstatus**. Behåll varje fas befintliga PR och 8×4-checklista. Codex ska uppdatera respektive PR:s egna acceptanskriterier och dokumentation utan att skriva över pågående arbete eller markera ej körda tester som godkända.
+
+- **Fas 25 / PR #173:** Slutför Android-QA, tvåenhetssynk, säker kontoradering, integritet, tillgänglighet, CI och releasegrind. Google Play Data safety, butiksmaterial och Play-publicering är inte blockerare för APK-kanalen; flytta till en framtida separat Play-fas. Rättvisande integritetspolicy, säker datahantering och fungerande raderingsväg kvarstår som blockerare.
+- **Fas 29 / PR #181:** Verifiera riktig fristående signerad Preview-APK, stabil signeringsidentitet, GitHub Release med versionsmanifest/SHA-256 och korrekt, säker nedladdningslänk från webbplatsen. Preview/Production- och OTA-isolering måste hålla; kontrollera att releasepekaren uppdateras först efter verifierad artefakt. Publicera inte en tom eller obekräftad APK-länk.
+- **Fas 30 / PR #182:** Slutpolera verklig APK-användarupplevelse: inga Metro-/dev-client-beroenden, fungerande installation/uppdatering, korrekta kontoflöden, support- och integritetslänkar, tillgängliga texter, notiser och offlinebeteende. Play Store-metadata kan vänta.
+- **Webbplatsen / Smoke-less-website:** Visa bara en nedladdningsknapp när en verklig, verifierad GitHub Release och korrekt manifest finns. Länka till rätt APK, checksumma, versionsnoteringar, installationshjälp, support och integritet. Behåll säkert ej-tillgängligt läge tills dess.
+- **Ordning och säkerhet:** Ingen ny funktion parallellt som duplicerar befintlig PR. Dokumentera beroenden mellan PR #173, #181 och #182; verifiera slutlig sammanslagen commit med relevant CI och Android-test före offentlig nedladdning. Signering, Firebase och kontoradering måste godkännas innan användardata riskeras.
+
+**Lanseringsgrind:** Offentlig APK-distribution är ett separat uttryckligt användarbeslut efter tester, inte en automatisk följd av merge eller gröna CI.
+
+## Fas 25.0 – Slutlig QA, säkerhet, integritet och APK-releasegrind
 - Genomför uppskjutna manuella tester från tidigare faser, inklusive `docs/PHASE_8_ANDROID_ACCEPTANCE.md` (7.4, 8.1, 8.1a, 8.2), på riktiga Android-enheter och BrowserStack. Dokumentera PASS/FAIL, enhet, Android-version och testad commit.
 - Verifiera full regression: onboarding, planer, SOS, historik, offline, gästläge, kontobyten, tvåenhetssynk och konflikter, notiser, tillgänglighet, TalkBack, stor text och små skärmar.
 - Säkerställ gröna CI, native releasebygge och blockeringsfri slutacceptans innan publicering.
 - Säker kontohantering, verifierad radering av konto och tillhörande data samt tydliga användarflöden.
 - Granska Firebase-regler, serverfunktioner, datalagring, behörigheter och loggning.
-- Färdigställ integritetspolicy, Google Play Data safety, butikstexter, skärmbilder och supportkontakt.
+- Färdigställ integritetspolicy, korrekt support- och raderingsinformation samt webbplatsens APK-installationshjälp. Google Play Data safety, butikstexter och butiksskärmbilder skjuts till eventuell framtida Play-fas.
 - Bygg och testa signerad release; verifiera riktiga Android-enheter, notifieringar och inloggning.
-- Säkerställ aktuell Google Play-policy och obligatoriska kontroller före offentlig lansering.
+- Säkerställ verifierad signerad APK, säker GitHub Release, korrekt webbplatslänk och obligatoriska integritets-/säkerhetskontroller före offentlig APK-distribution.
 - Plan för uppföljning, buggrapportering och underhåll efter publicering.
 
 ## Fas 31.0 – Automatiserade Android-flödestester och regressionsskydd (PLANERAD)
@@ -486,7 +500,7 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 
 **Notiser och kommunikation:** Granska påminnelser, milstolpar, statusmeddelanden och Androids notiskanaler, behörighetsförfrågningar och inställningsvägar. Språket ska vara varmt, sakligt och icke-skuldbeläggande; undvik spam, dubletter, onödiga störningar, känsliga detaljer på låsskärmen och medicinska löften. Kontrollera schemaläggning, avstängning, tidzoner, omstart, bakgrundsläge och uppdateringar. En ny native-build kan behövas för ändringar av native-notiskanaler, behörigheter eller config plugins; rena text-/JS-ändringar kan vara OTA-kompatibla när runtime tillåter.
 
-**Releasegräns:** Production-build får inte innehålla dev-client-beroende som kräver Metro, testnycklar, intern felsökningsinformation, Preview-OTA-kanal eller Preview-backend. Kontrollera appnamn, ikon, splash, versionsnummer, tillgänglighet, integritetstexter, felhantering, offline-läge, Google-inloggning, Firebase-synk, gästläge, widgets och databevarande. Produktionssignering och Play Store-metadata förbereds men **ingen publicering, utrullning eller automatisk release** utan separat uttryckligt godkännande.
+**Releasegräns:** Production-build får inte innehålla dev-client-beroende som kräver Metro, testnycklar, intern felsökningsinformation, Preview-OTA-kanal eller Preview-backend. Kontrollera appnamn, ikon, splash, versionsnummer, tillgänglighet, integritetstexter, felhantering, offline-läge, Google-inloggning, Firebase-synk, gästläge, widgets och databevarande. Signering och GitHub-/webbdistribution verifieras inför APK-release; Play Store-metadata skjuts upp. **Ingen publicering, utrullning eller automatisk release** utan separat uttryckligt godkännande.
 
 **Ordning:** Planerad efter fas 29 för att kunna granska det färdiga Preview/Production-upplägget och UI från faserna 27–28. Om ordningen ändras krävs uttryckligt beslut. En fas = en PR, fast 8×4-checklista, verifierade tester och grön CI.
 
@@ -549,8 +563,8 @@ Status nedan är en konservativ arbetsbedömning utifrån implementerad funktion
 - EAS Update med separat `preview`-kanal och lämplig runtimeVersion-policy; OTA får inte levereras till inkompatibla native-versioner eller fel kanal.
 - Tydlig och säker hantering av Firebase `google-services.json`, Google-inloggning, SHA-fingeravtryck, paket-ID, signeringscertifikat och miljövariabler för Preview. Inga hemligheter i Git eller loggar. Separat Firebase-projekt/miljö ska utredas och väljas utifrån dataseparation och kostnad; anta inte att ett ändrat paket-ID automatiskt isolerar backenddata.
 - OTA gäller endast kompatibla JS-/asset-ändringar. Ändringar i native-plugins, Android-konfiguration, Firebase-moduler, widgets, behörigheter eller annan native-kod kräver **ny Android-build**.
-- Dokumentera kommandon för Preview APK, installation och OTA-publicering samt hur användaren kontrollerar kanal, runtime och uppdateringsstatus. Publicera aldrig till produktion automatiskt.
-- **Distribution via Expo:** Preview-APK byggs primärt med **Expo EAS Build** (Expo-dashboardens byggflöde) och hämtas från Expo-byggresultatet. EAS Update distribuerar OTA. EAS Build är en bygg-/distributionsväg, inte i sig en versionskatalog som appen automatiskt kan jämföra med; inför en separat betrodd versionsmanifestkälla eller release-endpoint för nya native-byggen, med verifierade nedladdningslänkar till aktuella Expo-artifakter och hantering av länkarnas livslängd. Utred eventuell EAS Hosting/annan lämplig stabil manifestvärd utifrån kostnad och åtkomst.
+- Dokumentera kommandon för Preview APK, installation och OTA-publicering samt hur användaren kontrollerar kanal, runtime och uppdateringsstatus. Publicera aldrig till produktion eller offentlig GitHub Release automatiskt utan uttryckligt godkännande.
+- **Distribution via GitHub Releases (beslut 2026-11-16):** Preview-APK kan byggas med **Expo EAS Build**, men verifierad APK publiceras via GitHub Releases och länkas från wolfyslayer.online. EAS Update distribuerar OTA. EAS Build är en bygg-/distributionsväg, inte i sig en versionskatalog som appen automatiskt kan jämföra med; inför en separat betrodd versionsmanifestkälla eller release-endpoint för nya native-byggen, med verifierade nedladdningslänkar till aktuella Expo-artifakter och hantering av länkarnas livslängd. Utred eventuell EAS Hosting/annan lämplig stabil manifestvärd utifrån kostnad och åtkomst.
 - **Inbyggd uppdateringskontroll:** Vid appstart (med rimlig frekvens) och via **Appinställningar → Sök efter uppdateringar** ska Preview kunna kontrollera både kompatibla OTA-uppdateringar och om en nyare native-build finns. Visa installerad version/buildnummer, senaste kontroll, status och ett begripligt uppdateringsmeddelande. Vid OTA: erbjud säker hämtning/aktivering eller tillämpa vid nästa start. Vid ny native-build: visa knapp till verifierad nedladdning/installationsflöde; Android måste godkänna installationen. Ingen tyst native-installation och inget påstående om att OTA kan uppgradera native-kod.
 - **Versionsjämförelse och skydd:** Jämför paket-ID, plattform, native-buildnummer och runtimeVersion; undvik falska erbjudanden om äldre/inkompatibla byggen. Låt produktion följa Google Plays normala uppdateringsflöde när den distribueras där. Säkra manifest, URL:er och eventuell signering samt fel-/offlinehantering. Separata kanaler och länkar för Preview respektive Production.
 
