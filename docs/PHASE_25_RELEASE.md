@@ -73,3 +73,5 @@ Nästa driftmilstolpe: återhämtningsverktyget kräver uttryckligt projekt och 
    - [ ] 8.2 Åtgärda blockerande regressioner.
    - [ ] 8.3 Verifiera godkända releasegrindar.
    - [ ] 8.4 Publicera först efter uttryckligt lanseringsbeslut.
+
+Supportbeslut 2026-11-16: Simon ansvarar, contact@wolfyslayer.online är aktiv/bevakad enligt bekräftelse och avslutade supportärenden ska gallras efter 30 dagar. Se PRIVACY_POLICY_DRAFT.md och SUPPORT_AND_RECOVERY.md. Full policy, verifierad gallringsrutin och raderings-/återhämtningsacceptans återstår; inga ytterligare huvud-/delpunkter markeras klara.
