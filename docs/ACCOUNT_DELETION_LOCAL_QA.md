@@ -1,5 +1,7 @@
 # Isolerad Android-acceptans för kontoradering
 
+Uppföljning 2026-11-17: offlineprovet med två separata Android-emulatorer och ett starkare serverprov med positiva klientkontroller finns i [ACCOUNT_DELETION_TWO_DEVICE_QA.md](ACCOUNT_DELETION_TWO_DEVICE_QA.md). Omfattning, systemavbrott och kvarvarande öppna fall redovisas där.
+
 Den publika raderingsflaggan förblir avstängd. För att kunna testa Android-klienten utan att aktivera radering mot den delade Firebase-miljön finns en separat disponibel debug-app: `com.smokeless.app.deletionqa`. Den använder endast `demo-smokeless-qa` i lokala Auth-, Firestore- och Functions-emulatorer. Ingen riktig Google-konfiguration, EAS-identitet, stabil privat signeringsnyckel eller OTA-kanal kopieras till den. Den ersätter inte Preview eller ordinarie app.
 
 `scripts/prepare-deletion-qa.cjs` körs bara i en färsk disponibel utcheckning av fas 25, utan befintlig `app.config.js` eller `android`. Den skapar en syntetisk Firebase-konfiguration i `.expo` och en lokal config-wrapper. Ingen befintlig fil skrivs över. EAS/OTA och påslagen publik raderingsflagga avvisas. Debug-nyckeln skapas av Androids vanliga debugflöde och är inte appens stabila Preview-nyckel.

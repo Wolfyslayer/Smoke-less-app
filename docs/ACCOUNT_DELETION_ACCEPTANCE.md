@@ -1,5 +1,7 @@
 # Kontoradering – konkret acceptans före aktivering
 
+Uppföljning 2026-11-17: två lokala Android-klienter verifierade osynkade poster före/efter radering, nekad återuppladdning efter anslutning, kontobunden städning och återhämtning efter ett Android-systemavbrott. Kontrollkontot och gästhistoriken bevarades. Se [ACCOUNT_DELETION_TWO_DEVICE_QA.md](ACCOUNT_DELETION_TWO_DEVICE_QA.md) för exakta begränsningar; automatisk omstart på andra emulatorn avbröts av systemuppdateringen och är inte godkänd från det provet.
+
 Aktuellt QA-arbete 2026-11-16: separat lokal demo/debug-app förbereds enligt [ACCOUNT_DELETION_LOCAL_QA.md](ACCOUNT_DELETION_LOCAL_QA.md). Den ansluter aldrig till det delade Firebase-projektet och ändrar inte den publika aktiveringsflaggan. Native acceptans är fortfarande öppen tills faktiska resultat finns.
 
 Riktat native-resultat 2026-11-16: egen radering och **Starta om appen** har nu verifierats med nya lokala demo-konton. Knappen öppnade automatiskt samma QA-paket i ny process. A:s Auth/molnhistorik/lokala cache är borttagna, completed-lås/tombstone kvar; B:s molndata/lokala cache och gästhistorik är oförändrade. Resetflaggan hölls fram till verklig processomstart. Se det fullständiga protokollet i ACCOUNT_DELETION_LOCAL_QA.md. Detta stänger inte tvåenhets-/offline-/återhämtningsmatrisen och ersätter inte en ny fristående kandidat med den nya native-modulen. Publik aktivering är fortsatt avstängd.
