@@ -113,3 +113,16 @@ test('opt-out cannot be undone by a native publish already in flight',async()=>{
   native.clearNativeWidget=originalClear;
  }
 });
+
+test('failed native privacy clear preserves opt-in and snapshot until retry succeeds',async()=>{
+ map.clear();await setWidgetOptIn(true);await refreshWidgetSnapshot(data,now);
+ const snapshot=map.get('smokeless:widget-snapshot:v1');
+ const original=native.clearNativeWidget;
+ native.clearNativeWidget=async()=>{throw Error('native storage unavailable')};
+ try{
+  await assert.rejects(clearWidgetPrivacy(),/native storage unavailable/);
+  assert.equal(map.get('smokeless:widget-opt-in:v1'),'true');
+  assert.equal(map.get('smokeless:widget-snapshot:v1'),snapshot);
+ }finally{native.clearNativeWidget=original}
+ await clearWidgetPrivacy();assert.equal(map.size,0);
+});

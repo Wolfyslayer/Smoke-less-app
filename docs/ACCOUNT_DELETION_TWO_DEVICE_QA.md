@@ -45,4 +45,12 @@ En snapshot under omstartens laddningsfas hade ännu resetflaggan satt på prim�
 
 ## Återstående acceptans
 
+## Fel- och widgetkontroller 2026-11-17
+
+Ett nytt lokalt syntetiskt konto användes på sekundärklienten. Med Wi-Fi och mobildata avstängda visade egen modal att raderingen inte startades eftersom inloggningen inte kunde verifieras. Före/efter-jämförelser bekräftade oförändrade molndata för både test- och kontrollkonto, kvarvarande lokal kontocache samt frånvaro av serverlås och lokal raderingsmarkör. Nätverket återställdes efter provet.
+
+Native widgetlagring verifierades med opt-in och faktiska dagsaggregat. Efter utloggning var Androids widget-SharedPreferences tomma. Två nya automatiska regressioner verifierar att fel i native widgetstädning behåller opt-in/snapshot och raderingens omstartsspärr, förhindrar för tidig utloggning samt tillåter lyckat återförsök. Den ordinarie fas 25-sviten omfattar därefter 318 passerande tester, varav 19 riktade backend-/widgetfall.
+
+Ett efterföljande raderingsförsök fick ett faktiskt lokalt Firestore/gRPC-avbrott efter att serverns lease skapats. Klienten behöll blockerad återhämtning och rapporterade ingen lyckad radering. Återinloggning kunde göras men återförsök nekades under aktiv lease. Slutförd återhämtning efter ordinarie lease-utgång följs upp separat. Inget serverlås ändras administrativt för att förkorta provet.
+
 Full konflikt-/lagringsfel-/widgetmatris, fysisk tvåenhets-/tillgänglighetsacceptans och en ny fristående Preview-kandidat från samlingsgrenen återstår. Fasta faschecklistor behåller sina nämnare. Full 4.4 kräver återstående acceptans. Dessa riktade prov använder två emulatorer med debug/Metro.
