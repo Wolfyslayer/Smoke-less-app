@@ -2,6 +2,8 @@
 
 # Fortsättning – Smoke Less
 
+Användarbeslut 2026-11-17 efter online-QA godkänner nästa steg med återstående fel-/widgettester och ny signerad lokal APK för emulatoracceptans. Nästa kandidat får versionCode 4 från samlingsgrenen, med samma befintliga Preview-certifikat. Kandidatens hash/runtime och faktiska installationsresultat ska verifieras efter bygget. Publika aktiverings- och releasegrindar kräver separat acceptans.
+
 **Samlingsgrenens fortsättning 2026-11-17:** Fas 25:s exakta tillägg 637fd74..ce924ad är integrerade i befintlig PR #184, med båda sidors fortsättningsanteckningar bevarade. TypeScript, 383 ordinarie tester, 10 storage, 6 migration och fyra riktiga lokala callable-integrationer passerade på samlingsgrenen. Ny Android-build NEJ för dessa test-/dokumentationstillägg. Tidigare native-ändringar kräver en ny signerad fristående kandidat före releaseacceptans. Native-onlineprovet gjordes med fas 25-klienten, så samlingsgrenens senaste UI behöver fortfarande egen kandidatacceptans.
 
 **Samlingsgrenens integration 2026-11-16:** Exakta fas 25-ändringar 87f1a42..637fd74 och fas 29-ändringen 47a64a3..a84b1db är införda i befintlig fas 32/PR #184. Senaste UI/reaktiva teman och alla fyra widget-providers bevaras. Widgetpluginens paket-/schemaallowlist omfattar även det strikt lokala deletionqa-paketet. TypeScript och 383 ordinarie tester PASS vid integrationen. Den nya native-modulen kräver ny fristående APK; tidigare build 3 och dess oförändrade signerade APK omfattar inte raderings-/omstartsrättningen. Releaseutkastets fyra filer är korrigerade/verifierade, men inte publicerade. Raderingsflagga och lanseringsattest är fortfarande avstängda. Inga fas-PR:er är slutmergade av denna integration.
