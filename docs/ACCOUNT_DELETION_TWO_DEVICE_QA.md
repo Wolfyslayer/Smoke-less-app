@@ -29,6 +29,20 @@ Råa RKStorage-filer, kontonycklar, krypterade testhemligheter och UID-mappninga
 
 Alla fyra integrationer passerade lokalt. Detta förstärker de tidigare 403-observationerna, som utan en positiv kontroll av samma payload inte ensamma kan bevisa varför skrivningen nekades. Firestore-regler och serverns produktionskod ändrades inte.
 
-## Öppna gränser
+## Kompletterande onlineprov 2026-11-17
 
-Detta är ett riktat native-prov med två emulatorer och debug/Metro, inte fysisk tvåenhetsacceptans eller verifiering av en ny fristående Preview-APK från samlingsgrenen. Onlinefallet där den andra klienten är ansluten under själva raderingen, full konflikt-/lagringsfel-/widgetmatris och fysisk/tillgänglighetsacceptans återstår. Fasta faschecklistor och deras nämnare ändras inte; full 4.4 markeras inte klar från detta avgränsade prov. Publik radering, releaseattest, APK, OTA och webbdistribution är fortsatt avstängda/opublicerade.
+Samma befintliga QA-APK och granskade JavaScript på `637fd74` användes på båda emulatorerna. En ny lokal emulatorkörning fick två nya syntetiska konton. Kontrollkontot loggades först in på sekundärklienten och visade sin post, innan båda klienterna loggades in på det gemensamma kontot. Separata privata snapshotar bevarar föregående offlineprovs evidens.
+
+| Prov | Resultat | Evidens |
+| --- | --- | --- |
+| Positiv tvåklientssynk online | PASS | En registrering skapad genom primärklientens UI gav två poster på servern och två i båda klienternas kontocache. Sekundärklientens logg visade två poster. |
+| Radering från sekundärklienten medan primärklienten var online | PASS | Egen bekräftelsemodal användes. Auth och alla fyra samlingar raderades och completed-kvittot behölls. Primärklienten gick till blockerad raderingsåterhämtning. |
+| Återhämtning på den anslutna primärklienten | PASS | Försök igen kontrollerade serverkvittot och slutförde lokal städning, varefter Starta om appen visades. |
+| Automatisk omstart på båda emulatorerna | PASS | Respektive Starta om appen gav ett nytt huvudprocess-PID i samma QA-paket. Sekundärklienten visade välkomstvyn och primärklienten gästhemmet. En färsk snapshot efter färdig uppstart visade tömda resetflaggor, saknad raderad kontocache och bevarade confirmed-markörer på båda klienterna. |
+| Annan lokal historik och kontrollkonto | PASS | Primärklientens befintliga gästcache var exakt bevarad. Sekundärklientens kontrollkontocache var exakt bevarad. Kontrollkontots Auth och fyra samlingar var exakt oförändrade, även efter återinloggning som visade dess enda post. Det raderade kontots serverhistorik förblev tom. |
+
+En snapshot under omstartens laddningsfas hade ännu resetflaggan satt på primärklienten. Slutresultatet bygger på den senare snapshoten efter visat gästhem och avslutad cachekontroll. Den tidiga observationen sparas privat. Sekundärklienten hade ingen gästcache i utgångsläget, så gästbevarande på den klienten räknas inte som ett separat positivt prov.
+
+## Återstående acceptans
+
+Full konflikt-/lagringsfel-/widgetmatris, fysisk tvåenhets-/tillgänglighetsacceptans och en ny fristående Preview-kandidat från samlingsgrenen återstår. Fasta faschecklistor behåller sina nämnare. Full 4.4 kräver återstående acceptans. Dessa riktade prov använder två emulatorer med debug/Metro.
