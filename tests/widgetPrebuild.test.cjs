@@ -48,6 +48,7 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   }
   const provider=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetProvider.kt'),'utf8');
   const bridge=fs.readFileSync(path.join(javaDir,'SmokeLessWidgetModule.kt'),'utf8');
+  assert.ok(provider.includes('import android.view.View'),'generated visibility calls require the Android View import');
   assert.match(provider,/storedDate == today/);
   assert.ok(provider.includes('Intent.ACTION_BOOT_COMPLETED'));
   assert.ok(provider.includes('Intent.ACTION_DATE_CHANGED'));
