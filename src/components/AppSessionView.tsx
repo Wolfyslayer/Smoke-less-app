@@ -1,3 +1,4 @@
+import {useWidgetNavigation} from '../hooks/useWidgetNavigation';
 import {AccountDeletionStatus} from './AccountDeletionStatus';
 import React,{useEffect,useRef,useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,6 +29,8 @@ export function AppSessionView({model}:{model:SessionModel}){
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
  useEffect(()=>{if(!model.deletion.ready){model.setDialog(null);model.setRegisterOpen(false);}},[model.deletion.ready]);
+ const widgetNavigationReady=ready&&!!p&&model.deletion.ready&&!loadError&&!showLogin&&authPrompt===null&&!model.dialog&&!model.registerOpen&&!model.accountBusy&&!model.migrationBusy&&!model.cloudPreviewBusy&&(tab!=='account'||(!model.accountEmail.trim()&&!model.accountPassword));
+ useWidgetNavigation(widgetNavigationReady,go);
  const leaveLogin=()=>{
   if(model.accountEmail.trim()||model.accountPassword){
    model.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>setShowLogin(false),'Lämna inloggningen');
