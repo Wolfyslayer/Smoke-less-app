@@ -5,6 +5,7 @@ import {C} from '../theme';
 
 type AccountUser={email?:string|null};
 type Props={
+ deletionEnabled:boolean;onDeleteAccount:()=>void;
  accountUser:AccountUser|null;emailVerified:boolean;verificationBusy:boolean;accountBusy:boolean;
  syncStatus:string;cloudPreviewResult:string|null;cloudPreviewBusy:boolean;migrationBusy:boolean;
  accountMode:'login'|'signup';accountEmail:string;accountPassword:string;
@@ -16,7 +17,7 @@ type Props={
 const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 function Card({children,style}:{children:React.ReactNode;style?:any}){return <View style={[s.card,style]}>{children}</View>}
 function Btn({title,onPress,secondary=false,disabled=false}:{title:string;onPress:()=>void;secondary?:boolean;disabled?:boolean}){return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{disabled}} disabled={disabled} onPress={onPress} style={[s.button,secondary&&s.buttonSecondary,disabled&&{opacity:0.5}]}><Text style={[s.buttonText,secondary&&{color:C.white}]}>{title}</Text></Pressable>}
-export function AccountScreen({accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
+export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,emailVerified,verificationBusy,accountBusy,syncStatus,cloudPreviewResult,cloudPreviewBusy,migrationBusy,accountMode,accountEmail,accountPassword,onBack,onVerification,onGuestMigration,onCloudPreview,onCloudImport,onEmailChange,onPasswordChange,onAccountAction,googleConfigured,onGoogleSignIn,onLinkGoogle,onToggleAccountMode,onPasswordReset,onInspectCloud,onOpenSettings}:Props){
  return <View style={{gap:20}}>
 
  <Pressable accessibilityRole="button" accessibilityLabel="Tillbaka till Profil" accessibilityHint="Återgår till din profil" onPress={()=>onBack()} style={{minHeight:48,flexDirection:'row',alignItems:'center',gap:8,alignSelf:'flex-start',paddingVertical:7}}><ChevronRight size={18} color={C.lime} style={{transform:[{rotate:'180deg'}]}}/><Text style={s.link}>Tillbaka till Profil</Text></Pressable>
@@ -62,7 +63,7 @@ export function AccountScreen({accountUser,emailVerified,verificationBusy,accoun
   <View style={{height:1,backgroundColor:C.border}}/>
   <Text style={s.cardTitle} accessibilityRole="header">Radera data och konto</Text>
   <Btn title={cloudPreviewBusy?'Kontrollerar…':'Kontrollera vad som finns i molnet'} secondary disabled={cloudPreviewBusy||migrationBusy||accountBusy} onPress={onInspectCloud}/>
-  <Text style={s.muted}>Att radera lokal historik, molnhistorik och Firebase-kontot är olika åtgärder. Säker kontoradering behöver färdigställas och testas innan funktionen kan aktiveras. Din inloggade historik synkroniseras automatiskt med Firebase; i gästläge sparas historiken bara på enheten.</Text>
+  {deletionEnabled?<><Text style={s.muted}>Radera ditt konto och tillhörande kontohistorik permanent. Gästhistorik och andra kontons aktiva historik behålls. Logga in på nytt först; läs bekräftelsen innan du fortsätter.</Text><Btn title="Radera konto och kontohistorik" secondary disabled={accountBusy||migrationBusy||cloudPreviewBusy} onPress={onDeleteAccount}/></>:<Text style={s.muted}>Kontoradering är inte tillgänglig i den här förhandsversionen. Din kontohistorik synkroniseras via Firebase; gästhistorik finns bara på enheten.</Text>}
   <Btn title="Visa historik och synkronisering" secondary onPress={()=>onOpenSettings()}/>
  </Card>:null}
  {!accountUser?<Card style={{gap:10,padding:17,borderColor:'#9D793E',backgroundColor:'#272218'}}>

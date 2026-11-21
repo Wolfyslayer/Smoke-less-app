@@ -1,9 +1,11 @@
 const {withAndroidManifest,withDangerousMod}=require('expo/config-plugins');
 const fs=require('node:fs');
 const path=require('node:path');
-const packageName='com.smokeless.app';
-const providerName=packageName+'.SmokeLessWidgetProvider';
 module.exports=function withSmokeLessWidget(config){
+ const packageName=config.android?.package||'com.smokeless.app';
+ if(!['com.smokeless.app','com.smokeless.app.deletionqa'].includes(packageName))throw Error('Unsupported widget package');
+ const launchUri=packageName.endsWith('.deletionqa')?'Uri.parse("smokeless-deletionqa://")':'Uri.parse("smokeless://")';
+ const providerName=packageName+'.SmokeLessWidgetProvider';
  config=withAndroidManifest(config,c=>{
   const app=c.modResults.manifest.application?.[0];
   if(!app)throw Error('Missing Android application manifest');
@@ -23,7 +25,7 @@ module.exports=function withSmokeLessWidget(config){
   const res=path.join(root,'app/src/main/res');
   for(const d of [javaDir,path.join(res,'layout'),path.join(res,'xml'),path.join(res,'drawable')])fs.mkdirSync(d,{recursive:true});
   const files={
-   [path.join(javaDir,'SmokeLessWidgetModule.kt')]:`package com.smokeless.app
+   [path.join(javaDir,'SmokeLessWidgetModule.kt')]:`package ${packageName}
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -62,7 +64,7 @@ class SmokeLessWidgetModule(private val reactContext: ReactApplicationContext) :
  }
 }
 `,
-   [path.join(javaDir,'SmokeLessWidgetPackage.kt')]:`package com.smokeless.app
+   [path.join(javaDir,'SmokeLessWidgetPackage.kt')]:`package ${packageName}
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -76,7 +78,7 @@ class SmokeLessWidgetPackage : ReactPackage {
 }
 `,
 
-   [path.join(javaDir,'SmokeLessWidgetProvider.kt')]:`package com.smokeless.app
+   [path.join(javaDir,'SmokeLessWidgetProvider.kt')]:`package ${packageName}
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -130,7 +132,7 @@ class SmokeLessWidgetProvider : AppWidgetProvider() {
    }
    views.setTextViewText(R.id.smoke_less_widget_summary, summary)
    views.setContentDescription(R.id.smoke_less_widget_root, "Smoke Less. $summary. Tryck för att öppna appen.")
-   val launch = Intent(Intent.ACTION_VIEW, Uri.parse("smokeless://")).apply {
+   val launch = Intent(Intent.ACTION_VIEW, ${launchUri}).apply {
     setPackage(context.packageName)
     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
    }

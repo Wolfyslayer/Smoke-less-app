@@ -1,5 +1,11 @@
 # Smoke Less – masterplan för utveckling och lansering
 
+**Kompletterande online-QA 2026-11-17:** Två anslutna QA-emulatorer verifierade positiv postsynk, radering från sekundärklienten, spärr och återhämtning på primärklienten samt automatisk processomstart på båda. Raderad kontocache försvann och confirmed-markörer behölls. Kontrollkontots molndata och befintliga lokala cache samt primärklientens gästcache bevarades exakt. Se ACCOUNT_DELETION_TWO_DEVICE_QA.md. Full konflikt-/fel-/widgetmatris och fristående kandidatacceptans återstår.
+
+**Raderings-QA 2026-11-17:** Ett riktat offlinefall med två separata Android-emulatorer passerade: osynkade poster återuppladdades inte, kontobunden lokal städning och kall återhämtning fungerade, kontrollkontot och gästhistoriken bevarades. Nytt serverprov använder först giltiga klientskrivningar som positiv kontroll och verifierar därefter raderingslåsets avvisning i fyra samlingar. Se ACCOUNT_DELETION_TWO_DEVICE_QA.md. Online-/konflikt-/felmatris och slutlig fristående kandidat är öppna; inga fasta fasräknare eller publika flaggor ändras av detta riktade prov.
+
+**Riktad raderings-QA 2026-11-16:** I befintlig fas 25/PR #173 har en separat Android-debugapp med enbart lokala Firebase-demoemulatorer verifierat egen kontoradering och automatisk processomstart via **Starta om appen**. Andra kontots moln-/lokalhistorik och gästhistorik bevarades exakt. Verkliga omstarts-/återhämtningsfel rättades med regressionstester. Se ACCOUNT_DELETION_LOCAL_QA.md. Ingen publik flagga, Preview-APK, OTA eller webbdistribution aktiverades. Full matris och ny fristående kandidat är fortfarande öppna; fasta checklistor markeras inte färdiga av detta riktade prov.
+
 **Syfte:** Denna fil är projektets långsiktiga, versionshanterade facit för vad vi har beslutat att bygga, vad som återstår och vad som är klart. Läs den tillsammans med `AI_WORKFLOW.md` före varje AI-arbetspass. En fas = en PR. Den aktiva PR:ns fasta huvudchecklista och aktuella CI-resultat styr exakt färdigstatus; markera inte en fas klar i denna fil förrän den är mergad och verifierad.
 
 ## Teststrategi beslutad 2026-11-04
@@ -36,9 +42,9 @@
 | 14.0 | Smart coach och personligt stöd | Mergad; manuell QA i fas 17 | #154 |
 | 15.0 | Frivilligt socialt stöd | Mergad; manuell Android-QA i fas 17 | #155 |
 | 16.0 | Slutpolering, prestanda, tillgänglighet och språk | Mergad; Android-verifiering återstår i fas 17 | #156 |
-| 16.1 | Android-hemskärmswidgets | Planerad | — |
-| 16.2 | Google-inloggning med Firebase | Planerad | — |
-| 16.3 | Android-tillbakaknapp och navigations-UX | Planerad | — |
+| 16.1 | Android-hemskärmswidgets | Mergad; fysisk QA i fas 25 | #158, `e9ee298` |
+| 16.2 | Google-inloggning med Firebase | Mergad; fysisk QA i fas 25 | #159, `27d0e0f` |
+| 16.3 | Android-tillbakaknapp och navigations-UX | Mergad; fysisk QA i fas 25 | #160, `1811444` |
 | 16.4 | Helhetsgranskning av UI, Safe Area och Android-enheter | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #161, `07ff48c` |
 | 16.5 | Personlig dashboard och anpassningsbar startsida | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #162, `a3c53e8` |
 | 16.6 | Flexiblare planering och långsiktig målanpassning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #163, `525b07b` |
@@ -50,7 +56,7 @@
 | 21.0 | Evidensbaserat stod, nikotinlakemedel och vardvagar | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #169, `70a2295` |
 | 22.0 | Varsamma påminnelser och tillgänglig motivation | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #170, `577558d` |
 | 23.0 | Förenklad startsida och tydlig informationshierarki | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #171, `3a05bfc` |
-| 24.0 | Lättbegriplig onboarding och vägledd användning | Startad; fast 8x4-checklista | docs/PHASE_24_ONBOARDING.md |
+| 24.0 | Lättbegriplig onboarding och vägledd användning | Mergad; 8/8 och 32/32, fysisk QA i fas 25 | #172, `d606126` |
 | 25.0 | Slutlig Android-QA, säkerhet och releasegrind för APK-distribution | Pågår i PR #173; slutacceptans återstår | #173 |
 | 26.0 | Uppföljning och förbättringar efter lansering | Planerad | — |
 | 27.0 | Premium UI/UX-redesign och Light/Dark/System-teman | Planerad; start först efter fas 25 och enligt fas 26-prioritering | — |
@@ -1407,9 +1413,11 @@ Faktiska React-renderingar med plattformsadapter verifierar ordning, kollapsade 
 Behåll fyra steg, alla tre planvägar, gästläge och befintlig frivillig kontoanslutning. Ersätt automatiskt växlande välkomsttext med stabil kort introduktion. Basnivå anges uttryckligen; paketstorlek 20 och pris 0 är öppet redovisade standardvärden i frivillig ekonomidel. Lugn standardtakt med valbar annan takt. Validera fält innan nästa steg; behåll inmatning vid Tillbaka. Ingen befintlig historik får raderas när profil skapas. Kontoval och synkförklaring ska finnas kvar.
 
 Lägg diskreta valbara tips i registrering, SOS, plan och statistik med Läsa/stänga och Visa inte igen. Endast avvisade tips-ID:n sparas lokalt per gäst/konto via befintlig preferenstjänst; aldrig registreringar eller medicinska slutsatser. Fel vid sparning ska vara återförsökbara. Tips ska inte täcka innehåll eller registrera något. Verifiera nollnivå, tomma/ogiltiga tal, datum, data-/kontoisolering, bakåtnavigering och frivillig hjälp. Fysisk TalkBack/tangentbord/Safe Area kvar i fas 25.
-**Status:** Lokala kontroller passerar. 1/8 huvudpunkter (12,5 %) och 6/32 delpunkter (18,75 %); kodpunkter inväntar CI.
+**Status:** Mergad i PR #172 som `d606126`, head `99e3560` med grön validate/rules. 8/8 och 32/32 (100 %); fysisk QA kvar i fas 25.
 
 ## Genomförd acceptans
+
+Slutgranskning efter grön CI på `dd68804`: paketstorlek begränsas till 1–200 och pris till 0–100000 kr enligt befintligt Firestore-schema. Gränstester tillagda; reglerna ändras inte. TypeScript och 218 tester passerar även efter korrigeringen. Ny slutlig CI krävs före merge.
 
 Fyra steg och alla planval är kvar. Välkomsttexten roterar inte längre och stor logobild visas bara på första steget. Lugn standardtakt kan ändras via utfällning. Endast basnivå behöver anges; frivillig ekonomidel har öppna standarder (20 per paket, pris 0 utan besparing). Tidigare exempelpris 85 används inte som om det vore användarens eget. Tomma tal och exponent-/hexformat accepteras inte som verkliga uppgifter. Nollnivå och nollpris stöds. Fel före nästa steg visas på svenska; Tillbaka behåller värden. Stegindikator har tillgängligt värde och radioval använder checked.
 
@@ -1422,50 +1430,80 @@ TypeScript och 218 tester passerar (202 ordinarie, 10 storage, 6 migration). Tes
    - [x] 1.2 Identifiera information som konkurrerar om uppmärksamhet.
    - [x] 1.3 Definiera tre viktigaste förstagångsuppgifter.
    - [x] 1.4 Fastställ acceptanskriterier och avgränsning.
-2. [ ] **Informationshierarki (0/4)**
-   - [ ] 2.1 Definiera tydligt huvudfokus.
-   - [ ] 2.2 Flytta sekundär information till rätt vy.
-   - [ ] 2.3 Ta bort duplicerade navigationsvägar.
-   - [ ] 2.4 Behåll åtkomst till fördjupning.
-3. [ ] **Primära användarflöden (0/4)**
-   - [ ] 3.1 Gör registrering tydlig.
-   - [ ] 3.2 Gör SOS lätt att hitta.
-   - [ ] 3.3 Gör planval lätt att förstå.
-   - [ ] 3.4 Visa nästa relevanta steg.
-4. [ ] **Tillstånd och innehåll (0/4)**
-   - [ ] 4.1 Hantera helt ny användare.
-   - [ ] 4.2 Hantera tom historik och nollmål.
-   - [ ] 4.3 Hantera svår dag utan skuldbeläggning.
-   - [ ] 4.4 Använd korta begripliga svenska texter.
-5. [ ] **Visuell design (0/4)**
-   - [ ] 5.1 Använd konsekvent typografi.
-   - [ ] 5.2 Behåll tydlig knapphierarki.
-   - [ ] 5.3 Begränsa skroll och visuell täthet.
-   - [ ] 5.4 Granska olika skärmstorlekar.
-6. [ ] **Tillgänglighet och kontroll (0/4)**
-   - [ ] 6.1 Granska TalkBack-ordning.
-   - [ ] 6.2 Granska stora textstorlekar.
-   - [ ] 6.3 Granska tryckytor och kontrast.
-   - [ ] 6.4 Gör hjälp och tips frivilliga.
-7. [ ] **Tester (0/4)**
-   - [ ] 7.1 Testa huvudflöden och tillstånd.
-   - [ ] 7.2 Testa databevarande och gästläge.
-   - [ ] 7.3 Testa navigering och avbrott.
-   - [ ] 7.4 Verifiera CI på aktuell commit.
-8. [ ] **Avslut (2/4)**
+2. [x] **Informationshierarki (4/4)**
+   - [x] 2.1 Definiera tydligt huvudfokus.
+   - [x] 2.2 Flytta sekundär information till rätt vy.
+   - [x] 2.3 Ta bort duplicerade navigationsvägar.
+   - [x] 2.4 Behåll åtkomst till fördjupning.
+3. [x] **Primära användarflöden (4/4)**
+   - [x] 3.1 Gör registrering tydlig.
+   - [x] 3.2 Gör SOS lätt att hitta.
+   - [x] 3.3 Gör planval lätt att förstå.
+   - [x] 3.4 Visa nästa relevanta steg.
+4. [x] **Tillstånd och innehåll (4/4)**
+   - [x] 4.1 Hantera helt ny användare.
+   - [x] 4.2 Hantera tom historik och nollmål.
+   - [x] 4.3 Hantera svår dag utan skuldbeläggning.
+   - [x] 4.4 Använd korta begripliga svenska texter.
+5. [x] **Visuell design (4/4)**
+   - [x] 5.1 Använd konsekvent typografi.
+   - [x] 5.2 Behåll tydlig knapphierarki.
+   - [x] 5.3 Begränsa skroll och visuell täthet.
+   - [x] 5.4 Granska olika skärmstorlekar.
+6. [x] **Tillgänglighet och kontroll (4/4)**
+   - [x] 6.1 Granska TalkBack-ordning.
+   - [x] 6.2 Granska stora textstorlekar.
+   - [x] 6.3 Granska tryckytor och kontrast.
+   - [x] 6.4 Gör hjälp och tips frivilliga.
+7. [x] **Tester (4/4)**
+   - [x] 7.1 Testa huvudflöden och tillstånd.
+   - [x] 7.2 Testa databevarande och gästläge.
+   - [x] 7.3 Testa navigering och avbrott.
+   - [x] 7.4 Verifiera CI på aktuell commit.
+8. [x] **Avslut (4/4)**
    - [x] 8.1 Dokumentera genomförd acceptans.
    - [x] 8.2 Flytta bred fysisk enhets-QA till fas 25.
-   - [ ] 8.3 Verifiera slutlig grön CI.
-   - [ ] 8.4 Merga fas-PR.
+   - [x] 8.3 Verifiera slutlig grön CI.
+   - [x] 8.4 Merga fas-PR.
 
 ### Fas 25.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
-**Status:** Planerad, 0/8 huvudpunkter och 0/32 delpunkter verifierade. Checklista fryses vid fasstart; nya idéer läggs i backlog i stället för att förlänga en aktiv fas.
 
-1. [ ] **Testplan (0/4)**
-   - [ ] 1.1 Samla uppskjutna testfall från faser 8–17.
-   - [ ] 1.2 Fastställ enhetsmatris.
-   - [ ] 1.3 Dokumentera PASS/FAIL och testad commit.
-   - [ ] 1.4 Prioritera blockerande fel.
+## Grind och avgränsning
+
+Ingen offentlig publicering eller produktionsändring ingår utan uttryckligt lanseringsbeslut. Verifiera befintlig säkerhetsmodell, negativa emulatorfall, serverns raderingsprototyp, lokal lagring och releaseunderlag. Samla uppskjuten fysisk QA från faser 8–24. Markera inte fysisk eller driftsatt funktion klar på grund av kodtester. Firestore-regler ändras bara vid verifierat behov och då enligt separat säkerhets-PR-policy.
+
+Vid start: ADB finns men `adb devices -l` visar ingen ansluten enhet. Native-projektkällor och signerad releasekonfiguration saknas i arbetskopian (endast tidigare byggcache finns). Kontoradering är en icke driftsatt serverprototyp utan klientflöde. Integritetspolicy saknar ansvarig, kontakt, lagringsregioner och publicerad URL. Kontrollera vad som kan färdigställas lokalt och dokumentera konkret återstående acceptans innan fasen får avslutas. Fas 26 kräver faktisk lansering och verklig återkoppling.
+
+## Faktisk framdrift
+
+Telefon anslöts senare: A024/Android 17, befintlig utvecklingsbuild med aktuell JS. Riktad fysisk granskning och PNG/systemdelning är utförda enligt `PHASE_25_QA_RESULTS.md`; bred acceptans är inte klar. Textskala återställd till 1,0. Inga testposter, kontoändringar eller meddelanden skickades från telefonen.
+
+SOS inställningar ligger nu bakom valbar fördjupning efter hjälpen. Dubblerade introytor tas bort från Hem/SOS. Byte av SOS-situation rensar tidigare hjälpsamhetssvar för att undvika felaktig attribution. Nya lokala återställningskopior identifierar gäst/UID; äldre omärkta kopior behålls och är en uttrycklig releaseblockerare.
+
+Ordinarie enhetssvit upptäcks automatiskt: 265 tester inklusive serverns 21 säkerhetstester passerar, plus 10 storage, 6 migration och 9 riktiga emulatortester (290 totalt). TypeScript passerar. Fem tidigare utelämnade, föråldrade källkontrakt uppdaterades till aktuell funktionsgräns/texter; säkerhetskraven behölls. Emulatorn kördes isolerat utan produktionsdata.
+
+Manuella Android-CI-byggen saknade miljö för main:s obligatoriska keystore-plugin. De förbereds nu med en disponibel QA-testnyckel, utan hemlighetsändringar eller borttagen plugin. Detta är inte Play-signering och får inte ersätta befintlig installation med annan signatur. Ny native QA-build ska köras efter push; signerad produktionsrelease är fortfarande öppen.
+
+Officiella Play-källor kontrollerade 2026-11-15 i `PLAY_DATA_SAFETY_REVIEW.md`. Utkast till policy/listning uppdaterade mot faktisk datahantering. Ansvarig, kontakt, URL, retention och färdig kontoradering återstår. Inget har publicerats eller driftsatts.
+
+Efter grön validate/rules på `3f3d63e`: gästlagring skyddas mot tyst tom återställning vid fel/skadad data, och Inställningar har bekräftad engångsstädning av exakta äldre omärkta backupnycklar. Inget har raderats på telefonen. 272 ordinarie tester + 10 storage + 6 migration + 9 emulatorfall = 297 verifierade automatiska fall; ny slutlig CI inväntas. Enhetsproven är nu kopplade till faktisk commit i QA-protokollet.
+
+**Användarbeslut:** Bygg inte mer nu; användaren ordnar bygge senare. QA-körning 43740485924 är cancelled. Ingen ny APK/release är verifierad. Fortsätt övrig utveckling och tester; beslutet pausar inte fasens övriga arbete.
+
+Kontoraderingens klientkedja är därefter implementerad bakom avstängd flagga: samtycke/färsk auth, pausad synk, beständig UID-spärr, serverkvitto före städning, skydd för sena writes, gäst/andra konton, omstart samt SDK-/PNG-/widgetstädning. Kontrolläsningar är flaggade för kompatibilitet med ännu ej verifierade produktionsregler. Tre verkliga lokala Auth/Firestore/Functions-test passerar; säkerhets-CI kör dem med Node 22. `ACCOUNT_DELETION_ACCEPTANCE.md` beskriver återstående nativa/produktionsgrindar. 297 ordinarie + 10 storage + 6 migration + 9 regler + 3 integration = 325 lokalt verifierade automatiska fall. Denna kod innebär inte att fysisk kontoradering 4.4 är klar.
+
+Användaren pekade på `C:\SL\google-services.json`. Läsande kontroll bekräftar projekt `smoke-less-75efa`, paket `com.smokeless.app`, Firestore `eur3` och avstängt Cloud Functions-API (`SERVICE_DISABLED`). Funktionen förbereds för närmaste region `europe-west1`; ingen hemlighet, API-aktivering, produktionsdriftsättning eller verklig radering är utförd.
+
+Kodcommit `1a413ad` och dokumentationshead `aea9a54` har verifierats gröna i validate/rules; kodmilstolpens callable-integrationer kördes med Node 22. Efter uttryckligt användargodkännande är serverdelen nu driftsatt och provad i `smoke-less-75efa`/`europe-west1`. Fakturering var redan aktiv; ingen betalplansändring gjordes. Befintliga granskade Firestore-regler driftsattes före funktionen och tillbakalästes med exakt matchning. Två nya syntetiska konton verifierade egen radering, kontoisolering, nekad återuppladdning med gammal token och idempotent återförsök; båda testkontona städades via egen callable. Två serverägda säkerhetslås behålls. Inga befintliga konton eller telefondata raderades. Appflaggan förblir avstängd; native-/tvåenhetsacceptans, extern väg, support och retention återstår. Se `ACCOUNT_DELETION_DEPLOYMENT.md`. Fasstatus är oförändrad 1/8 och 8/32.
+Nästa driftmilstolpe: återhämtningsverktyget kräver uttryckligt projekt och separat Admin-app, nekar blandade emulator-/produktionsmål och aktivt/ogiltigt lease samt utelämnar UID/okända sökvägar i diagnostik. Elva riktade återhämtningstest och samtliga 301 ordinarie tester passerar; TypeScript passerar. `SUPPORT_AND_RECOVERY.md` beskriver triage, privat identitetskontroll, säker återhämtning och rollback. En offentlig felrapportmall efterfrågar inga kontouppgifter. Ingen driftändring eller Android-build kördes. Namngiven supportansvarig, kontakt, retention och nativ övning saknas fortfarande, så 7.4 och fasstatus 1/8, 8/32 är oförändrade. Fas 26:s underlag förbereds inom fas 25; efterlanseringsresultat kan inte verifieras före lansering.
+
+**Status:** Pågår. 1/8 huvudpunkter (12,5 %) och 8/32 delpunkter (25 %) verifierade. Fysisk slutacceptans, radering och release är inte klara.
+
+1. [x] **Testplan (4/4)**
+   - [x] 1.1 Samla uppskjutna testfall från faser 8–17.
+   - [x] 1.2 Fastställ enhetsmatris.
+   - [x] 1.3 Dokumentera PASS/FAIL och testad commit.
+   - [x] 1.4 Prioritera blockerande fel.
 2. [ ] **Android-regression (0/4)**
    - [ ] 2.1 Testa onboarding och planer.
    - [ ] 2.2 Testa SOS, historik och statistik.
@@ -1481,16 +1519,16 @@ TypeScript och 218 tester passerar (202 ordinarie, 10 storage, 6 migration). Tes
    - [ ] 4.2 Testa tvåenhetssynk och konflikter.
    - [ ] 4.3 Testa kontobyten.
    - [ ] 4.4 Testa kontoradering.
-5. [ ] **Säkerhet (0/4)**
-   - [ ] 5.1 Granska Firestore-regler.
-   - [ ] 5.2 Verifiera negativa behörighetstester.
-   - [ ] 5.3 Granska datalagring och loggar.
+5. [ ] **Säkerhet (3/4)**
+   - [x] 5.1 Granska Firestore-regler.
+   - [x] 5.2 Verifiera negativa behörighetstester.
+   - [x] 5.3 Granska datalagring och loggar.
    - [ ] 5.4 Åtgärda blockerande säkerhetsfel.
-6. [ ] **Play Store (0/4)**
+6. [ ] **Play Store (1/4)**
    - [ ] 6.1 Färdigställ integritetspolicy.
    - [ ] 6.2 Färdigställ Data safety.
    - [ ] 6.3 Färdigställ butikstexter och skärmbilder.
-   - [ ] 6.4 Verifiera aktuell Play-policy.
+   - [x] 6.4 Verifiera aktuell Play-policy.
 7. [ ] **Release (0/4)**
    - [ ] 7.1 Bygg signerad release.
    - [ ] 7.2 Verifiera release på Android.

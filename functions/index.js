@@ -36,7 +36,7 @@ async function deleteCollection(db, collectionRef) {
 }
 
 exports.deleteMyAccount = onCall(
-  {maxInstances: 10, timeoutSeconds: 540, memory: '256MiB'},
+  {region: 'europe-west1', maxInstances: 10, timeoutSeconds: 540, memory: '256MiB'},
   async request => {
     const uid = request.auth?.uid;
     const authTime = Number(request.auth?.token?.auth_time);
@@ -58,32 +58,38 @@ exports.deleteMyAccount = onCall(
     // Preserve the original request timestamp on retries. A completed lock
     // must never be downgraded to "deleting" by a delayed duplicate request.
     try {
-      await lock.create({
-        state: 'deleting',
-        requestedAt: FieldValue.serverTimestamp(),
-        leaseUntilMs: Date.now() + DELETE_LEASE_MS,
-      });
-    } catch (error) {
-      if (error.code !== 6 && error.code !== 'already-exists') throw error;
-      const existing = await lock.get();
-      if (!existing.exists) throw error;
-      if (existing.get('state') === 'completed') return {deleted: true};
-      if (existing.get('state') !== 'deleting') {
-        throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
-      }
-      // An active invocation owns the lease. After it expires, a single
-      // retry may take over through a Firestore transaction.
-      await db.runTransaction(async transaction => {
-        const current = await transaction.get(lock);
-        if (!current.exists || current.get('state') !== 'deleting') {
+      try {
+        await lock.create({
+          state: 'deleting',
+          requestedAt: FieldValue.serverTimestamp(),
+          leaseUntilMs: Date.now() + DELETE_LEASE_MS,
+        });
+      } catch (error) {
+        if (error.code !== 6 && error.code !== 'already-exists') throw error;
+        const existing = await lock.get();
+        if (!existing.exists) throw error;
+        if (existing.get('state') === 'completed') return {deleted: true};
+        if (existing.get('state') !== 'deleting') {
           throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
         }
-        const leaseUntil = current.get('leaseUntilMs');
-        if (typeof leaseUntil !== 'number' || !Number.isFinite(leaseUntil) || leaseUntil > Date.now()) {
-          throw new HttpsError('failed-precondition', 'Kontoraderingen pågår redan.');
-        }
-        transaction.update(lock, {leaseUntilMs: Date.now() + DELETE_LEASE_MS});
-      });
+        // An active invocation owns the lease. After it expires, a single
+        // retry may take over through a Firestore transaction.
+        await db.runTransaction(async transaction => {
+          const current = await transaction.get(lock);
+          if (!current.exists || current.get('state') !== 'deleting') {
+            throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
+          }
+          const leaseUntil = current.get('leaseUntilMs');
+          if (typeof leaseUntil !== 'number' || !Number.isFinite(leaseUntil) || leaseUntil > Date.now()) {
+            throw new HttpsError('failed-precondition', 'Kontoraderingen pågår redan.');
+          }
+          transaction.update(lock, {leaseUntilMs: Date.now() + DELETE_LEASE_MS});
+        });
+      }
+    } catch (error) {
+      if (error instanceof HttpsError) throw error;
+      console.error('Account deletion lock unavailable');
+      throw new HttpsError('internal', 'Raderingen kunde inte bekräftas. Försök igen eller kontakta support.');
     }
 
     try {
@@ -108,7 +114,8 @@ exports.deleteMyAccount = onCall(
     } catch (error) {
       // Never remove the lock or report success on partial failure. Admin
       // recovery is required if auth deletion succeeded but final status fails.
-      console.error('Account deletion incomplete', {uid, error});
+      // Avoid account identifiers and provider error payloads in application logs.
+      console.error('Account deletion incomplete');
       throw new HttpsError('internal', 'Raderingen kunde inte bekräftas. Kontakta support.');
     }
   }

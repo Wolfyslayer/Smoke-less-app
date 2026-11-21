@@ -45,6 +45,8 @@ jobs:
           fs.appendFileSync(process.env.GITHUB_ENV, 'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=' + webClients[0] + '\n');
           console.log('Google OAuth Web client ID hittades och konfigurerades för Expo-bygget.');
           NODE
+      - name: Configure disposable QA signing (not production)
+        run: bash scripts/configure-ci-test-signing.sh
       - name: Generate native Android project
         run: npx expo prebuild --platform android --non-interactive --clean
       - name: Build standalone release APK (includes JS bundle)

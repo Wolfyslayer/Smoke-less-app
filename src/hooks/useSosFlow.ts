@@ -24,7 +24,7 @@ export function useSosFlow(setData:Dispatch<SetStateAction<Data>>,goHome:()=>voi
   onToggleTimer:()=>{if(sosTimerActive){setSosTimerActive(false)}else{if(sosTimer===0)setSosTimer(120);setSosTimerActive(true)}},
   onResetTimer:()=>{setSosTimerActive(false);setSosTimer(0)},
   sosStartIntensity,intensity,onStartIntensity:setSosStartIntensity,onIntensity:setIntensity,
-  trigger,onTrigger:setTrigger,helpful,onHelpful:setHelpful,
+  trigger,onTrigger:(value:string)=>{if(value!==trigger){setTrigger(value);setHelpful(null)}},helpful,onHelpful:setHelpful,
   onSave:()=>{setData(v=>addCravingEntry(v,intensity,trigger,{...(sosStartIntensity!==null?{startIntensity:sosStartIntensity}:{}),strategy:sosIdeas[sosTip].title,...(helpful!==null?{helpful}:{})}));setBreathing(false);setSosTimerActive(false);setSosTimer(0);setSosStartIntensity(null);setIntensity(3);setTrigger('Stress');setHelpful(null);goHome()}
  };
  return {sosProps,startSos,stopSos};

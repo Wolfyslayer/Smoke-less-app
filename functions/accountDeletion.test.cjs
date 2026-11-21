@@ -4,18 +4,20 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false, activeLease = false, missingLease = false} = {}) {
+function harness({failLockAt = null, records = 3, failBatch = false, failCompletion = false, lockState = null, parentExists = false, unknownCollections = [], extraControl = false, nestedDocuments = false, activeLease = false, missingLease = false} = {}) {
   let remaining = records;
   let authDeleted = false;
   let lock = lockState && {state: lockState, leaseUntilMs: missingLease ? undefined : activeLease ? Date.now() + 600000 : Date.now() - 1000};
   const events = [];
+  const logs = [];
   const COLLECTION_NAMES = ['entries', 'cravings', 'checkins', 'settings', 'control'];
   const lockRef = {
     async create(value) {
+      if (failLockAt === 'create') throw new Error('SDK detail users/private-identity');
       if (lock) {const e = new Error('exists'); e.code = 6; throw e;}
       lock = {...value}; events.push('lock');
     },
-    async get() {return {exists: !!lock, get: key => lock?.[key]};},
+    async get() {if (failLockAt === 'get') throw new Error('SDK detail users/private-identity'); return {exists: !!lock, get: key => lock?.[key]};},
     async set(value) {if (failCompletion) throw new Error('final status unavailable'); lock = {...lock, ...value}; events.push('complete');}
   };
   const db = {
@@ -36,6 +38,7 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
       };}};
     },
     async runTransaction(fn) {
+      if (failLockAt === 'transaction') throw new Error('SDK detail users/private-identity');
       return fn({
         get: async () => ({exists: !!lock, get: key => lock?.[key]}),
         update: (_ref, value) => {lock = {...lock, ...value}; events.push('lease');}
@@ -63,10 +66,10 @@ function harness({records = 3, failBatch = false, failCompletion = false, lockSt
   const context = {exports: {}, require: name => {
     if (!(name in modules)) throw Error('Unexpected dependency: ' + name);
     return modules[name];
-  }, console: {error() {}}};
+  }, console: {error(...args) {logs.push(args);}}};
   vm.runInNewContext(fs.readFileSync('functions/index.js', 'utf8'), context);
   const request = {auth: {uid: 'test-user', token: {auth_time: Math.floor(Date.now()/1000)}}, data: {}};
-  return {invoke: (overrides = {}) => context.exports.deleteMyAccount({...request, ...overrides}), events, get remaining() {return remaining;}, get authDeleted() {return authDeleted;}, get lock() {return lock;}};
+  return {invoke: (overrides = {}) => context.exports.deleteMyAccount({...request, ...overrides}), logs, events, get remaining() {return remaining;}, get authDeleted() {return authDeleted;}, get lock() {return lock;}};
 }
 
 test('deletes all documents before Auth and completes the lock', async () => {
@@ -80,6 +83,7 @@ test('failed Firestore batch keeps Auth and deletion lock intact', async () => {
   await assert.rejects(h.invoke(), error => error.code === 'internal');
   assert.equal(h.authDeleted, false);
   assert.equal(h.lock.state, 'deleting');
+  assert.deepEqual(h.logs,[['Account deletion incomplete']]);
 });
 test('retry resumes an interrupted deletion', async () => {
   const h = harness({lockState: 'deleting'});
@@ -176,4 +180,14 @@ test('legacy deletion lock without lease requires manual review', async () => {
   assert.equal(h.remaining, 3);
   assert.equal(h.authDeleted, false);
   assert.deepEqual(h.events, []);
+});
+
+test('lock acquisition failures hide provider details and preserve Auth and history', async () => {
+  for (const stage of ['create', 'get', 'transaction']) {
+    const h = harness({failLockAt: stage, lockState: stage === 'create' ? null : 'deleting'});
+    await assert.rejects(h.invoke(), error => error.code === 'internal' && !error.message.includes('private-identity'));
+    assert.equal(h.authDeleted, false);
+    assert.equal(h.remaining, 3);
+    assert.deepEqual(h.logs, [['Account deletion lock unavailable']]);
+  }
 });

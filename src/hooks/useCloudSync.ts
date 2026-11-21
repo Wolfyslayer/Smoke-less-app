@@ -37,7 +37,7 @@ export function useCloudSync({
      if(verifyCurrentUid()!==uid)return;
      if(JSON.stringify(dataRef.current)!==original){setSyncStatus('Lokala data ändrades. Synkroniserar igen.');setSyncTrigger(v=>v+1);return;}
      if(JSON.stringify(merged)!==original){
-      await backupBeforeCloudImport(dataRef.current);
+      await backupBeforeCloudImport(dataRef.current,uid);
       if(verifyCurrentUid()!==uid || JSON.stringify(dataRef.current)!==original)return;
       setData(merged);
      }

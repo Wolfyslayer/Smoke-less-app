@@ -1,3 +1,4 @@
+import {AccountDeletionStatus} from './AccountDeletionStatus';
 import React,{useEffect,useRef,useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {validateData} from '../domain';
@@ -25,6 +26,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  const completedOnboardingRef=useRef(false);
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
+ useEffect(()=>{if(!model.deletion.ready){model.setDialog(null);model.setRegisterOpen(false);}},[model.deletion.ready]);
  const leaveLogin=()=>{
   if(model.accountEmail.trim()||model.accountPassword){
    model.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>setShowLogin(false),'Lämna inloggningen');
@@ -37,6 +39,7 @@ export function AppSessionView({model}:{model:SessionModel}){
   const subscription=BackHandler.addEventListener('hardwareBackPress',()=>{
    const state=backStateRef.current;
    const current=state.model;
+   if(!current.deletion.ready)return true;
    // A native Modal owns its own Android back event through onRequestClose.
    if(state.authPrompt!==null){
     setAuthPrompt(state.authPrompt==='email'||state.authPrompt==='benefits'?'choice':null);
@@ -97,6 +100,7 @@ export function AppSessionView({model}:{model:SessionModel}){
   return ()=>{cancelled=true;};
  },[ready,accountUser?.uid,syncStatus,model.data]);
 
+ if(!model.deletion.ready)return <AccountDeletionStatus deletion={model.deletion}/>;
  if(loadError)return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',alignItems:'center',padding:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24),gap:16}}><Text style={{color:C.white,textAlign:'center'}}>{loadError}</Text><Text style={{color:C.dim,textAlign:'center'}}>Ingen historik har skrivits över. Starta om appen efter att problemet åtgärdats.</Text></ScrollView>;
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
@@ -146,7 +150,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  if(authPrompt!==null && !accountUser)return <View style={s.root}><AppSessionOnboarding model={model}/><AppSessionOverlays model={model}/>{authModal}</View>;
  return <View style={s.root}><ScrollView key={tab} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={{paddingLeft:Math.max(insets.left,20),paddingRight:Math.max(insets.right,20),paddingTop:Math.max(insets.top,18)+12,paddingBottom:32,gap:20}} showsVerticalScrollIndicator={false}>
  <ScreenHeader tab={tab} clock={clock} onNavigate={go}/>
- {(['home','plan','register','stats','history','sos','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
+ {(['plan','register','stats','history','benefits'] as Tab[]).includes(tab)?<SectionIntroCard tab={tab as 'home'|'plan'|'register'|'stats'|'history'|'sos'|'benefits'}/>:null}
  <AppScreenRouter model={model}/>
  </ScrollView><BottomNavigation tab={tab} onNavigate={go}/><AppSessionOverlays model={model}/>
  {authModal}

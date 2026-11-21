@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
-function load(path,deps={}){const context={exports:{},require:id=>{if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,context);return context.exports;}
+function load(path,deps={}){const context={exports:{},require:id=>{if(id==='./accountDeletionSafety')return load('src/accountDeletionSafety.ts');if(!(id in deps))throw Error(id);return deps[id];}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,context);return context.exports;}
 const catalog=load('src/data/sosIdeas.ts');
 const {normalizeActionPlans:normalize,toggleActionStep:toggle,moveActionStep:move,rememberActionStrategy:remember,clearActionPlan:clear}=load('src/domain/actionPlans.ts',{'../data/sosIdeas':catalog});
 const {createLocalPreferences:create}=load('src/localPreferences.ts');

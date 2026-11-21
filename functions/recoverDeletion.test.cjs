@@ -4,11 +4,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-function harness({state = 'deleting', authExists = false, remaining = [], confirm = false, parentExists = false, unknownCollections = [], extraControl = false} = {}) {
+function harness({state = 'deleting', authExists = false, remaining = [], confirm = false, parentExists = false, unknownCollections = [], extraControl = false, leaseUntilMs = 0, projectId = 'smokeless-recovery-test', env = {}, args, existingProject} = {}) {
   let updated = false;
   const lock = {
     exists: state !== null,
-    get: key => key === 'state' ? state : undefined
+    get: key => key === 'state' ? state : key === 'leaseUntilMs' ? leaseUntilMs : undefined
   };
   const db = {
     doc: path => {
@@ -40,8 +40,8 @@ function harness({state = 'deleting', authExists = false, remaining = [], confir
     }
   };
   const modules = {
-    'firebase-admin/app': {initializeApp() {}, getApps: () => [1]},
-    'firebase-admin/firestore': {getFirestore: () => db, FieldValue: {serverTimestamp: () => 'now'}},
+    'firebase-admin/app': {initializeApp(options, name) {assert.equal(options.projectId, projectId);assert.equal(name, 'deletion-recovery');return {options};}, getApps: () => existingProject ? [{name: 'deletion-recovery', options: {projectId: existingProject}}] : []},
+    'firebase-admin/firestore': {getFirestore: app => {assert.equal(app.options.projectId, projectId);return db;}, FieldValue: {serverTimestamp: () => 'now'}},
     'firebase-admin/auth': {getAuth: () => ({async getUser() {
       if (!authExists) {
         const error = new Error('missing');
@@ -59,7 +59,7 @@ function harness({state = 'deleting', authExists = false, remaining = [], confir
       if (name in modules) return modules[name];
       throw Error('Unexpected module: ' + name);
     },
-    process: {argv: ['node', 'recoverDeletion.js', 'test-uid', ...(confirm ? ['--confirm-completed'] : [])]},
+    process: {env, argv: ['node', 'recoverDeletion.js', ...(args || ['test-uid', '--project', projectId, ...(confirm ? ['--confirm-completed'] : [])])]},
     console: {log: message => logs.push(message), error: message => logs.push(message)}
   };
   context.exports = context.module.exports;
@@ -72,6 +72,42 @@ test('default recovery inspection is read-only', async () => {
   await h.run();
   assert.equal(h.updated, false);
   assert.match(h.logs[0], /dry-run/);
+  assert.doesNotMatch(h.logs[0], /test-uid/);
+});
+
+test('requires an explicit valid project and rejects extra arguments', async () => {
+  for (const args of [['test-uid'], ['test-uid', '--project', 'bad/path'], ['test-uid', '--project', 'valid-project', '--confirm-completed', 'extra']]) {
+    const h = harness({args});
+    await assert.rejects(h.run(), /Usage/);
+    assert.equal(h.updated, false);
+  }
+});
+
+test('refuses mixed emulator/production targets and wrong initialized project', async () => {
+  for (const options of [
+    {env: {FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080'}},
+    {projectId: 'demo-smokeless-qa'},
+    {projectId: 'demo-smokeless-qa', env: {FIRESTORE_EMULATOR_HOST: 'remote.example:8080', FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099'}},
+    {existingProject: 'wrong-project'},
+  ]) {
+    const h = harness(options);
+    await assert.rejects(h.run(), /emulator|project mismatch/);
+    assert.equal(h.updated, false);
+  }
+});
+
+test('explicit demo recovery works only with both loopback emulators', async () => {
+  const h = harness({projectId: 'demo-smokeless-qa', env: {FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080', FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099'}});
+  await h.run();
+  assert.equal(h.updated, false);
+});
+
+test('refuses finalization during active or invalid lease', async () => {
+  for (const leaseUntilMs of [Date.now() + 600000, undefined, null, NaN, 'expired']) {
+    const h = harness({confirm: true, leaseUntilMs: leaseUntilMs === undefined ? null : leaseUntilMs});
+    await assert.rejects(h.run(), /lease is active or invalid/);
+    assert.equal(h.updated, false);
+  }
 });
 test('explicit confirmation completes only an empty, auth-less deletion', async () => {
   const h = harness({confirm: true});
