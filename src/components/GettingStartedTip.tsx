@@ -18,4 +18,4 @@ export function GettingStartedTip({uid,id}:{uid:string|null;id:GuidanceId}){
   {open&&<><Text style={s.text}>{guidanceText[id].text}</Text><Pressable accessibilityRole="button" onPress={dismiss} style={s.button}><Text style={s.link}>Visa inte det här tipset igen</Text></Pressable></>}
  </View>;
 }
-const createS=(C:ThemeColors)=>StyleSheet.create({box:{gap:8,padding:12,borderWidth:1,borderColor:C.border,borderRadius:16},button:{minHeight:48,justifyContent:'center',padding:8},link:{color:C.lime,fontSize:14,fontWeight:'700'},text:{color:C.dim,fontSize:14,lineHeight:21}});
+const createS=(C:ThemeColors)=>StyleSheet.create({box:{gap:8,padding:4,borderWidth:1,borderColor:C.border,borderRadius:16},button:{minHeight:48,justifyContent:'center',padding:8},link:{color:C.lime,fontSize:14,fontWeight:'700'},text:{color:C.dim,fontSize:14,lineHeight:21}});

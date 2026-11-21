@@ -78,7 +78,7 @@ export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,email
  </View>;
 }
 const createS=(C:ThemeColors)=>StyleSheet.create({
- card:{backgroundColor:C.surface,borderRadius:24,padding:15,borderWidth:1,borderColor:C.border,gap:9},
+ card:{backgroundColor:C.surface,borderRadius:16,padding:15,borderWidth:1,borderColor:C.border,gap:9},
  cardTitle:{fontSize:16,fontWeight:'800',color:C.white},
  muted:{fontSize:15,color:C.muted,lineHeight:23},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},

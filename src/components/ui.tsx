@@ -18,9 +18,9 @@ export function AppButton({title,onPress,secondary=false,disabled=false,secondar
  </Pressable>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- card:{backgroundColor:C.surface,borderRadius:designTokens.radius.card,padding:designTokens.spacing.xl,gap:designTokens.spacing.lg},
+ card:{backgroundColor:C.surface,borderRadius:designTokens.radius.card,padding:designTokens.spacing.lg,gap:designTokens.spacing.lg},
  elevated:{backgroundColor:C.elevated},
- button:{backgroundColor:C.lime,paddingHorizontal:24,paddingVertical:17,borderRadius:designTokens.radius.control,alignItems:'center',justifyContent:'center',minHeight:56},
+ button:{backgroundColor:C.lime,paddingHorizontal:20,paddingVertical:13,borderRadius:designTokens.radius.control,alignItems:'center',justifyContent:'center',minHeight:48},
  pressed:{opacity:.8},
  disabled:{opacity:.5},
  secondaryElevated:{backgroundColor:C.elevated},

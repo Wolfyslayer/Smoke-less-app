@@ -29,8 +29,8 @@ export function HistoryScreen({entries,sorted,onRemove}:Props){
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:20},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
- card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:24,padding:17},
+ screen:{gap:16},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
+ card:{backgroundColor:C.elevated,borderWidth:1,borderColor:C.border,borderRadius:16,padding:17},
  inline:{flexDirection:'row',alignItems:'center',gap:14},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},
  heroNumber:{fontSize:48,fontWeight:'900',color:C.white},

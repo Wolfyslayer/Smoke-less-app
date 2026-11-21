@@ -6,6 +6,8 @@ import {syncCloudData,resetObservedCloudPlans,subscribeCloudChanges} from '../cl
 import {backupBeforeCloudImport} from '../storage';
 import {useAppResumeTrigger} from './useAppResumeTrigger';
 
+export type SyncPhase='idle'|'syncing'|'synced'|'error';
+
 /** Owns the existing debounced, account-scoped cloud sync workflow. */
 export function useCloudSync({
  data,setData,dataRef,ready,sessionUser,migrationBusy,cloudPreviewBusy,verifyCurrentUid
@@ -14,14 +16,17 @@ export function useCloudSync({
  ready:boolean;sessionUser:{uid:string}|null;migrationBusy:boolean;cloudPreviewBusy:boolean;
  verifyCurrentUid:()=>string|null;
 }){
- const [syncStatus,setSyncStatus]=useState('');
+ const [syncState,setSyncState]=useState<{uid:string|null;phase:SyncPhase;message:string}>({uid:null,phase:'idle',message:''});
+ const currentUid=sessionUser?.uid??null;
+ const scopedState=currentUid!==null&&syncState.uid===currentUid?syncState:{phase:'idle' as const,message:''};
+ const setSync=(uid:string,phase:SyncPhase,message:string)=>setSyncState({uid,phase,message});
  const [syncTrigger,setSyncTrigger]=useState(0);
  const syncInFlight=useRef(false);
  const syncQueued=useRef(false);
  const lastUid=useRef<string|null|undefined>(undefined);
  useEffect(()=>{
   const uid=sessionUser?.uid??null;
-  if(lastUid.current!==uid){resetObservedCloudPlans();lastUid.current=uid;}
+  if(lastUid.current!==uid){resetObservedCloudPlans();lastUid.current=uid;setSyncState({uid,phase:'idle',message:''});}
  },[sessionUser?.uid]);
  useEffect(()=>{
   if(!sessionUser || !ready || migrationBusy || cloudPreviewBusy)return;
@@ -31,20 +36,20 @@ export function useCloudSync({
    if(syncInFlight.current){syncQueued.current=true;return;}
    const original=JSON.stringify(dataRef.current);
    syncInFlight.current=true;
-   setSyncStatus('Synkroniserar…');
+   setSync(uid,'syncing','Synkroniserar…');
    void (async()=>{
     try{
      const merged=await syncCloudData(uid,dataRef.current);
      if(verifyCurrentUid()!==uid)return;
-     if(JSON.stringify(dataRef.current)!==original){setSyncStatus('Lokala data ändrades. Synkroniserar igen.');setSyncTrigger(v=>v+1);return;}
+     if(JSON.stringify(dataRef.current)!==original){setSync(uid,'syncing','Lokala data ändrades. Synkroniserar igen.');setSyncTrigger(v=>v+1);return;}
      if(JSON.stringify(merged)!==original){
       await backupBeforeCloudImport(dataRef.current,uid);
       if(verifyCurrentUid()!==uid || JSON.stringify(dataRef.current)!==original)return;
       setData(merged);
      }
-     setSyncStatus('Historiken är synkroniserad');
+     setSync(uid,'synced','Historiken är synkroniserad');
     }catch(error){
-     if(verifyCurrentUid()===uid)setSyncStatus(userMessage(error,'Synkronisering misslyckades. Försöker igen nästa gång appen öppnas.'));
+     if(verifyCurrentUid()===uid)setSync(uid,'error',userMessage(error,'Synkronisering misslyckades. Försöker igen nästa gång appen öppnas.'));
     }finally{
      syncInFlight.current=false;
      if(syncQueued.current){syncQueued.current=false;setSyncTrigger(v=>v+1);}
@@ -63,11 +68,11 @@ export function useCloudSync({
     else setSyncTrigger(v=>v+1);
    }
   },error=>{
-   if(active && verifyCurrentUid()===uid)setSyncStatus(userMessage(error,'Kunde inte följa ändringar i molnet. Försök synkronisera igen.'));
+   if(active && verifyCurrentUid()===uid)setSync(uid,'error',userMessage(error,'Kunde inte följa ändringar i molnet. Försök synkronisera igen.'));
   });
   return()=>{active=false;unsubscribe();};
  },[sessionUser?.uid,ready,migrationBusy,cloudPreviewBusy]);
  useAppResumeTrigger(setSyncTrigger);
- const retrySync=()=>{setSyncStatus('');if(syncInFlight.current){syncQueued.current=true;}else{setSyncTrigger(v=>v+1);}};
- return {syncStatus,retrySync};
+ const retrySync=()=>{setSyncState({uid:currentUid,phase:'idle',message:''});if(syncInFlight.current){syncQueued.current=true;}else{setSyncTrigger(v=>v+1);}};
+ return {syncStatus:scopedState.message,syncPhase:scopedState.phase,retrySync};
 }

@@ -1,6 +1,6 @@
 ### Fas 30.0 – fast checklista (8 huvudpunkter × 4 delpunkter = 32)
 
-**Status:** Kodmilstolpe: 2/8 huvudpunkter (25 %), 20/32 delpunkter (62,5 %). Senaste 529be8b har grön validate/rules. Fysisk acceptans och offentlig release är öppna.
+**Status:** Kodmilstolpe: 2/8 huvudpunkter (25 %), 19/32 delpunkter (59,375 %). Lokal verifiering PASS, senaste CI väntar. Fysisk acceptans och offentlig release är öppna.
 
 1. **Release-inventering och kriterier (4/4)**
    - [x] 1.1 Inventera samtliga användarsynliga skärmar, dialoger, knappar och texter.
@@ -36,9 +36,9 @@
    - [x] 7.1 Lägg till tester som upptäcker debug-/Preview-UI i Production.
    - [x] 7.2 Lägg till relevanta notis-, text- och navigationsregressionstester.
    - [x] 7.3 Dokumentera versionering, signering, OTA/native-gräns och rollback.
-   - [x] 7.4 Förbered release-checklista och Play Store-underlag utan publicering.
-8. **Verifiering och överlämning (1/4)**
-   - [x] 8.1 Kör TypeScript, relevanta tester och båda obligatoriska CI-kontrollerna.
+   - [x] 7.4 Förbered APK-releasechecklista, webbdistribution och installationsunderlag utan publicering.
+8. **Verifiering och överlämning (0/4)**
+   - [ ] 8.1 Kör TypeScript, relevanta tester och båda obligatoriska CI-kontrollerna.
    - [ ] 8.2 Verifiera fristående Preview och release-liknande Android-build på enhet.
    - [ ] 8.3 Kontrollera kontosäkerhet, databevarande, notiser och tillgänglighet.
    - [ ] 8.4 Slutför fasens PR och dokumentera kvarvarande releasehinder; invänta uttryckligt publiceringsbeslut.

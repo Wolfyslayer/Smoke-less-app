@@ -17,9 +17,9 @@ export function RegisterScreen({todayCount,goal,duration,sorted,today,last,onOpe
  const C=useThemeColors(); const styles=useThemeStyles(createStyles);
 
  return <View style={styles.screen}>
-  <View style={styles.registerHero}><View style={styles.registerOverview}><View style={{flex:1,gap:8}}>
+  <View style={styles.registerHero}><View style={styles.registerOverview}><View style={{flex:1,minWidth:120,gap:8}}>
    <Text style={styles.label}>REGISTRERADE IDAG</Text>
-   <Text style={[styles.heroNumber,{fontSize:76}]}>{todayCount}</Text>
+   <Text style={[styles.heroNumber,{fontSize:40}]}>{todayCount}</Text>
    <View><Text style={styles.muted}>Dagens riktvärde: {goal}</Text></View>
    </View><View style={styles.lastRegistration}><Clock size={22} color={C.accent}/><Text style={styles.label}>SENASTE CIGARETTEN</Text><Text style={styles.statValue}>{duration||'Ingen ännu'}</Text></View></View>
    <Button title="+ Registrera cigarett" onPress={onOpenRegister}/>
@@ -34,10 +34,10 @@ export function RegisterScreen({todayCount,goal,duration,sorted,today,last,onOpe
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:24},registerHero:{backgroundColor:C.surface,borderRadius:28,padding:22,gap:24},registerOverview:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',gap:20},lastRegistration:{flex:1,minWidth:110,gap:10,paddingLeft:18,borderLeftWidth:1,borderLeftColor:C.border},card:{backgroundColor:C.surface,borderRadius:22,padding:18},
+ screen:{gap:16},registerHero:{backgroundColor:C.surface,borderRadius:16,padding:16,gap:24},registerOverview:{flexDirection:'row',flexWrap:'wrap',alignItems:'center',gap:20},lastRegistration:{flex:1,minWidth:110,gap:10,paddingLeft:18,borderLeftWidth:1,borderLeftColor:C.border},card:{backgroundColor:C.surface,borderRadius:22,padding:18},
  label:{fontSize:11,fontWeight:'800',letterSpacing:1.5,color:C.lime},
- heroNumber:{fontSize:48,fontWeight:'900',color:C.white},
- statValue:{fontSize:26,fontWeight:'800',color:C.white},
+ heroNumber:{fontSize:40,fontWeight:'900',color:C.white},
+ statValue:{fontSize:20,fontWeight:'800',color:C.white},
  muted:{fontSize:15,lineHeight:23,color:C.dim},
  sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8},historyLink:{minHeight:48,justifyContent:'center',paddingHorizontal:8},deleteAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
  heading:{fontSize:19,fontWeight:'800',color:C.white},link:{color:C.lime,fontSize:15,fontWeight:'700'},

@@ -17,7 +17,7 @@ test('presentation never reflects SDK messages, credentials, storage keys or unk
 test('Android reminder channel is created only on explicit activation and before permission',async()=>{
  let adapter;const calls=[];
  const notifications={AndroidImportance:{DEFAULT:3},AndroidNotificationVisibility:{PRIVATE:0},SchedulableTriggerInputTypes:{DAILY:'daily',WEEKLY:'weekly'},setNotificationChannelAsync:async(id,value)=>calls.push(['channel',id,value]),getPermissionsAsync:async()=>{calls.push(['read']);return {granted:false}},requestPermissionsAsync:async()=>{calls.push(['request']);return {granted:true}},scheduleNotificationAsync:async value=>calls.push(['schedule',value])};
- const deps={react:{},'react-native':{Platform:{OS:'android'}},'@react-native-async-storage/async-storage':{},'expo-notifications':notifications,'../reminderService':{createReminderService:(_,n)=>{adapter=n;return {}}},'../domain/reminders':{},'../theme':{}};
+ const deps={react:{},'react-native':{Platform:{OS:'android'}},'./SettingsSwitch':{},'@react-native-async-storage/async-storage':{},'expo-notifications':notifications,'../reminderService':{createReminderService:(_,n)=>{adapter=n;return {}}},'../domain/reminders':{},'../theme':{}};
  const context={exports:{},require:id=>{assert(id in deps,id);return deps[id]}};
  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/components/ReminderSettings.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React}}).outputText,context);
  assert.equal(calls.length,0);
@@ -30,9 +30,10 @@ test('Android reminder channel is created only on explicit activation and before
 
 test('release presentation has no technical build instructions or raw errors in account and sync flows',()=>{
  for(const file of ['src/screens/AccountScreen.tsx','src/screens/SettingsScreen.tsx','src/components/OnboardingAuthModal.tsx'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/under utveckling|Android-build|development build/);
- for(const file of ['src/hooks/useAccountFlow.ts','src/hooks/useCloudSync.ts'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/error\.message|Firestore-lyssnare/);
+ for(const file of ['src/hooks/useAccountFlow.ts','src/hooks/useCloudSync.ts','src/hooks/useLocalSession.ts','src/hooks/useSettingsFlow.ts'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/error\.message|Firestore-lyssnare/);
  const settings=fs.readFileSync('src/screens/SettingsScreen.tsx','utf8');assert.match(settings,/appVariant==='preview'/);
  const client=fs.readFileSync('src/updates/previewUpdateClient.native.ts','utf8');assert.match(client,/appVariant!=='preview'/);
  const hook=fs.readFileSync('src/hooks/useCloudSync.ts','utf8'),view=fs.readFileSync('src/components/AppSessionView.tsx','utf8');
- assert.match(hook,/Historiken är synkroniserad/);assert.equal((view.match(/syncStatus!=='Historiken är synkroniserad'/g)||[]).length,2);
+ assert.match(hook,/Historiken är synkroniserad/);assert.equal((view.match(/syncPhase!=='synced'/g)||[]).length,2);
+ assert.doesNotMatch(view,/syncStatus\s*[!=]==/);
 });

@@ -113,8 +113,8 @@ test('centered hero keeps its number inside the ring and stacks statistics befor
   const layout=progressCardLayout(buildDailyShareCard({todayCount,dailyGoal}),scale);
   assert.ok(layout.numberY-layout.numberSize>=layout.ringY-layout.ringRadius);
   assert.ok(layout.numberY<=layout.ringY+layout.ringRadius);
-  assert.ok(layout.statsY>layout.captionY);
-  assert.ok(layout.messageY-13*layout.scale>layout.statsY+(layout.stacked?73:18)*layout.scale);
+  if(layout.stacked){assert.ok(layout.statsY>layout.captionY);assert.ok(layout.messageY-13*layout.scale>layout.statsY+73*layout.scale);}
+  else{assert.equal(layout.horizontal,true);assert.ok(80+layout.ringRadius<162,'ring must stay left of the statistics');assert.ok(layout.messageY-13*layout.scale>layout.ringY+layout.ringRadius);}
   assert.equal(layout.stacked,scale>1.3);
  }
 });
@@ -141,7 +141,7 @@ test('profile overview keeps account text selectable and category rows accessibl
  const profile=fs.readFileSync('src/components/ProfileOverview.tsx','utf8');
  assert.match(profile,/selectable style=\{s.description\}/);
  assert.match(profile,/accessibilityRole="button" accessibilityLabel=\{category.title\}/);
- assert.match(profile,/row:\{minHeight:88/);
+ assert.ok(Number(profile.match(/row:\{minHeight:(\d+)/)[1])>=48,'category rows must preserve accessible touch targets');
  assert.match(profile,/rowTitle:\{[^}]*flexShrink:1/);
 });
 
@@ -181,7 +181,7 @@ test('reminder settings support larger text and polite status announcements',()=
 test('home quick actions expose accessible labels and adapt to larger text',()=>{
  const home=fs.readFileSync('src/screens/HomeScreen.tsx','utf8');
  assert.match(home,/function Tile\([\s\S]*?accessibilityRole="button" accessibilityLabel=\{title\}/);
- assert.match(home,/style=\{\[styles\.tileText,featured&&\{color:C\.onAccent\}\]\}/);
+ assert.match(home,/style=\{\[styles\.tileText,\{color:featured\?C\.onAccent:C\.background\}\]\}/);
  assert.match(home,/tileText:\{[^}]*color:C\.white[^}]*\}/);
  assert.match(home,/accessibilityRole="header" style=\{\[styles\.heading,\{flexShrink:1\}\]\}>Din utveckling/);
  assert.match(home,/accessibilityLabel="Visa mer statistik om din utveckling"/);

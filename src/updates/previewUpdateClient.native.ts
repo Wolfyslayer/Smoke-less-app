@@ -11,8 +11,9 @@ export function getPreviewUpdateService():PreviewUpdateService|null{
  try{
   const updates=require('expo-updates') as typeof import('expo-updates');
   const app=require('expo-application') as typeof import('expo-application');
-  const info={applicationId:app.applicationId??'',version:app.nativeApplicationVersion??'',build:Number(app.nativeBuildVersion),runtime:updates.runtimeVersion??'',channel:updates.channel??'',projectId:Constants.easConfig?.projectId??''};
-  if(!updates.isEnabled||!validInstalledPreview(info)||info.projectId!==identity.preview.projectId)return service=null;
+  const configProjectId=Constants.expoConfig?.extra?.eas?.projectId;
+  const info={applicationId:app.applicationId??'',version:app.nativeApplicationVersion??'',build:Number(app.nativeBuildVersion),runtime:updates.runtimeVersion??'',channel:updates.channel??'',projectId:Constants.easConfig?.projectId??configProjectId??''};
+  if(!updates.isEnabled||!validInstalledPreview(info)||info.projectId!==identity.preview.projectId||(configProjectId!==undefined&&configProjectId!==info.projectId))return service=null;
   service=createPreviewUpdateService({info,now:Date.now,storage:AsyncStorage,checkOta:updates.checkForUpdateAsync,fetchOta:updates.fetchUpdateAsync,openUrl:url=>Linking.openURL(url),fetchManifest:async()=>{
    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),10000);
    try{const response=await fetch(PREVIEW_MANIFEST_URL,{redirect:'error',signal:controller.signal});if(response.url!==PREVIEW_MANIFEST_URL)throw Error('Manifest redirected');if(response.status===404)return null;if(!response.ok)throw Error('Manifest unavailable');if(Number(response.headers.get('content-length'))>16384)throw Error('Manifest too large');const text=await response.text();if(text.length>16384)throw Error('Manifest too large');return JSON.parse(text);}finally{clearTimeout(timeout);}

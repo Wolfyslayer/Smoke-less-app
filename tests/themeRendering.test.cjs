@@ -1,15 +1,16 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const vm=require('node:vm');const ts=require('typescript');const React=require('react');const {renderToStaticMarkup:render}=require('react-dom/server');
 let width=360,fontScale=1,capturedActions=null,capturedViews=null;
+let controlledStates=null,controlledIndex=0;const renderReact={...React,useState:initial=>{if(!controlledStates)return React.useState(initial);const i=controlledIndex++;if(!(i in controlledStates))controlledStates[i]=initial;return [controlledStates[i],value=>controlledStates[i]=typeof value==='function'?value(controlledStates[i]):value];}};
 const flat=style=>Object.assign({},...[typeof style==='function'?style({pressed:false}):style].flat(Infinity).filter(Boolean));
 const element=tag=>function Element({children,style,accessibilityRole,accessibilityLabel,accessibilityState,accessible,...props}){if(capturedActions&&tag==='button')capturedActions.push({label:accessibilityLabel,children,onPress:props.onPress,disabled:props.disabled,state:accessibilityState});if(capturedViews&&props.testID)capturedViews.push({id:props.testID,style:flat(style)});return React.createElement(tag,{style:flat(style),role:accessibilityRole,'aria-label':accessibilityLabel,...(tag==='button'?{disabled:props.disabled}:{}),...(props.fill?{fill:props.fill}:{}),...(props.stroke?{stroke:props.stroke}:{})},children);};
-const rn={View:element('div'),Text:element('span'),Pressable:element('button'),ScrollView:element('section'),Modal:({visible,children})=>visible?children:null,StyleSheet:{create:s=>s},useWindowDimensions:()=>({width,height:900,fontScale}),ActivityIndicator:element('span')};
-const svg={__esModule:true,default:element('svg'),Circle:element('circle'),Rect:element('rect'),Text:element('text'),TSpan:element('tspan')};
+const rn={Switch:element('input'),View:element('div'),Text:element('span'),Pressable:element('button'),ScrollView:element('section'),Modal:({visible,children})=>visible?children:null,StyleSheet:{create:s=>s},useWindowDimensions:()=>({width,height:900,fontScale}),ActivityIndicator:element('span')};
+const svg={__esModule:true,default:element('svg'),Circle:element('circle'),Rect:element('rect'),Text:element('text'),TSpan:element('tspan'),Path:element('path'),Defs:element('defs'),LinearGradient:element('linearGradient'),RadialGradient:element('radialGradient'),Stop:element('stop')};
 const cache=new Map();
 function load(file){
  file=path.resolve(file);if(cache.has(file))return cache.get(file);
  const out={};cache.set(file,out);
  const context={exports:out,require:id=>{
-  if(id==='react')return React;if(id==='react-native')return rn;if(id==='react-native-svg')return svg;
+  if(id==='react')return renderReact;if(id==='react-native')return rn;if(id==='react-native-svg')return svg;
   if(id==='lucide-react-native')return new Proxy({},{get:()=>element('span')});
   if(id==='react-native-safe-area-context')return {useSafeAreaInsets:()=>({top:24,bottom:24,left:0,right:0})};
   if(id==='@react-native-async-storage/async-storage')return {getItem:async()=>null,setItem:async()=>assert.fail('Render must not save'),getAllKeys:async()=>[]};
@@ -95,4 +96,26 @@ test('cloud data controls stay disabled while another account operation is activ
 
 test('selected bottom tabs use a round indicator without a filled selection rectangle',()=>{
  for(const name of ['light','dark'])for(const tab of ['home','plan','register','stats','profile']){capturedViews=[];capturedActions=[];themed(name,React.createElement(BottomNavigation,{tab,onNavigate:()=>{}}));const selected=capturedActions.filter(action=>action.state?.selected);assert.equal(selected.length,1);const dots=capturedViews.filter(v=>v.id.startsWith('bottom-nav-indicator-'));assert.equal(dots.filter(v=>v.style.backgroundColor===palettes[name].accent).length,1);assert(dots.every(v=>v.style.borderRadius>=v.style.width/2&&v.style.width===v.style.height));for(const icon of capturedViews.filter(v=>v.id.startsWith('bottom-nav-icon-'))){assert(icon.style.borderRadius>=Math.min(icon.style.width,icon.style.height)/2);if(!icon.id.endsWith('register'))assert.equal(icon.style.backgroundColor,undefined);}capturedViews=null;capturedActions=null;}
+});
+
+test('compact reference header buttons retain working destinations and back behavior',()=>{
+ const {ScreenHeader}=load('src/components/ScreenHeader.tsx');
+ for(const [tab,label,destination] of [['home','Öppna appinställningar','settings'],['profile','Öppna appinställningar','settings'],['plan','Öppna min profil','profile']]){
+  const calls=[];capturedActions=[];themed('dark',React.createElement(ScreenHeader,{tab,clock:Date.parse('2026-11-16T12:00:00Z'),onNavigate:value=>calls.push(value)}));assert.deepEqual(calls,[]);const action=capturedActions.find(a=>a.label===label);assert(action);action.onPress();assert.deepEqual(calls,[destination]);
+ }
+ let back=0;capturedActions=[];themed('light',React.createElement(ScreenHeader,{tab:'settings',clock:0,onNavigate:()=>assert.fail('Back should use the existing history'),onBack:()=>back++}));capturedActions.find(a=>a.label==='Tillbaka').onPress();assert.equal(back,1);capturedActions=null;
+});
+
+
+test('reference statistics tabs reveal the existing data sections without modifying history',()=>{
+ const {StatsScreen}=load('src/screens/StatsScreen.tsx');
+ const data={profile:{mode:'reduce',baseline:12,packSize:20,packPrice:85,speed:'gentle',startAt:'2026-11-01T12:00:00Z'},entries:[],cravings:[],checkins:[]},before=JSON.stringify(data);
+ const props={data,clock:Date.parse('2026-11-15T12:00:00Z'),period:7,weekly:[0,0,0,0,0,0,0],todayCount:0,recentCravingsCount:0,cravingTriggers:[],cigaretteTriggers:[],onPeriodChange:()=>assert.fail('Rendering or switching sections must not change the period')};
+ const draw=()=>{controlledIndex=0;capturedActions=[];return themed('dark',React.createElement(StatsScreen,props));};
+ try{
+  controlledStates=[];let html=draw();assert(html.includes('Cigaretter per dag'));assert(!html.includes('Så räknas din besparing'));assert(!html.includes('Diagrammet visar alltid'));
+  capturedActions.find(a=>a.label==='Om diagrammet').onPress();html=draw();assert(html.includes('Diagrammet visar alltid'));capturedActions.find(a=>a.label==='Om diagrammet').onPress();html=draw();assert(!html.includes('Diagrammet visar alltid'));
+  for(const [label,expected] of [['Hälsa','Din hälsa, i din takt'],['Ekonomi','Så räknas din besparing'],['Historik','Strategier som hjälpt dig'],['Översikt','Cigaretter per dag']]){const action=capturedActions.find(a=>a.label===label);assert(action,label);action.onPress();html=draw();assert(html.includes(expected),label);assert.equal(capturedActions.filter(a=>a.state?.selected&&['Översikt','Hälsa','Ekonomi','Historik'].includes(a.label)).length,1);}
+  assert.equal(JSON.stringify(data),before);
+ }finally{controlledStates=null;capturedActions=null;}
 });

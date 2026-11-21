@@ -24,7 +24,7 @@ const codeMessages = {
   'auth/network-request-failed': 'Kontrollera internetanslutningen och försök igen.',
 };
 function userMessage(error, fallback) {
-  if (error && typeof error.code === 'string' && Object.hasOwn(codeMessages, error.code)) return codeMessages[error.code];
+  if (error && typeof error.code === 'string' && Object.prototype.hasOwnProperty.call(codeMessages, error.code)) return codeMessages[error.code];
   if (error && typeof error.message === 'string' && safeMessages.has(error.message)) return error.message;
   return fallback;
 }

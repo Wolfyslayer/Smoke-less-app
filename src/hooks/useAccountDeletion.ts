@@ -28,7 +28,10 @@ export function useAccountDeletion(props:Props){
   setState({phase:'loading',uid:props.uid,message:'',confirmed:false});
   void(async()=>{
    try{
-    await backend.finishDeletionCacheReset();
+    if(await backend.finishDeletionCacheReset()==='restart-required'){
+     if(current&&active.current){restartRequired.current=true;setState({phase:'restart',uid:null,message:'Starta om appen med knappen nedan för att slutföra säker städning. Din gästhistorik finns kvar.',confirmed:false});}
+     return;
+    }
     const recovery=await AsyncStorage.getItem(recoveryKey);
     const recoveredState=recovery?await localDeletionState(AsyncStorage,recovery):null;
     if(recovery&&!recoveredState)await AsyncStorage.removeItem(recoveryKey);
@@ -55,7 +58,7 @@ export function useAccountDeletion(props:Props){
    if(marker==='confirmed'||flow.current!.hasConfirmedResponse(uid))await flow.current!.resumeConfirmed(uid);
    else await flow.current!.run(uid,true);
    restartRequired.current=true;
-   if(active.current)setState({phase:'restart',uid,message:'Kontot och dess kontohistorik är raderade. Stäng appen och öppna den igen för att fortsätta.',confirmed:true});
+   if(active.current)setState({phase:'restart',uid,message:'Kontot och dess kontohistorik är raderade. Starta om appen för att fortsätta.',confirmed:true});
   }catch(error){
    let marker:Awaited<ReturnType<typeof localDeletionState>>='pending';
    try{marker=await localDeletionState(AsyncStorage,uid);}catch{/* Stay blocked if status cannot be read. */}
@@ -78,5 +81,12 @@ export function useAccountDeletion(props:Props){
   catch{if(active.current)setState(v=>({...v,message:'Kunde inte logga ut. Försök igen.'}));}
   finally{busy.current=false;}
  };
- return {state,ready:state.phase==='idle',enabled:backend.deletionEnabled,request,retry:()=>{if(state.uid)void run(state.uid);},leaveForGuest:()=>void leaveForGuest()};
+ const restartApp=async()=>{
+  if(busy.current)return;
+  busy.current=true;
+  try{await backend.restartDeletedApp();}
+  catch(error){if(active.current)setState(v=>({...v,message:error instanceof DeletionError?error.message:'Appen kunde inte startas om. Stäng den helt i Androids appinställningar och öppna den igen.'}));}
+  finally{busy.current=false;}
+ };
+ return {state,ready:state.phase==='idle',enabled:backend.deletionEnabled,request,retry:()=>{if(state.uid)void run(state.uid);},leaveForGuest:()=>void leaveForGuest(),restartApp:()=>void restartApp()};
 }

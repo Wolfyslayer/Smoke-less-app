@@ -46,10 +46,10 @@ export function OnboardingAuthModal({step,onEmail,onGoogle,googleConfigured,goog
 const createS=(C:ThemeColors)=>StyleSheet.create({
  confirmOverlay:{position:'absolute',top:0,right:0,bottom:0,left:0,backgroundColor:'rgba(0,0,0,.85)'},
  confirmScroll:{flexGrow:1,justifyContent:'center',paddingHorizontal:20},
- confirmCard:{backgroundColor:C.surface,borderRadius:26,borderWidth:1,borderColor:C.border,padding:22,gap:16},
+ confirmCard:{backgroundColor:C.surface,borderRadius:16,borderWidth:1,borderColor:C.border,padding:22,gap:16},
  overlay:{flex:1,backgroundColor:'rgba(0,0,0,.75)'},
  scrollContent:{flexGrow:1,justifyContent:'center',paddingHorizontal:20},
- card:{width:'100%',maxWidth:560,alignSelf:'center',backgroundColor:C.surface,borderRadius:26,borderWidth:1,borderColor:C.border,padding:22,gap:16},
+ card:{width:'100%',maxWidth:560,alignSelf:'center',backgroundColor:C.surface,borderRadius:16,borderWidth:1,borderColor:C.border,padding:22,gap:16},
  title:{fontSize:23,fontWeight:'900',color:C.white},
  description:{fontSize:14,lineHeight:21,color:C.muted},
  option:{flexDirection:'row',alignItems:'center',gap:14,minHeight:56,padding:15,borderRadius:14,backgroundColor:C.elevated,borderWidth:1,borderColor:C.border},

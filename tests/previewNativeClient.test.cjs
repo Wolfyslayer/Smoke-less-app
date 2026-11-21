@@ -7,3 +7,9 @@ test('native adapter requires Preview package, project, channel, module availabi
   const adapter=load('src/updates/previewUpdateClient.native.ts',deps,{__DEV__:o.dev});const client=adapter.getPreviewUpdateService();assert.equal(!!client,Object.keys(patch).length===0);assert.equal(called,0);
  }
 });
+test('local standalone build uses signed Expo config project identity when the legacy embedded manifest has no EAS project field',()=>{
+ for(const [nativeProject,configProject,expected] of [[undefined,identity.preview.projectId,true],[identity.production.projectId,identity.preview.projectId,false],[identity.preview.projectId,identity.production.projectId,false],[undefined,undefined,false]]){
+  const deps={'expo-constants':{expoConfig:{extra:{appVariant:'preview',...(configProject?{eas:{projectId:configProject}}:{})}},...(nativeProject?{easConfig:{projectId:nativeProject}}:{})},'@react-native-async-storage/async-storage':{},'react-native':{Linking:{openURL:()=>assert.fail()}},'../../config/projectIdentity.json':identity,'./previewUpdateService':service,'./previewManifest':manifest,'expo-updates':{isEnabled:true,runtimeVersion:'runtime',channel:'preview',checkForUpdateAsync:()=>{},fetchUpdateAsync:()=>{}},'expo-application':{applicationId:identity.preview.package,nativeApplicationVersion:'6.0.0',nativeBuildVersion:'3'}};
+  const adapter=load('src/updates/previewUpdateClient.native.ts',deps,{__DEV__:false});assert.equal(!!adapter.getPreviewUpdateService(),expected);
+ }
+});

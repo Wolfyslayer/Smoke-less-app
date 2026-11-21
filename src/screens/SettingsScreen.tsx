@@ -1,5 +1,6 @@
 import {SettingsSection} from '../components/SettingsSection';
 import {AppearanceSettings} from '../components/AppearanceSettings';
+import {SettingsSwitch} from '../components/SettingsSwitch';
 import {PreviewUpdateSettings} from '../components/PreviewUpdateSettings';
 import Constants from 'expo-constants';
 import React,{useEffect,useState} from 'react';
@@ -41,12 +42,11 @@ export function SettingsScreen({data}:Props){
   {Constants.expoConfig?.extra?.appVariant==='preview'?<SettingsSection title="Sök efter uppdateringar" description="Appuppdateringar och nya Preview-versioner"><PreviewUpdateSettings/></SettingsSection>:null}
   <SettingsSection title="Utseende" description="Ljust, mörkt eller systemtema"><AppearanceSettings/></SettingsSection>
 
-  <SettingsSection title="Android-widget" description="Välj vad som visas på hemskärmen">
+  <SettingsSection title="Android-widgetar" description="Dagsöversikt, registrering och SOS på hemskärmen">
   <Card style={{gap:10,padding:18}}>
    <Text style={styles.muted}>Du väljer själv om dagens antal och mål får visas på hemskärmen. Lägg till widgeten från telefonens hemskärm när du har aktiverat den här.</Text>
-   <Pressable accessibilityRole="switch" accessibilityLabel="Tillåt dagsframsteg i Android-widget" accessibilityState={{checked:widgetEnabled,disabled:widgetBusy}} disabled={widgetBusy} onPress={toggleWidget} style={[styles.inline,{justifyContent:'space-between',minHeight:48,paddingVertical:10}]}>
-    <Text style={[styles.cardTitle,{flexShrink:1}]}>{widgetEnabled?'Tillåtet':'Inte tillåtet'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{widgetEnabled?'PÅ':'AV'}</Text>
-   </Pressable>
+   <SettingsSwitch label="Visa dagens antal och mål i widgetar" value={widgetEnabled} disabled={widgetBusy} onValueChange={()=>void toggleWidget()}/>
+   <Text style={styles.muted}>Dagens framsteg finns som vanlig och kompakt widget. Registrera och SOS är genvägar som inte visar personliga uppgifter. Lägg till dem via telefonens widgetmeny. Registreringswidgeten öppnar appen; den sparar ingen cigarett automatiskt.</Text>
    {widgetMessage?<Text accessibilityLiveRegion="polite" style={styles.muted}>{widgetMessage}</Text>:null}
   </Card>
   </SettingsSection>
@@ -56,7 +56,7 @@ export function SettingsScreen({data}:Props){
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:20},card:{backgroundColor:C.surface,borderRadius:24,padding:15,borderWidth:1,borderColor:C.border,gap:9},
+ screen:{gap:16},card:{backgroundColor:C.surface,borderRadius:16,padding:15,borderWidth:1,borderColor:C.border,gap:9},
  inline:{flexDirection:'row',alignItems:'center',gap:12},inlineHeading:{flexDirection:'row',alignItems:'center',gap:9},
  actionIcon:{width:36,height:36,borderRadius:11,backgroundColor:C.elevated,alignItems:'center',justifyContent:'center'},
  heading:{fontSize:19,fontWeight:'800',color:C.white},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},muted:{fontSize:15,color:C.muted,lineHeight:23},

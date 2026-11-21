@@ -58,32 +58,38 @@ exports.deleteMyAccount = onCall(
     // Preserve the original request timestamp on retries. A completed lock
     // must never be downgraded to "deleting" by a delayed duplicate request.
     try {
-      await lock.create({
-        state: 'deleting',
-        requestedAt: FieldValue.serverTimestamp(),
-        leaseUntilMs: Date.now() + DELETE_LEASE_MS,
-      });
-    } catch (error) {
-      if (error.code !== 6 && error.code !== 'already-exists') throw error;
-      const existing = await lock.get();
-      if (!existing.exists) throw error;
-      if (existing.get('state') === 'completed') return {deleted: true};
-      if (existing.get('state') !== 'deleting') {
-        throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
-      }
-      // An active invocation owns the lease. After it expires, a single
-      // retry may take over through a Firestore transaction.
-      await db.runTransaction(async transaction => {
-        const current = await transaction.get(lock);
-        if (!current.exists || current.get('state') !== 'deleting') {
+      try {
+        await lock.create({
+          state: 'deleting',
+          requestedAt: FieldValue.serverTimestamp(),
+          leaseUntilMs: Date.now() + DELETE_LEASE_MS,
+        });
+      } catch (error) {
+        if (error.code !== 6 && error.code !== 'already-exists') throw error;
+        const existing = await lock.get();
+        if (!existing.exists) throw error;
+        if (existing.get('state') === 'completed') return {deleted: true};
+        if (existing.get('state') !== 'deleting') {
           throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
         }
-        const leaseUntil = current.get('leaseUntilMs');
-        if (typeof leaseUntil !== 'number' || !Number.isFinite(leaseUntil) || leaseUntil > Date.now()) {
-          throw new HttpsError('failed-precondition', 'Kontoraderingen pågår redan.');
-        }
-        transaction.update(lock, {leaseUntilMs: Date.now() + DELETE_LEASE_MS});
-      });
+        // An active invocation owns the lease. After it expires, a single
+        // retry may take over through a Firestore transaction.
+        await db.runTransaction(async transaction => {
+          const current = await transaction.get(lock);
+          if (!current.exists || current.get('state') !== 'deleting') {
+            throw new HttpsError('failed-precondition', 'Kontoraderingen kräver administrativ kontroll.');
+          }
+          const leaseUntil = current.get('leaseUntilMs');
+          if (typeof leaseUntil !== 'number' || !Number.isFinite(leaseUntil) || leaseUntil > Date.now()) {
+            throw new HttpsError('failed-precondition', 'Kontoraderingen pågår redan.');
+          }
+          transaction.update(lock, {leaseUntilMs: Date.now() + DELETE_LEASE_MS});
+        });
+      }
+    } catch (error) {
+      if (error instanceof HttpsError) throw error;
+      console.error('Account deletion lock unavailable');
+      throw new HttpsError('internal', 'Raderingen kunde inte bekräftas. Försök igen eller kontakta support.');
     }
 
     try {

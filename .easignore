@@ -1,8 +1,10 @@
 node_modules/
+artifacts/
 .git/
 .expo/
 .tmp/
 dist/
+artifacts/
 android/
 ios/
 .env

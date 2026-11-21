@@ -9,6 +9,8 @@
     "plugins": [
       "expo-router",
       "expo-dev-client",
+      "expo-sharing",
+      "expo-status-bar",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "@react-native-google-signin/google-signin",
@@ -23,6 +25,7 @@
       ],
       "./plugins/withAndroidConfigChanges",
       "./plugins/withSmokeLessWidget",
+      "./plugins/withAccountDeletionLifecycle",
       "./plugins/withCustomDebugKeystore"
     ],
     "web": {
@@ -40,7 +43,7 @@
         "foregroundImage": "./assets/branding/adaptive-icon-foreground.png",
         "backgroundImage": "./assets/branding/adaptive-icon-background.png"
       },
-      "versionCode": 1,
+      "versionCode": 5,
       "permissions": [
         "POST_NOTIFICATIONS"
       ]

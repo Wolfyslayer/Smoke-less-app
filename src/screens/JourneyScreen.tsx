@@ -99,11 +99,11 @@ export function JourneyScreen({profile,todayCount,dailyGoal,onNavigate}:Props){
  </View>;
 }
 const createStyles=(C:ThemeColors)=>StyleSheet.create({
- screen:{gap:20},
+ screen:{gap:16},
  inline:{flexDirection:'row',alignItems:'center',gap:14},sectionRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12},
  muted:{fontSize:15,lineHeight:23,color:C.dim},cardTitle:{fontSize:16,fontWeight:'800',color:C.white},heading:{fontSize:19,fontWeight:'800',color:C.white},
  actionIcon:{width:42,height:42,borderRadius:13,backgroundColor:C.limeSoft,alignItems:'center',justifyContent:'center'},
  planAction:{minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center'},
- linkGroup:{backgroundColor:C.surface,borderRadius:28,overflow:'hidden'},row:{minHeight:76,flexDirection:'row',alignItems:'center',gap:14,borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:C.border,paddingHorizontal:20,paddingVertical:18}
+ linkGroup:{backgroundColor:C.surface,borderRadius:16,overflow:'hidden'},row:{minHeight:76,flexDirection:'row',alignItems:'center',gap:14,borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:C.border,paddingHorizontal:20,paddingVertical:18}
 
 });

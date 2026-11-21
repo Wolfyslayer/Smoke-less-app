@@ -1,3 +1,7 @@
+**Aktuell kandidatverifiering 2026-11-16:** Användaren har godkänt lokal Android-build på sin dator och test/uppgraderingsinstallation ENDAST på Android-emulator; telefonen ska inte användas. Ingen EAS-molnbyggnad, OTA eller offentlig release är godkänd. Senaste UI från 8bb7071 och releasearbetet från PR #173/#181/#182 samlas i befintlig PR #184. Verifierade dokumentations-/CI-förändringar från fas 25 (till 87f1a42) är införda med exakt patch ovanpå sammanslagningen. Preview-kandidaten får versionCode 3; EAS Preview-räknaren är separat verifierad till 2 och autoIncrement ger nästa nummer. Publik acceptansflagga och kontoraderingsflagga är fortsatt avstängda. Riktiga konton och telefonhistorik används inte som testdata.
+
+**Gällande distributionsbeslut 2026-11-16:** Fortsätt i befintliga PR #173/#181/#182 mot GitHub Releases och wolfyslayer.online. Google Play förbereds inte nu; äldre Play-hänvisningar är historik. Starta ingen Android-build, OTA eller offentlig release utan nytt uttryckligt godkännande. Bevara senare UI, main och signerings-/raderingsskydd.
+
 # AI_WORKFLOW.md – obligatoriskt arbetsflöde för Smoke Less
 
 Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och utvecklare. Läs den **innan** du ändrar kod, skapar commits eller hanterar en pull request. Läs också `docs/MASTER_ROADMAP.md`, aktuell fasplan, PR-beskrivning och senaste CI-status. Masterplanen anger fasernas ordning och omfattning; den aktiva PR:ns fasta checklista anger verifierad framdrift. Använd den senaste uppdaterade huvudchecklistan i fasens PR som källa till status.
@@ -28,7 +32,7 @@ Den här filen är den gemensamma arbetsinstruktionen för AI-assistenter och ut
 4. När AI har verifierat grönt: fortsätt automatiskt med nästa kvarvarande punkt i **samma fas och PR**. Fråga inte om nytt godkännande för varje rutinmässigt steg.
 5. **Efter varje commit ska AI kontrollera om en ny Android-build krävs**. Granska särskilt ändringar i `package.json` och lockfil, Expo-plugins, `app.json`, `android/`, Firebase-konfiguration, Android-behörigheter, appikon, splash och andra nativa resurser. Rapportera alltid **Ny Android-build: JA/NEJ**, kort motivering och, vid JA, vilka bygg- och installationskommandon användaren ska köra. Vid osäkerhet: redovisa osäkerheten och rekommendera verifierande build. Enbart server-, test- och dokumentationsändringar kräver normalt ingen ny native build. JavaScript-/TypeScript-ändringar kan normalt testas genom omladdning av utvecklingsappen men behöver fortfarande funktionstestas. Fysiska testresultat får aldrig hittas på.
 
-**Senaste byggbeslut 2026-11-15:** Användaren ordnar Android-bygge senare. Starta inga ytterligare Android-byggen nu. Fortsätt kod, automatiska tester och underlag; markera inte utebliven native-/releaseacceptans som godkänd.
+**Senaste byggbeslut 2026-11-16:** Användaren har godkänt lokal Preview-build på sin dator och installation på ansluten mobil. Bygg lokalt och behåll signering, inloggning och data vid uppdatering. Starta inga EAS-molnbyggen eller offentliga publiceringar som följd av commit/push. Markera endast verkligt utförd native-/releaseacceptans godkänd.
 
 ## Obligatorisk rapport i chatten efter VARJE commit
 Efter varje commit, visa en uppdaterad **checklista över fasens samtliga huvudpunkter**, med `[x]` för verifierat klara och `[ ]` för återstående. Visa även en **completion-stapel**, antal klara/total och procent, t.ex.:
@@ -55,6 +59,10 @@ Ange commit-SHA, PR-länk, vad som faktiskt ändrats, CI-status (väntar/grön/r
 - Behåll användarens fokus: en fungerande, vältestad Android-app och tydlig framdrift, inte många små PR:er.
 
 ## Aktuell fas och historik
+
+- **Aktuellt användarbeslut 2026-11-15:** Fortsätt kodarbete genom dokumenterade faser 29–32 efter grön senaste CI även medan tidigare faser har öppna native-grindar. Bevara en PR per fas, stapla på föregående branch och merga inte dem som slutgodkända innan deras fasta checklistor är verifierade. Ingen roadmap markeras färdig av kodförberedelser ensamt.
+- Lokal Preview-build och uppdateringsinstallation är nu godkända enligt byggbeslutet ovan. OTA-publiceringar och produktionsreleaser kräver separat beslut. Preview får tillfälligt använda `smoke-less-75efa` enligt uttryckligt beslut; detta isolerar inte serverkonton. Använd syntetiska data och bevara verklig historik.
+- Bred fysisk Android-, BrowserStack- och TalkBack-acceptans ligger fortsatt i fas 25. Specifika APK/OTA-grindar i fas 29 och verkliga E2E-grindar i fas 31 är också öppna tills de faktiskt körts. Gamla hänvisningar till fas 17 nedan/längre bak i masterplanen är historik från dåvarande fasordning.
 - Aktuell fas och PR finns i `docs/MASTER_ROADMAP.md`. Verifiera alltid mot GitHub innan du arbetar.
 - Fas 7.0 avslutades i PR #138 och fas 8.0 i PR #140. Senare faser och aktiv PR verifieras mot masterplanens statusöversikt och GitHub. Bred manuell slutacceptans ligger i fas 25.0.
 - Ändra roadmap-status när en fas verkligen mergats och verifierats, inte när enstaka commits skapats.

@@ -14,6 +14,7 @@ test('semantic text and action pairs remain readable in both palettes',()=>{
    for(const fg of ['text','textMuted','textSecondary','success','warning','danger'])assert(contrast(c[fg],c[bg])>=4.5,`${name}: ${fg}/${bg}`);
   }
   for(const bg of ['accent','accentPressed'])assert(contrast(c.onAccent,c[bg])>=4.5,`${name}: onAccent/${bg}`);
+  assert(contrast(c.background,c.danger)>=4.5,`${name}: filled SOS action`);
  }
 });
 test('explicit themes override system and missing system theme falls back to light',()=>{

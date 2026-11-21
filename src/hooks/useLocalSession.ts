@@ -1,4 +1,5 @@
 import {useEffect,useRef} from 'react';
+import {userMessage} from '../userMessage.cjs';
 import {AppState} from 'react-native';
 import type {Dispatch,SetStateAction} from 'react';
 import type {Data} from '../domain';
@@ -52,7 +53,7 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
     void refreshWidgetSnapshot(snapshot.data).catch(()=>{});
    }catch(error){
     if(active && generation===switchGeneration.current)
-     setLoadError(error instanceof Error?error.message:'Kunde inte läsa lokal historik eller rensa widgetdata.');
+     setLoadError(userMessage(error,'Kunde inte läsa lokal historik eller rensa widgetdata.'));
    }
   })();
   return()=>{active=false;};
@@ -81,7 +82,7 @@ export function useLocalSession({sessionUser,data,setData,ready,setReady,setLoad
   }).catch(error=>{
    // Never display stale save failures after switching accounts.
    if(sessionKey(sessionRef.current)===sessionKey(target))
-    showMessage('Kunde inte spara',error instanceof Error?error.message:'Kontrollera lagringsutrymmet.');
+    showMessage('Kunde inte spara',userMessage(error,'Kontrollera lagringsutrymmet och försök igen.'));
   });
  },[data,sessionReady,requestedKey]);
  return {storageRef,loadedDataRef,sessionRef,sessionReady};
