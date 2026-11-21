@@ -1,5 +1,13 @@
 # Fas 30 – slutpolering inför release
 
+## Widgetpolering 2026-11-21
+
+Widgetarnas visuella uppdatering hör till fas 30:s 3.4 och 6.3 i befintlig PR #182. Den använder appens petrolbakgrund, mintaccent, kantlinjer och bladform. Vanlig och kompakt dagswidget får tydligare antal, måltext och en diskret målindikator. Registrera och SOS har egna symboler. Dagsvärden och indikator är dolda tills opt-in och ett giltigt dagsvärde finns. Genvägarna visar inga personliga värden och registrerar aldrig en cigarett vid tryck.
+
+De fyra providers och deras skyddade navigering fanns tidigare på samlingsgrenen i PR #184. Samma implementation förs här till fasens källa för att widgetpoleringen ska kunna granskas och levereras i rätt PR. Privat native-widgetlagring, datumkontroll, paketbundna PendingIntent och uppdatering av alla providers vid städning bevaras.
+
+TypeScript och 353 ordinarie tester passerade lokalt. Native-kompilering och visuell acceptans av den nya designen återstår vid denna commit. Ny Android-build JA eftersom Android-resurser och provider ändras. Samlingsgrenen får nästa Preview-versionCode före ett godkänt lokalt kandidatbygge. Fulla punkterna 3.4 och 6.3 förblir öppna tills hela deras acceptans är utförd.
+
 ## Inventering och beslut
 
 Inventeringen omfattar routning i `app/`, samtliga 16 skärmfiler i `src/screens/` och presentationskomponenterna i `src/components/`. Sökning efter utvecklingstext, tekniska fel, bygginstruktioner och plattformsdialoger kompletterades med riktad läsning av konto, onboarding, data, inställningar, uppdateringar, synk och påminnelser. Detta är en kodinventering, inte en genomklickad Android-acceptans av varje knapp eller en full språkgranskning.

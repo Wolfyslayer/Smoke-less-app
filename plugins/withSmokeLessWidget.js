@@ -153,6 +153,16 @@ open class SmokeLessWidgetProvider : AppWidgetProvider() {
     else -> "Idag: $count / $goal cigaretter"
    }
    views.setTextViewText(R.id.smoke_less_widget_summary, summary)
+   views.setTextViewText(R.id.smoke_less_widget_value, if (valid) count.toString() else "")
+   views.setViewVisibility(R.id.smoke_less_widget_value, if (valid && !shortcut) View.VISIBLE else View.GONE)
+   views.setViewVisibility(R.id.smoke_less_widget_progress, if (valid && !shortcut && goal > 0) View.VISIBLE else View.GONE)
+   val progress = if (goal > 0) (count.toLong() * 100 / goal).coerceIn(0L, 100L).toInt() else 0
+   views.setProgressBar(R.id.smoke_less_widget_progress, 100, progress, false)
+   views.setImageViewResource(R.id.smoke_less_widget_icon, when (kind) {
+    "register" -> R.drawable.smoke_less_widget_plus
+    "sos" -> R.drawable.smoke_less_widget_sos
+    else -> R.drawable.smoke_less_widget_leaf
+   })
    if (shortcut) views.setTextViewText(R.id.smoke_less_widget_title, if (kind == "sos") "SOS" else "Registrera")
    views.setContentDescription(R.id.smoke_less_widget_root, "Smoke Less. $summary. Tryck för att öppna appen.")
    val action = when (kind) { "register" -> "register"; "sos" -> "sos"; else -> null }
@@ -181,45 +191,57 @@ class SmokeLessSosWidgetProvider : SmokeLessWidgetProvider() { override val kind
  android:updatePeriodMillis="0"
  android:description="@string/app_name" />
 `,
-   [path.join(res,'layout/smoke_less_widget.xml')]:`<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
- android:id="@+id/smoke_less_widget_root"
- android:layout_width="match_parent" android:layout_height="match_parent"
- android:orientation="vertical" android:gravity="center_vertical"
- android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."
- android:padding="16dp" android:background="@drawable/smoke_less_widget_background">
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:text="Smoke Less" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="6dp" android:text="Öppna appen för dagens framsteg"
- android:textColor="#FFFFFF" android:textSize="13sp" android:maxLines="3" android:ellipsize="end" />
-</LinearLayout>
-`,
-   [path.join(res,'layout/smoke_less_widget_wide.xml')]:`<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
- android:id="@+id/smoke_less_widget_root"
- android:layout_width="match_parent" android:layout_height="match_parent"
- android:orientation="vertical" android:gravity="center_vertical"
- android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."
- android:padding="20dp" android:background="@drawable/smoke_less_widget_background">
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:text="${displayName} · Dagens framsteg" android:textColor="#B7F37C" android:textStyle="bold" android:textSize="18sp" />
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
- android:id="@+id/smoke_less_widget_summary" android:layout_marginTop="8dp" android:text="Öppna appen för att se din dag"
- android:textColor="#FFFFFF" android:textSize="15sp" android:maxLines="3" android:ellipsize="end" />
-</LinearLayout>
-`,
-   [path.join(res,'drawable/smoke_less_widget_background.xml')]:`<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
- <solid android:color="#101A15" />
- <corners android:radius="18dp" />
-</shape>
-`
   };
-  files[path.join(res,'layout/smoke_less_widget_compact.xml')]=files[path.join(res,'layout/smoke_less_widget.xml')].replace('android:padding="16dp"','android:padding="12dp"').replace('android:text="Smoke Less"','android:text="Dagens framsteg"').replace('android:textSize="18sp"','android:textSize="14sp"');
-  files[path.join(res,'layout/smoke_less_widget_shortcut.xml')]=files[path.join(res,'layout/smoke_less_widget_compact.xml')].replace('android:text="Dagens framsteg"','android:id="@+id/smoke_less_widget_title" android:text="Öppna appen"').replace('android:text="Öppna appen för dagens framsteg"','android:text="Öppna appen"').replace('android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."','android:contentDescription="Smoke Less. Öppna appen."');
+  const widgetLayout=(title,compact=false)=>`<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:id="@+id/smoke_less_widget_root" android:layout_width="match_parent" android:layout_height="match_parent"
+ android:orientation="vertical" android:gravity="center_vertical" android:padding="${compact?'12':'16'}dp"
+ android:contentDescription="Smoke Less. Öppna appen för dagens framsteg."
+ android:background="@drawable/smoke_less_widget_background">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+  <ImageView android:id="@+id/smoke_less_widget_icon" android:layout_width="22dp" android:layout_height="22dp"
+   android:src="@drawable/smoke_less_widget_leaf" android:importantForAccessibility="no" />
+  <TextView android:id="@+id/smoke_less_widget_title" android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="${title}"
+   android:textColor="#F2FCF9" android:textStyle="bold" android:textSize="${compact?'13':'14'}sp"
+   android:maxLines="1" android:ellipsize="end" />
+ </LinearLayout>
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="8dp">
+  <TextView android:id="@+id/smoke_less_widget_value" android:layout_width="wrap_content" android:layout_height="wrap_content"
+   android:layout_marginEnd="10dp" android:textColor="#35EDAC" android:textSize="${compact?'26':'36'}sp"
+   android:textStyle="bold" android:visibility="gone" android:importantForAccessibility="no" />
+  <TextView android:id="@+id/smoke_less_widget_summary" android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="wrap_content" android:text="Öppna appen för dagens framsteg"
+   android:textColor="#B4D0D1" android:textSize="12sp" android:maxLines="3" android:ellipsize="end" />
+ </LinearLayout>
+ <ProgressBar android:id="@+id/smoke_less_widget_progress" style="?android:attr/progressBarStyleHorizontal"
+  android:layout_width="match_parent" android:layout_height="4dp" android:layout_marginTop="8dp"
+  android:progressDrawable="@drawable/smoke_less_widget_progress" android:visibility="gone" android:importantForAccessibility="no" />
+</LinearLayout>
+`;
+  files[path.join(res,'layout/smoke_less_widget.xml')]=widgetLayout('Smoke Less');
+  files[path.join(res,'layout/smoke_less_widget_wide.xml')]=widgetLayout('Dagens framsteg');
+  files[path.join(res,'layout/smoke_less_widget_compact.xml')]=widgetLayout('Dagens framsteg',true);
+  files[path.join(res,'layout/smoke_less_widget_shortcut.xml')]=widgetLayout('Öppna appen',true);
+  files[path.join(res,'drawable/smoke_less_widget_background.xml')]=`<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+ <gradient android:startColor="#0A3339" android:endColor="#00151B" android:angle="315" />
+ <stroke android:width="1dp" android:color="#205259" />
+ <corners android:radius="20dp" />
+</shape>`;
+  files[path.join(res,'drawable/smoke_less_widget_progress.xml')]=`<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+ <item android:id="@android:id/background"><shape><corners android:radius="2dp"/><solid android:color="#205259"/></shape></item>
+ <item android:id="@android:id/progress"><clip><shape><corners android:radius="2dp"/><solid android:color="#35EDAC"/></shape></clip></item>
+</layer-list>`;
+  const icons={
+   leaf:'M9,57 C1,43 6,21 26,13 C41,7 48,8 58,1 C65,26 61,49 43,57 C31,63 18,61 9,57 Z M8,61 C16,38 36,35 51,16 C43,35 25,43 8,61 Z',
+   plus:'M29,10 L35,10 L35,29 L54,29 L54,35 L35,35 L35,54 L29,54 L29,35 L10,35 L10,29 L29,29 Z',
+   sos:'M32,3 A29,29 0,1 0,32,61 A29,29 0,1 0,32,3 M32,17 A15,15 0,1 1,32,47 A15,15 0,1 1,32,17',
+  };
+  for(const [name,data] of Object.entries(icons))files[path.join(res,'drawable','smoke_less_widget_'+name+'.xml')]=`<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="64" android:viewportHeight="64"><path android:fillColor="#35EDAC" android:fillType="evenOdd" android:pathData="${data}"/></vector>`;
   for(const variant of variants.slice(1)){
-   files[path.join(res,'xml',variant.resource+'.xml')]=files[path.join(res,'xml/smoke_less_widget_info.xml')].replace('android:minWidth="180dp"','android:minWidth="110dp"').replace('android:minResizeWidth="120dp"','android:minResizeWidth="90dp"').replace('android:targetCellWidth="2"','android:targetCellWidth="1"').replace('@layout/smoke_less_widget"',variant.resource.includes('compact')?'@layout/smoke_less_widget_compact"':'@layout/smoke_less_widget_shortcut"');
+   files[path.join(res,'xml',variant.resource+'.xml')]=files[path.join(res,'xml/smoke_less_widget_info.xml')].replace('android:minWidth="180dp"','android:minWidth="150dp"').replace('android:minResizeWidth="120dp"','android:minResizeWidth="110dp"').replace('@layout/smoke_less_widget"',variant.resource.includes('compact')?'@layout/smoke_less_widget_compact"':'@layout/smoke_less_widget_shortcut"');
   }
   for(const [file,content] of Object.entries(files))fs.writeFileSync(file,content,'utf8');
   // Register the local React Native module after Expo prebuild regenerates MainApplication.

@@ -64,6 +64,11 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
   }
   assert.ok(!provider.includes('\\n'), 'generated Kotlin must not contain literal escaped newlines');
 
+  assert.ok(provider.includes('if (valid && !shortcut) View.VISIBLE else View.GONE'));
+  assert.ok(provider.includes('if (valid && !shortcut && goal > 0) View.VISIBLE else View.GONE'));
+  assert.ok(provider.includes('count.toLong() * 100'),'progress avoids Int overflow');
+  const background=fs.readFileSync(path.join(root,'app/src/main/res/drawable/smoke_less_widget_background.xml'),'utf8');
+  assert.ok(background.includes('#00151B')&&background.includes('#205259'),'widget shares petrol surfaces and borders with the app');
   assert.match(bridge,/MODE_PRIVATE/);
   assert.ok(bridge.includes('prefs.edit().clear().commit()'));
   assert.ok(fs.existsSync(path.join(root,'app/src/main/res/xml/smoke_less_widget_info.xml')));
@@ -77,7 +82,8 @@ test('Expo widget prebuild generates native provider, bridge, resources and regi
    assert.ok(xml.includes('android:id="@+id/smoke_less_widget_root"'));
    assert.ok(xml.includes('android:maxLines="3"'),'summary should support larger font sizes');
    assert.ok(xml.includes('android:ellipsize="end"'),'summary should truncate instead of overflowing');
-   assert.ok(xml.includes('android:textColor="#FFFFFF"'),'summary must keep high-contrast text');
+   assert.ok(xml.includes('android:textColor="#B4D0D1"'),'summary uses the app dark-theme text color');
+   assert.ok(xml.includes('android:visibility="gone"'),'personal count and progress start hidden');
   }
  }finally{fs.rmSync(root,{recursive:true,force:true})}
 });

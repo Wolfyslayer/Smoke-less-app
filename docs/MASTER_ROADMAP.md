@@ -1,5 +1,21 @@
 # Smoke Less – masterplan för utveckling och lansering
 
+## PR-ansvar granskat 2026-11-21
+
+PR #184 har använts som samlingsgren för den senaste UI-kandidaten och integrationer från tidigare faser. Dess stora diff omfattar därför flera fasers arbete. Varje fas behåller sin befintliga käll-PR och sina egna acceptansgrindar. Widgetarnas nya visuella polering ligger i fas 30/PR #182 och integreras i samlingsgrenen för kandidatbygget.
+
+| Fas och PR | Verifierad framdrift vid granskningen | Återstående arbete |
+| --- | --- | --- |
+| 25, #173 | 1/8 huvudpunkter, senaste säkerhetsrättning inväntar CI | Full raderings-/återhämtningsmatris, fysisk Android/tillgänglighet, policy/retention och slutliga releasegrindar. |
+| 27, #175 | 3/8 och 24/32, grön CI | Visuell tema-/enhetsacceptans, full tillgänglighet och fasavslut. Senare referens-UI finns på samlingsgrenen. |
+| 28, #180 | 6/8 och 29/32, grön CI | Fysisk profil-/inställningsacceptans och fasavslut. |
+| 29, #181 | 6/8 och 28/32, grön CI | Verklig APK-/OTA-/publiceringsacceptans och uttryckligt lanseringsbeslut. |
+| 30, #182 | 2/8, nya widgetändringar inväntar CI och native-prov | Språk/knappar, notiser, widgets, stora texter, konto-/dataskydd och releaseacceptans. |
+| 31, #183 | 2/8 och 20/32, grön CI | Körning av hela Android E2E-flödet och verifierad runner, regressioner och fasavslut. |
+| 32, #184 | 6/8 och 29/32 på be6c969, grön CI | Faktisk profilering, motiverade renderingsåtgärder, kandidatacceptans och slutgodkänd PR. |
+
+Fas 26 kräver lansering och verklig återkoppling. Framdrift hämtas från senaste PR-head och dess fasta checklista. Nya commits kräver egna obligatoriska CI-resultat. En APK från samlingsgrenen stänger ingen annan fas automatiskt.
+
 **Kompletterande online-QA 2026-11-17:** Två anslutna QA-emulatorer verifierade positiv postsynk, radering från sekundärklienten, spärr och återhämtning på primärklienten samt automatisk processomstart på båda. Raderad kontocache försvann och confirmed-markörer behölls. Kontrollkontots molndata och befintliga lokala cache samt primärklientens gästcache bevarades exakt. Se ACCOUNT_DELETION_TWO_DEVICE_QA.md. Full konflikt-/fel-/widgetmatris och fristående kandidatacceptans återstår.
 
 **Raderings-QA 2026-11-17:** Ett riktat offlinefall med två separata Android-emulatorer passerade: osynkade poster återuppladdades inte, kontobunden lokal städning och kall återhämtning fungerade, kontrollkontot och gästhistoriken bevarades. Nytt serverprov använder först giltiga klientskrivningar som positiv kontroll och verifierar därefter raderingslåsets avvisning i fyra samlingar. Se ACCOUNT_DELETION_TWO_DEVICE_QA.md. Online-/konflikt-/felmatris och slutlig fristående kandidat är öppna; inga fasta fasräknare eller publika flaggor ändras av detta riktade prov.

@@ -2,6 +2,8 @@
 
 # Fortsättning – Smoke Less
 
+Fortsättning 2026-11-21: PR-ansvar och återstående arbete finns överst i MASTER_ROADMAP.md. Widgetpoleringens källa är befintlig fas 30/PR #182, e7c8a30. Samlingsgrenen integrerar den tillsammans med fas 25:s 05d4543..c1dec45. Nästa lokala signerade Preview-kandidat får versionCode 5 eftersom Android-widgetresurserna ändrats. Build 4 finns verifierad lokalt och uppgraderades på QA-emulatorn med bevarad inloggning och två testposter. Se PREVIEW_BUILD_4_QA.md. Nya widgetutseendet behöver egen native/visuell acceptans. Den nya serverrättningen är lokalt testad och kräver separat produktionsdriftsättning före lansering.
+
 Användarbeslut 2026-11-17 efter online-QA godkänner nästa steg med återstående fel-/widgettester och ny signerad lokal APK för emulatoracceptans. Nästa kandidat får versionCode 4 från samlingsgrenen, med samma befintliga Preview-certifikat. Kandidatens hash/runtime och faktiska installationsresultat ska verifieras efter bygget. Publika aktiverings- och releasegrindar kräver separat acceptans.
 
 **Samlingsgrenens fortsättning 2026-11-17:** Fas 25:s exakta tillägg 637fd74..ce924ad är integrerade i befintlig PR #184, med båda sidors fortsättningsanteckningar bevarade. TypeScript, 383 ordinarie tester, 10 storage, 6 migration och fyra riktiga lokala callable-integrationer passerade på samlingsgrenen. Ny Android-build NEJ för dessa test-/dokumentationstillägg. Tidigare native-ändringar kräver en ny signerad fristående kandidat före releaseacceptans. Native-onlineprovet gjordes med fas 25-klienten, så samlingsgrenens senaste UI behöver fortfarande egen kandidatacceptans.

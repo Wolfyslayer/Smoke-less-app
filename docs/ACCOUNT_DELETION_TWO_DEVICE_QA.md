@@ -43,6 +43,20 @@ Samma befintliga QA-APK och granskade JavaScript på `637fd74` användes på bå
 
 En snapshot under omstartens laddningsfas hade ännu resetflaggan satt på primärklienten. Slutresultatet bygger på den senare snapshoten efter visat gästhem och avslutad cachekontroll. Den tidiga observationen sparas privat. Sekundärklienten hade ingen gästcache i utgångsläget, så gästbevarande på den klienten räknas inte som ett separat positivt prov.
 
+## Fel- och widgetkontroller 2026-11-17
+
+Ett nytt lokalt syntetiskt konto användes på sekundärklienten. Med Wi-Fi och mobildata avstängda visade egen modal att raderingen inte startades eftersom inloggningen inte kunde verifieras. Före/efter-jämförelser bekräftade oförändrade molndata för både test- och kontrollkonto, kvarvarande lokal kontocache samt frånvaro av serverlås och lokal raderingsmarkör. Nätverket återställdes efter provet.
+
+Native widgetlagring verifierades med opt-in och faktiska dagsaggregat. Efter utloggning var Androids widget-SharedPreferences tomma. Två nya automatiska regressioner verifierar att fel i native widgetstädning behåller opt-in/snapshot och raderingens omstartsspärr, förhindrar för tidig utloggning samt tillåter lyckat återförsök. Den ordinarie fas 25-sviten omfattar därefter 318 passerande tester, varav 19 riktade backend-/widgetfall.
+
+Ett efterföljande raderingsförsök fick ett faktiskt lokalt Firestore/gRPC-avbrott efter att serverns lease skapats. Klienten behöll blockerad återhämtning och rapporterade ingen lyckad radering. Återinloggning kunde göras men återförsök nekades under aktiv lease. Slutförd återhämtning efter ordinarie lease-utgång följs upp separat. Inget serverlås ändras administrativt för att förkorta provet.
+
+## Fortsättning 2026-11-21
+
+Den tidigare lokala emulatorkörningen hade avslutats före återupptagningen. Slutförd återhämtning efter lease-utgång i det avbrutna 17 november-provet är därför fortsatt öppen. Nya prov använder nya syntetiska konton och separat privat evidens. Den nya emulatorkörningen har export vid avslut.
+
+Granskning av det verkliga gRPC-felet visade att fel under låsets skapande, läsning eller lease-transaktion kunde nå Functions ramverksloggning som råa SDK-fel. Servern översätter nu dessa till ett generiskt callable-fel och loggar endast en fast text. Befintliga failed-precondition-svar för aktivt eller ogiltigt lås bevaras. Ett regressionstest var rött före rättningen och passerar efteråt för samtliga tre felsteg, med Auth och historik bevarade. TypeScript och 319 ordinarie fas 25-tester passerade lokalt.
+
 ## Återstående acceptans
 
-Full konflikt-/lagringsfel-/widgetmatris, fysisk tvåenhets-/tillgänglighetsacceptans och en ny fristående Preview-kandidat från samlingsgrenen återstår. Fasta faschecklistor behåller sina nämnare. Full 4.4 kräver återstående acceptans. Dessa riktade prov använder två emulatorer med debug/Metro.
+Full konflikt-/lagringsfel-/widgetmatris, fysisk tvåenhets-/tillgänglighetsacceptans och slutlig fristående kandidatacceptans återstår. Fasta faschecklistor behåller sina nämnare. Full 4.4 kräver återstående acceptans. Raderingsproven använder två emulatorer med debug/Metro.
