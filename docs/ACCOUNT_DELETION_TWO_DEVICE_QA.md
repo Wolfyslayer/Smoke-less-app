@@ -57,6 +57,16 @@ Den tidigare lokala emulatorkörningen hade avslutats före återupptagningen. S
 
 Granskning av det verkliga gRPC-felet visade att fel under låsets skapande, läsning eller lease-transaktion kunde nå Functions ramverksloggning som råa SDK-fel. Servern översätter nu dessa till ett generiskt callable-fel och loggar endast en fast text. Befintliga failed-precondition-svar för aktivt eller ogiltigt lås bevaras. Ett regressionstest var rött före rättningen och passerar efteråt för samtliga tre felsteg, med Auth och historik bevarade. TypeScript och 319 ordinarie fas 25-tester passerade lokalt.
 
+### Verifierad återhämtning efter partiellt fel
+
+Ett nytt syntetiskt konto fick en enda avsiktlig, okänd nästlad testpost i den lokala demoemulatorn. Native-klientens raderingsbegäran skapade det ordinarie tio minuters serverlåset men stoppade före Auth-radering. Auth, kontocache och den ursprungliga posten behölls. Ett nytt autentiserat återförsök under aktiv lease nekades och bevarade data.
+
+Endast den nästlade syntetiska felposten togs bort av testoperatören. Serverlåset och dess tidsgräns ändrades aldrig administrativt. Efter verklig lease-utgång, ny inloggning och Försök igen slutförde klient/server raderingen. Auth och samtliga fyra samlingar var då tomma och completed-kvittot kvar. Knappen Starta om appen gav ny process och välkomstvy. En snapshot efter avslutad uppstart visade tömd resetflagga, saknad kontocache och confirmed-markör. En tidigare snapshot under laddningen hade ännu resetflaggan satt och räknas inte som slutresultat.
+
+Kontrollkontots Auth och fyra samlingar var exakt oförändrade. Primärklientens befintliga gästcache och fyra andra kontocacher på emulatorerna var exakt bevarade. Native widget-SharedPreferences var tomma efter återhämtningskedjan. Eftersom återinloggningen omfattade utloggning tillskrivs detta inte enbart det sista raderingsanropet. Första snapshoten hade verifierade dagsaggregat och opt-in. Server-/klientfel vid widgetstädning täcks dessutom av regressionstesterna.
+
+Privat emulatorexport sparades under pending-läget. Inga lösenord, UID:n, databasfiler eller exportfiler checkas in. Detta prov använder fas 25-klienten i befintlig deletionqa-debugapp och den uppdaterade lokala servern. Full fristående/fysisk acceptans förblir öppen.
+
 ## Återstående acceptans
 
 Full konflikt-/lagringsfel-/widgetmatris, fysisk tvåenhets-/tillgänglighetsacceptans och slutlig fristående kandidatacceptans återstår. Fasta faschecklistor behåller sina nämnare. Full 4.4 kräver återstående acceptans. Raderingsproven använder två emulatorer med debug/Metro.
