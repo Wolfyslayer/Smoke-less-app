@@ -55,7 +55,7 @@ export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,email
   <Btn title={accountBusy?'Vänta…':accountMode==='login'?'Logga in':'Skapa konto'} disabled={accountBusy||!validEmail(accountEmail)||!accountPassword||(accountMode==='signup'&&accountPassword.length<6)} onPress={()=>onAccountAction(accountMode)}/>
   <Text style={[s.muted,{textAlign:'center'}]}>eller</Text>
   <Btn title={accountBusy?'Vänta…':'Fortsätt med Google'} secondary disabled={accountBusy||!googleConfigured} onPress={onGoogleSignIn}/>
-  {!googleConfigured?<Text style={s.muted} accessibilityLiveRegion="polite">Google-inloggning är inte konfigurerad i den här appversionen. Använd e-post och lösenord tills en uppdaterad Android-build finns.</Text>:null}
+  {!googleConfigured?<Text style={s.muted} accessibilityLiveRegion="polite">Google-inloggning är inte tillgänglig just nu. Du kan använda e-post och lösenord.</Text>:null}
   <Btn title={accountMode==='login'?'Skapa ett nytt konto':'Jag har redan ett konto'} secondary disabled={accountBusy} onPress={()=>onToggleAccountMode()}/>
   <Pressable disabled={accountBusy||!validEmail(accountEmail)} onPress={()=>onAccountAction('reset')} accessibilityRole="button" accessibilityLabel="Återställ lösenord" accessibilityState={{disabled:accountBusy||!validEmail(accountEmail)}} style={{minHeight:48,justifyContent:"center",paddingVertical:5,alignSelf:'center',opacity:accountBusy||!validEmail(accountEmail)?0.5:1}}><Text style={s.link}>Glömt lösenord?</Text></Pressable>
  </Card>}
@@ -65,7 +65,7 @@ export function AccountScreen({deletionEnabled,onDeleteAccount,accountUser,email
   <Btn title={accountBusy?'Skickar…':'Skicka länk för lösenordsbyte'} secondary disabled={accountBusy||!accountUser.email} onPress={onPasswordReset}/>
   <View style={{height:1,backgroundColor:C.border}}/>
   <Text style={s.cardTitle} accessibilityRole="header">Radera data och konto</Text>
-  {deletionEnabled?<><Text style={s.muted}>Radera ditt konto och tillhörande kontohistorik permanent. Gästhistorik och andra kontons aktiva historik behålls. Logga in på nytt först; läs bekräftelsen innan du fortsätter.</Text><Btn title="Radera konto och kontohistorik" secondary disabled={accountBusy||migrationBusy||cloudPreviewBusy} onPress={onDeleteAccount}/></>:<Text style={s.muted}>Kontoradering är inte tillgänglig i den här förhandsversionen. Din kontohistorik synkroniseras via Firebase; gästhistorik finns bara på enheten.</Text>}
+  {deletionEnabled?<><Text style={s.muted}>Radera ditt konto och tillhörande kontohistorik permanent. Gästhistorik och andra kontons aktiva historik behålls. Logga in på nytt först; läs bekräftelsen innan du fortsätter.</Text><Btn title="Radera konto och kontohistorik" secondary disabled={accountBusy||migrationBusy||cloudPreviewBusy} onPress={onDeleteAccount}/></>:<Text style={s.muted}>Kontoradering är inte tillgänglig just nu. Kontohistorik synkroniseras med molnet. Gästhistorik finns bara på enheten.</Text>}
   <Btn title="Visa historik och synkronisering" secondary onPress={()=>onOpenData()}/>
  </Card>:null}
  {!accountUser?<Card style={{gap:10,padding:17,borderColor:C.warning,backgroundColor:C.surface}}>

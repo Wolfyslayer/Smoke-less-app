@@ -19,13 +19,13 @@ function googleSignInFailure(error) {
     return {kind:'network', message:'Ingen nätverksanslutning. Försök igen när du är online. Din historik finns kvar.'};
   }
   if (['DEVELOPER_ERROR', '10'].includes(code)) {
-    return {kind:'configuration', message:'Google avvisade Android-appens OAuth-konfiguration (DEVELOPER_ERROR/10). Kontrollera att SHA-1 för den installerade debug-appen finns i Firebase och att appen använder rätt Web Client ID. Ingen historik har ändrats.'};
+    return {kind:'configuration', message:'Google-inloggning är inte tillgänglig i den här appversionen. Använd e-postinloggning och försök igen efter nästa appuppdatering.'};
   }
   if (code === 'auth/invalid-credential') {
-    return {kind:'configuration', message:'Firebase kunde inte verifiera Google-token (auth/invalid-credential). Kontrollera att Google-provider och OAuth-klient tillhör samma Firebase-projekt. Ingen historik har ändrats.'};
+    return {kind:'configuration', message:'Google-inloggningen kunde inte bekräftas. Försök igen eller använd e-postinloggning.'};
   }
   if (code === 'auth/operation-not-allowed') {
-    return {kind:'configuration', message:'Firebase tillåter inte Google-inloggning (auth/operation-not-allowed). Kontrollera Google-provider i Firebase Authentication. Ingen historik har ändrats.'};
+    return {kind:'configuration', message:'Google-inloggning är inte tillgänglig just nu. Använd e-postinloggning i stället.'};
   }
   return {kind:'unknown', message:'Google-inloggningen misslyckades. Försök igen eller använd e-postinloggning. Ingen historik har ändrats.'};
 }

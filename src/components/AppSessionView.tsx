@@ -1,3 +1,4 @@
+import {useWidgetNavigation} from '../hooks/useWidgetNavigation';
 import {AccountDeletionStatus} from './AccountDeletionStatus';
 import React,{useEffect,useRef,useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,6 +29,8 @@ export function AppSessionView({model}:{model:SessionModel}){
  const [showSyncDetails,setShowSyncDetails]=useState(false);
  const {ready,loadError,tab,clock,p,go,accountUser,syncStatus}=model;
  useEffect(()=>{if(!model.deletion.ready){model.setDialog(null);model.setRegisterOpen(false);}},[model.deletion.ready]);
+ const widgetNavigationReady=ready&&!!p&&model.deletion.ready&&!loadError&&!showLogin&&authPrompt===null&&!model.dialog&&!model.registerOpen&&!model.accountBusy&&!model.migrationBusy&&!model.cloudPreviewBusy&&(tab!=='account'||(!model.accountEmail.trim()&&!model.accountPassword));
+ useWidgetNavigation(widgetNavigationReady,go);
  const leaveLogin=()=>{
   if(model.accountEmail.trim()||model.accountPassword){
    model.ask('Lämna inloggningen?','E-post och lösenord som du har skrivit in kommer inte att användas.',()=>setShowLogin(false),'Lämna inloggningen');
@@ -82,7 +85,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  const [loginOrigin]=useState(()=>accountUser?consumeLoginOrigin():null);
  const guestPromptedRef=useRef(false);
  useEffect(()=>{
-  if(!ready || !accountUser || loginOrigin!=='profile' || guestPromptedRef.current || syncStatus!=='Synkroniserad med Firestore')return;
+  if(!ready || !accountUser || loginOrigin!=='profile' || guestPromptedRef.current || syncStatus!=='Historiken är synkroniserad')return;
   guestPromptedRef.current=true;
   let cancelled=false;
   void (async()=>{
@@ -106,7 +109,7 @@ export function AppSessionView({model}:{model:SessionModel}){
  if(!ready)return <View style={[s.root,{justifyContent:'center',alignItems:'center'}]}><ActivityIndicator color={C.lime}/></View>;
  // On a new device, an authenticated account may have no local profile yet.
  // Wait for the first cloud read before deciding that onboarding is needed.
- if(!p && accountUser && syncStatus!=='Synkroniserad med Firestore') {
+ if(!p && accountUser && syncStatus!=='Historiken är synkroniserad') {
   const syncing=!syncStatus||syncStatus==='Synkroniserar…'||syncStatus==='Lokala data ändrades. Synkroniserar igen.';
   return <ScrollView style={s.root} contentContainerStyle={{flexGrow:1,justifyContent:'center',paddingHorizontal:24,paddingTop:Math.max(insets.top,24),paddingBottom:Math.max(insets.bottom,24)}}>
    <View style={s.errorCard}>

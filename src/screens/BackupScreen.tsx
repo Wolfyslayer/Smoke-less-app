@@ -24,7 +24,7 @@ export function BackupScreen({accountEmail,syncStatus,onGuestReset,onOpenAccount
    {loggedIn&&onRetrySync?<AppButton title="Försök synkronisera igen" secondary onPress={onRetrySync}/>:null}
   </AppCard>
   {loggedIn?cloudActions:null}
-  <AppCard><Text accessibilityRole="header" style={s.cardTitle}>Integritet och kontoradering</Text><Text style={s.muted}>Gästdata lagras på den här enheten. Kontohistorik synkroniseras via Firebase. Kontosäkerhet och kontoradering, när funktionen stöds i appversionen, finns under Mitt konto.</Text><AppButton title="Öppna Mitt konto" secondary onPress={onOpenAccount}/></AppCard>
+  <AppCard><Text accessibilityRole="header" style={s.cardTitle}>Integritet och kontoradering</Text><Text style={s.muted}>Gästdata lagras på den här enheten. Kontohistorik synkroniseras med molnet. Kontosäkerhet och kontoradering, när funktionen stöds i appversionen, finns under Mitt konto.</Text><AppButton title="Öppna Mitt konto" secondary onPress={onOpenAccount}/></AppCard>
   <LegacyRecoveryCleanup/>
   {!loggedIn?<AppCard tone="surface" style={s.card}>
    <View style={s.heading}><Shield size={22} color={C.warning}/><Text style={s.cardTitle} accessibilityRole="header">Hantera gästhistorik</Text></View>

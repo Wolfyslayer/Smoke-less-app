@@ -30,7 +30,7 @@ export function SettingsScreen({data}:Props){
    await setWidgetOptIn(next);
    if(next)await refreshWidgetSnapshot(data);
    setWidgetEnabled(next);
-   setWidgetMessage(next?'Dagens framsteg får visas i widgeten. Lägg till Smoke Less via hemskärmens widgetmeny. Om den saknas behöver du installera en ny Android-build.':'Widgetens sparade uppgifter har rensats.');
+   setWidgetMessage(next?'Dagens framsteg får visas i widgeten. Lägg till Smoke Less via hemskärmens widgetmeny. Om widgeten saknas, kontrollera att du har den senaste appversionen.':'Widgetens sparade uppgifter har rensats.');
   }catch{
    if(next)await setWidgetOptIn(false).catch(()=>{});
    setWidgetMessage('Kunde inte ändra widgetinställningen. Försök igen.');
@@ -43,7 +43,7 @@ export function SettingsScreen({data}:Props){
 
   <SettingsSection title="Android-widget" description="Välj vad som visas på hemskärmen">
   <Card style={{gap:10,padding:18}}>
-   <Text style={styles.muted}>Du väljer själv om dagens antal och mål får visas på hemskärmen. Funktionen är under utveckling och kräver en kommande Android-build.</Text>
+   <Text style={styles.muted}>Du väljer själv om dagens antal och mål får visas på hemskärmen. Lägg till widgeten från telefonens hemskärm när du har aktiverat den här.</Text>
    <Pressable accessibilityRole="switch" accessibilityLabel="Tillåt dagsframsteg i Android-widget" accessibilityState={{checked:widgetEnabled,disabled:widgetBusy}} disabled={widgetBusy} onPress={toggleWidget} style={[styles.inline,{justifyContent:'space-between',minHeight:48,paddingVertical:10}]}>
     <Text style={[styles.cardTitle,{flexShrink:1}]}>{widgetEnabled?'Tillåtet':'Inte tillåtet'}</Text><Text style={{color:C.lime,fontWeight:'800'}}>{widgetEnabled?'PÅ':'AV'}</Text>
    </Pressable>

@@ -184,8 +184,8 @@ test('offline, missing Play services and invalid OAuth config provide safe Swedi
   ['NETWORK_ERROR','network',/nätverksanslutning/],
   ['7','network',/historik finns kvar/],
   ['PLAY_SERVICES_NOT_AVAILABLE','unavailable',/e-postinloggning/],
-  ['DEVELOPER_ERROR','configuration',/SHA-1/],
-  ['auth/operation-not-allowed','configuration',/Google-provider/],
+  ['DEVELOPER_ERROR','configuration',/appuppdatering/],
+  ['auth/operation-not-allowed','configuration',/e-postinloggning/],
  ];
  for(const [code,kind,message] of cases){
   const result=googleSignInFailure({code,credential:'private-secret'});
